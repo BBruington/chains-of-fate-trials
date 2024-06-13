@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.1.5",
+    "@radix-ui/themes": "^3.0.5",
+    "@rocicorp/reflect": "^0.39.202402230127",
+    "lucide-react": "^0.394.0",
     "@neondatabase/serverless": "^0.9.3",
     "@prisma/adapter-neon": "^5.15.0",
     "@prisma/client": "^5.15.0",

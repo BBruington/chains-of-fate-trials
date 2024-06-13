@@ -1,4 +1,6 @@
+import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
+
 import {
   ClerkProvider
 } from "@clerk/nextjs";
@@ -23,6 +25,21 @@ export default function RootLayout({
       <html lang="en">
         <body className={inter.className}>
           <Navigation />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <header>
+              <SignedOut>
+                <SignInButton />
+              </SignedOut>
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
+            </header>
+          </ThemeProvider>
           <main>{children}</main>
         </body>
       </html>

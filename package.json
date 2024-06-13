@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.1.5",
+    "@radix-ui/themes": "^3.0.5",
+    "@rocicorp/reflect": "^0.39.202402230127",
+    "lucide-react": "^0.394.0",
     "next": "14.2.4",
     "next-themes": "^0.3.0",
     "react": "^18",

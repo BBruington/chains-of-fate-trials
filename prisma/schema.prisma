@@ -10,21 +10,49 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model Post {
-  id        String     @default(cuid()) @id
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  String?
+model PuzzleSession {
+  id                String     @default(cuid()) @id
+  title             String
+  durationSeconds   Int      @default(0)
+  createdAt         DateTime @default(now())
+  chat              PuzzleChatMessage[]
+  players           User[]
+  puzzles           Puzzle[]
+}
+
+model PuzzleChatMessage {
+  id         String   @id @default(cuid())
+  sessionId  String
+  username   String
+  message    String
+  createdAt  DateTime @default(now())
+  session    PuzzleSession @relation(fields: [sessionId], references: [id])
+}
+
+model Puzzle {
+  id          String @default(cuid()) @id
+  checkpoint  Int @default(1)
+  title       String
+  description String?
+  solved      Boolean
+  data        Json
+  typeId      String
+  type        PuzzleType @relation(fields: [typeId], references: [id])
+  session     PuzzleSession[]
+}
+
+model PuzzleType {
+  name String
+  id   String @default(cuid()) @id
+  puzzles Puzzle[]
 }
 
 model User {
-  id            String       @default(cuid()) @id
-  name          String?
-  email         String?   @unique
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
-  posts         Post[]
+  id                String    @default(cuid()) @id
+  username          String?
+  email             String?   @unique
+  createdAt         DateTime  @default(now()) @map(name: "created_at")
+  updatedAt         DateTime  @updatedAt @map(name: "updated_at")
+  puzzleSessions    PuzzleSession[]
   @@map(name: "users")
 }

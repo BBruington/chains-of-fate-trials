@@ -7,7 +7,7 @@ import Draggable from "@/components/dndkit/draggable";
 export default function Home() {
   const containers = ["A", "B", "C"];
   const [parent, setParent] = useState<UniqueIdentifier | null>(null);
-  const draggableMarkup = <Draggable id="draggable">Drag me</Draggable>;
+  const draggableMarkup = <Draggable className="bg-primary text-black" id="draggable">Drag me</Draggable>;
 
   const handleDragEnd = (event: DragEndEvent): void => {
     const { over } = event;

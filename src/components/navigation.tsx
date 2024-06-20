@@ -9,12 +9,29 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "./ui/dropdown-menu";
+import Link from "next/link";
 
 export default function Navigation() {
   const { setTheme } = useTheme();
 
   return (
-    <div className="px-2 space-x-3 items-center flex justify-end border-b-2 border-secondary">
+    <nav className="px-2 space-x-3 items-center flex justify-end border-b-2 border-secondary">
+      <div>Potion Craft</div>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="w-32" asChild>
+          <Button variant="outline" size="icon">
+            <span className="">Puzzle Session</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem className="flex justify-center">
+            <Link href={`/session/create`}>Create</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem className="flex justify-center">
+            Join
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <div className="flex items-center my-1">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -42,6 +59,6 @@ export default function Navigation() {
           <UserButton />
         </SignedIn>
       </div>
-    </div>
+    </nav>
   );
 }

@@ -56,3 +56,31 @@ model User {
   puzzleSessions    PuzzleSession[]
   @@map(name: "users")
 }
+
+model Ingredient {
+  id                String    @default(cuid()) @id  
+  name String
+  description String
+  abjuration Int @default(0)
+  conjuration Int @default(0)
+  divination Int @default(0)
+  enchantment Int @default(0)
+  evocation Int @default(0)
+  illusion Int @default(0)
+  necromancy Int @default(0)
+  transmutation Int @default(0)
+}
+
+model Potion {
+  id                String    @default(cuid()) @id  
+  name String
+  description String
+  abjuration Int @default(0)
+  conjuration Int @default(0)
+  divination Int @default(0)
+  enchantment Int @default(0)
+  evocation Int @default(0)
+  illusion Int @default(0)
+  necromancy Int @default(0)
+  transmutation Int @default(0)
+}

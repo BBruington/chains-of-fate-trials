@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/dndkit/draggable.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/dndkit/draggable.tsx", "src/components/dndkit/sortableItem.tsx", "src/app/page.tsx"],
   "exclude": ["node_modules"]
 }

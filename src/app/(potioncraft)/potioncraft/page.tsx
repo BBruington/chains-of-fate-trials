@@ -8,15 +8,14 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-  UniqueIdentifier,
 } from "@dnd-kit/core";
+import { Ingredient } from "@/types";
 import {
   SortableContext,
   arrayMove,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Ingredient } from "@prisma/client";
 
 import { SortableItem } from "@/components/dndkit/sortableItem";
 export default function Home() {
@@ -102,6 +101,7 @@ export default function Home() {
       transmutation: 0,
     },
   ];
+
   const [items1, setItems1] = useState<Ingredient[]>([]);
   const [items2, setItems2] = useState<Ingredient[]>([...playerIngredients]);
   const initialPotionProperties = {
@@ -122,7 +122,7 @@ export default function Home() {
     })
   );
 
-  const potion = findPotion(item);
+  const potion = findPotion();
 
   return (
     <div className="flex flex-col items-center">
@@ -199,23 +199,26 @@ export default function Home() {
     transmutation: number;
   };
 
-  function findPotion(mixture: MagicProperties) {
+  function findPotion() {
     return potions.find((potion) => {
-      return Object.keys(mixture).every((key) => {
-        const potionValue = Math.max(potion[key], 0);
-        const combinedValue = Math.max(mixture[key], 0);
+      return Object.keys(item).every((key) => {
+        const potionValue = Math.max(potion[key as keyof MagicProperties], 0);
+        const combinedValue = Math.max(item[key as keyof MagicProperties], 0);
         return potionValue === combinedValue;
       });
     });
   }
 
-  function findPotionValue(ingredients: Ingredient[] | []) {
+  function findPotionValue(ingredients: Ingredient[]) {
     if (ingredients.length === 0) {
       setItem(initialPotionProperties);
       return;
     }
     const solution = ingredients.reduce((ingredientSum, currentIngretient) => {
       return {
+        id: 1,
+        name: "",
+        description: "",
         abjuration: ingredientSum.abjuration + currentIngretient.abjuration,
         conjuration: ingredientSum.conjuration + currentIngretient.conjuration,
         divination: ingredientSum.divination + currentIngretient.divination,
@@ -235,39 +238,51 @@ export default function Home() {
     const { active, over } = event;
     if (over?.data.current?.sortable.containerId === "1") {
       const overItem = items1.find((item) => item.id === over.id);
-      if (active?.data.current?.sortable.containerId !== "1") {
-        const activeItem = items2.find((item) => item.id === active.id);
-        setItems1([...items1, activeItem]);
-        findPotionValue([...items1, activeItem]);
-        setItems2(items2.filter((item) => item !== activeItem));
-      }
-      if (active?.data.current?.sortable.containerId === "1") {
-        const activeItem = items1.find((item) => item.id === active.id);
-        setItems1((items) => {
-          const oldIndex = items.indexOf(activeItem);
-          const newIndex = items.indexOf(overItem);
+      if (overItem !== undefined) {
+        if (active!.data.current!.sortable.containerId !== "1") {
+          const activeItem = items2.find((item) => item.id === active.id);
+          if (activeItem !== undefined) {
+            setItems1([...items1, activeItem]);
+            findPotionValue([...items1, activeItem]);
+            setItems2(items2.filter((item) => item !== activeItem));
+          }
+        }
+        if (active?.data.current?.sortable.containerId === "1") {
+          const activeItem = items1.find((item) => item.id === active.id);
+          if (activeItem !== undefined) {
+            setItems1((items) => {
+              const oldIndex = items.indexOf(activeItem);
+              const newIndex = items.indexOf(overItem);
 
-          return arrayMove(items, oldIndex, newIndex);
-        });
+              return arrayMove(items, oldIndex, newIndex);
+            });
+          }
+        }
       }
     }
     if (over?.data.current?.sortable.containerId === "2") {
       const overItem = items2.find((item) => item.id === over.id);
-      if (active?.data.current?.sortable.containerId !== "2") {
-        const activeItem = items1.find((item) => item.id === active.id);
-        const filteredItems1 = items1.filter((item) => item !== activeItem);
-        setItems2([...items2, activeItem]);
-        setItems1(filteredItems1);
-        findPotionValue([...filteredItems1]);
-      }
-      if (active?.data.current?.sortable.containerId === "2") {
-        const activeItem = items2.find((item) => item.id === active.id);
-        setItems2((items) => {
-          const oldIndex = items.indexOf(activeItem);
-          const newIndex = items.indexOf(overItem);
+      if (overItem !== undefined) {
+        if (active?.data.current?.sortable.containerId !== "2") {
+          const activeItem = items1.find((item) => item.id === active.id);
+          const filteredItems1 = items1.filter((item) => item !== activeItem);
+          if (activeItem !== undefined) {
+            setItems2([...items2, activeItem]);
+            setItems1(filteredItems1);
+            findPotionValue([...filteredItems1]);
+          }
+        }
+        if (active?.data.current?.sortable.containerId === "2") {
+          const activeItem = items2.find((item) => item.id === active.id);
+          if (activeItem !== undefined) {
+            setItems2((items) => {
+              const oldIndex = items.indexOf(activeItem);
+              const newIndex = items.indexOf(overItem);
 
-          return arrayMove(items, oldIndex, newIndex);
-        });
+              return arrayMove(items, oldIndex, newIndex);
+            });
+          }
+        }
       }
     }
   }

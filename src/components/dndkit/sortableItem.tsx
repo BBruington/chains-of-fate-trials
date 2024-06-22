@@ -2,8 +2,7 @@ import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { UniqueIdentifier } from "@dnd-kit/core";
-import { Ingredient } from "@prisma/client";
-
+import { Ingredient } from "@/types";
 export function SortableItem(props: {
   id: UniqueIdentifier;
   item: Ingredient;

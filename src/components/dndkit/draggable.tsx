@@ -6,10 +6,34 @@ import { cn } from "@/lib/utils";
 type DraggableProps = {
   id: string;
   children: string | React.JSX.Element;
+  abjuration: number;
+  conjuration: number;
+  divination: number;
+  enchantment: number;
+  evocation: number;
+  illusion: number;
+  necromancy: number;
+  transmutation: number;
+  name: string;
+  description: string;
   className?: string | undefined;
 };
 
-export default function Draggable({ id, children, className }: DraggableProps) {
+export default function Draggable({
+  id,
+  name,
+  description,
+  abjuration,
+  conjuration,
+  divination,
+  enchantment,
+  evocation,
+  illusion,
+  necromancy,
+  transmutation,
+  children,
+  className,
+}: DraggableProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
   });

@@ -3,16 +3,21 @@ import React, { useState } from "react";
 import {
   DndContext,
   closestCenter,
+  pointerWithin,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
   DragEndEvent,
+  DragStartEvent,
+  DragOverEvent,
 } from "@dnd-kit/core";
 import { Ingredient } from "@/types";
 import {
   SortableContext,
   arrayMove,
+  rectSortingStrategy,
+  rectSwappingStrategy,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
@@ -102,8 +107,6 @@ export default function Home() {
     },
   ];
 
-  const [items1, setItems1] = useState<Ingredient[]>([]);
-  const [items2, setItems2] = useState<Ingredient[]>([...playerIngredients]);
   const initialPotionProperties = {
     abjuration: 0,
     conjuration: 0,
@@ -114,7 +117,13 @@ export default function Home() {
     necromancy: 0,
     transmutation: 0,
   };
+
+  const [items1, setItems1] = useState<Ingredient[]>([]);
+  const [items2, setItems2] = useState<Ingredient[]>([...playerIngredients]);
   const [item, setItem] = useState(initialPotionProperties);
+  const [activeIngredient, setActiveIngredient] = useState<Ingredient | null>(
+    null
+  );
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -125,62 +134,61 @@ export default function Home() {
   const potion = findPotion();
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex">
-        <div className="flex flex-col ml-5">
-          <span className="border-b-2 p-3 m-1">Potion Properties</span>
-          <span>abjuration: {item.abjuration}</span>
-          <span>conjuration: {item.conjuration}</span>
-          <span>divination: {item.divination}</span>
-          <span>enchantment: {item.enchantment}</span>
-          <span>evocation: {item.evocation}</span>
-          <span>illusion: {item.illusion}</span>
-          <span>necromancy: {item.necromancy}</span>
-          <span>transmutation: {item.transmutation}</span>
-        </div>
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleIngredientDragEnd}
-        >
-          <div className="flex">
-            <SortableContext
-              id="1"
-              items={[0, 1, 2, 3, 4, 5, 6, 7]}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="flex flex-col bg-green-900 p-12">
-                <div>add ingredients</div>
-                {items1.length === 0 ? (
-                  <SortableItem id={69} item={empty} disabled={true} />
-                ) : (
-                  items1.map((item) => (
-                    <SortableItem key={item.id} id={item.id} item={item} />
-                  ))
-                )}
-              </div>
-            </SortableContext>
-          </div>
-          <div className="flex">
-            <SortableContext
-              id="2"
-              items={[0, 1, 2, 3, 4, 5, 6]}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="flex flex-col bg-green-800 p-12">
-                <div>ingredients</div>
-                {items2.length === 0 ? (
-                  <SortableItem id={69} item={empty} disabled={true} />
-                ) : (
-                  items2.map((item) => (
-                    <SortableItem key={item.id} id={item.id} item={item} />
-                  ))
-                )}
-              </div>
-            </SortableContext>
-          </div>
-        </DndContext>
+    <div className="flex w-screen">
+      <div className="flex flex-col ml-5">
+        <span className="border-b-2 p-3 m-1">Potion Properties</span>
+        <span>abjuration: {item.abjuration}</span>
+        <span>conjuration: {item.conjuration}</span>
+        <span>divination: {item.divination}</span>
+        <span>enchantment: {item.enchantment}</span>
+        <span>evocation: {item.evocation}</span>
+        <span>illusion: {item.illusion}</span>
+        <span>necromancy: {item.necromancy}</span>
+        <span>transmutation: {item.transmutation}</span>
       </div>
+      <DndContext
+        sensors={sensors}
+        // onDragStart={handleIngredientDragStart}
+        onDragOver={handleIngredientDragOver}
+        // onDragEnd={handleIngredientDragEnd}
+      >
+        <div className="flex">
+          <SortableContext
+            id="1"
+            items={[0, 1, 2, 3, 4, 5, 6, 7, 69]}
+            // strategy={verticalListSortingStrategy}
+          >
+            <div className="flex flex-col bg-green-900 p-12 h-1/2">
+              <div>add ingredients</div>
+              {items1.length === 0 ? (
+                <SortableItem id={69} item={empty} disabled={true} />
+              ) : (
+                items1.map((item) => (
+                  <SortableItem className="m-1" key={item.id} id={item.id} item={item} />
+                ))
+              )}
+            </div>
+          </SortableContext>
+        </div>
+        <div className="flex justify-end w-full h-screen">
+          <SortableContext
+            id="2"
+            items={[0, 1, 2, 3, 4, 5, 6, 69]}
+            // strategy={verticalListSortingStrategy}
+          >
+            <div className="flex flex-col bg-green-800 p-12">
+              <div>ingredients</div>
+              {items2.length === 0 ? (
+                <SortableItem id={69} item={empty} disabled={true} />
+              ) : (
+                items2.map((item) => (
+                  <SortableItem key={item.id} id={item.id} item={item} />
+                ))
+              )}
+            </div>
+          </SortableContext>
+        </div>
+      </DndContext>
       <div className="mt-5">
         Potion being made:
         {potion?.name ? potion?.name : "failed"}
@@ -201,7 +209,7 @@ export default function Home() {
 
   function findPotion() {
     return potions.find((potion) => {
-      return Object.keys(item).every((key) => {
+      return Object.keys(initialPotionProperties).every((key) => {
         const potionValue = Math.max(potion[key as keyof MagicProperties], 0);
         const combinedValue = Math.max(item[key as keyof MagicProperties], 0);
         return potionValue === combinedValue;
@@ -234,54 +242,92 @@ export default function Home() {
     return solution;
   }
 
-  function handleIngredientDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (over?.data.current?.sortable.containerId === "1") {
-      const overItem = items1.find((item) => item.id === over.id);
-      if (overItem !== undefined) {
-        if (active!.data.current!.sortable.containerId !== "1") {
-          const activeItem = items2.find((item) => item.id === active.id);
-          if (activeItem !== undefined) {
-            setItems1([...items1, activeItem]);
-            findPotionValue([...items1, activeItem]);
-            setItems2(items2.filter((item) => item !== activeItem));
-          }
-        }
-        if (active?.data.current?.sortable.containerId === "1") {
-          const activeItem = items1.find((item) => item.id === active.id);
-          if (activeItem !== undefined) {
-            setItems1((items) => {
-              const oldIndex = items.indexOf(activeItem);
-              const newIndex = items.indexOf(overItem);
+  // function handleIngredientDragStart(event: DragStartEvent) {
+  //   setActiveIngredient(event.active.data.current?.item);
+  //   return;
+  // }
 
-              return arrayMove(items, oldIndex, newIndex);
-            });
-          }
+  // function handleIngredientDragOver(event: DragOverEvent) {
+  //   const { active, over } = event;
+  //   if (!over) return;
+
+  //   const activeId = active.id;
+  //   const overId = over.id;
+
+  //   if (activeId === overId) return;
+  //   const overContainerId = over?.data.current?.sortable.containerId
+  //   const activeContainerId = active?.data.current?.sortable.containerId
+
+  //   if (overContainerId === activeContainerId && overContainerId === "1") {
+  //     setItems1((ingredients) => {
+  //       const activeIndex = ingredients.findIndex(t => t.id === activeId)
+  //       const overIndex = ingredients.findIndex(t => t.id === overId)
+  //       ingredients[activeIndex].id = ingredients[overIndex].id;
+  //       return arrayMove(ingredients, activeIndex, overIndex - 1);
+  //     })
+  //   }
+  //   if (overContainerId === activeContainerId && overContainerId === "2") {
+
+  //   }
+  // }
+
+  function handleIngredientDragOver(event: DragOverEvent) {
+    const { active, over } = event;
+    const overContainerId = over?.data.current?.sortable.containerId;
+    const activeContainerId = active?.data.current?.sortable.containerId;
+    if (active.id === over?.id) return;
+    if (overContainerId === "1") {
+      if (activeContainerId === "2") {
+        const activeItem = items2.find((item) => item.id === active.id);
+        const overItem = items1.find((item) => item.id === over?.id);
+        // console.log("active and over: ", activeItem, overItem)
+        if (activeItem !== undefined) {
+          setItems1([...items1, activeItem]);
+          // setItems1((items) => {
+          //   if(items1.length === 0) return [activeItem]
+          //   const activeIndex = items.findIndex((t) => t.id === active.id);
+          //   // const overIndex = items.indexOf(overItem);
+          //   items[activeIndex].id = over?.id;
+          //   console.log(activeIndex)
+          //   console.log("here")
+          //   return arrayMove(items, activeIndex, activeIndex);
+          // });
+          findPotionValue([...items1, activeItem]);
+          setItems2(items2.filter((item) => item !== activeItem));
+        }
+      }
+      if (activeContainerId === "1") {
+        const activeItem = items1.find((item) => item.id === active.id);
+        const overItem = items1.find((item) => item.id === over?.id);
+        if (activeItem !== undefined && overItem !== undefined) {
+          setItems1((items) => {
+            const oldIndex = items.indexOf(activeItem);
+            const newIndex = items.indexOf(overItem);
+
+            return arrayMove(items, oldIndex, newIndex);
+          });
         }
       }
     }
-    if (over?.data.current?.sortable.containerId === "2") {
-      const overItem = items2.find((item) => item.id === over.id);
-      if (overItem !== undefined) {
-        if (active?.data.current?.sortable.containerId !== "2") {
-          const activeItem = items1.find((item) => item.id === active.id);
-          const filteredItems1 = items1.filter((item) => item !== activeItem);
-          if (activeItem !== undefined) {
-            setItems2([...items2, activeItem]);
-            setItems1(filteredItems1);
-            findPotionValue([...filteredItems1]);
-          }
+    if (overContainerId === "2") {
+      if (activeContainerId === "1") {
+        const activeItem = items1.find((item) => item.id === active.id);
+        const filteredItems1 = items1.filter((item) => item !== activeItem);
+        if (activeItem !== undefined) {
+          setItems2([...items2, activeItem]);
+          setItems1(filteredItems1);
+          findPotionValue([...filteredItems1]);
         }
-        if (active?.data.current?.sortable.containerId === "2") {
-          const activeItem = items2.find((item) => item.id === active.id);
-          if (activeItem !== undefined) {
-            setItems2((items) => {
-              const oldIndex = items.indexOf(activeItem);
-              const newIndex = items.indexOf(overItem);
-
-              return arrayMove(items, oldIndex, newIndex);
-            });
-          }
+      }
+      if (activeContainerId === "2") {
+        const activeItem = items2.find((item) => item.id === active.id);
+        const overItem = items2.find((item) => item.id === over?.id);
+        if (activeItem !== undefined && overItem !== undefined) {
+          setItems2((items) => {
+            const oldIndex = items.indexOf(activeItem);
+            const newIndex = items.indexOf(overItem);
+            return arrayMove(items, oldIndex, newIndex);
+          });
         }
       }
     }

@@ -279,19 +279,8 @@ export default function Home() {
     if (overContainerId === "1") {
       if (activeContainerId === "2") {
         const activeItem = items2.find((item) => item.id === active.id);
-        const overItem = items1.find((item) => item.id === over?.id);
-        // console.log("active and over: ", activeItem, overItem)
         if (activeItem !== undefined) {
           setItems1([...items1, activeItem]);
-          // setItems1((items) => {
-          //   if(items1.length === 0) return [activeItem]
-          //   const activeIndex = items.findIndex((t) => t.id === active.id);
-          //   // const overIndex = items.indexOf(overItem);
-          //   items[activeIndex].id = over?.id;
-          //   console.log(activeIndex)
-          //   console.log("here")
-          //   return arrayMove(items, activeIndex, activeIndex);
-          // });
           findPotionValue([...items1, activeItem]);
           setItems2(items2.filter((item) => item !== activeItem));
         }

@@ -122,21 +122,21 @@ export default function Home() {
   const [items2, setItems2] = useState<Ingredient[]>([...playerIngredients]);
   const [item, setItem] = useState(initialPotionProperties);
   const [activeIngredient, setActiveIngredient] = useState<Ingredient | null>(
-    null
+    null,
   );
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const potion = findPotion();
 
   return (
     <div className="flex w-screen">
-      <div className="flex flex-col ml-5">
-        <span className="border-b-2 p-3 m-1">Potion Properties</span>
+      <div className="ml-5 flex flex-col">
+        <span className="m-1 border-b-2 p-3">Potion Properties</span>
         <span>abjuration: {item.abjuration}</span>
         <span>conjuration: {item.conjuration}</span>
         <span>divination: {item.divination}</span>
@@ -158,19 +158,24 @@ export default function Home() {
             items={[0, 1, 2, 3, 4, 5, 6, 7, 69]}
             // strategy={verticalListSortingStrategy}
           >
-            <div className="flex flex-col bg-green-900 p-12 h-1/2">
+            <div className="flex h-1/2 flex-col bg-green-900 p-12">
               <div>add ingredients</div>
               {items1.length === 0 ? (
                 <SortableItem id={69} item={empty} disabled={true} />
               ) : (
                 items1.map((item) => (
-                  <SortableItem className="m-1" key={item.id} id={item.id} item={item} />
+                  <SortableItem
+                    className="m-1"
+                    key={item.id}
+                    id={item.id}
+                    item={item}
+                  />
                 ))
               )}
             </div>
           </SortableContext>
         </div>
-        <div className="flex justify-end w-full h-screen">
+        <div className="flex h-screen w-full justify-end">
           <SortableContext
             id="2"
             items={[0, 1, 2, 3, 4, 5, 6, 69]}

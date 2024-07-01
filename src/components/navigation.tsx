@@ -3,6 +3,7 @@ import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { useTheme } from "next-themes";
 import { Sun, Moon } from "lucide-react";
 import { Button } from "./ui/button";
+import { usePathname } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -12,11 +13,25 @@ import {
 import Link from "next/link";
 
 export default function Navigation() {
+  const pathName = usePathname();
   const { setTheme } = useTheme();
 
   return (
-    <nav className="px-2 space-x-3 items-center flex justify-end border-b-2 border-secondary">
-      <div>Potion Craft</div>
+    <nav className="flex items-center justify-end space-x-3 border-b-2 border-secondary px-2">
+      <Link
+        href={"/"}
+        className={pathName === "/" ? "cursor-default text-secondary" : ""}
+      >
+        Home
+      </Link>
+      <Link
+        href={"/potioncraft"}
+        className={
+          pathName === "/potioncraft" ? "cursor-default text-secondary" : ""
+        }
+      >
+        Potion Craft
+      </Link>
       <DropdownMenu>
         <DropdownMenuTrigger className="w-32" asChild>
           <Button variant="outline" size="icon">
@@ -25,14 +40,30 @@ export default function Navigation() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem className="flex justify-center">
-            <Link href={`/session/create`}>Create</Link>
+            <Link
+              href={`/session/create`}
+              className={
+                pathName === "/session/create"
+                  ? "cursor-default text-secondary"
+                  : ""
+              }
+            >
+              Create
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className="flex justify-center">
-            Join
+            <Link
+              href={"/session/join"}
+              className={
+                pathName === "/" ? "cursor-default text-secondary" : ""
+              }
+            >
+              Join
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <div className="flex items-center my-1">
+      <div className="my-1 flex items-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon">
@@ -51,7 +82,7 @@ export default function Navigation() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex items-center my-2">
+      <div className="my-2 flex items-center">
         <SignedOut>
           <SignInButton />
         </SignedOut>

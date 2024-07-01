@@ -22,7 +22,8 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
-import { SortableItem } from "@/components/dndkit/sortableItem";
+import { SortableItem } from "@/dndkit/sortableItem";
+
 export default function Home() {
   const empty = {
     id: 1,

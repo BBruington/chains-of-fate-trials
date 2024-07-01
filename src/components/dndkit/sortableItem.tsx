@@ -27,9 +27,12 @@ export function SortableItem(props: {
 
   return (
     <div
-      className={cn(`bg-secondary p-3 h-12 w-32 text-xs text-center ${
-        props.id === 0 && "invisible h-0 w-0"}`, className)
-      }
+      className={cn(
+        `h-12 w-32 bg-secondary p-3 text-center text-xs ${
+          props.id === 0 && "invisible h-0 w-0"
+        }`,
+        className,
+      )}
       ref={setNodeRef}
       style={style}
       {...attributes}

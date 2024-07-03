@@ -38,7 +38,7 @@ export function SortableItem(props: {
       {...attributes}
       {...listeners}
     >
-      {props.item.name}
+      {props.item.name} <span className="text-white ml-2">{" "}{props.item.quantity !== 0 ? `(${props.item.quantity})` : ""}</span>
     </div>
   );
 }

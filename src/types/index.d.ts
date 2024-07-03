@@ -4,6 +4,7 @@ export type Ingredient = {
   id: UniqueIdentifier;
   name: string;
   description: string;
+  quantity: number;
   abjuration: number;
   conjuration: number;
   divination: number;

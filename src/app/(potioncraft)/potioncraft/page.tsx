@@ -123,20 +123,39 @@ export default function Home() {
   const [items1, setItems1] = useState<Ingredient[]>([]);
   const [items2, setItems2] = useState<Ingredient[]>([...playerIngredients]);
   const [filteredItems, setFilteredItems] = useState(items2);
+  const [filteredIngredientsInput, setFilteredIngredientsInput] = useState("");
   const [item, setItem] = useState(initialPotionProperties);
-  const [activeIngredient, setActiveIngredient] = useState<Ingredient | null>(
-    null,
-  );
 
-  const handleFilterIngredients = (
-    event: ChangeEvent<HTMLInputElement>,
-  ) => {
-    const { value } = event.target;
-    const filteredIngredients = items2.filter((filter) => {
-      const name = filter.name.toLowerCase();
-      return name.includes(value.toLowerCase());
-    });
-    setFilteredItems(filteredIngredients);
+  interface HandleFilterIngredientsProps {
+    event?: ChangeEvent<HTMLInputElement> | undefined;
+    ingredients?: Ingredient[] | undefined;
+  }
+
+  const handleFilterIngredients = ({
+    event,
+    ingredients,
+  }: HandleFilterIngredientsProps) => {
+    if (event?.target.value === "") {
+      setFilteredItems(items2);
+      return;
+    }
+    const ingredientInput = event?.target.value
+      ? event?.target.value
+      : filteredIngredientsInput;
+    setFilteredIngredientsInput(ingredientInput);
+    if (ingredients) {
+      const filteredIngredients = ingredients.filter((filter) => {
+        const name = filter.name.toLowerCase();
+        return name.includes(ingredientInput.toLowerCase());
+      });
+      setFilteredItems(filteredIngredients);
+    } else {
+      const filteredIngredients = items2.filter((filter) => {
+        const name = filter.name.toLowerCase();
+        return name.includes(ingredientInput.toLowerCase());
+      });
+      setFilteredItems(filteredIngredients);
+    }
   };
 
   const sensors = useSensors(
@@ -161,12 +180,7 @@ export default function Home() {
         <span>necromancy: {item.necromancy}</span>
         <span>transmutation: {item.transmutation}</span>
       </div>
-      <DndContext
-        sensors={sensors}
-        // onDragStart={handleIngredientDragStart}
-        onDragOver={handleIngredientDragOver}
-        // onDragEnd={handleIngredientDragEnd}
-      >
+      <DndContext sensors={sensors} onDragEnd={handleIngredientDragEnd}>
         <div className="flex">
           <SortableContext
             id="1"
@@ -200,7 +214,8 @@ export default function Home() {
               <div className="py-2 text-2xl">Ingredients</div>
               <Input
                 className="m-2"
-                onChange={handleFilterIngredients}
+                // value={filteredIngredientsInput}
+                onChange={(event) => handleFilterIngredients({ event })}
               />
               <div className="w-full overflow-y-auto">
                 {filteredItems.length === 0 ? (
@@ -297,7 +312,7 @@ export default function Home() {
   //   }
   // }
 
-  function handleIngredientDragOver(event: DragOverEvent) {
+  function handleIngredientDragEnd(event: DragOverEvent) {
     const { active, over } = event;
     const overContainerId = over?.data.current?.sortable.containerId;
     const activeContainerId = active?.data.current?.sortable.containerId;
@@ -308,7 +323,9 @@ export default function Home() {
         if (activeItem !== undefined) {
           setItems1([...items1, activeItem]);
           findPotionValue([...items1, activeItem]);
-          setItems2(items2.filter((item) => item !== activeItem));
+          const newIngredients = items2.filter((item) => item !== activeItem);
+          setItems2(newIngredients);
+          handleFilterIngredients({ ingredients: newIngredients });
         }
       }
       if (activeContainerId === "1") {
@@ -329,9 +346,11 @@ export default function Home() {
         const activeItem = items1.find((item) => item.id === active.id);
         const filteredItems1 = items1.filter((item) => item !== activeItem);
         if (activeItem !== undefined) {
-          setItems2([...items2, activeItem]);
+          const newIngredients = [...items2, activeItem];
+          setItems2(newIngredients);
           setItems1(filteredItems1);
           findPotionValue([...filteredItems1]);
+          handleFilterIngredients({ ingredients: newIngredients });
         }
       }
       if (activeContainerId === "2") {

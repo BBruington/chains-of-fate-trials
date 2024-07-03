@@ -28,7 +28,7 @@ export function SortableItem(props: {
   return (
     <div
       className={cn(
-        `h-12 w-32 bg-secondary p-3 text-center text-xs ${
+        `flex h-10 w-full items-center justify-center border-b border-primary/80 bg-secondary p-1 text-center text-xs hover:text-primary/80 ${
           props.id === 0 && "invisible h-0 w-0"
         }`,
         className,

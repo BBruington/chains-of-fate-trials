@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import {
   DndContext,
   closestCenter,
@@ -23,6 +23,7 @@ import {
 } from "@dnd-kit/sortable";
 
 import { SortableItem } from "@/dndkit/sortableItem";
+import { Input } from "@/components/ui/input";
 
 export default function Home() {
   const empty = {
@@ -121,10 +122,23 @@ export default function Home() {
 
   const [items1, setItems1] = useState<Ingredient[]>([]);
   const [items2, setItems2] = useState<Ingredient[]>([...playerIngredients]);
+  const [filteredItems, setFilteredItems] = useState(items2);
   const [item, setItem] = useState(initialPotionProperties);
   const [activeIngredient, setActiveIngredient] = useState<Ingredient | null>(
     null,
   );
+
+  const handleFilterIngredients = (
+    event: ChangeEvent<HTMLInputElement>,
+  ) => {
+    const { value } = event.target;
+    const filteredIngredients = items2.filter((filter) => {
+      const name = filter.name.toLowerCase();
+      return name.includes(value.toLowerCase());
+    });
+    setFilteredItems(filteredIngredients);
+  };
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -182,23 +196,29 @@ export default function Home() {
             items={[0, 1, 2, 3, 4, 5, 6, 69]}
             // strategy={verticalListSortingStrategy}
           >
-            <div className="flex flex-col bg-green-800 p-12">
-              <div>ingredients</div>
-              {items2.length === 0 ? (
-                <SortableItem id={69} item={empty} disabled={true} />
-              ) : (
-                items2.map((item) => (
-                  <SortableItem key={item.id} id={item.id} item={item} />
-                ))
-              )}
+            <div className="flex h-screen w-96 flex-col items-center overflow-y-auto bg-secondary p-3">
+              <div className="py-2 text-2xl">Ingredients</div>
+              <Input
+                className="m-2"
+                onChange={handleFilterIngredients}
+              />
+              <div className="w-full overflow-y-auto">
+                {filteredItems.length === 0 ? (
+                  <SortableItem id={69} item={empty} disabled={true} />
+                ) : (
+                  filteredItems.map((item) => (
+                    <SortableItem key={item.id} id={item.id} item={item} />
+                  ))
+                )}
+              </div>
             </div>
           </SortableContext>
         </div>
       </DndContext>
-      <div className="mt-5">
+      {/* <div className="mt-5">
         Potion being made:
         {potion?.name ? potion?.name : "failed"}
-      </div>
+      </div> */}
     </div>
   );
 

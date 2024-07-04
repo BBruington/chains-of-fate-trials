@@ -1,5 +1,6 @@
 "use client";
 import React, { ChangeEvent, useState } from "react";
+import { potionData } from "./testData";
 import {
   DndContext,
   closestCenter,
@@ -12,7 +13,7 @@ import {
   DragStartEvent,
   DragOverEvent,
 } from "@dnd-kit/core";
-import { Ingredient } from "@/types";
+import { Ingredient, Potion } from "@/types";
 import {
   SortableContext,
   arrayMove,
@@ -24,12 +25,19 @@ import {
 
 import { SortableItem } from "@/dndkit/sortableItem";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { addPotionToUser, spendIngredients } from "../actions";
+import { User } from "@prisma/client";
 interface PotionCraftComponentProps {
   ingredients: Ingredient[];
+  userId: User["clerkId"];
+  potions: Potion[];
 }
 
 export default function PotionCraftComponent({
   ingredients,
+  userId,
+  potions,
 }: PotionCraftComponentProps) {
   const empty = {
     id: 1,
@@ -45,34 +53,6 @@ export default function PotionCraftComponent({
     necromancy: 0,
     transmutation: 0,
   };
-  const potions = [
-    {
-      id: 1,
-      name: "Potion of False Life",
-      description: "it gives temporary hp",
-      abjuration: 6,
-      conjuration: 0,
-      divination: 0,
-      enchantment: 0,
-      evocation: 5,
-      illusion: 0,
-      necromancy: 0,
-      transmutation: 0,
-    },
-    {
-      id: 2,
-      name: "Potion of Minor Healing",
-      description: "heal 1d4 + 2 hp",
-      abjuration: 3,
-      conjuration: 0,
-      divination: 0,
-      enchantment: 0,
-      evocation: 10,
-      illusion: 4,
-      necromancy: 0,
-      transmutation: 0,
-    },
-  ];
 
   const initialPotionProperties = {
     abjuration: 0,
@@ -132,6 +112,17 @@ export default function PotionCraftComponent({
 
   const potion = findPotion();
 
+  const handleCraftPotion = async () => {
+    const potion = findPotion();
+    await spendIngredients({ ingredients: items1 });
+    setItems1([empty]);
+    if (potion === undefined) {
+      console.log("potion craft failed! D:");
+    } else {
+      await addPotionToUser({ potion, userId });
+    }
+  };
+
   return (
     <div className="flex w-screen">
       <div className="ml-5 flex flex-col">
@@ -149,7 +140,7 @@ export default function PotionCraftComponent({
         <div className="flex">
           <SortableContext
             id="1"
-            items={[0, 1, 2, 3, 4, 5, 6, 7, 69]}
+            items={[...ingredients.map((ingredient) => ingredient.id)]}
             // strategy={verticalListSortingStrategy}
           >
             <div className="flex h-1/2 flex-col bg-green-900 p-12">
@@ -168,6 +159,15 @@ export default function PotionCraftComponent({
               )}
             </div>
           </SortableContext>
+          <Button onClick={handleCraftPotion}>Craft Potion</Button>
+          {potions.map((potion) => (
+            <div
+              className="flex h-12 w-40 items-center bg-secondary p-1 text-justify text-xs"
+              key={potion.id}
+            >
+              {potion.name}
+            </div>
+          ))}
         </div>
         <div className="flex h-screen w-full justify-end">
           <SortableContext
@@ -186,8 +186,9 @@ export default function PotionCraftComponent({
                   <SortableItem id={69} item={empty} disabled={true} />
                 ) : (
                   filteredItems.map((item) => (
-                    <div key={item.id} className="flex">
-                      <SortableItem id={item.id} item={item} />
+                    <div key={item.id} className="flex items-center">
+                      <SortableItem id={item.id} item={item} />{" "}
+                      <Button className="ml-1 h-6 w-10 text-xs">Add</Button>
                     </div>
                   ))
                 )}
@@ -196,10 +197,10 @@ export default function PotionCraftComponent({
           </SortableContext>
         </div>
       </DndContext>
-      {/* <div className="mt-5">
+      <div className="mt-5">
         Potion being made:
         {potion?.name ? potion?.name : "failed"}
-      </div> */}
+      </div>
     </div>
   );
 
@@ -215,7 +216,7 @@ export default function PotionCraftComponent({
   };
 
   function findPotion() {
-    return potions.find((potion) => {
+    return potionData.find((potion) => {
       return Object.keys(initialPotionProperties).every((key) => {
         const potionValue = Math.max(potion[key as keyof MagicProperties], 0);
         const combinedValue = Math.max(item[key as keyof MagicProperties], 0);
@@ -250,35 +251,6 @@ export default function PotionCraftComponent({
     return solution;
   }
 
-  // function handleIngredientDragStart(event: DragStartEvent) {
-  //   setActiveIngredient(event.active.data.current?.item);
-  //   return;
-  // }
-
-  // function handleIngredientDragOver(event: DragOverEvent) {
-  //   const { active, over } = event;
-  //   if (!over) return;
-
-  //   const activeId = active.id;
-  //   const overId = over.id;
-
-  //   if (activeId === overId) return;
-  //   const overContainerId = over?.data.current?.sortable.containerId
-  //   const activeContainerId = active?.data.current?.sortable.containerId
-
-  //   if (overContainerId === activeContainerId && overContainerId === "1") {
-  //     setItems1((ingredients) => {
-  //       const activeIndex = ingredients.findIndex(t => t.id === activeId)
-  //       const overIndex = ingredients.findIndex(t => t.id === overId)
-  //       ingredients[activeIndex].id = ingredients[overIndex].id;
-  //       return arrayMove(ingredients, activeIndex, overIndex - 1);
-  //     })
-  //   }
-  //   if (overContainerId === activeContainerId && overContainerId === "2") {
-
-  //   }
-  // }
-
   function handleIngredientDragEnd(event: DragOverEvent) {
     const { active, over } = event;
     const overContainerId = over?.data.current?.sortable.containerId;
@@ -290,13 +262,18 @@ export default function PotionCraftComponent({
         if (activeItem !== undefined) {
           setItems1([...items1, activeItem]);
           findPotionValue([...items1, activeItem]);
-          const ingredientsWithoutActive = items2.filter((item) => item !== activeItem);
-          if(activeItem.quantity === 1) {
+          const ingredientsWithoutActive = items2.filter(
+            (item) => item !== activeItem,
+          );
+          if (activeItem.quantity === 1) {
             setItems2(ingredientsWithoutActive);
             handleFilterIngredients({ ingredients: ingredientsWithoutActive });
           } else {
-            const newItems = [...ingredientsWithoutActive, {...activeItem, quantity: activeItem.quantity - 1}]
-            setItems2(newItems)
+            const newItems = [
+              ...ingredientsWithoutActive,
+              { ...activeItem, quantity: activeItem.quantity - 1 },
+            ];
+            setItems2(newItems);
             handleFilterIngredients({ ingredients: newItems });
           }
         }

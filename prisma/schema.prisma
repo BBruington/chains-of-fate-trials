@@ -57,6 +57,7 @@ model User {
   updatedAt         DateTime  @updatedAt @map(name: "updated_at")
   puzzleSessions    PuzzleSession[]
   Ingredients       Ingredient[]
+  Potions           Potion[]
   @@map(name: "users")
 }
 
@@ -81,6 +82,7 @@ model Potion {
   id                String    @default(cuid()) @id  
   name String
   description String
+  quantity   Int @default(1)
   abjuration Int @default(0)
   conjuration Int @default(0)
   divination Int @default(0)
@@ -89,4 +91,6 @@ model Potion {
   illusion Int @default(0)
   necromancy Int @default(0)
   transmutation Int @default(0)
+  userId   String
+  User   User @relation(fields: [userId], references: [clerkId])
 }

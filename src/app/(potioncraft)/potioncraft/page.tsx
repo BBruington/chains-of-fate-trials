@@ -8,7 +8,13 @@ export default async function PotionCraftPage () {
 
   if (!user) return <div>Not signed in</div>;
 
-  const ingredients = await prisma.ingredient.findMany()
+  const ingredients = await prisma.ingredient.findMany({where: {
+    userId: user.id
+  }})
 
-  return <PotionCraftComponent ingredients={ingredients}/>
+  const potions = await prisma.potion.findMany({where: {
+    userId: user.id
+  }})
+
+  return <PotionCraftComponent ingredients={ingredients} userId={user.id} potions={potions} />
 }

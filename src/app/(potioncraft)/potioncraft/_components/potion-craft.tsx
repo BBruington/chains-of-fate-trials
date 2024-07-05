@@ -12,6 +12,7 @@ import {
   DragEndEvent,
   DragStartEvent,
   DragOverEvent,
+  DragOverlay,
 } from "@dnd-kit/core";
 import Droppable from "@/components/dndkit/dropable";
 import Draggable from "@/components/dndkit/draggable";
@@ -25,8 +26,6 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-
-import { SortableItem } from "@/dndkit/sortableItem";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -47,7 +46,7 @@ export default function PotionCraftComponent({
   potions,
 }: PotionCraftComponentProps) {
   const empty = {
-    id: "aksdjflajd;",
+    id: "empty",
     name: "Empty",
     description: "It's empty",
     quantity: 0,
@@ -84,6 +83,9 @@ export default function PotionCraftComponent({
   const [filteredItems, setFilteredItems] = useState(userIngredients);
   const [filteredIngredientsInput, setFilteredIngredientsInput] = useState("");
   const [item, setItem] = useState(initialPotionProperties);
+  const [activeIngredient, setActiveIngredient] = useState<null | Ingredient>(
+    null,
+  );
 
   interface HandleFilterIngredientsProps {
     event?: ChangeEvent<HTMLInputElement> | undefined;
@@ -117,12 +119,12 @@ export default function PotionCraftComponent({
     }
   };
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
+  // const sensors = useSensors(
+  //   useSensor(PointerSensor),
+  //   useSensor(KeyboardSensor, {
+  //     coordinateGetter: sortableKeyboardCoordinates,
+  //   }),
+  // );
 
   const potion = findPotion();
 
@@ -158,40 +160,28 @@ export default function PotionCraftComponent({
 
   return (
     <div className="flex w-screen">
-      <DndContext sensors={sensors} onDragEnd={handleIngredientDragEnd}>
+      <DndContext
+        // sensors={sensors}
+        onDragStart={handleIngredientDragStart}
+        onDragEnd={handleIngredientDragEnd}
+      >
+        <DragOverlay>
+          {activeIngredient ? (
+            <Draggable id={activeIngredient.id} item={activeIngredient} />
+          ) : null}
+        </DragOverlay>
         <div className="flex flex-col">
           {mixture.map((mix, index) => (
             <Droppable
               key={index}
-              className="h-20 w-32 bg-secondary"
+              className="h-20 w-40 bg-secondary text-xs"
               accepts={[
                 ...ingredients.map((ingredient) => ingredient.id as string),
               ]}
               id={index}
               item={mix}
-            ></Droppable>
+            />
           ))}
-          {/* <SortableContext
-            id="1"
-            items={[...ingredients.map((ingredient) => ingredient.id)]}
-            // strategy={verticalListSortingStrategy}
-          >
-            <div className="flex h-1/2 flex-col bg-green-900 p-12">
-              <div>add ingredients</div>
-              {mixture.length === 0 ? (
-                <SortableItem id={69} item={empty} disabled={true} />
-              ) : (
-                mixture.map((item) => (
-                  <SortableItem
-                    className="m-1"
-                    key={item.id}
-                    id={item.id}
-                    item={item}
-                  />
-                ))
-              )}
-            </div>
-          </SortableContext> */}
           <Button onClick={handleCraftPotion}>Craft Potion</Button>
           {potions.map((potion) => (
             <div
@@ -203,44 +193,38 @@ export default function PotionCraftComponent({
           ))}
         </div>
         <div className="flex h-screen w-full justify-end">
-          <SortableContext
-            id="2"
-            items={[...ingredients.map((ingredient) => ingredient.id)]}
-            // strategy={verticalListSortingStrategy}
-          >
-            <div className="flex h-screen w-96 flex-col items-center overflow-y-auto bg-secondary p-3">
-              <div className="py-2 text-2xl">Ingredients</div>
-              <Input
-                className="m-2 mr-5"
-                onChange={(event) => handleFilterIngredients({ event })}
-              />
-              <div className="w-full overflow-y-auto">
-                {filteredItems.length === 0 ? (
-                  <SortableItem id={69} item={empty} disabled={true} />
-                ) : (
-                  filteredItems.map((item) => (
-                    <div key={item.id} className="flex items-center">
-                      <Draggable id={item.id} item={item}></Draggable>{" "}
-                      <Button
-                        onClick={() =>
-                          handleIncrementIngredient({ ingredient: item })
-                        }
-                        className="ml-1 h-6 w-10 text-xs"
-                      >
-                        Add
-                      </Button>
-                    </div>
-                  ))
-                )}
-              </div>
+          <div className="flex h-screen w-96 flex-col items-center overflow-y-auto bg-secondary p-3">
+            <div className="py-2 text-2xl">Ingredients</div>
+            <Input
+              className="m-2 mr-5"
+              onChange={(event) => handleFilterIngredients({ event })}
+            />
+            <div className="w-full overflow-y-auto">
+              {filteredItems.length === 0 ? (
+                <Draggable id={69} item={empty} disabled={true} className="" />
+              ) : (
+                filteredItems.map((item) => (
+                  <div key={item.id} className="flex items-center">
+                    <Draggable id={item.id} item={item}></Draggable>{" "}
+                    <Button
+                      onClick={() =>
+                        handleIncrementIngredient({ ingredient: item })
+                      }
+                      className="ml-1 h-6 w-10 text-xs"
+                    >
+                      Add
+                    </Button>
+                  </div>
+                ))
+              )}
             </div>
-          </SortableContext>
+          </div>
         </div>
       </DndContext>
-      <div className="mt-5">
+      {/* <div className="mt-5">
         Potion being made:
         {potion?.name ? potion?.name : "failed"}
-      </div>
+      </div> */}
     </div>
   );
 
@@ -291,19 +275,20 @@ export default function PotionCraftComponent({
     return solution;
   }
 
+  function handleIngredientDragStart(event: DragStartEvent) {
+    const { active } = event;
+    const activeIng = userIngredients.find(
+      (ingredient) => ingredient.id === active.id,
+    );
+    if (activeIng) setActiveIngredient(activeIng);
+  }
+
   function handleIngredientDragEnd(event: DragOverEvent) {
+    setActiveIngredient(null);
     const { active, over } = event;
     const activeItem = userIngredients.find((item) => item.id === active.id);
-    const filteredmixture = mixture.filter((item) => item !== activeItem);
-    console.log(
-      "running function",
-      activeItem,
-      "active: ",
-      active,
-      "over: ",
-      over,
-    );
     if (over !== null && activeItem !== undefined) {
+      if (mixture[Number(over?.id)].id !== "empty") return;
       const newMixture = mixture.map((mix, index) => {
         if (index === over.id) {
           return activeItem;
@@ -328,9 +313,6 @@ export default function PotionCraftComponent({
         setUserIngredients(newUserIngredients);
         handleFilterIngredients({ ingredients: newUserIngredients });
       }
-      // setUserIngredients(newIngredients);
-      // setMixture(filteredmixture);
-      // handleFilterIngredients({ ingredients: newIngredients });
     }
   }
 }

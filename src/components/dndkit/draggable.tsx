@@ -9,6 +9,7 @@ type DraggableProps = {
   children?: string | React.JSX.Element;
   item: Ingredient;
   className?: string | undefined;
+  disabled?: boolean
 };
 
 export default function Draggable({
@@ -16,12 +17,14 @@ export default function Draggable({
   item,
   children,
   className,
+  disabled
 }: DraggableProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
     data: {
       type: item.id
-    }
+    },
+    disabled: disabled ? disabled : false,
   });
   const style = {
     transform: CSS.Translate.toString(transform),

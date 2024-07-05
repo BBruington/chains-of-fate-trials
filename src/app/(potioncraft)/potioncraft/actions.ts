@@ -33,6 +33,24 @@ export const spendIngredients = async ({
     });
   }
 };
+export const increaseIngredient = async ({
+  ingredient,
+  amount,
+}: {
+  ingredient: Ingredient;
+  amount: number;
+}) => {
+  const increasedIngredient = await prisma.ingredient.update({
+    where: {
+      id: ingredient.id as string,
+    },
+    data: {
+      quantity: ingredient.quantity + amount,
+    },
+  });
+  revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+  return increasedIngredient;
+};
 
 interface AddPotionToUserProps {
   userId: User["clerkId"];
@@ -54,10 +72,11 @@ export const addPotionToUser = async ({
 };
 
 interface AddIngredientToUserProps {
-  userId: User["clerkId"],
-  ingredient: Ingredient,
+  userId: User["clerkId"];
+  ingredient: Ingredient;
 }
 
-export const addIngredientToUser = async ({userId, ingredient}: AddIngredientToUserProps) => {
-
-}
+export const addIngredientToUser = async ({
+  userId,
+  ingredient,
+}: AddIngredientToUserProps) => {};

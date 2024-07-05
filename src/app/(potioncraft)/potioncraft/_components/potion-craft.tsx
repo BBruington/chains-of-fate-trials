@@ -26,7 +26,11 @@ import {
 import { SortableItem } from "@/dndkit/sortableItem";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { addPotionToUser, spendIngredients } from "../actions";
+import {
+  addPotionToUser,
+  increaseIngredient,
+  spendIngredients,
+} from "../actions";
 import { User } from "@prisma/client";
 interface PotionCraftComponentProps {
   ingredients: Ingredient[];
@@ -40,7 +44,7 @@ export default function PotionCraftComponent({
   potions,
 }: PotionCraftComponentProps) {
   const empty = {
-    id: 1,
+    id: "aksdjflajd;",
     name: "Empty",
     description: "It's empty",
     quantity: 0,
@@ -66,8 +70,10 @@ export default function PotionCraftComponent({
   };
 
   const [items1, setItems1] = useState<Ingredient[]>([]);
-  const [items2, setItems2] = useState<Ingredient[]>([...ingredients]);
-  const [filteredItems, setFilteredItems] = useState(items2);
+  const [userIngredients, setUserIngredients] = useState<Ingredient[]>([
+    ...ingredients,
+  ]);
+  const [filteredItems, setFilteredItems] = useState(userIngredients);
   const [filteredIngredientsInput, setFilteredIngredientsInput] = useState("");
   const [item, setItem] = useState(initialPotionProperties);
 
@@ -81,7 +87,7 @@ export default function PotionCraftComponent({
     ingredients,
   }: HandleFilterIngredientsProps) => {
     if (event?.target.value === "") {
-      setFilteredItems(items2);
+      setFilteredItems(userIngredients);
       return;
     }
     const ingredientInput = event?.target.value
@@ -95,7 +101,7 @@ export default function PotionCraftComponent({
       });
       setFilteredItems(filteredIngredients);
     } else {
-      const filteredIngredients = items2.filter((filter) => {
+      const filteredIngredients = userIngredients.filter((filter) => {
         const name = filter.name.toLowerCase();
         return name.includes(ingredientInput.toLowerCase());
       });
@@ -120,6 +126,23 @@ export default function PotionCraftComponent({
       console.log("potion craft failed! D:");
     } else {
       await addPotionToUser({ potion, userId });
+    }
+  };
+  const handleIncrementIngredient = async ({
+    ingredient,
+  }: {
+    ingredient: Ingredient;
+  }) => {
+    const res = await increaseIngredient({ ingredient, amount: 1 });
+    const incrementedIngredients = userIngredients.map((userIngredient) => {
+      if (userIngredient.id === ingredient.id) {
+        return { ...userIngredient, quantity: userIngredient.quantity + 1 };
+      }
+      return userIngredient;
+    });
+    if (res) {
+      setUserIngredients(incrementedIngredients);
+      handleFilterIngredients({ ingredients: incrementedIngredients });
     }
   };
 
@@ -188,7 +211,14 @@ export default function PotionCraftComponent({
                   filteredItems.map((item) => (
                     <div key={item.id} className="flex items-center">
                       <SortableItem id={item.id} item={item} />{" "}
-                      <Button className="ml-1 h-6 w-10 text-xs">Add</Button>
+                      <Button
+                        onClick={() =>
+                          handleIncrementIngredient({ ingredient: item })
+                        }
+                        className="ml-1 h-6 w-10 text-xs"
+                      >
+                        Add
+                      </Button>
                     </div>
                   ))
                 )}
@@ -258,22 +288,24 @@ export default function PotionCraftComponent({
     if (active.id === over?.id) return;
     if (overContainerId === "1") {
       if (activeContainerId === "2") {
-        const activeItem = items2.find((item) => item.id === active.id);
+        const activeItem = userIngredients.find(
+          (item) => item.id === active.id,
+        );
         if (activeItem !== undefined) {
           setItems1([...items1, activeItem]);
           findPotionValue([...items1, activeItem]);
-          const ingredientsWithoutActive = items2.filter(
+          const ingredientsWithoutActive = userIngredients.filter(
             (item) => item !== activeItem,
           );
           if (activeItem.quantity === 1) {
-            setItems2(ingredientsWithoutActive);
+            setUserIngredients(ingredientsWithoutActive);
             handleFilterIngredients({ ingredients: ingredientsWithoutActive });
           } else {
             const newItems = [
               ...ingredientsWithoutActive,
               { ...activeItem, quantity: activeItem.quantity - 1 },
             ];
-            setItems2(newItems);
+            setUserIngredients(newItems);
             handleFilterIngredients({ ingredients: newItems });
           }
         }
@@ -296,18 +328,20 @@ export default function PotionCraftComponent({
         const activeItem = items1.find((item) => item.id === active.id);
         const filteredItems1 = items1.filter((item) => item !== activeItem);
         if (activeItem !== undefined) {
-          const newIngredients = [...items2, activeItem];
-          setItems2(newIngredients);
+          const newIngredients = [...userIngredients, activeItem];
+          setUserIngredients(newIngredients);
           setItems1(filteredItems1);
           findPotionValue([...filteredItems1]);
           handleFilterIngredients({ ingredients: newIngredients });
         }
       }
       if (activeContainerId === "2") {
-        const activeItem = items2.find((item) => item.id === active.id);
-        const overItem = items2.find((item) => item.id === over?.id);
+        const activeItem = userIngredients.find(
+          (item) => item.id === active.id,
+        );
+        const overItem = userIngredients.find((item) => item.id === over?.id);
         if (activeItem !== undefined && overItem !== undefined) {
-          setItems2((items) => {
+          setUserIngredients((items) => {
             const oldIndex = items.indexOf(activeItem);
             const newIndex = items.indexOf(overItem);
             return arrayMove(items, oldIndex, newIndex);

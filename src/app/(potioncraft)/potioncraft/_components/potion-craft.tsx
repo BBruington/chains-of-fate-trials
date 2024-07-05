@@ -13,6 +13,8 @@ import {
   DragStartEvent,
   DragOverEvent,
 } from "@dnd-kit/core";
+import Droppable from "@/components/dndkit/dropable";
+import Draggable from "@/components/dndkit/draggable";
 import { Ingredient } from "@/types";
 import { Potion } from "@prisma/client";
 import {
@@ -70,7 +72,12 @@ export default function PotionCraftComponent({
     transmutation: 0,
   };
 
-  const [items1, setItems1] = useState<Ingredient[]>([]);
+  const [mixture, setMixture] = useState<Ingredient[]>([
+    empty,
+    empty,
+    empty,
+    empty,
+  ]);
   const [userIngredients, setUserIngredients] = useState<Ingredient[]>([
     ...ingredients,
   ]);
@@ -121,13 +128,15 @@ export default function PotionCraftComponent({
 
   const handleCraftPotion = async () => {
     const potion = findPotion();
-    await spendIngredients({ ingredients: items1 });
-    setItems1([empty]);
+    await spendIngredients({ ingredients: mixture });
+    const resetMix = { ...empty };
+    setMixture([resetMix]);
     if (potion === undefined) {
       console.log("potion craft failed! D:");
     } else {
       await addPotionToUser({ potion, userId });
     }
+    findPotionValue([resetMix]);
   };
   const handleIncrementIngredient = async ({
     ingredient,
@@ -149,30 +158,30 @@ export default function PotionCraftComponent({
 
   return (
     <div className="flex w-screen">
-      <div className="ml-5 flex flex-col">
-        <span className="m-1 border-b-2 p-3">Potion Properties</span>
-        <span>abjuration: {item.abjuration}</span>
-        <span>conjuration: {item.conjuration}</span>
-        <span>divination: {item.divination}</span>
-        <span>enchantment: {item.enchantment}</span>
-        <span>evocation: {item.evocation}</span>
-        <span>illusion: {item.illusion}</span>
-        <span>necromancy: {item.necromancy}</span>
-        <span>transmutation: {item.transmutation}</span>
-      </div>
       <DndContext sensors={sensors} onDragEnd={handleIngredientDragEnd}>
-        <div className="flex">
-          <SortableContext
+        <div className="flex flex-col">
+          {mixture.map((mix, index) => (
+            <Droppable
+              key={index}
+              className="h-20 w-32 bg-secondary"
+              accepts={[
+                ...ingredients.map((ingredient) => ingredient.id as string),
+              ]}
+              id={index}
+              item={mix}
+            ></Droppable>
+          ))}
+          {/* <SortableContext
             id="1"
             items={[...ingredients.map((ingredient) => ingredient.id)]}
             // strategy={verticalListSortingStrategy}
           >
             <div className="flex h-1/2 flex-col bg-green-900 p-12">
               <div>add ingredients</div>
-              {items1.length === 0 ? (
+              {mixture.length === 0 ? (
                 <SortableItem id={69} item={empty} disabled={true} />
               ) : (
-                items1.map((item) => (
+                mixture.map((item) => (
                   <SortableItem
                     className="m-1"
                     key={item.id}
@@ -182,7 +191,7 @@ export default function PotionCraftComponent({
                 ))
               )}
             </div>
-          </SortableContext>
+          </SortableContext> */}
           <Button onClick={handleCraftPotion}>Craft Potion</Button>
           {potions.map((potion) => (
             <div
@@ -211,7 +220,7 @@ export default function PotionCraftComponent({
                 ) : (
                   filteredItems.map((item) => (
                     <div key={item.id} className="flex items-center">
-                      <SortableItem id={item.id} item={item} />{" "}
+                      <Draggable id={item.id} item={item}></Draggable>{" "}
                       <Button
                         onClick={() =>
                           handleIncrementIngredient({ ingredient: item })
@@ -284,71 +293,44 @@ export default function PotionCraftComponent({
 
   function handleIngredientDragEnd(event: DragOverEvent) {
     const { active, over } = event;
-    const overContainerId = over?.data.current?.sortable.containerId;
-    const activeContainerId = active?.data.current?.sortable.containerId;
-    if (active.id === over?.id) return;
-    if (overContainerId === "1") {
-      if (activeContainerId === "2") {
-        const activeItem = userIngredients.find(
-          (item) => item.id === active.id,
+    const activeItem = userIngredients.find((item) => item.id === active.id);
+    const filteredmixture = mixture.filter((item) => item !== activeItem);
+    console.log(
+      "running function",
+      activeItem,
+      "active: ",
+      active,
+      "over: ",
+      over,
+    );
+    if (over !== null && activeItem !== undefined) {
+      const newMixture = mixture.map((mix, index) => {
+        if (index === over.id) {
+          return activeItem;
+        }
+        return mix;
+      });
+      setMixture(newMixture);
+      findPotionValue(newMixture);
+      if (activeItem.quantity === 1) {
+        const ingredientsWithoutActive = userIngredients.filter(
+          (item) => item !== activeItem,
         );
-        if (activeItem !== undefined) {
-          setItems1([...items1, activeItem]);
-          findPotionValue([...items1, activeItem]);
-          const ingredientsWithoutActive = userIngredients.filter(
-            (item) => item !== activeItem,
-          );
-          if (activeItem.quantity === 1) {
-            setUserIngredients(ingredientsWithoutActive);
-            handleFilterIngredients({ ingredients: ingredientsWithoutActive });
-          } else {
-            const newItems = [
-              ...ingredientsWithoutActive,
-              { ...activeItem, quantity: activeItem.quantity - 1 },
-            ];
-            setUserIngredients(newItems);
-            handleFilterIngredients({ ingredients: newItems });
+        setUserIngredients(ingredientsWithoutActive);
+        handleFilterIngredients({ ingredients: ingredientsWithoutActive });
+      } else {
+        const newUserIngredients = userIngredients.map((ingredient) => {
+          if (ingredient.id === activeItem.id) {
+            return { ...ingredient, quantity: ingredient.quantity - 1 };
           }
-        }
+          return ingredient;
+        });
+        setUserIngredients(newUserIngredients);
+        handleFilterIngredients({ ingredients: newUserIngredients });
       }
-      if (activeContainerId === "1") {
-        const activeItem = items1.find((item) => item.id === active.id);
-        const overItem = items1.find((item) => item.id === over?.id);
-        if (activeItem !== undefined && overItem !== undefined) {
-          setItems1((items) => {
-            const oldIndex = items.indexOf(activeItem);
-            const newIndex = items.indexOf(overItem);
-
-            return arrayMove(items, oldIndex, newIndex);
-          });
-        }
-      }
-    }
-    if (overContainerId === "2") {
-      if (activeContainerId === "1") {
-        const activeItem = items1.find((item) => item.id === active.id);
-        const filteredItems1 = items1.filter((item) => item !== activeItem);
-        if (activeItem !== undefined) {
-          const newIngredients = [...userIngredients, activeItem];
-          setUserIngredients(newIngredients);
-          setItems1(filteredItems1);
-          findPotionValue([...filteredItems1]);
-          handleFilterIngredients({ ingredients: newIngredients });
-        }
-      }
-      if (activeContainerId === "2") {
-        const activeItem = userIngredients.find(
-          (item) => item.id === active.id,
-        );
-        const overItem = userIngredients.find((item) => item.id === over?.id);
-        if (activeItem !== undefined && overItem !== undefined) {
-          setUserIngredients((items) => {
-            const oldIndex = items.indexOf(activeItem);
-            const newIndex = items.indexOf(overItem);
-            return arrayMove(items, oldIndex, newIndex);
-          });
-        }
-      }
+      // setUserIngredients(newIngredients);
+      // setMixture(filteredmixture);
+      // handleFilterIngredients({ ingredients: newIngredients });
     }
   }
 }

@@ -1,41 +1,27 @@
 import React from "react";
-import { useDraggable } from "@dnd-kit/core";
+import { UniqueIdentifier, useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
+import { Ingredient } from "@/types";
 
 type DraggableProps = {
-  id: string;
-  children: string | React.JSX.Element;
-  abjuration: number;
-  conjuration: number;
-  divination: number;
-  enchantment: number;
-  evocation: number;
-  illusion: number;
-  necromancy: number;
-  transmutation: number;
-  name: string;
-  description: string;
+  id: UniqueIdentifier;
+  children?: string | React.JSX.Element;
+  item: Ingredient;
   className?: string | undefined;
 };
 
 export default function Draggable({
   id,
-  name,
-  description,
-  abjuration,
-  conjuration,
-  divination,
-  enchantment,
-  evocation,
-  illusion,
-  necromancy,
-  transmutation,
+  item,
   children,
   className,
 }: DraggableProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
+    data: {
+      type: item.id
+    }
   });
   const style = {
     transform: CSS.Translate.toString(transform),
@@ -52,7 +38,7 @@ export default function Draggable({
       {...listeners}
       {...attributes}
     >
-      {children}
+      {item.name} {item.quantity}
     </button>
   );
 }

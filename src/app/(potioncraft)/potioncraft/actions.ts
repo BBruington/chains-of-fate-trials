@@ -61,13 +61,30 @@ export const addPotionToUser = async ({
   userId,
   potion,
 }: AddPotionToUserProps) => {
-  await prisma.potion.create({
-    data: {
-      ...potion,
-      id: undefined,
-      userId,
-    },
+  const potionResponse = await prisma.potion.findFirst({
+    where: { userId, name: potion.name },
   });
+  if (potionResponse === null) {
+    await prisma.potion.create({
+      data: {
+        ...potion,
+        id: undefined,
+        userId,
+      },
+    });
+  } else
+    [
+      await prisma.potion.update({
+        where: {
+          id: potionResponse.id,
+          name: potion.name,
+        },
+        data: {
+          quantity: potionResponse.quantity + 1,
+        },
+      }),
+    ];
+
   revalidatePath(`${process.env.BASE_URL}/potioncraft`);
 };
 

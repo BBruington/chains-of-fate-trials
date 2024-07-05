@@ -13,7 +13,8 @@ import {
   DragStartEvent,
   DragOverEvent,
 } from "@dnd-kit/core";
-import { Ingredient, Potion } from "@/types";
+import { Ingredient } from "@/types";
+import { Potion } from "@prisma/client";
 import {
   SortableContext,
   arrayMove,
@@ -188,7 +189,7 @@ export default function PotionCraftComponent({
               className="flex h-12 w-40 items-center bg-secondary p-1 text-justify text-xs"
               key={potion.id}
             >
-              {potion.name}
+              {potion.name} {potion.quantity}
             </div>
           ))}
         </div>

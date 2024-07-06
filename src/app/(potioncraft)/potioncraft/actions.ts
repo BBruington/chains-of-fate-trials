@@ -13,6 +13,7 @@ export const spendIngredients = async ({
   ingredients,
 }: SpendIngredientsProps) => {
   for (let ingredient of ingredients) {
+    console.log(ingredient.id)
     if (ingredient.quantity === 1) {
       await prisma.ingredient.delete({
         where: {

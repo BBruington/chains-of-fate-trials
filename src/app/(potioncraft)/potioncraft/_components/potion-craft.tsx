@@ -18,14 +18,6 @@ import Droppable from "@/components/dndkit/dropable";
 import Draggable from "@/components/dndkit/draggable";
 import { Ingredient } from "@/types";
 import { Potion } from "@prisma/client";
-import {
-  SortableContext,
-  arrayMove,
-  rectSortingStrategy,
-  rectSwappingStrategy,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -71,15 +63,11 @@ export default function PotionCraftComponent({
     transmutation: 0,
   };
 
-  const [mixture, setMixture] = useState<Ingredient[]>([
-    empty,
-    empty,
-    empty,
-    empty,
-  ]);
-  const [userIngredients, setUserIngredients] = useState<Ingredient[]>([
-    ...ingredients,
-  ]);
+  const emptyMixture = [empty, empty, empty, empty];
+
+  const [mixture, setMixture] = useState<Ingredient[]>(emptyMixture);
+  const [userIngredients, setUserIngredients] =
+    useState<Ingredient[]>(ingredients);
   const [filteredItems, setFilteredItems] = useState(userIngredients);
   const [filteredIngredientsInput, setFilteredIngredientsInput] = useState("");
   const [item, setItem] = useState(initialPotionProperties);
@@ -119,20 +107,18 @@ export default function PotionCraftComponent({
     }
   };
 
-  // const sensors = useSensors(
-  //   useSensor(PointerSensor),
-  //   useSensor(KeyboardSensor, {
-  //     coordinateGetter: sortableKeyboardCoordinates,
-  //   }),
-  // );
-
-  const potion = findPotion();
+  const handleResetIngredients = () => {
+    setUserIngredients(ingredients);
+    handleFilterIngredients({ ingredients });
+    setMixture(emptyMixture);
+  };
 
   const handleCraftPotion = async () => {
     const potion = findPotion();
-    await spendIngredients({ ingredients: mixture });
+    const spentIngredients = mixture.filter((mix) => mix.id !== "empty");
+    await spendIngredients({ ingredients: spentIngredients });
     const resetMix = { ...empty };
-    setMixture([resetMix]);
+    setMixture(emptyMixture);
     if (potion === undefined) {
       console.log("potion craft failed! D:");
     } else {
@@ -161,7 +147,6 @@ export default function PotionCraftComponent({
   return (
     <div className="flex w-screen">
       <DndContext
-        // sensors={sensors}
         onDragStart={handleIngredientDragStart}
         onDragEnd={handleIngredientDragEnd}
       >
@@ -171,18 +156,21 @@ export default function PotionCraftComponent({
           ) : null}
         </DragOverlay>
         <div className="flex flex-col">
-          {mixture.map((mix, index) => (
-            <Droppable
-              key={index}
-              className="h-20 w-40 bg-secondary text-xs"
-              accepts={[
-                ...ingredients.map((ingredient) => ingredient.id as string),
-              ]}
-              id={index}
-              item={mix}
-            />
-          ))}
+          <div className="column col-span-2">
+            {mixture.map((mix, index) => (
+              <Droppable
+                key={index}
+                className={`h-20 w-40 rounded-none bg-secondary text-xs ${mix.id === "empty" ? "bg-secondary/60 text-primary/60" : ""}`}
+                accepts={[
+                  ...ingredients.map((ingredient) => ingredient.id as string),
+                ]}
+                id={index}
+                item={mix}
+              />
+            ))}
+          </div>
           <Button onClick={handleCraftPotion}>Craft Potion</Button>
+          <Button onClick={handleResetIngredients}>Reset</Button>
           {potions.map((potion) => (
             <div
               className="flex h-12 w-40 items-center bg-secondary p-1 text-justify text-xs"
@@ -221,10 +209,6 @@ export default function PotionCraftComponent({
           </div>
         </div>
       </DndContext>
-      {/* <div className="mt-5">
-        Potion being made:
-        {potion?.name ? potion?.name : "failed"}
-      </div> */}
     </div>
   );
 

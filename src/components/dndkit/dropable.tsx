@@ -27,7 +27,7 @@ export default function Droppable({
     <div
       ref={setNodeRef}
       className={cn(
-        "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium",
+        `inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium`,
         className,
       )}
     >

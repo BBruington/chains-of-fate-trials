@@ -149,10 +149,11 @@ export default function PotionCraftComponent({
       <DndContext
         onDragStart={handleIngredientDragStart}
         onDragEnd={handleIngredientDragEnd}
+        autoScroll={false}
       >
         <DragOverlay>
           {activeIngredient ? (
-            <Draggable id={activeIngredient.id} item={activeIngredient} />
+            <Draggable id={activeIngredient.id} item={activeIngredient}  showQuantity={false} />
           ) : null}
         </DragOverlay>
         <div className="flex flex-col">
@@ -187,13 +188,13 @@ export default function PotionCraftComponent({
               className="m-2 mr-5"
               onChange={(event) => handleFilterIngredients({ event })}
             />
-            <div className="w-full overflow-y-auto">
+            <div className="flex flex-col items-center w-full overflow-y-auto">
               {filteredItems.length === 0 ? (
-                <Draggable id={69} item={empty} disabled={true} className="" />
+                <Draggable id={69} item={empty} disabled={true} />
               ) : (
                 filteredItems.map((item) => (
                   <div key={item.id} className="flex items-center">
-                    <Draggable id={item.id} item={item}></Draggable>{" "}
+                    <Draggable showQuantity={true} id={item.id} item={item}></Draggable>{" "}
                     <Button
                       onClick={() =>
                         handleIncrementIngredient({ ingredient: item })

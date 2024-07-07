@@ -63,6 +63,8 @@ model User {
 
 model Ingredient {
   id                String    @default(cuid()) @id  
+  rarity  Rarity @default(COMMON)
+  type    MagicType @default(PRIMAL)
   name String @unique
   description String
   quantity   Int @default(1)
@@ -80,6 +82,8 @@ model Ingredient {
 
 model Potion {
   id                String    @default(cuid()) @id  
+  rarity  Rarity @default(COMMON)
+  type    MagicType @default(ARCANE)
   name String
   description String
   quantity   Int @default(1)
@@ -93,4 +97,23 @@ model Potion {
   transmutation Int @default(0)
   userId   String
   User   User @relation(fields: [userId], references: [clerkId])
+}
+// potency
+// life
+// utility
+// element
+
+enum MagicType {
+  ARCANE
+  PRIMAL
+  DIVINE
+  OCCULT
+}
+
+enum Rarity {
+  COMMON
+  UNCOMMON
+  RARE
+  VERYRARE
+  LEGENDARY
 }

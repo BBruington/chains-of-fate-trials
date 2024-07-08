@@ -1,7 +1,7 @@
 import React from "react";
 import { UniqueIdentifier, useDroppable } from "@dnd-kit/core";
 import { cn } from "@/lib/utils";
-import { Ingredient } from "@/types";
+import { Ingredient } from "@prisma/client";
 
 type DroppableProps = {
   id: UniqueIdentifier;

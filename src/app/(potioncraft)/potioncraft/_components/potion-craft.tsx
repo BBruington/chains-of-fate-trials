@@ -1,6 +1,7 @@
 "use client";
 import React, { ChangeEvent, useState } from "react";
-import { potionData } from "./testData";
+import { z } from "zod";
+import { commonPotions, playerIngredients } from "./testData";
 import {
   DndContext,
   closestCenter,
@@ -16,11 +17,18 @@ import {
 } from "@dnd-kit/core";
 import Droppable from "@/components/dndkit/dropable";
 import Draggable from "@/components/dndkit/draggable";
-import { Ingredient } from "@/types";
-import { Potion } from "@prisma/client";
+import { CommonIngredientSchema, IngredientSchema } from "@/types";
+import {
+  Potion,
+  Ingredient,
+  Rarity,
+  PrimaryAttribute,
+  MagicType,
+} from "@prisma/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
+  addIngredientsToUser,
   addPotionToUser,
   increaseIngredient,
   spendIngredients,
@@ -40,7 +48,11 @@ export default function PotionCraftComponent({
   const empty = {
     id: "empty",
     name: "Empty",
+    type: MagicType["EMPTY"],
+    rarity: Rarity["EMPTY"],
+    primaryAttribute: PrimaryAttribute["EMPTY"],
     description: "It's empty",
+    userId: "empty",
     quantity: 0,
     abjuration: 0,
     conjuration: 0,
@@ -113,6 +125,20 @@ export default function PotionCraftComponent({
     setMixture(emptyMixture);
   };
 
+  interface AddIngredientsProps {
+    userId: User["clerkId"];
+    ingredients: Ingredient[];
+  }
+
+  const handleAddIngredients = async ({
+    ingredients,
+    userId,
+  }: AddIngredientsProps) => {
+    if (userIngredients.length === 0) {
+      await addIngredientsToUser({ userId, ingredients });
+    }
+  };
+
   const handleCraftPotion = async () => {
     const potion = findPotion();
     const spentIngredients = mixture.filter((mix) => mix.id !== "empty");
@@ -129,7 +155,7 @@ export default function PotionCraftComponent({
   const handleIncrementIngredient = async ({
     ingredient,
   }: {
-    ingredient: Ingredient;
+    ingredient: z.infer<typeof IngredientSchema>;
   }) => {
     const res = await increaseIngredient({ ingredient, amount: 1 });
     const incrementedIngredients = userIngredients.map((userIngredient) => {
@@ -153,7 +179,11 @@ export default function PotionCraftComponent({
       >
         <DragOverlay>
           {activeIngredient ? (
-            <Draggable id={activeIngredient.id} item={activeIngredient}  showQuantity={false} />
+            <Draggable
+              id={activeIngredient.id}
+              item={activeIngredient}
+              showQuantity={false}
+            />
           ) : null}
         </DragOverlay>
         <div className="flex flex-col">
@@ -172,6 +202,13 @@ export default function PotionCraftComponent({
           </div>
           <Button onClick={handleCraftPotion}>Craft Potion</Button>
           <Button onClick={handleResetIngredients}>Reset</Button>
+          <Button
+            onClick={() =>
+              handleAddIngredients({ ingredients: playerIngredients, userId })
+            }
+          >
+            Add Ingredients
+          </Button>
           {potions.map((potion) => (
             <div
               className="flex h-12 w-40 items-center bg-secondary p-1 text-justify text-xs"
@@ -188,13 +225,17 @@ export default function PotionCraftComponent({
               className="m-2 mr-5"
               onChange={(event) => handleFilterIngredients({ event })}
             />
-            <div className="flex flex-col items-center w-full overflow-y-auto">
+            <div className="flex w-full flex-col items-center overflow-y-auto">
               {filteredItems.length === 0 ? (
                 <Draggable id={69} item={empty} disabled={true} />
               ) : (
                 filteredItems.map((item) => (
                   <div key={item.id} className="flex items-center">
-                    <Draggable showQuantity={true} id={item.id} item={item}></Draggable>{" "}
+                    <Draggable
+                      showQuantity={true}
+                      id={item.id}
+                      item={item}
+                    ></Draggable>{" "}
                     <Button
                       onClick={() =>
                         handleIncrementIngredient({ ingredient: item })
@@ -225,7 +266,7 @@ export default function PotionCraftComponent({
   };
 
   function findPotion() {
-    return potionData.find((potion) => {
+    return commonPotions.find((potion) => {
       return Object.keys(initialPotionProperties).every((key) => {
         const potionValue = Math.max(potion[key as keyof MagicProperties], 0);
         const combinedValue = Math.max(item[key as keyof MagicProperties], 0);
@@ -241,10 +282,14 @@ export default function PotionCraftComponent({
     }
     const solution = ingredients.reduce((ingredientSum, currentIngretient) => {
       return {
-        id: 1,
+        id: "1",
         name: "",
         description: "",
         quantity: 0,
+        userId: "",
+        rarity: "COMMON",
+        type: "ARCANE",
+        primaryAttribute: "ABJURATION",
         abjuration: ingredientSum.abjuration + currentIngretient.abjuration,
         conjuration: ingredientSum.conjuration + currentIngretient.conjuration,
         divination: ingredientSum.divination + currentIngretient.divination,

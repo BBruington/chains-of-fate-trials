@@ -65,6 +65,7 @@ model Ingredient {
   id                String    @default(cuid()) @id  
   rarity  Rarity @default(COMMON)
   type    MagicType @default(PRIMAL)
+  primaryAttribute   PrimaryAttribute @default(ABJURATION)
   name String @unique
   description String
   quantity   Int @default(1)
@@ -84,6 +85,7 @@ model Potion {
   id                String    @default(cuid()) @id  
   rarity  Rarity @default(COMMON)
   type    MagicType @default(ARCANE)
+  primaryAttribute   PrimaryAttribute
   name String
   description String
   quantity   Int @default(1)
@@ -104,6 +106,7 @@ model Potion {
 // element
 
 enum MagicType {
+  EMPTY
   ARCANE
   PRIMAL
   DIVINE
@@ -111,9 +114,22 @@ enum MagicType {
 }
 
 enum Rarity {
+  EMPTY
   COMMON
   UNCOMMON
   RARE
   VERYRARE
   LEGENDARY
+}
+
+enum PrimaryAttribute {
+  EMPTY
+  ABJURATION
+  CONJURATION
+  DIVINATION
+  ENCHANTMENT
+  EVOCATION
+  ILLUSION
+  NECROMANCY
+  TRANSMUTATION
 }

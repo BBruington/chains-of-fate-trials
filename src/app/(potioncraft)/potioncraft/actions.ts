@@ -1,19 +1,19 @@
 "use server";
 
-import { Ingredient, Potion } from "@/types";
+import { IngredientSchema, Potion } from "@/types";
 import { prisma } from "@/app/utils/context";
-import { User } from "@prisma/client";
+import { Ingredient, User } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import {z} from 'zod';
 
 interface SpendIngredientsProps {
-  ingredients: Ingredient[];
+  ingredients: z.infer<typeof IngredientSchema>[]
 }
 
 export const spendIngredients = async ({
   ingredients,
 }: SpendIngredientsProps) => {
   for (let ingredient of ingredients) {
-    console.log(ingredient.id)
     if (ingredient.quantity === 1) {
       await prisma.ingredient.delete({
         where: {
@@ -38,7 +38,7 @@ export const increaseIngredient = async ({
   ingredient,
   amount,
 }: {
-  ingredient: Ingredient;
+  ingredient: z.infer< typeof IngredientSchema>;
   amount: number;
 }) => {
   const increasedIngredient = await prisma.ingredient.update({
@@ -91,10 +91,21 @@ export const addPotionToUser = async ({
 
 interface AddIngredientToUserProps {
   userId: User["clerkId"];
-  ingredient: Ingredient;
+  ingredients: Ingredient[];
 }
 
-export const addIngredientToUser = async ({
+export const addIngredientsToUser = async ({
   userId,
-  ingredient,
-}: AddIngredientToUserProps) => {};
+  ingredients,
+}: AddIngredientToUserProps) => {
+  for (let ingredient of ingredients) {
+    await prisma.ingredient.create({
+      data: {
+        ...ingredient,
+        id: undefined,
+        userId,
+      },
+    });
+  }
+  revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+};

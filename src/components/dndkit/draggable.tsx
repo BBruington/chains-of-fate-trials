@@ -2,7 +2,7 @@ import React from "react";
 import { UniqueIdentifier, useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
-import { Ingredient } from "@/types";
+import { Ingredient } from "@prisma/client";
 
 type DraggableProps = {
   id: UniqueIdentifier;

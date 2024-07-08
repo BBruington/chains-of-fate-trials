@@ -16,7 +16,6 @@ type DraggableProps = {
 export default function Draggable({
   id,
   item,
-  children,
   className,
   disabled,
   showQuantity,

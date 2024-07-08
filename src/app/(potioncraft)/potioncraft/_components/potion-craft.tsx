@@ -2,17 +2,16 @@
 import React, { useState } from "react";
 import { z } from "zod";
 import { commonPotions, playerIngredients } from "./testData";
-import UserFormula from "./formula";
-import IngredientList from "./ingredient-list";
 import {
   DndContext,
   DragStartEvent,
   DragOverEvent,
   DragOverlay,
 } from "@dnd-kit/core";
+import UserFormula from "./formula";
+import IngredientList from "./ingredient-list";
 import Droppable from "@/components/dndkit/dropable";
 import Draggable from "@/components/dndkit/draggable";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { IngredientSchema } from "@/types";
 import {

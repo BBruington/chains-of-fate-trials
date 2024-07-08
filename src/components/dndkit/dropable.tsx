@@ -13,7 +13,6 @@ type DroppableProps = {
 
 export default function Droppable({
   id,
-  children,
   className,
   accepts,
   item,
@@ -31,7 +30,7 @@ export default function Droppable({
         className,
       )}
     >
-      {children} {item.name}
+      {item.name}
     </div>
   );
 }

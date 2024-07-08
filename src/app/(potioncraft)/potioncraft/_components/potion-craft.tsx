@@ -1,32 +1,28 @@
 "use client";
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 import { commonPotions, playerIngredients } from "./testData";
+import UserFormula from "./formula";
+import IngredientList from "./ingredient-list";
 import {
   DndContext,
-  closestCenter,
-  pointerWithin,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
   DragStartEvent,
   DragOverEvent,
   DragOverlay,
 } from "@dnd-kit/core";
 import Droppable from "@/components/dndkit/dropable";
 import Draggable from "@/components/dndkit/draggable";
-import { CommonIngredientSchema, IngredientSchema } from "@/types";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { IngredientSchema } from "@/types";
 import {
   Potion,
   Ingredient,
   Rarity,
   PrimaryAttribute,
   MagicType,
+  Formula,
 } from "@prisma/client";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   addIngredientsToUser,
   addPotionToUser,
@@ -34,16 +30,19 @@ import {
   spendIngredients,
 } from "../actions";
 import { User } from "@prisma/client";
+import { HandleFilterIngredientsProps } from "../_types/types";
 interface PotionCraftComponentProps {
   ingredients: Ingredient[];
   userId: User["clerkId"];
   potions: Potion[];
+  formulas: Formula[];
 }
 
 export default function PotionCraftComponent({
   ingredients,
   userId,
   potions,
+  formulas,
 }: PotionCraftComponentProps) {
   const empty = {
     id: "empty",
@@ -86,11 +85,6 @@ export default function PotionCraftComponent({
   const [activeIngredient, setActiveIngredient] = useState<null | Ingredient>(
     null,
   );
-
-  interface HandleFilterIngredientsProps {
-    event?: ChangeEvent<HTMLInputElement> | undefined;
-    ingredients?: Ingredient[] | undefined;
-  }
 
   const handleFilterIngredients = ({
     event,
@@ -207,7 +201,7 @@ export default function PotionCraftComponent({
               handleAddIngredients({ ingredients: playerIngredients, userId })
             }
           >
-            Add Ingredients
+            Reset Ingredients
           </Button>
           {potions.map((potion) => (
             <div
@@ -217,37 +211,17 @@ export default function PotionCraftComponent({
               {potion.name} {potion.quantity}
             </div>
           ))}
+          {formulas.map((formula) => (
+            <UserFormula key={formula.id} formula={formula} />
+          ))}
         </div>
         <div className="flex h-screen w-full justify-end">
           <div className="flex h-screen w-96 flex-col items-center overflow-y-auto bg-secondary p-3">
-            <div className="py-2 text-2xl">Ingredients</div>
-            <Input
-              className="m-2 mr-5"
-              onChange={(event) => handleFilterIngredients({ event })}
+            <IngredientList
+              ingredients={filteredItems}
+              handleFilterIngredients={handleFilterIngredients}
+              handleIncrementIngredient={handleIncrementIngredient}
             />
-            <div className="flex w-full flex-col items-center overflow-y-auto">
-              {filteredItems.length === 0 ? (
-                <Draggable id={69} item={empty} disabled={true} />
-              ) : (
-                filteredItems.map((item) => (
-                  <div key={item.id} className="flex items-center">
-                    <Draggable
-                      showQuantity={true}
-                      id={item.id}
-                      item={item}
-                    ></Draggable>{" "}
-                    <Button
-                      onClick={() =>
-                        handleIncrementIngredient({ ingredient: item })
-                      }
-                      className="ml-1 h-6 w-10 text-xs"
-                    >
-                      Add
-                    </Button>
-                  </div>
-                ))
-              )}
-            </div>
           </div>
         </div>
       </DndContext>

@@ -18,12 +18,18 @@ export default async function PotionCraftPage() {
       userId: user.id,
     },
   });
+  const formulas = await prisma.formula.findMany({
+    where: {
+      userId: user.id
+    }
+  })
 
   return (
     <PotionCraftComponent
       ingredients={ingredients}
       userId={user.id}
       potions={potions}
+      formulas={formulas}
     />
   );
 }

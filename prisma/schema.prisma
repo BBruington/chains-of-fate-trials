@@ -58,7 +58,20 @@ model User {
   puzzleSessions    PuzzleSession[]
   Ingredients       Ingredient[]
   Potions           Potion[]
+  Formulas          Formula[]
   @@map(name: "users")
+}
+model Formula {
+  id String @default(cuid()) @id
+  name String
+  userId String
+  description String
+  rarity Rarity @default(COMMON)
+  ingredient1 String?
+  ingredient2 String?
+  ingredient3 String?
+  ingredient4 String?
+  user User @relation(fields: [userId], references: [clerkId])
 }
 
 model Ingredient {

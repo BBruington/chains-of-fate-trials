@@ -3,25 +3,21 @@ import { EMPTY_INGREDIENT } from "@/constants";
 import { DragStartEvent, DragOverEvent } from "@dnd-kit/core";
 import {
   Ingredient,
-  MagicType,
-  PrimaryAttribute,
-  Rarity,
   User,
 } from "@prisma/client";
 import { useState } from "react";
 import { z } from "zod";
 import {
   IngredientSchema,
-  RaritySchema,
   RarityType,
 } from "../../../../../prisma/generated/zod";
+import { PotionSchema } from "@/types";
 import { HandleFilterIngredientsProps } from "../_types";
 import {
   addIngredientsToUser,
   spendIngredients,
   addPotionToUser,
   increaseIngredient,
-  PotionSchema,
 } from "../actions";
 import { commonPotions } from "./testData";
 

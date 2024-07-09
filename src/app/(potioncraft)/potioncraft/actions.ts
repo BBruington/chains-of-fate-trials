@@ -1,16 +1,16 @@
 "use server";
 
 import { prisma } from "@/app/utils/context";
-import {
-  Ingredient,
-  MagicType,
-  PrimaryAttribute,
-  Rarity,
-} from "@prisma/client";
+import { Ingredient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { IngredientSchema, RaritySchema, MagicTypeSchema, PrimaryAttributeSchema } from "../../../../prisma/generated/zod";
-export const PotionSchema = z.object({
+import {
+  IngredientSchema,
+  RaritySchema,
+  MagicTypeSchema,
+  PrimaryAttributeSchema,
+} from "../../../../prisma/generated/zod";
+const PotionSchema = z.object({
   id: z.number(),
   rarity: RaritySchema,
   type: MagicTypeSchema,
@@ -56,18 +56,18 @@ export const spendIngredients = async (
       if (ingredient.quantity === 1) {
         await prisma.ingredient.delete({
           where: {
-            id: ingredient.id as string,
+            id: ingredient.id,
           },
         });
         return;
       }
       await prisma.ingredient.update({
         where: {
-          id: ingredient.id as string,
+          id: ingredient.id,
         },
         data: {
           ...ingredient,
-          id: ingredient.id as string,
+          id: ingredient.id,
           quantity: ingredient.quantity - 1,
         },
       });

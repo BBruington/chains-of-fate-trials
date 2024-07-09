@@ -1,12 +1,13 @@
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { Rarity, MagicType, PrimaryAttribute } from "@prisma/client";
+import { RaritySchema, MagicTypeSchema, PrimaryAttributeSchema } from "../../prisma/generated/zod";
 import { z } from "zod";
 
 export const IngredientSchema = z.object({
   id: z.string().or(z.number()),
-  rarity: Rarity,
-  type: MagicType,
-  primaryAttribute: PrimaryAttribute,
+  rarity: RaritySchema,
+  type: MagicTypeSchema,
+  primaryAttribute: PrimaryAttributeSchema,
   name: z.string(),
   quantity: z.number().min(0).default(0),
   description: z.string(),
@@ -23,9 +24,9 @@ export const IngredientSchema = z.object({
 const CommonIngredientSchema = z
   .object({
     id: z.number(),
-    rarity: Rarity,
-    type: MagicType,
-    primaryAttribute: PrimaryAttribute,
+    rarity: RaritySchema,
+    type: MagicTypeSchema,
+    primaryAttribute: PrimaryAttributeSchema,
     name: z.string(),
     description: z.string(),
     abjuration: z.number().min(0).max(10),
@@ -42,9 +43,9 @@ const CommonIngredientSchema = z
 export const CommonPotionSchema = z
   .object({
     id: z.number(),
-    rarity: z.enum(Rarity),
-    type: z.enum(MagicType),
-    primaryAttribute: z.enum(PrimaryAttribute),
+    rarity: RaritySchema,
+    type: MagicTypeSchema,
+    primaryAttribute: PrimaryAttributeSchema,
     name: z.string(),
     description: z.string(),
     abjuration: z.number().min(0).max(30),
@@ -58,19 +59,37 @@ export const CommonPotionSchema = z
   })
   .array();
 
-export type Potion = {
-  id: UniqueIdentifier;
-  rarity: $enum.Rarity;
-  type: $enum.MagicType;
-  primaryAttribute: $enum.PrimaryAttribute;
-  name: string;
-  description: string;
-  abjuration: number;
-  conjuration: number;
-  divination: number;
-  enchantment: number;
-  evocation: number;
-  illusion: number;
-  necromancy: number;
-  transmutation: number;
-};
+  export const PotionSchema = z
+  .object({
+    id: z.number(),
+    rarity: RaritySchema,
+    type: MagicTypeSchema,
+    primaryAttribute: PrimaryAttributeSchema,
+    name: z.string(),
+    description: z.string(),
+    abjuration: z.number().positive(),
+    conjuration: z.number().positive(),
+    divination: z.number().positive(),
+    enchantment: z.number().positive(),
+    evocation: z.number().positive(),
+    illusion: z.number().positive(),
+    necromancy: z.number().positive(),
+    transmutation: z.number().positive(),
+  })
+
+// export type PotionSchema = {
+//   id: UniqueIdentifier;
+//   rarity: $enum.Rarity;
+//   type: $enum.MagicType;
+//   primaryAttribute: $enum.PrimaryAttribute;
+//   name: string;
+//   description: string;
+//   abjuration: number;
+//   conjuration: number;
+//   divination: number;
+//   enchantment: number;
+//   evocation: number;
+//   illusion: number;
+//   necromancy: number;
+//   transmutation: number;
+// };

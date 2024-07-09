@@ -41,7 +41,8 @@
     "tailwind-merge": "^2.3.0",
     "vaul": "^0.9.1",
     "ws": "^8.17.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zod-prisma-types": "^3.1.8"
   },
   "devDependencies": {
     "@types/node": "^20",

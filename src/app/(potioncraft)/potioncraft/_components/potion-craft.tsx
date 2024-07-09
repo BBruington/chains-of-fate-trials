@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 import { commonPotions, playerIngredients } from "./testData";
 import {
@@ -8,18 +8,14 @@ import {
   DragOverEvent,
   DragOverlay,
 } from "@dnd-kit/core";
-import UserFormula from "./formula";
 import IngredientList from "./ingredient-list";
 import Droppable from "@/components/dndkit/dropable";
 import Draggable from "@/components/dndkit/draggable";
 import { Button } from "@/components/ui/button";
-import { IngredientSchema } from "@/types";
+import { IngredientSchema } from "../../../../../prisma/generated/zod";
 import {
   Potion,
   Ingredient,
-  Rarity,
-  PrimaryAttribute,
-  MagicType,
   Formula,
 } from "@prisma/client";
 import {
@@ -29,7 +25,9 @@ import {
   spendIngredients,
 } from "../actions";
 import { User } from "@prisma/client";
-import { HandleFilterIngredientsProps } from "../_types/types";
+import { HandleFilterIngredientsProps } from "../_types";
+import { EMPTY_INGREDIENT } from "@/constants";
+import { PotionSchema } from "@/types";
 interface PotionCraftComponentProps {
   ingredients: Ingredient[];
   userId: User["clerkId"];
@@ -43,25 +41,6 @@ export default function PotionCraftComponent({
   potions,
   formulas,
 }: PotionCraftComponentProps) {
-  const empty = {
-    id: "empty",
-    name: "Empty",
-    type: MagicType["EMPTY"],
-    rarity: Rarity["EMPTY"],
-    primaryAttribute: PrimaryAttribute["EMPTY"],
-    description: "It's empty",
-    userId: "empty",
-    quantity: 0,
-    abjuration: 0,
-    conjuration: 0,
-    divination: 0,
-    enchantment: 0,
-    evocation: 0,
-    illusion: 0,
-    necromancy: 0,
-    transmutation: 0,
-  };
-
   const initialPotionProperties = {
     abjuration: 0,
     conjuration: 0,
@@ -73,7 +52,12 @@ export default function PotionCraftComponent({
     transmutation: 0,
   };
 
-  const emptyMixture = [empty, empty, empty, empty];
+  const emptyMixture = [
+    EMPTY_INGREDIENT,
+    EMPTY_INGREDIENT,
+    EMPTY_INGREDIENT,
+    EMPTY_INGREDIENT,
+  ];
 
   const [mixture, setMixture] = useState<Ingredient[]>(emptyMixture);
   const [userIngredients, setUserIngredients] =
@@ -136,7 +120,7 @@ export default function PotionCraftComponent({
     const potion = findPotion();
     const spentIngredients = mixture.filter((mix) => mix.id !== "empty");
     await spendIngredients({ ingredients: spentIngredients });
-    const resetMix = { ...empty };
+    const resetMix = { ...EMPTY_INGREDIENT };
     setMixture(emptyMixture);
     if (potion === undefined) {
       console.log("potion craft failed! D:");
@@ -210,9 +194,6 @@ export default function PotionCraftComponent({
               {potion.name} {potion.quantity}
             </div>
           ))}
-          {formulas.map((formula) => (
-            <UserFormula key={formula.id} formula={formula} />
-          ))}
         </div>
         <div className="flex h-screen w-full justify-end">
           <div className="flex h-screen w-96 flex-col items-center overflow-y-auto bg-secondary p-3">
@@ -238,7 +219,7 @@ export default function PotionCraftComponent({
     transmutation: number;
   };
 
-  function findPotion() {
+  function findPotion(): z.infer<typeof PotionSchema> | undefined {
     return commonPotions.find((potion) => {
       return Object.keys(initialPotionProperties).every((key) => {
         const potionValue = Math.max(potion[key as keyof MagicProperties], 0);

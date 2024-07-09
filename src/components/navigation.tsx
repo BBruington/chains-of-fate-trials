@@ -11,59 +11,69 @@ import {
   DropdownMenuItem,
 } from "./ui/dropdown-menu";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+
+const NAV_LINKS = [
+  { href: "/", label: "Home" },
+  { href: "/potioncraft", label: "Potion Craft" },
+];
+
+const PUZZLE_SESSION_LINKS = [
+  { href: "/session/create", label: "Create" },
+  { href: "/session/join", label: "Join" },
+];
+
+const THEME_OPTIONS = [
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+  { value: "system", label: "System" },
+];
 
 export default function Navigation() {
   const pathName = usePathname();
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   return (
     <nav className="flex items-center justify-end space-x-3 border-b-2 border-secondary px-2">
-      <Link
-        href={"/"}
-        className={pathName === "/" ? "cursor-default text-secondary" : ""}
-      >
-        Home
-      </Link>
-      <Link
-        href={"/potioncraft"}
-        className={
-          pathName === "/potioncraft" ? "cursor-default text-secondary" : ""
-        }
-      >
-        Potion Craft
-      </Link>
-      <DropdownMenu>
-        <DropdownMenuTrigger className="w-32" asChild>
-          <Button variant="outline" size="icon">
-            <span className="">Puzzle Session</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem className="flex justify-center">
-            <Link
-              href={`/session/create`}
-              className={
-                pathName === "/session/create"
-                  ? "cursor-default text-secondary"
-                  : ""
-              }
-            >
-              Create
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="flex justify-center">
-            <Link
-              href={"/session/join"}
-              className={
-                pathName === "/" ? "cursor-default text-secondary" : ""
-              }
-            >
-              Join
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <div className="my-1 flex items-center">
+      <div className="flex items-center space-x-4">
+        {NAV_LINKS.map(({ href, label }) => (
+          <Link
+            className={cn(
+              "transition-colors hover:text-primary/80",
+              pathName === href &&
+                "pointer-events-none font-semibold text-secondary",
+            )}
+            href={href}
+            key={href}
+          >
+            {label}
+          </Link>
+        ))}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="w-32" asChild>
+            <Button variant="ghost" size="icon">
+              Puzzle Session
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {PUZZLE_SESSION_LINKS.map(({ href, label }) => (
+              <DropdownMenuItem key={href}>
+                <Link
+                  href={href}
+                  className={cn(
+                    "w-full transition-colors hover:text-primary/80",
+                    pathName === href &&
+                      "pointer-events-none font-semibold text-secondary",
+                  )}
+                >
+                  {label}
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="my-1 flex items-center space-x-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon">
@@ -73,12 +83,12 @@ export default function Navigation() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTheme("light")}>
-              Light
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("dark")}>
-              Dark
-            </DropdownMenuItem>
+            {THEME_OPTIONS.map(({value, label}) => (
+              <DropdownMenuItem key={value} onClick={() => setTheme(value)}>
+                {label}
+                {theme === value && <span className="ml-2">✓</span>}
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

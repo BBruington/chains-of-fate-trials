@@ -17,14 +17,14 @@ const PotionSchema = z.object({
   primaryAttribute: PrimaryAttributeSchema,
   name: z.string(),
   description: z.string(),
-  abjuration: z.number().positive(),
-  conjuration: z.number().positive(),
-  divination: z.number().positive(),
-  enchantment: z.number().positive(),
-  evocation: z.number().positive(),
-  illusion: z.number().positive(),
-  necromancy: z.number().positive(),
-  transmutation: z.number().positive(),
+  abjuration: z.number().nonnegative(),
+  conjuration: z.number().nonnegative(),
+  divination: z.number().nonnegative(),
+  enchantment: z.number().nonnegative(),
+  evocation: z.number().nonnegative(),
+  illusion: z.number().nonnegative(),
+  necromancy: z.number().nonnegative(),
+  transmutation: z.number().nonnegative(),
 });
 
 const SpendIngredientsSchema = z.object({
@@ -44,6 +44,12 @@ const AddPotionToUserSchema = z.object({
 const AddIngredientToUserSchema = z.object({
   userId: z.string(),
   ingredients: z.array(IngredientSchema),
+});
+
+const AddFormulaToUserSchema = z.object({
+  userId: z.string(),
+  ingredients: z.array(IngredientSchema),
+  potion: PotionSchema,
 });
 
 export const spendIngredients = async (
@@ -164,5 +170,33 @@ export const addIngredientsToUser = async (
       throw new Error("Invalid input for adding ingredients to user");
     }
     throw new Error("Failed to add ingredients to user");
+  }
+};
+
+export const addFormulaToUser = async (
+  props: z.infer<typeof AddFormulaToUserSchema>,
+): Promise<void> => {
+  try {
+    const { ingredients, potion, userId } = AddFormulaToUserSchema.parse(props);
+    
+    await prisma.formula.create({
+      data: {
+        userId,
+        name: potion.name,
+        description: potion.description,
+        rarity: potion.rarity,
+        ingredient1: ingredients[0]?.name ? ingredients[0].name : null,
+        ingredient2: ingredients[1]?.name ? ingredients[1].name : null,
+        ingredient3: ingredients[2]?.name ? ingredients[2].name : null,
+        ingredient4: ingredients[3]?.name ? ingredients[3].name : null,
+      },
+    });
+    revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+  } catch (error) {
+    console.error("Error adding formula to user: ", error);
+    if (error instanceof z.ZodError) {
+      throw new Error("Invalid input for adding ingredients to user");
+    }
+    throw new Error("Failed to add formula to user");
   }
 };

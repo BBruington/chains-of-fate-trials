@@ -29,9 +29,10 @@ export default function PotionCraftComponent({
     activeIngredient,
     mixtureProperties,
     findPotion,
+    findMixtureProperties,
+    addFormula,
     handleResetIngredients,
     handleFilterIngredients,
-    findMixtureProperties,
     handleAddIngredients,
     handleCraftPotion,
     handleIncrementIngredient,
@@ -72,7 +73,7 @@ export default function PotionCraftComponent({
           <Button onClick={handleCraftPotion}>Craft Potion</Button>
           <Button onClick={handleResetIngredients}>Reset</Button>
           <Button onClick={() => findMixtureProperties(mixture)}>look at properties</Button>
-          <Button onClick={() => findPotion({mixture: mixtureProperties})}>look at potions</Button>
+          <Button onClick={() => findPotion({mixture: mixtureProperties})}>look at potion(s)</Button>
           <Button
             onClick={() =>
               handleAddIngredients({ ingredients: playerIngredients, userId })
@@ -80,6 +81,7 @@ export default function PotionCraftComponent({
           >
             Reset Ingredients
           </Button>
+          <Button onClick={() => addFormula({mixture, userId})}>Add to formulas</Button>
           {potions.map((potion) => (
             <div
               className="flex h-12 w-40 items-center bg-secondary p-1 text-justify text-xs"

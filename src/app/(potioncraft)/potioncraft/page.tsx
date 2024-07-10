@@ -1,11 +1,11 @@
+import { currentUser } from "@clerk/nextjs/server";
 import PotionCraftComponent from "./_components/potion-craft";
 import { prisma } from "@/app/utils/context";
-import { currentUser } from "@clerk/nextjs/server";
 
 export default async function PotionCraftPage() {
   const user = await currentUser();
 
-  if (!user) return <div>Not signed in</div>;
+  if (user === null) return <div>Not signed in</div>;
 
   const ingredients = await prisma.ingredient.findMany({
     where: {
@@ -20,9 +20,9 @@ export default async function PotionCraftPage() {
   });
   const formulas = await prisma.formula.findMany({
     where: {
-      userId: user.id
-    }
-  })
+      userId: user.id,
+    },
+  });
 
   return (
     <PotionCraftComponent

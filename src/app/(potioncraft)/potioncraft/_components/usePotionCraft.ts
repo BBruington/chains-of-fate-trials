@@ -1,5 +1,5 @@
 "use client";
-import { EMPTY_INGREDIENT } from "@/constants";
+import { EMPTY_INGREDIENT, EMPTY_POTION } from "@/constants";
 import { DragStartEvent, DragOverEvent } from "@dnd-kit/core";
 import { Ingredient, User } from "@prisma/client";
 import { useState } from "react";
@@ -15,6 +15,7 @@ import {
   spendIngredients,
   addPotionToUser,
   increaseIngredient,
+  addFormulaToUser,
 } from "../actions";
 import { commonPotions } from "./testData";
 
@@ -222,16 +223,7 @@ export function usePotionCraft(
     console.log(potionSecondaryAttributes);
     console.log(answer.potion);
 
-    return potions.find((potion) => {
-      return Object.keys(initialPotionProperties).every((key) => {
-        const potionValue = Math.max(potion[key as keyof MagicProperties], 0);
-        const combinedValue = Math.max(
-          mixtureProperties[key as keyof MagicProperties],
-          0,
-        );
-        return potionValue === combinedValue;
-      });
-    });
+    return answer.potion;
   }
 
   //find highest ingredient(s) rarity and type
@@ -388,6 +380,19 @@ export function usePotionCraft(
     }
   }
 
+  interface AddFormulaProps {
+    mixture: Ingredient[];
+    userId: User["clerkId"];
+  }
+
+  const addFormula = async ({ mixture, userId }: AddFormulaProps) => {
+    const ingredients = mixture.filter((mix) => mix.id !== "empty");
+    let potion = findPotion({ mixture: mixtureProperties });
+    if (potion === undefined) potion = EMPTY_POTION;
+
+    await addFormulaToUser({ ingredients, potion, userId });
+  };
+
   return {
     mixture,
     userIngredients,
@@ -396,6 +401,7 @@ export function usePotionCraft(
     mixtureProperties,
     findMixtureProperties,
     findPotion,
+    addFormula,
     handleFilterIngredients,
     handleResetIngredients,
     handleAddIngredients,

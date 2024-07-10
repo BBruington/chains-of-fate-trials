@@ -67,8 +67,8 @@ model User {
 }
 model Formula {
   id String @default(cuid()) @id
-  name String
   userId String
+  name String
   description String
   rarity Rarity @default(COMMON)
   ingredient1 String?

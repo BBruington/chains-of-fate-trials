@@ -1,20 +1,14 @@
 "use client";
 import { playerIngredients } from "./testData";
-import {
-  DndContext,
-  DragOverlay,
-} from "@dnd-kit/core";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
 import IngredientList from "./ingredient-list";
 import Droppable from "@/components/dndkit/dropable";
 import Draggable from "@/components/dndkit/draggable";
 import { Button } from "@/components/ui/button";
-import {
-  Potion,
-  Ingredient,
-  Formula,
-} from "@prisma/client";
+import { Potion, Ingredient, Formula } from "@prisma/client";
 import { User } from "@prisma/client";
-import {usePotionCraft} from "./usePotionCraft";
+import { usePotionCraft } from "./usePotionCraft";
+
 interface PotionCraftComponentProps {
   ingredients: Ingredient[];
   userId: User["clerkId"];
@@ -28,14 +22,16 @@ export default function PotionCraftComponent({
   potions,
   formulas,
 }: PotionCraftComponentProps) {
-
   const {
     mixture,
     userIngredients,
     filteredUserIngredients,
     activeIngredient,
-    handleFilterIngredients,
+    mixtureProperties,
+    findPotion,
     handleResetIngredients,
+    handleFilterIngredients,
+    findMixtureProperties,
     handleAddIngredients,
     handleCraftPotion,
     handleIncrementIngredient,
@@ -66,7 +62,7 @@ export default function PotionCraftComponent({
                 key={index}
                 className={`h-20 w-40 rounded-none bg-secondary text-xs ${mix.id === "empty" ? "bg-secondary/60 text-primary/60" : ""}`}
                 accepts={[
-                  ...ingredients.map((ingredient) => ingredient.id as string),
+                  ...ingredients.map((ingredient) => ingredient.id),
                 ]}
                 id={index}
                 item={mix}
@@ -75,6 +71,8 @@ export default function PotionCraftComponent({
           </div>
           <Button onClick={handleCraftPotion}>Craft Potion</Button>
           <Button onClick={handleResetIngredients}>Reset</Button>
+          <Button onClick={() => findMixtureProperties(mixture)}>look at properties</Button>
+          <Button onClick={() => findPotion({mixture: mixtureProperties})}>look at potions</Button>
           <Button
             onClick={() =>
               handleAddIngredients({ ingredients: playerIngredients, userId })

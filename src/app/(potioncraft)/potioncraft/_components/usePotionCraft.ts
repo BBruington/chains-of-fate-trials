@@ -1,10 +1,7 @@
 "use client";
 import { EMPTY_INGREDIENT } from "@/constants";
 import { DragStartEvent, DragOverEvent } from "@dnd-kit/core";
-import {
-  Ingredient,
-  User,
-} from "@prisma/client";
+import { Ingredient, User } from "@prisma/client";
 import { useState } from "react";
 import { z } from "zod";
 import {
@@ -165,6 +162,7 @@ export function usePotionCraft(
   const findPotionSchema = z.object({
     mixture: mixturePropertiesSchema,
   });
+
   //get potions of appropriate rarity
   //find craftable potion(s) with mixture: potion primary attribute === mixture primary attribute
   //check requirements for potion vs mixture ie: required type(s)
@@ -175,7 +173,56 @@ export function usePotionCraft(
   ): z.infer<typeof PotionSchema> | undefined {
     const { mixture } = findPotionSchema.parse(props);
 
-    return commonPotions.find((potion) => {
+    let potions;
+
+    if (mixture.rarity === "COMMON") potions = commonPotions;
+
+    potions?.filter(
+      (potion) =>
+        potion[mixture.primaryAttribute as keyof MagicProperties] ===
+        mixture[mixture.primaryAttribute as keyof MagicProperties],
+    );
+    if (potions === undefined) return;
+
+    const potionSecondaryAttributes = potions.map((potion) => {
+      const potionKeys = Object.keys(initialPotionProperties);
+      const matchingSecondaryAttributes = potionKeys.filter((key) => {
+        const potionValue = Math.max(potion[key as keyof MagicProperties], 0);
+        const combinedValue = Math.max(
+          mixtureProperties[key as keyof MagicProperties],
+          0,
+        );
+        return (
+          potionValue === combinedValue &&
+          potionValue !== 0 &&
+          key.toUpperCase() !== potion.primaryAttribute
+        );
+      });
+      return { potion, secondaryAttributes: matchingSecondaryAttributes };
+    });
+
+    const answer = potionSecondaryAttributes.reduce(
+      (initialPotion, nextPotion) => {
+        if (
+          initialPotion.secondaryAttributes.length ===
+          nextPotion.secondaryAttributes.length
+        ) {
+          const randomPotion = Math.floor(Math.random() * 2);
+          return [initialPotion, nextPotion][randomPotion];
+        }
+        if (
+          initialPotion.secondaryAttributes.length >
+          nextPotion.secondaryAttributes.length
+        ) {
+          return initialPotion;
+        } else return nextPotion;
+      },
+    );
+
+    console.log(potionSecondaryAttributes);
+    console.log(answer.potion);
+
+    return potions.find((potion) => {
       return Object.keys(initialPotionProperties).every((key) => {
         const potionValue = Math.max(potion[key as keyof MagicProperties], 0);
         const combinedValue = Math.max(
@@ -279,6 +326,13 @@ export function usePotionCraft(
       return initialPotionProperties;
     }
 
+    console.log({
+      ...properties,
+      primaryAttribute: primaryAttribute[0],
+      rarity: allRarities[currentRarity],
+      magicTypes: MagicTypesOfHighestRarity,
+    });
+
     setMixtureProperties({
       ...properties,
       primaryAttribute: primaryAttribute[0],
@@ -339,6 +393,9 @@ export function usePotionCraft(
     userIngredients,
     filteredUserIngredients,
     activeIngredient,
+    mixtureProperties,
+    findMixtureProperties,
+    findPotion,
     handleFilterIngredients,
     handleResetIngredients,
     handleAddIngredients,

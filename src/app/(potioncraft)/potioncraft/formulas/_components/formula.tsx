@@ -26,7 +26,7 @@ export default function UserFormula({ formula }: FormulaProps) {
 
       <h2 className="border-b border-secondary text-lg">Ingredients</h2>
       <ul>
-        {formula.ingredient1 && <li className="">1. {formula.ingredient1}</li>}
+        {formula.ingredient1 && <li>1. {formula.ingredient1}</li>}
         {formula.ingredient2 && <li>2. {formula.ingredient2}</li>}
         {formula.ingredient3 && <li>3. {formula.ingredient3}</li>}
         {formula.ingredient4 && <li>4. {formula.ingredient4}</li>}

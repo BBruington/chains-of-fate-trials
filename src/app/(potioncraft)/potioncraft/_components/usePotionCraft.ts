@@ -266,7 +266,7 @@ export function usePotionCraft(
       (ingredient) => allRarities[currentRarity] === ingredient.rarity,
     );
 
-    const MagicTypesOfHighestRarity = allIngredientsHighesRarity.map(
+    const magicTypesOfHighestRarity = allIngredientsHighesRarity.map(
       (ingredient) => {
         return ingredient.type;
       },
@@ -321,17 +321,19 @@ export function usePotionCraft(
       return initialPotionProperties;
     }
 
+    console.log(mixtureProperties)
+
     setMixtureProperties({
       ...properties,
       primaryAttribute: primaryAttribute[0],
       rarity: allRarities[currentRarity],
-      magicTypes: MagicTypesOfHighestRarity,
+      magicTypes: magicTypesOfHighestRarity,
     });
     return {
       ...properties,
       primaryAttribute: primaryAttribute[0],
       rarity: allRarities[currentRarity],
-      magicTypes: MagicTypesOfHighestRarity,
+      magicTypes: magicTypesOfHighestRarity,
     };
   }
 

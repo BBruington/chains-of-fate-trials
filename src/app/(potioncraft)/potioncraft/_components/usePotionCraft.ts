@@ -178,14 +178,15 @@ export function usePotionCraft(
 
     if (mixture.rarity === "COMMON") potions = commonPotions;
 
-    potions?.filter(
+    const potionsMatchingPrimaryAttribute = potions?.filter(
       (potion) =>
         potion[mixture.primaryAttribute as keyof MagicProperties] ===
         mixture[mixture.primaryAttribute as keyof MagicProperties],
     );
-    if (potions === undefined) return;
 
-    const potionSecondaryAttributes = potions.map((potion) => {
+    if (potionsMatchingPrimaryAttribute === undefined || potionsMatchingPrimaryAttribute.length === 0) return;
+
+    const potionSecondaryAttributes = potionsMatchingPrimaryAttribute.map((potion) => {
       const potionKeys = Object.keys(initialPotionProperties);
       const matchingSecondaryAttributes = potionKeys.filter((key) => {
         const potionValue = Math.max(potion[key as keyof MagicProperties], 0);
@@ -310,20 +311,15 @@ export function usePotionCraft(
 
     const propertiesArray = Object.values(properties);
     const maxValue = Math.max(...propertiesArray);
+
     const primaryAttribute = Object.keys(properties).filter(
       (key) => properties[key as keyof MagicProperties] === maxValue,
     );
 
     if (primaryAttribute.length !== 1) {
+      setMixtureProperties(initialPotionProperties);
       return initialPotionProperties;
     }
-
-    console.log({
-      ...properties,
-      primaryAttribute: primaryAttribute[0],
-      rarity: allRarities[currentRarity],
-      magicTypes: MagicTypesOfHighestRarity,
-    });
 
     setMixtureProperties({
       ...properties,
@@ -350,32 +346,36 @@ export function usePotionCraft(
   function handleIngredientDragEnd(event: DragOverEvent) {
     setActiveIngredient(null);
     const { active, over } = event;
-    const activeItem = userIngredients.find((item) => item.id === active.id);
-    if (over !== null && activeItem !== undefined) {
-      if (mixture[Number(over?.id)].id !== "empty") return;
-      const newMixture = mixture.map((mix, index) => {
+    const draggedIngredient = userIngredients.find(
+      (item) => item.id === active.id,
+    );
+    const mixtureSpot = over !== null;
+    if (mixtureSpot && draggedIngredient !== undefined) {
+      const mixtureSpotFilled = mixture[Number(over?.id)].id !== "empty";
+      if (mixtureSpotFilled) return;
+      const mixtureWithDraggedIngredient = mixture.map((mix, index) => {
         if (index === over.id) {
-          return activeItem;
+          return draggedIngredient;
         }
         return mix;
       });
-      setMixture(newMixture);
-      findMixtureProperties(newMixture);
-      if (activeItem.quantity === 1) {
-        const ingredientsWithoutActive = userIngredients.filter(
-          (item) => item !== activeItem,
+      setMixture(mixtureWithDraggedIngredient);
+      findMixtureProperties(mixtureWithDraggedIngredient);
+      if (draggedIngredient.quantity === 1) {
+        const ingredientsWithoutDragged = userIngredients.filter(
+          (item) => item !== draggedIngredient,
         );
-        setUserIngredients(ingredientsWithoutActive);
-        handleFilterIngredients({ ingredients: ingredientsWithoutActive });
+        setUserIngredients(ingredientsWithoutDragged);
+        handleFilterIngredients({ ingredients: ingredientsWithoutDragged });
       } else {
-        const newUserIngredients = userIngredients.map((ingredient) => {
-          if (ingredient.id === activeItem.id) {
+        const ingredientsUpdatedQuantity = userIngredients.map((ingredient) => {
+          if (ingredient.id === draggedIngredient.id) {
             return { ...ingredient, quantity: ingredient.quantity - 1 };
           }
           return ingredient;
         });
-        setUserIngredients(newUserIngredients);
-        handleFilterIngredients({ ingredients: newUserIngredients });
+        setUserIngredients(ingredientsUpdatedQuantity);
+        handleFilterIngredients({ ingredients: ingredientsUpdatedQuantity });
       }
     }
   }

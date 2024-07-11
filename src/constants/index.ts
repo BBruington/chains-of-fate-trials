@@ -35,3 +35,15 @@ export const EMPTY_POTION = {
   necromancy: 20,
   transmutation: 3,
 };
+
+export const BLANK_FORMULA = {
+  id: "empty",
+  userId: "empty",
+  name: "Blank",
+  description: "blank",
+  rarity: Rarity["EMPTY"],
+  ingredient1: null,
+  ingredient2: null,
+  ingredient3: null,
+  ingredient4: null,
+}

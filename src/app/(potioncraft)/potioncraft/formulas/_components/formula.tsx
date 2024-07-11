@@ -1,12 +1,24 @@
+import { Button } from "@/components/ui/button";
 import type { Formula } from "@prisma/client";
+import { useAtom } from "jotai";
+import { displayFormaula } from "../jotaiAtoms";
 
 interface FormulaProps {
   formula: Formula;
 }
 
 export default function UserFormula({ formula }: FormulaProps) {
+  const [selectedFormula, setSelectedFormula] =
+    useAtom<Formula>(displayFormaula);
+  const handleSelectFormula = () => {
+    setSelectedFormula(formula);
+  };
+
   return (
-    <div className="flex w-72 flex-col items-center bg-secondary-foreground/70 text-secondary rounded-sm">
+    <Button
+      onClick={handleSelectFormula}
+      className="flex h-fit w-72 flex-col items-center rounded-sm border border-secondary bg-secondary-foreground/70 text-secondary hover:cursor-pointer hover:bg-secondary-foreground/60"
+    >
       <h1 className="w-full border-b border-secondary text-center text-2xl">
         {formula.name}
       </h1>
@@ -19,6 +31,6 @@ export default function UserFormula({ formula }: FormulaProps) {
         {formula.ingredient3 && <li>3. {formula.ingredient3}</li>}
         {formula.ingredient4 && <li>4. {formula.ingredient4}</li>}
       </ul>
-    </div>
+    </Button>
   );
 }

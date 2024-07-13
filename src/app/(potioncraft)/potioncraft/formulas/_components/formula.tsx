@@ -24,13 +24,19 @@ export default function UserFormula({ formula }: FormulaProps) {
       </h1>
       <h2>Effect: {formula.description}</h2>
 
-      <h2 className="border-b border-secondary text-lg">Ingredients</h2>
-      <ul>
-        {formula.ingredient1 && <li>1. {formula.ingredient1}</li>}
-        {formula.ingredient2 && <li>2. {formula.ingredient2}</li>}
-        {formula.ingredient3 && <li>3. {formula.ingredient3}</li>}
-        {formula.ingredient4 && <li>4. {formula.ingredient4}</li>}
-      </ul>
+      {formula.ingredient1 === null ? (
+        <></>
+      ) : (
+        <>
+          <h2 className="border-b border-secondary text-lg">Ingredients</h2>
+          <ul>
+            {formula.ingredient1 && <li>1. {formula.ingredient1}</li>}
+            {formula.ingredient2 && <li>2. {formula.ingredient2}</li>}
+            {formula.ingredient3 && <li>3. {formula.ingredient3}</li>}
+            {formula.ingredient4 && <li>4. {formula.ingredient4}</li>}
+          </ul>
+        </>
+      )}
     </Button>
   );
 }

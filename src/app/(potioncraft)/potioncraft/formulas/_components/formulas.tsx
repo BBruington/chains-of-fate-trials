@@ -5,8 +5,6 @@ import UserFormula from "./formula";
 import DisplayFormula from "./displayFormula";
 import { Button } from "@/components/ui/button";
 import { addNewFormula } from "../actions";
-import { z } from "zod";
-import { FormulaSchema } from "../../../../../../prisma/generated/zod";
 
 interface FormulasProps {
   formulas: Formula[];

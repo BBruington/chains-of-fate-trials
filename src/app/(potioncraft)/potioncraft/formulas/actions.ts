@@ -26,6 +26,31 @@ const SaveFormulaSchema = z.object({
   formula: FormulaSchema,
 });
 
+const RemoveFormulaSchema = z.object({
+  formula: FormulaSchema,
+});
+
+export const removeFormula = async (
+  props: z.infer<typeof RemoveFormulaSchema>,
+): Promise<void> => {
+  try {
+    const { formula } = RemoveFormulaSchema.parse(props);
+
+    await prisma.formula.delete({
+      where: {
+        id: formula.id,
+      },
+    });
+    revalidatePath(`${process.env.BASE_URL}/potioncraft/formulas`);
+  } catch (error) {
+    console.error("Error removing formula");
+    if (error instanceof z.ZodError) {
+      throw new Error("Invalid input for removing formula");
+    }
+    throw new Error("Failed to remove formula");
+  }
+};
+
 export const addNewFormula = async (
   props: z.infer<typeof AddNewFormulaSchema>,
 ): Promise<void> => {
@@ -66,6 +91,7 @@ export const saveFormula = async (
         ...formula,
       },
     });
+    revalidatePath(`${process.env.BASE_URL}/potioncraft/formulas`);
   } catch (error) {
     console.error("Error saving formula: ", error);
     if (error instanceof z.ZodError) {

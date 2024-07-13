@@ -10,6 +10,7 @@ import {
   MagicTypeSchema,
   PrimaryAttributeSchema,
 } from "../../../../prisma/generated/zod";
+
 const PotionSchema = z.object({
   id: z.number(),
   rarity: RaritySchema,

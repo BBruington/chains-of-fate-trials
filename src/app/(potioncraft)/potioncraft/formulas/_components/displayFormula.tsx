@@ -64,7 +64,6 @@ export default function DisplayFormula() {
   ];
 
   const handleAddIngredient = () => {
-    console.log(selectedFormula)
     if (selectedFormula.ingredient1 === null) {
       setSelectedFormula({
         ...selectedFormula,

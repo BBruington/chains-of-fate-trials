@@ -1,4 +1,3 @@
-import Droppable from "@/components/dndkit/dropable";
 import { EMPTY_INGREDIENT } from "@/constants";
 
 export default function Loading() {

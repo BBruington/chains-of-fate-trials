@@ -34,7 +34,37 @@ export default function DisplayFormula() {
   const [selectedFormula, setSelectedFormula] =
     useAtom<Formula>(displayFormaula);
 
+  interface FormulaIngredient {
+    ingredientNum:
+      | "ingredient1"
+      | "ingredient2"
+      | "ingredient3"
+      | "ingredient4";
+    ingredientName: string | null;
+  }
+  type FormulaIngredientsProps = FormulaIngredient[];
+
+  const formulaIngredients: FormulaIngredientsProps = [
+    {
+      ingredientNum: "ingredient1",
+      ingredientName: selectedFormula.ingredient1,
+    },
+    {
+      ingredientNum: "ingredient2",
+      ingredientName: selectedFormula.ingredient2,
+    },
+    {
+      ingredientNum: "ingredient3",
+      ingredientName: selectedFormula.ingredient3,
+    },
+    {
+      ingredientNum: "ingredient4",
+      ingredientName: selectedFormula.ingredient4,
+    },
+  ];
+
   const handleAddIngredient = () => {
+    console.log(selectedFormula)
     if (selectedFormula.ingredient1 === null) {
       setSelectedFormula({
         ...selectedFormula,
@@ -220,7 +250,7 @@ export default function DisplayFormula() {
                     Potion Rarity
                   </FormLabel>
                   <FormControl>
-                    <Select           
+                    <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
@@ -228,7 +258,11 @@ export default function DisplayFormula() {
                         <SelectValue
                           className="text-secondary-foreground"
                           placeholder="Rarity"
-                        >{field.value === "EMPTY" ? selectedFormula.rarity : field.value}</SelectValue>
+                        >
+                          {field.value === "EMPTY"
+                            ? selectedFormula.rarity
+                            : field.value}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -273,18 +307,27 @@ export default function DisplayFormula() {
             )}
           />
 
-          {selectedFormula.ingredient1 && (
-            <IngredientFormfield ingredient="ingredient1" form={form} />
+          {formulaIngredients.map((ingredient) => (
+            <IngredientFormfield
+              key={ingredient.ingredientNum}
+              ingredientNum={ingredient.ingredientNum}
+              ingredientName={ingredient.ingredientName}
+              form={form}
+            />
+          ))}
+
+          {/* {selectedFormula.ingredient1 && (
+            <IngredientFormfield ingredientNum="ingredient1" form={form} />
           )}
           {selectedFormula.ingredient2 && (
-            <IngredientFormfield ingredient="ingredient2" form={form} />
+            <IngredientFormfield ingredientNum="ingredient2" form={form} />
           )}
           {selectedFormula.ingredient3 && (
-            <IngredientFormfield ingredient="ingredient3" form={form} />
+            <IngredientFormfield ingredientNum="ingredient3" form={form} />
           )}
           {selectedFormula.ingredient4 && (
-            <IngredientFormfield ingredient="ingredient4" form={form} />
-          )}
+            <IngredientFormfield ingredientNum="ingredient4" form={form} />
+          )} */}
         </div>
       </form>
     </Form>

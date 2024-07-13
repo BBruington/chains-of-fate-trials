@@ -65,13 +65,14 @@ model User {
   Formulas          Formula[]
   @@map(name: "users")
 }
+
 model Formula {
   id String @default(cuid()) @id
   userId String
   name String
   description String
   rarity Rarity @default(COMMON)
-  ingredient1 String?
+  ingredient1 String[]
   ingredient2 String?
   ingredient3 String?
   ingredient4 String?
@@ -85,7 +86,7 @@ model Ingredient {
   primaryAttribute   PrimaryAttribute @default(ABJURATION)
   name String @unique
   description String
-  quantity   Int @default(1)
+  quantity   Int @default(1) 
   abjuration Int @default(0)
   conjuration Int @default(0)
   divination Int @default(0)

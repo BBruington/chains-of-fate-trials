@@ -57,6 +57,50 @@ export function usePotionCraft(
     null,
   );
 
+  const handleOrderFilteredIngredients = (e: string) => {
+    if (e === "alphabet") {
+      const ingredientsByName = filteredUserIngredients.sort((a, b) =>
+        a.name.localeCompare(b.name),
+      );
+
+      setUserIngredients(ingredientsByName);
+      handleFilterIngredients({ ingredients: ingredientsByName });
+    }
+    if (e === "type") {
+      const ingredientType = {
+        EMPTY: 0,
+        ARCANE: 1,
+        DIVINE: 2,
+        OCCULT: 3,
+        PRIMAL: 4,
+      };
+      const ingredientsByType = filteredUserIngredients.sort((a, b) => {
+        const typeA = a.type;
+        const typeB = b.type;
+        return ingredientType[typeA] - ingredientType[typeB];
+      });
+      setUserIngredients(ingredientsByType);
+      handleFilterIngredients({ ingredients: ingredientsByType });
+    }
+    if (e === "rarity") {
+      const ingredientRarity = {
+        EMPTY: 0,
+        COMMON: 1,
+        UNCOMMON: 2,
+        RARE: 3,
+        VERYRARE: 4,
+        LEGENDARY: 5,
+      };
+      const ingredientsByRarity = filteredUserIngredients.sort((a, b) => {
+        const rarityA = a.rarity;
+        const rarityB = b.rarity;
+        return ingredientRarity[rarityA] - ingredientRarity[rarityB];
+      });
+      setUserIngredients(ingredientsByRarity);
+      handleFilterIngredients({ ingredients: ingredientsByRarity });
+    }
+  };
+
   const handleFilterIngredients = ({
     event,
     ingredients,
@@ -184,24 +228,30 @@ export function usePotionCraft(
         mixture[mixture.primaryAttribute as keyof MagicProperties],
     );
 
-    if (potionsMatchingPrimaryAttribute === undefined || potionsMatchingPrimaryAttribute.length === 0) return;
+    if (
+      potionsMatchingPrimaryAttribute === undefined ||
+      potionsMatchingPrimaryAttribute.length === 0
+    )
+      return;
 
-    const potionSecondaryAttributes = potionsMatchingPrimaryAttribute.map((potion) => {
-      const potionKeys = Object.keys(initialPotionProperties);
-      const matchingSecondaryAttributes = potionKeys.filter((key) => {
-        const potionValue = Math.max(potion[key as keyof MagicProperties], 0);
-        const combinedValue = Math.max(
-          mixtureProperties[key as keyof MagicProperties],
-          0,
-        );
-        return (
-          potionValue === combinedValue &&
-          potionValue !== 0 &&
-          key.toUpperCase() !== potion.primaryAttribute
-        );
-      });
-      return { potion, secondaryAttributes: matchingSecondaryAttributes };
-    });
+    const potionSecondaryAttributes = potionsMatchingPrimaryAttribute.map(
+      (potion) => {
+        const potionKeys = Object.keys(initialPotionProperties);
+        const matchingSecondaryAttributes = potionKeys.filter((key) => {
+          const potionValue = Math.max(potion[key as keyof MagicProperties], 0);
+          const combinedValue = Math.max(
+            mixtureProperties[key as keyof MagicProperties],
+            0,
+          );
+          return (
+            potionValue === combinedValue &&
+            potionValue !== 0 &&
+            key.toUpperCase() !== potion.primaryAttribute
+          );
+        });
+        return { potion, secondaryAttributes: matchingSecondaryAttributes };
+      },
+    );
 
     const answer = potionSecondaryAttributes.reduce(
       (initialPotion, nextPotion) => {
@@ -321,7 +371,7 @@ export function usePotionCraft(
       return initialPotionProperties;
     }
 
-    console.log(mixtureProperties)
+    console.log(mixtureProperties);
 
     setMixtureProperties({
       ...properties,
@@ -405,6 +455,7 @@ export function usePotionCraft(
     findPotion,
     addFormula,
     handleFilterIngredients,
+    handleOrderFilteredIngredients,
     handleResetIngredients,
     handleAddIngredients,
     handleCraftPotion,

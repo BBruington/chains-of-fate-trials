@@ -33,6 +33,7 @@ export default function PotionCraftComponent({
     addFormula,
     handleResetIngredients,
     handleFilterIngredients,
+    handleOrderFilteredIngredients,
     handleAddIngredients,
     handleCraftPotion,
     handleIncrementIngredient,
@@ -96,6 +97,7 @@ export default function PotionCraftComponent({
             <IngredientList
               ingredients={filteredUserIngredients}
               handleFilterIngredients={handleFilterIngredients}
+              handleOrderFilteredIngredients={handleOrderFilteredIngredients}
               handleIncrementIngredient={handleIncrementIngredient}
             />
           </div>

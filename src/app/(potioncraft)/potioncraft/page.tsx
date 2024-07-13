@@ -3,33 +3,28 @@ import PotionCraftComponent from "./_components/potion-craft";
 import { prisma } from "@/app/utils/context";
 
 export default async function PotionCraftPage() {
-  const user = await currentUser();
+  const clerkUser = await currentUser();
 
-  if (user === null) return <div>Not signed in</div>;
+  if (clerkUser === null) return <div>Not signed in</div>;
 
-  const ingredients = await prisma.ingredient.findMany({
+  const user = await prisma.user.findUnique({
     where: {
-      userId: user.id,
+      clerkId: clerkUser.id
     },
-  });
-
-  const potions = await prisma.potion.findMany({
-    where: {
-      userId: user.id,
-    },
-  });
-  const formulas = await prisma.formula.findMany({
-    where: {
-      userId: user.id,
-    },
-  });
+    select: {
+      Ingredients: true,
+      Potions: true,
+      Formulas: true
+    }
+  })
+  if(user === null) return <div>Could not find user</div>
 
   return (
     <PotionCraftComponent
-      ingredients={ingredients}
-      userId={user.id}
-      potions={potions}
-      formulas={formulas}
+      ingredients={user.Ingredients}
+      userId={clerkUser.id}
+      potions={user.Potions}
+      formulas={user.Formulas}
     />
   );
 }

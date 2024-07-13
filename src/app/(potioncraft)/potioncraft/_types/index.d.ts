@@ -9,6 +9,7 @@ export interface IngredientListProps {
     event,
     ingredients,
   }: HandleFilterIngredientsProps) => void;
+  handleOrderFilteredIngredients: (e: string) => void;
   handleIncrementIngredient: ({
     ingredient,
   }: {

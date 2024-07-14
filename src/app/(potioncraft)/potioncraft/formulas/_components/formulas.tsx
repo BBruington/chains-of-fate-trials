@@ -2,7 +2,7 @@
 
 import { Formula, Rarity, User } from "@prisma/client";
 import UserFormula from "./formula";
-import DisplayFormula from "./displayFormula";
+import DisplayFormula from "./display-formula";
 import { Button } from "@/components/ui/button";
 import { addNewFormula } from "../actions";
 

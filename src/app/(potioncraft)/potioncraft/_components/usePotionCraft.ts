@@ -63,7 +63,7 @@ export function usePotionCraft(
         a.name.localeCompare(b.name),
       );
 
-      setUserIngredients(ingredientsByName);
+      setFilteredUserIngredients(ingredientsByName);
       handleFilterIngredients({ ingredients: ingredientsByName });
     }
     if (e === "type") {
@@ -79,7 +79,7 @@ export function usePotionCraft(
         const typeB = b.type;
         return ingredientType[typeA] - ingredientType[typeB];
       });
-      setUserIngredients(ingredientsByType);
+      setFilteredUserIngredients(ingredientsByType);
       handleFilterIngredients({ ingredients: ingredientsByType });
     }
     if (e === "rarity") {
@@ -96,7 +96,7 @@ export function usePotionCraft(
         const rarityB = b.rarity;
         return ingredientRarity[rarityA] - ingredientRarity[rarityB];
       });
-      setUserIngredients(ingredientsByRarity);
+      setFilteredUserIngredients(ingredientsByRarity);
       handleFilterIngredients({ ingredients: ingredientsByRarity });
     }
   };
@@ -107,6 +107,7 @@ export function usePotionCraft(
   }: HandleFilterIngredientsProps) => {
     if (event?.target.value === "") {
       setFilteredUserIngredients(userIngredients);
+      setFilteredIngredientsInput('')
       return;
     }
     const ingredientInput = event?.target.value
@@ -270,9 +271,6 @@ export function usePotionCraft(
         } else return nextPotion;
       },
     );
-
-    console.log(potionSecondaryAttributes);
-    console.log(answer.potion);
 
     return answer.potion;
   }

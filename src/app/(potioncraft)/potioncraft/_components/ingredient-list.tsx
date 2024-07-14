@@ -1,9 +1,12 @@
 import Draggable from "@/components/dndkit/draggable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { IngredientListProps, IngredientItemProps } from "../_types";
+import { IngredientListProps, IngredientItemProps, RarityStyleProps, IngredientIconProps } from "../_types";
 import { EMPTY_INGREDIENT } from "@/constants";
 import { cn } from "@/lib/utils";
+import skull from "@/../public/icons/skull.svg"
+import wizardHat from "@/../public/icons/wizard-hat.svg"
+import scroll from "@/../public/icons/scroll.svg"
 import {
   Select,
   SelectContent,
@@ -13,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Image from "next/image";
 
 export default function IngredientList({
   ingredients,
@@ -46,10 +50,10 @@ export default function IngredientList({
         {ingredients.length === 0 ? (
           <Draggable id={"empty"} item={EMPTY_INGREDIENT} disabled={true} />
         ) : (
-          ingredients.map((item) => (
+          ingredients.map((ingredient) => (
             <IngredientItem
-              key={item.id}
-              item={item}
+              key={ingredient.id}
+              ingredient={ingredient}
               onIncrement={handleIncrementIngredient}
             />
           ))
@@ -59,29 +63,41 @@ export default function IngredientList({
   );
 }
 
-function IngredientItem({ item, onIncrement }: IngredientItemProps) {
-  const rarityStyles = {
+function IngredientItem({ ingredient, onIncrement }: IngredientItemProps) {
+
+  const rarityStyles: RarityStyleProps = {
     COMMON: "bg-slate-600",
     UNCOMMON: "bg-green-900",
     RARE: "bg-blue-900",
+    VERYRARE: "bg-purple-900",
+    LEGENDARY: "bg-orange-800"
   };
+
+  const ingredientIcon: IngredientIconProps = {
+    ARCANE: wizardHat,
+    DIVINE: wizardHat,
+    OCCULT: skull,
+    PRIMAL: scroll,
+  }
+
   return (
     <div
       className={cn(
         "flex items-center rounded-sm border-b px-2",
-        rarityStyles[item.rarity],
+        rarityStyles[ingredient.rarity as keyof RarityStyleProps],
       )}
     >
+      <Image className="w-4" src={ingredientIcon[ingredient.type as keyof IngredientIconProps]} alt="Picture of a skull"/>
       <Draggable
         showQuantity={true}
-        id={item.id}
-        item={item}
-        className={rarityStyles[item.rarity]}
+        id={ingredient.id}
+        item={ingredient}
+        className={`${rarityStyles[ingredient.rarity as keyof RarityStyleProps]}`}
       />
       <Button
-        onClick={() => onIncrement({ ingredient: item })}
+        onClick={() => onIncrement({ ingredient })}
         className="ml-1 h-6 w-10 text-xs"
-        aria-label={`Add ${item.name}`}
+        aria-label={`Add ${ingredient.name}`}
       >
         Add
       </Button>

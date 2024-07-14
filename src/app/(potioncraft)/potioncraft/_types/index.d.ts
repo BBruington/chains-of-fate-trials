@@ -18,10 +18,25 @@ export interface IngredientListProps {
 }
 
 export interface IngredientItemProps {
-  item: Ingredient;
+  ingredient: Ingredient;
   onIncrement: ({
     ingredient,
   }: {
     ingredient: z.infer<typeof IngredientSchema>;
   }) => Promise<void>;
+}
+
+export interface RarityStyleProps {
+  COMMON: string;
+  UNCOMMON: string;
+  RARE: string;
+  VERYRARE: string;
+  LEGENDARY: string;
+}
+
+export interface IngredientIconProps {
+  ARCANE: StaticImport;
+  DIVINE: StaticImport;
+  OCCULT: StaticImport;
+  PRIMAL: StaticImport;
 }

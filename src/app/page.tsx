@@ -1,10 +1,10 @@
 "use client";
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import Droppable from "@/components/dndkit/dropable";
 import Draggable from "@/components/dndkit/draggable";
+import Droppable from "@/components/dndkit/dropable";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { Reflect } from "@rocicorp/reflect/client";
-import { mutators } from "./utils/reflect/mutators";
 import { useSubscribe } from "@rocicorp/reflect/react";
+import { mutators } from "./utils/reflect/mutators";
 
 export default function Home() {
   return (
@@ -24,8 +24,11 @@ export default function Home() {
           </Droppable>
         ))}
       </DndContext>
+<<<<<<< HEAD
       Test PR
 >>>>>>> 3900b64 (Test PR)
+=======
+>>>>>>> a31f44c (Pose and Pose Mirror Update)
     </main>
   );
 }

@@ -1,10 +1,10 @@
 "use client";
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import Droppable from "@/components/dndkit/dropable";
 import Draggable from "@/components/dndkit/draggable";
+import Droppable from "@/components/dndkit/dropable";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { Reflect } from "@rocicorp/reflect/client";
-import { mutators } from "./utils/reflect/mutators";
 import { useSubscribe } from "@rocicorp/reflect/react";
+import { mutators } from "./utils/reflect/mutators";
 
 export default function Home() {
   const reflect = new Reflect({
@@ -24,7 +24,9 @@ export default function Home() {
   const handleDragEnd = async (event: DragEndEvent) => {
     const { over } = event;
     const newId = over ? over.id : null;
-    await reflect.mutate.handleDragEnd(typeof newId === "string" ? newId : null);
+    await reflect.mutate.handleDragEnd(
+      typeof newId === "string" ? newId : null
+    );
   };
 
   const handleCount = async () => {
@@ -52,7 +54,6 @@ export default function Home() {
           </Droppable>
         ))}
       </DndContext>
-      Test PR
     </main>
   );
 }

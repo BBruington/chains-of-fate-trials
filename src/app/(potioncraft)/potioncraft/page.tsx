@@ -9,15 +9,15 @@ export default async function PotionCraftPage() {
 
   const user = await prisma.user.findUnique({
     where: {
-      clerkId: clerkUser.id
+      clerkId: clerkUser.id,
     },
     select: {
       Ingredients: true,
       Potions: true,
-      Formulas: true
-    }
-  })
-  if(user === null) return <div>Could not find user</div>
+      Formulas: true,
+    },
+  });
+  if (user === null) return <div>Could not find user</div>;
 
   return (
     <PotionCraftComponent

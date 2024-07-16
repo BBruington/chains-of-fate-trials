@@ -2,10 +2,10 @@
 import { Potion } from "@prisma/client";
 import Link from "next/link";
 import { useAtom } from "jotai";
-import { displayPotion } from "../potions/jotaiAtoms";
+import { displayPotion } from "../jotaiAtoms";
 
 export default function DisplayPotion() {
-  const [selectedPotion, setSelectedPotion] = useAtom<Potion>(displayPotion);
+  const [selectedPotion] = useAtom<Potion>(displayPotion);
   return (
     <div className="flex h-60 w-96 flex-col justify-center bg-secondary text-center">
       <h1 className="p-2 text-2xl">Potion of {selectedPotion.name}</h1>

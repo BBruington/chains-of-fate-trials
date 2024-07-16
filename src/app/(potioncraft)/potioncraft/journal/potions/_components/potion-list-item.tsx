@@ -1,20 +1,19 @@
-"use client"
+"use client";
 
 import { Potion } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { useAtom } from "jotai";
-import { displayPotion } from "../potions/jotaiAtoms";
+import { displayPotion } from "../jotaiAtoms";
 
 interface PotionListItemProps {
   potion: Potion;
 }
 export default function PotionListItem({ potion }: PotionListItemProps) {
-
   const [selectedPotion, setSelectedPotion] = useAtom<Potion>(displayPotion);
 
   const handleSelectPotion = () => {
-    setSelectedPotion(potion)
-  }
+    setSelectedPotion(potion);
+  };
 
   return (
     <Button

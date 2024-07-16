@@ -170,165 +170,162 @@ export default function DisplayFormula() {
 
   return (
     <Form {...form}>
-      <form
-        className="flex w-full flex-col items-center justify-start border bg-secondary-foreground/60 text-secondary"
-        onSubmit={handleSubmit(handleSaveFormula)}
-      >
-        <div className="flex flex-col">
-          <Button
-            type="button"
-            onClick={handleAddIngredient}
-            disabled={
-              selectedFormula.ingredient4 !== null ||
-              selectedFormula.id === "empty"
-            }
-          >
-            Add Ingredient
-          </Button>
-          <Button
-            type="button"
-            disabled={selectedFormula.id === "empty"}
-            onClick={handleRemoveFormula}
-          >
-            Delete Formula
-          </Button>
-          <Button type="submit" disabled={selectedFormula.id === "empty"}>
-            Save Changes
-          </Button>
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <div>
-                  <FormLabel className="text-2xl" htmlFor="name">
-                    Formula Name
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      id="name"
-                      className="text-secondary-foreground"
-                      disabled={selectedFormula.id === "Blank"}
-                      placeholder="Formula Name"
-                      {...field}
-                    />
-                  </FormControl>
-                </div>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <div>
-                  <FormLabel className="text-2xl" htmlFor="description">
-                    Formula Description
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      id="description"
-                      disabled={selectedFormula.id === "Blank"}
-                      className="text-secondary-foreground"
-                      placeholder="formula title"
-                      {...field}
-                    />
-                  </FormControl>
-                </div>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="rarity"
-            render={({ field }) => (
-              <FormItem>
-                <div>
-                  <FormLabel className="text-2xl" htmlFor="rarity">
-                    Potion Rarity
-                  </FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <SelectTrigger className="w-[180px] text-secondary-foreground">
-                        <SelectValue
-                          className="text-secondary-foreground"
-                          placeholder="Rarity"
-                        >
-                          {field.value === "EMPTY"
-                            ? selectedFormula.rarity
-                            : field.value}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Rarities</SelectLabel>
-                          <SelectItem
-                            {...field}
-                            id="rarity"
-                            value={Rarity["COMMON"]}
-                          >
-                            Common
-                          </SelectItem>
-                          <SelectItem {...field} id="rarity" value={"UNCOMMON"}>
-                            Uncommon
-                          </SelectItem>
-                          <SelectItem
-                            {...field}
-                            id="rarity"
-                            value={Rarity["RARE"]}
-                          >
-                            Rare
-                          </SelectItem>
-                          <SelectItem
-                            {...field}
-                            id="rarity"
-                            value={Rarity["VERYRARE"]}
-                          >
-                            Very Rare
-                          </SelectItem>
-                          <SelectItem
-                            {...field}
-                            id="rarity"
-                            value={Rarity["LEGENDARY"]}
-                          >
-                            Legendary
-                          </SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </div>
-              </FormItem>
-            )}
-          />
-
-          {formulaIngredients.map((ingredient) => (
-            <IngredientFormfield
-              key={ingredient.ingredientNum}
-              ingredientNum={ingredient.ingredientNum}
-              ingredientName={ingredient.ingredientName}
-              form={form}
-            />
-          ))}
-
-          {/* {selectedFormula.ingredient1 && (
-            <IngredientFormfield ingredientNum="ingredient1" form={form} />
-          )}
-          {selectedFormula.ingredient2 && (
-            <IngredientFormfield ingredientNum="ingredient2" form={form} />
-          )}
-          {selectedFormula.ingredient3 && (
-            <IngredientFormfield ingredientNum="ingredient3" form={form} />
-          )}
-          {selectedFormula.ingredient4 && (
-            <IngredientFormfield ingredientNum="ingredient4" form={form} />
-          )} */}
+      {selectedFormula.id === "empty" ? (
+        <div className="flex h-full w-full flex-col items-center border bg-secondary-foreground/60 text-secondary text-3xl pt-10">
+          Select a Formula to Edit
         </div>
-      </form>
+      ) : (
+        <form
+          className="flex w-full flex-col items-center justify-start border bg-secondary-foreground/60 text-secondary"
+          onSubmit={handleSubmit(handleSaveFormula)}
+        >
+          <div className="flex flex-col">
+            <Button
+              type="button"
+              onClick={handleAddIngredient}
+              disabled={
+                selectedFormula.ingredient4 !== null ||
+                selectedFormula.id === "empty"
+              }
+            >
+              Add Ingredient
+            </Button>
+            <Button
+              type="button"
+              disabled={selectedFormula.id === "empty"}
+              onClick={handleRemoveFormula}
+            >
+              Delete Formula
+            </Button>
+            <Button type="submit" disabled={selectedFormula.id === "empty"}>
+              Save Changes
+            </Button>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <div>
+                    <FormLabel className="text-2xl" htmlFor="name">
+                      Formula Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        id="name"
+                        className="text-secondary-foreground"
+                        disabled={selectedFormula.id === "Blank"}
+                        placeholder="Formula Name"
+                        {...field}
+                      />
+                    </FormControl>
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <div>
+                    <FormLabel className="text-2xl" htmlFor="description">
+                      Formula Description
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        id="description"
+                        disabled={selectedFormula.id === "Blank"}
+                        className="text-secondary-foreground"
+                        placeholder="formula title"
+                        {...field}
+                      />
+                    </FormControl>
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="rarity"
+              render={({ field }) => (
+                <FormItem>
+                  <div>
+                    <FormLabel className="text-2xl" htmlFor="rarity">
+                      Potion Rarity
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="w-[180px] text-secondary-foreground">
+                          <SelectValue
+                            className="text-secondary-foreground"
+                            placeholder="Rarity"
+                          >
+                            {field.value === "EMPTY"
+                              ? selectedFormula.rarity
+                              : field.value}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Rarities</SelectLabel>
+                            <SelectItem
+                              {...field}
+                              id="rarity"
+                              value={Rarity["COMMON"]}
+                            >
+                              Common
+                            </SelectItem>
+                            <SelectItem
+                              {...field}
+                              id="rarity"
+                              value={"UNCOMMON"}
+                            >
+                              Uncommon
+                            </SelectItem>
+                            <SelectItem
+                              {...field}
+                              id="rarity"
+                              value={Rarity["RARE"]}
+                            >
+                              Rare
+                            </SelectItem>
+                            <SelectItem
+                              {...field}
+                              id="rarity"
+                              value={Rarity["VERYRARE"]}
+                            >
+                              Very Rare
+                            </SelectItem>
+                            <SelectItem
+                              {...field}
+                              id="rarity"
+                              value={Rarity["LEGENDARY"]}
+                            >
+                              Legendary
+                            </SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            {formulaIngredients.map((ingredient) => (
+              <IngredientFormfield
+                key={ingredient.ingredientNum}
+                ingredientNum={ingredient.ingredientNum}
+                ingredientName={ingredient.ingredientName}
+                form={form}
+              />
+            ))}
+          </div>
+        </form>
+      )}
     </Form>
   );
 }

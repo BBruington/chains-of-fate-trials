@@ -2,7 +2,8 @@ import { prisma } from "@/app/utils/context";
 import { currentUser } from "@clerk/nextjs/server";
 import DisplayPotion from "./_components/display-potion";
 import PotionListItem from "./_components/potion-list-item";
-export default async function Journal() {
+
+export default async function PotionJournal() {
   const curUser = await currentUser();
   if (!curUser) return <div>Not signed in</div>;
 

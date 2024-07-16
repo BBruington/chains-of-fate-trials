@@ -74,12 +74,6 @@ export default function PotionCraftComponent({
           <Button className="my-5 w-36" onClick={handleCraftPotion}>
             Craft Potion
           </Button>
-          <Button
-            className="my-5 w-36"
-            onClick={() => findPotion({ mixture: mixtureProperties })}
-          >
-            Find Potion
-          </Button>
           <Button className="w-36" onClick={handleResetIngredients}>
             Reset Mixture
           </Button>

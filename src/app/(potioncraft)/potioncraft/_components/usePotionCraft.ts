@@ -63,7 +63,6 @@ export function usePotionCraft(
         a.name.localeCompare(b.name),
       );
 
-      setFilteredUserIngredients(ingredientsByName);
       handleFilterIngredients({ ingredients: ingredientsByName });
     }
     if (e === "type") {
@@ -79,7 +78,6 @@ export function usePotionCraft(
         const typeB = b.type;
         return ingredientType[typeA] - ingredientType[typeB];
       });
-      setFilteredUserIngredients(ingredientsByType);
       handleFilterIngredients({ ingredients: ingredientsByType });
     }
     if (e === "rarity") {
@@ -96,7 +94,6 @@ export function usePotionCraft(
         const rarityB = b.rarity;
         return ingredientRarity[rarityA] - ingredientRarity[rarityB];
       });
-      setFilteredUserIngredients(ingredientsByRarity);
       handleFilterIngredients({ ingredients: ingredientsByRarity });
     }
   };
@@ -107,7 +104,7 @@ export function usePotionCraft(
   }: HandleFilterIngredientsProps) => {
     if (event?.target.value === "") {
       setFilteredUserIngredients(userIngredients);
-      setFilteredIngredientsInput('')
+      setFilteredIngredientsInput("");
       return;
     }
     const ingredientInput = event?.target.value
@@ -271,13 +268,9 @@ export function usePotionCraft(
         } else return nextPotion;
       },
     );
-
+    console.log(answer)
     return answer.potion;
   }
-
-  //find highest ingredient(s) rarity and type
-  //find primary attribute
-  //find attribute values
 
   function findMixtureProperties(
     ingredients: z.infer<typeof IngredientSchema>[],
@@ -368,8 +361,6 @@ export function usePotionCraft(
       setMixtureProperties(initialPotionProperties);
       return initialPotionProperties;
     }
-
-    console.log(mixtureProperties);
 
     setMixtureProperties({
       ...properties,

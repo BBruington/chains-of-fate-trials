@@ -42,7 +42,8 @@ export default function PotionCraftComponent({
   } = usePotionCraft(ingredients, userId);
 
   return (
-    <div className="flex w-screen">
+    <div className="flex w-screen justify-between">
+      <div></div>
       <DndContext
         onDragStart={handleIngredientDragStart}
         onDragEnd={handleIngredientDragEnd}
@@ -57,42 +58,47 @@ export default function PotionCraftComponent({
             />
           ) : null}
         </DragOverlay>
-        <div className="flex flex-col">
-          <div className="column col-span-2">
+        <div className="flex flex-col items-center justify-center">
+          <h1 className="mb-7 text-3xl">Add Ingredients to Make a Potion</h1>
+          <div className="grid grid-cols-2 content-center">
             {mixture.map((mix, index) => (
               <Droppable
                 key={index}
-                className={`h-20 w-40 rounded-none bg-secondary text-xs ${mix.id === "empty" ? "bg-secondary/60 text-primary/60" : ""}`}
-                accepts={[
-                  ...ingredients.map((ingredient) => ingredient.id),
-                ]}
+                className={`h-32 w-52 rounded-none bg-secondary text-xs ${mix.id === "empty" ? "bg-secondary/60 text-primary/60" : ""}`}
+                accepts={[...ingredients.map((ingredient) => ingredient.id)]}
                 id={index}
                 item={mix}
               />
             ))}
           </div>
-          <Button onClick={handleCraftPotion}>Craft Potion</Button>
-          <Button onClick={handleResetIngredients}>Reset</Button>
-          <Button onClick={() => findMixtureProperties(mixture)}>look at properties</Button>
-          <Button onClick={() => findPotion({mixture: mixtureProperties})}>look at potion(s)</Button>
+          <Button className="my-5 w-36" onClick={handleCraftPotion}>
+            Craft Potion
+          </Button>
           <Button
+            className="my-5 w-36"
+            onClick={() => findPotion({ mixture: mixtureProperties })}
+          >
+            Find Potion
+          </Button>
+          <Button className="w-36" onClick={handleResetIngredients}>
+            Reset Mixture
+          </Button>
+          <Button
+            className="my-5 w-36"
             onClick={() =>
               handleAddIngredients({ ingredients: playerIngredients, userId })
             }
           >
             Reset Ingredients
           </Button>
-          <Button onClick={() => addFormula({mixture, userId})}>Add to formulas</Button>
-          {potions.map((potion) => (
-            <div
-              className="flex h-12 w-40 items-center bg-secondary p-1 text-justify text-xs"
-              key={potion.id}
-            >
-              {potion.name} {potion.quantity}
-            </div>
-          ))}
+          <Button
+            className="w-36"
+            onClick={() => addFormula({ mixture, userId })}
+          >
+            Add to formulas
+          </Button>
         </div>
-        <div className="flex h-screen w-full justify-end">
+        <div className="flex h-screen w-96 justify-end">
           <div className="flex h-screen w-96 flex-col items-center overflow-y-auto bg-secondary p-3">
             <IngredientList
               ingredients={filteredUserIngredients}

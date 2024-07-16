@@ -19,6 +19,25 @@ export const EMPTY_INGREDIENT = {
   transmutation: 0,
 };
 
+export const EMPTY_USER_POTION = {
+  id: 'empty',
+  userId: "empty",
+  name: "Empty",
+  type: MagicType["EMPTY"],
+  rarity: Rarity["EMPTY"],
+  primaryAttribute: PrimaryAttribute["EMPTY"],
+  description: "It's empty",
+  quantity: 0,
+  abjuration: 0,
+  conjuration: 0,
+  divination: 0,
+  enchantment: 0,
+  evocation: 0,
+  illusion: 0,
+  necromancy: 0,
+  transmutation: 0,
+};
+
 export const EMPTY_POTION = {
   id: 1,
   name: "Empty",
@@ -32,8 +51,8 @@ export const EMPTY_POTION = {
   enchantment: 0,
   evocation: 0,
   illusion: 0,
-  necromancy: 20,
-  transmutation: 3,
+  necromancy: 0,
+  transmutation: 0,
 };
 
 export const BLANK_FORMULA = {

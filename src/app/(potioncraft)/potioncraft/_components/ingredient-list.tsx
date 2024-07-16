@@ -40,9 +40,9 @@ export default function IngredientList({
         <SelectContent>
           <SelectGroup>
             <SelectLabel>Order By</SelectLabel>
-            <SelectItem value="alphabet">All Ingredients</SelectItem>
-            <SelectItem value="rarity">Ingredient Rarity</SelectItem>
-            <SelectItem value="type">Ingredient Type</SelectItem>
+            <SelectItem value="alphabet">Alphabetical</SelectItem>
+            <SelectItem value="rarity">Rarity</SelectItem>
+            <SelectItem value="type">Type</SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>
@@ -92,7 +92,7 @@ function IngredientItem({ ingredient, onIncrement }: IngredientItemProps) {
         showQuantity={true}
         id={ingredient.id}
         item={ingredient}
-        className={`${rarityStyles[ingredient.rarity as keyof RarityStyleProps]}`}
+        className={`text-white ${rarityStyles[ingredient.rarity as keyof RarityStyleProps]}`}
       />
       <Button
         onClick={() => onIncrement({ ingredient })}

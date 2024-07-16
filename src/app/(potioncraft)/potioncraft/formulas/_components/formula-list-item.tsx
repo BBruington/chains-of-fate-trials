@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import type { Formula } from "@prisma/client";
 import { useAtom } from "jotai";
@@ -7,7 +8,7 @@ interface FormulaProps {
   formula: Formula;
 }
 
-export default function UserFormula({ formula }: FormulaProps) {
+export default function FormulaListItem({ formula }: FormulaProps) {
   const [selectedFormula, setSelectedFormula] =
     useAtom<Formula>(displayFormaula);
   const handleSelectFormula = () => {

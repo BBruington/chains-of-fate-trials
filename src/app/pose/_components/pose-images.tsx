@@ -8,10 +8,12 @@ export default function PoseImage(props: Props) {
   const { i } = props;
   return (
     <Image
-      src={`/Pose${i}.JPG`}
+      src={`/Pose/Pose${i}.JPG`}
       alt={`Pose ${i}`}
       width={90.406}
       height={116}
+      layout="responsive"
+      objectFit="cover"
     />
   );
 }

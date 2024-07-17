@@ -94,9 +94,13 @@ export default function SilentPose() {
 
   return (
     <div className="flex justify-evenly items-center h-[calc(100vh-50px)]">
-      <div className="h-[27rem] w-[30rem] border-2 border-black grid grid-cols-4 gap-2 p-5 grid-rows-3 place-items-center">
+      <div className="h-[35rem] w-[35rem] border-2 border-black grid grid-cols-4 p-5 grid-rows-3 gap-5 place-items-center">
         {imageArray.map((_, i) => {
-          return <PoseImage key={i} i={`${i + 1}`} />;
+          return (
+            <div key={i} className="border-2 border-black">
+              <PoseImage i={`${i + 1}`} />
+            </div>
+          );
         })}
       </div>
 

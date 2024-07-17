@@ -8,7 +8,13 @@ export default function Draggable(props) {
   const style = { transform: CSS.Translate.toString(transform) };
 
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+    <div
+      className="h-full w-full relative"
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+    >
       {props.children}
     </div>
   );

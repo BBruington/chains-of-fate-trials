@@ -171,35 +171,15 @@ export default function DisplayFormula() {
   return (
     <Form {...form}>
       {selectedFormula.id === "empty" ? (
-        <div className="flex h-full w-full flex-col items-center border bg-secondary-foreground/60 text-secondary text-3xl pt-10">
+        <div className="flex h-full w-full flex-col items-center border bg-secondary-foreground/60 pt-10 text-3xl text-secondary">
           Select a Formula to Edit
         </div>
       ) : (
         <form
-          className="flex w-full flex-col items-center justify-start border bg-secondary-foreground/60 text-secondary"
+          className="flex w-full flex-col items-center justify-center border bg-secondary-foreground/60 text-secondary"
           onSubmit={handleSubmit(handleSaveFormula)}
         >
-          <div className="flex flex-col">
-            <Button
-              type="button"
-              onClick={handleAddIngredient}
-              disabled={
-                selectedFormula.ingredient4 !== null ||
-                selectedFormula.id === "empty"
-              }
-            >
-              Add Ingredient
-            </Button>
-            <Button
-              type="button"
-              disabled={selectedFormula.id === "empty"}
-              onClick={handleRemoveFormula}
-            >
-              Delete Formula
-            </Button>
-            <Button type="submit" disabled={selectedFormula.id === "empty"}>
-              Save Changes
-            </Button>
+          <div className="flex flex-col w-100 bg-primary px-12 py-8">
             <FormField
               control={form.control}
               name="name"
@@ -314,6 +294,17 @@ export default function DisplayFormula() {
                 </FormItem>
               )}
             />
+            <Button
+              className="my-5"
+              type="button"
+              onClick={handleAddIngredient}
+              disabled={
+                selectedFormula.ingredient4 !== null ||
+                selectedFormula.id === "empty"
+              }
+            >
+              Add Ingredient
+            </Button>
 
             {formulaIngredients.map((ingredient) => (
               <IngredientFormfield
@@ -323,6 +314,20 @@ export default function DisplayFormula() {
                 form={form}
               />
             ))}
+            <div className="mt-5">
+              <Button
+                className="mr-3"
+                type="button"
+                variant={"destructive"}
+                disabled={selectedFormula.id === "empty"}
+                onClick={handleRemoveFormula}
+              >
+                Delete Formula
+              </Button>
+              <Button type="submit" disabled={selectedFormula.id === "empty"}>
+                Save Changes
+              </Button>
+            </div>
           </div>
         </form>
       )}

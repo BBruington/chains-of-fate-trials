@@ -87,7 +87,7 @@ function IngredientItem({ ingredient, onIncrement }: IngredientItemProps) {
         rarityStyles[ingredient.rarity as keyof RarityStyleProps],
       )}
     >
-      <Image className="w-4" src={ingredientIcon[ingredient.type as keyof IngredientIconProps]} alt="Picture of a skull"/>
+      <Image className="w-4" src={ingredientIcon[ingredient.type as keyof IngredientIconProps]} alt="Ingredient Type Icon"/>
       <Draggable
         showQuantity={true}
         id={ingredient.id}

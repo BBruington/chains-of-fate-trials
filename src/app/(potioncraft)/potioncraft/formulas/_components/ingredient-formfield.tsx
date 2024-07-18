@@ -43,21 +43,36 @@ export default function IngredientFormfield({
   const [selectedFormula, setSelectedFormula] =
     useAtom<Formula>(displayFormaula);
   const handleRemoveIngredient = () => {
-    if(ingredientNum === 'ingredient4'){
+    if (ingredientNum === "ingredient4") {
       setSelectedFormula({ ...selectedFormula, [ingredientNum]: null });
-      return
+      return;
     }
-    if(ingredientNum === 'ingredient3'){
-      setSelectedFormula({...selectedFormula, ingredient3: selectedFormula.ingredient4, ingredient4: null})
-      return
+    if (ingredientNum === "ingredient3") {
+      setSelectedFormula({
+        ...selectedFormula,
+        ingredient3: selectedFormula.ingredient4,
+        ingredient4: null,
+      });
+      return;
     }
-    if(ingredientNum === 'ingredient2'){
-      setSelectedFormula({...selectedFormula,ingredient2: selectedFormula.ingredient3, ingredient3: selectedFormula.ingredient4, ingredient4: null})
-      return
+    if (ingredientNum === "ingredient2") {
+      setSelectedFormula({
+        ...selectedFormula,
+        ingredient2: selectedFormula.ingredient3,
+        ingredient3: selectedFormula.ingredient4,
+        ingredient4: null,
+      });
+      return;
     }
-    if(ingredientNum === 'ingredient1'){
-      setSelectedFormula({...selectedFormula,ingredient1: selectedFormula.ingredient2, ingredient2: selectedFormula.ingredient3, ingredient3: selectedFormula.ingredient4, ingredient4: null})
-      return
+    if (ingredientNum === "ingredient1") {
+      setSelectedFormula({
+        ...selectedFormula,
+        ingredient1: selectedFormula.ingredient2,
+        ingredient2: selectedFormula.ingredient3,
+        ingredient3: selectedFormula.ingredient4,
+        ingredient4: null,
+      });
+      return;
     }
   };
 
@@ -70,15 +85,18 @@ export default function IngredientFormfield({
       render={({ field }) => (
         <FormItem>
           <div>
-            <FormLabel htmlFor={ingredientNum}>Ingredient {ingredientName}</FormLabel>
+            <FormLabel htmlFor={ingredientNum}>
+              Ingredient {ingredientName}
+            </FormLabel>
             <FormControl>
-              <div className="flex">
+              <div className="flex items-center">
                 <Input
+                  className="mr-5"
                   id={ingredientNum}
                   disabled={selectedFormula.id === "blank"}
                   {...field}
                 />
-                <Button type="button" onClick={handleRemoveIngredient}>
+                <Button className="w-16 h-8"  type="button" onClick={handleRemoveIngredient}>
                   remove
                 </Button>
               </div>

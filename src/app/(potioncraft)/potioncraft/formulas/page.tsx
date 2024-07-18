@@ -3,14 +3,13 @@ import { currentUser } from "@clerk/nextjs/server";
 import AddFormulaButton from "./_components/add-formula-button";
 import DisplayFormula from "./_components/display-formula";
 import FormulaListItem from "./_components/formula-list-item";
+import { getUser } from "../page";
 export default async function page() {
   const user = await currentUser();
   if (!user) return <div>Not signed in</div>;
-  const formulas = await prisma.formula.findMany({
-    where: {
-      userId: user.id,
-    },
-  });
+  const { formulas } = await getUser(user.id);
+  if (!formulas) return <div>Failed to fetch formulas</div>;
+
   return (
     <div className="flex h-screen w-screen">
       <DisplayFormula />

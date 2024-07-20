@@ -1,5 +1,4 @@
 "use client";
-import { playerIngredients } from "./testData";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import IngredientList from "./ingredient-list";
 import Droppable from "@/components/dndkit/dropable";
@@ -8,6 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Potion, Ingredient, Formula } from "@prisma/client";
 import { User } from "@prisma/client";
 import { usePotionCraft } from "./usePotionCraft";
+import { RarityStyleProps, IngredientIconProps } from "../_types";
+import skull from "@/../public/icons/skull.svg";
+import wizardHat from "@/../public/icons/wizard-hat.svg";
+import scroll from "@/../public/icons/scroll.svg";
 
 interface PotionCraftComponentProps {
   ingredients: Ingredient[];
@@ -41,6 +44,14 @@ export default function PotionCraftComponent({
     handleIngredientDragEnd,
   } = usePotionCraft(ingredients, userId);
 
+  const rarityStyles: RarityStyleProps = {
+    COMMON: "bg-slate-600",
+    UNCOMMON: "bg-green-900",
+    RARE: "bg-blue-900",
+    VERYRARE: "bg-purple-900",
+    LEGENDARY: "bg-orange-800",
+  };
+
   return (
     <div className="flex w-screen justify-between">
       <div></div>
@@ -52,6 +63,7 @@ export default function PotionCraftComponent({
         <DragOverlay>
           {activeIngredient ? (
             <Draggable
+              className={rarityStyles[activeIngredient.rarity as keyof RarityStyleProps]}
               id={activeIngredient.id}
               item={activeIngredient}
               showQuantity={false}

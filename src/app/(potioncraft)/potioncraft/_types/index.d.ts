@@ -1,6 +1,13 @@
+import { Ingredient } from "@prisma/client";
+
 export interface HandleFilterIngredientsProps {
   event?: ChangeEvent<HTMLInputElement> | undefined;
   ingredients?: Ingredient[] | undefined;
+}
+
+export interface HandleIngredientQuantityChangeProps {
+  ingredient: Ingredient;
+  quantity: number;
 }
 
 export interface IngredientListProps {
@@ -10,20 +17,12 @@ export interface IngredientListProps {
     ingredients,
   }: HandleFilterIngredientsProps) => void;
   handleOrderFilteredIngredients: (e: string) => void;
-  handleIncrementIngredient: ({
-    ingredient,
-  }: {
-    ingredient: z.infer<typeof IngredientSchema>;
-  }) => Promise<void>;
+  handleChangeIngredientQuantity: ({ ingredient, quantity }: HandleIngredientQuantityChangeProps) => Promise<void>
 }
 
 export interface IngredientItemProps {
   ingredient: Ingredient;
-  onIncrement: ({
-    ingredient,
-  }: {
-    ingredient: z.infer<typeof IngredientSchema>;
-  }) => Promise<void>;
+  onQuantityChange: ({ ingredient, quantity }: HandleIngredientQuantityChangeProps) => Promise<void>
 }
 
 export interface RarityStyleProps {

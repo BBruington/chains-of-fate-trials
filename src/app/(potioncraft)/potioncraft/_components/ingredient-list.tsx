@@ -1,12 +1,17 @@
 import Draggable from "@/components/dndkit/draggable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { IngredientListProps, IngredientItemProps, RarityStyleProps, IngredientIconProps } from "../_types";
+import {
+  IngredientListProps,
+  IngredientItemProps,
+  RarityStyleProps,
+  IngredientIconProps,
+} from "../_types";
 import { EMPTY_INGREDIENT } from "@/constants";
 import { cn } from "@/lib/utils";
-import skull from "@/../public/icons/skull.svg"
-import wizardHat from "@/../public/icons/wizard-hat.svg"
-import scroll from "@/../public/icons/scroll.svg"
+import skull from "@/../public/icons/skull.svg";
+import wizardHat from "@/../public/icons/wizard-hat.svg";
+import scroll from "@/../public/icons/scroll.svg";
 import {
   Select,
   SelectContent,
@@ -22,7 +27,7 @@ export default function IngredientList({
   ingredients,
   handleFilterIngredients,
   handleOrderFilteredIngredients,
-  handleIncrementIngredient,
+  handleChangeIngredientQuantity,
 }: IngredientListProps) {
   return (
     <>
@@ -54,7 +59,7 @@ export default function IngredientList({
             <IngredientItem
               key={ingredient.id}
               ingredient={ingredient}
-              onIncrement={handleIncrementIngredient}
+              onQuantityChange={handleChangeIngredientQuantity}
             />
           ))
         )}
@@ -63,14 +68,13 @@ export default function IngredientList({
   );
 }
 
-function IngredientItem({ ingredient, onIncrement }: IngredientItemProps) {
-
+function IngredientItem({ ingredient, onQuantityChange }: IngredientItemProps) {
   const rarityStyles: RarityStyleProps = {
     COMMON: "bg-slate-600",
     UNCOMMON: "bg-green-900",
     RARE: "bg-blue-900",
     VERYRARE: "bg-purple-900",
-    LEGENDARY: "bg-orange-800"
+    LEGENDARY: "bg-orange-800",
   };
 
   const ingredientIcon: IngredientIconProps = {
@@ -78,7 +82,7 @@ function IngredientItem({ ingredient, onIncrement }: IngredientItemProps) {
     DIVINE: wizardHat,
     OCCULT: skull,
     PRIMAL: scroll,
-  }
+  };
 
   return (
     <div
@@ -87,7 +91,11 @@ function IngredientItem({ ingredient, onIncrement }: IngredientItemProps) {
         rarityStyles[ingredient.rarity as keyof RarityStyleProps],
       )}
     >
-      <Image className="w-4" src={ingredientIcon[ingredient.type as keyof IngredientIconProps]} alt="Ingredient Type Icon"/>
+      <Image
+        className="w-4"
+        src={ingredientIcon[ingredient.type as keyof IngredientIconProps]}
+        alt="Ingredient Type Icon"
+      />
       <Draggable
         showQuantity={true}
         id={ingredient.id}
@@ -95,11 +103,18 @@ function IngredientItem({ ingredient, onIncrement }: IngredientItemProps) {
         className={`text-white ${rarityStyles[ingredient.rarity as keyof RarityStyleProps]}`}
       />
       <Button
-        onClick={() => onIncrement({ ingredient })}
+        onClick={() => onQuantityChange({ ingredient, quantity: -1 })}
+        className="ml-1 h-6 w-10 text-xs"
+        aria-label={`Decrease ${ingredient.name}`}
+      >
+        -
+      </Button>
+      <Button
+        onClick={() => onQuantityChange({ ingredient, quantity: 1 })}
         className="ml-1 h-6 w-10 text-xs"
         aria-label={`Add ${ingredient.name}`}
       >
-        Add
+        +
       </Button>
     </div>
   );

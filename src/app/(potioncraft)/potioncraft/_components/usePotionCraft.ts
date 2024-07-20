@@ -9,13 +9,13 @@ import {
   RarityType,
 } from "../../../../../prisma/generated/zod";
 import { PotionSchema } from "@/types";
-import { HandleFilterIngredientsProps } from "../_types";
+import { HandleFilterIngredientsProps, HandleIngredientQuantityChangeProps } from "../_types";
 import {
   addIngredientsToUser,
   spendIngredients,
   addPotionToUser,
-  increaseIngredient,
   addFormulaToUser,
+  changeIngredientQuantity,
 } from "../actions";
 import { commonPotions } from "./testData";
 
@@ -159,21 +159,21 @@ export function usePotionCraft(
     }
     findMixtureProperties([resetMix]);
   };
-  const handleIncrementIngredient = async ({
-    ingredient,
-  }: {
-    ingredient: z.infer<typeof IngredientSchema>;
-  }) => {
-    const res = await increaseIngredient({ ingredient, amount: 1 });
-    const incrementedIngredients = userIngredients.map((userIngredient) => {
+
+  const handleChangeIngredientQuantity = async ({ ingredient, quantity }: HandleIngredientQuantityChangeProps) => {
+    const res = await changeIngredientQuantity({ ingredient, quantity });
+    const changedIngredients = userIngredients.map((userIngredient) => {
       if (userIngredient.id === ingredient.id) {
-        return { ...userIngredient, quantity: userIngredient.quantity + 1 };
+        return {
+          ...userIngredient,
+          quantity: userIngredient.quantity + quantity,
+        };
       }
-      return userIngredient;
+      return userIngredient
     });
     if (res) {
-      setUserIngredients(incrementedIngredients);
-      handleFilterIngredients({ ingredients: incrementedIngredients });
+      setUserIngredients(changedIngredients)
+      handleFilterIngredients({ingredients: changedIngredients})
     }
   };
 
@@ -268,7 +268,7 @@ export function usePotionCraft(
         } else return nextPotion;
       },
     );
-    console.log(answer)
+    console.log(answer);
     return answer.potion;
   }
 
@@ -448,7 +448,7 @@ export function usePotionCraft(
     handleResetIngredients,
     handleAddIngredients,
     handleCraftPotion,
-    handleIncrementIngredient,
+    handleChangeIngredientQuantity,
     handleIngredientDragStart,
     handleIngredientDragEnd,
   };

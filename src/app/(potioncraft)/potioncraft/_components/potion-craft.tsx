@@ -60,7 +60,7 @@ export default function PotionCraftComponent({
         </DragOverlay>
         <div className="flex min-w-fit flex-col items-center justify-center">
           <h1 className="mb-7 text-3xl">Add Ingredients to Make a Potion</h1>
-          <div className="grid grid-cols-2 content-center">
+          <div className="grid grid-cols-2 gap-5 content-center">
             {mixture.map((mix, index) => (
               <Droppable
                 key={index}

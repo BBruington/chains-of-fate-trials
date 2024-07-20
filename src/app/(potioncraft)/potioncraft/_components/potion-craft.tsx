@@ -60,7 +60,7 @@ export default function PotionCraftComponent({
         </DragOverlay>
         <div className="flex min-w-fit flex-col items-center justify-center">
           <h1 className="mb-7 text-3xl">Add Ingredients to Make a Potion</h1>
-          <div className="grid grid-cols-2 gap-5 content-center">
+          <div className="grid grid-cols-2 content-center gap-5">
             {mixture.map((mix, index) => (
               <Droppable
                 key={index}
@@ -71,26 +71,20 @@ export default function PotionCraftComponent({
               />
             ))}
           </div>
-          <Button className="my-5 w-36" onClick={handleCraftPotion}>
-            Craft Potion
-          </Button>
-          <Button className="w-36" onClick={handleResetIngredients}>
-            Reset Mixture
-          </Button>
-          <Button
-            className="my-5 w-36"
-            onClick={() =>
-              handleAddIngredients({ ingredients: playerIngredients, userId })
-            }
-          >
-            Reset Ingredients
-          </Button>
-          <Button
-            className="w-36"
-            onClick={() => addFormula({ mixture, userId })}
-          >
-            Add to formulas
-          </Button>
+          <div className="mt-8 flex space-x-3">
+            <Button className="w-36" onClick={handleCraftPotion}>
+              Craft Potion
+            </Button>
+            <Button className="w-36" onClick={handleResetIngredients}>
+              Reset Mixture
+            </Button>
+            <Button
+              className="w-36"
+              onClick={() => addFormula({ mixture, userId })}
+            >
+              Add to formulas
+            </Button>
+          </div>
         </div>
         <div className="flex h-screen w-96 justify-end">
           <div className="flex h-screen w-96 flex-col items-center overflow-y-auto bg-secondary p-3">

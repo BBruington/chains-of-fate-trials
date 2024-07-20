@@ -58,13 +58,13 @@ export default function PotionCraftComponent({
             />
           ) : null}
         </DragOverlay>
-        <div className="flex flex-col items-center justify-center min-w-fit">
+        <div className="flex min-w-fit flex-col items-center justify-center">
           <h1 className="mb-7 text-3xl">Add Ingredients to Make a Potion</h1>
-          <div className="grid grid-cols-2 content-center ">
+          <div className="grid grid-cols-2 content-center">
             {mixture.map((mix, index) => (
               <Droppable
                 key={index}
-                className={`h-32 min-w-52 rounded-none bg-secondary text-xs ${mix.id === "empty" ? "bg-secondary/60 text-primary/60" : ""}`}
+                className={`h-32 min-w-52 rounded-none bg-secondary text-xs ${mix.id === "empty" ? "bg-secondary/60 text-primary/60" : ""} ${index === 0 && "rounded-tl-lg"} ${index === 1 && "rounded-tr-lg"} ${index === 2 && "rounded-bl-lg"} ${index === 3 && "rounded-br-lg"}`}
                 accepts={ingredients.map((ingredient) => ingredient.id)}
                 id={index}
                 item={mix}

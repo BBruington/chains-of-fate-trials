@@ -32,6 +32,11 @@ const SpendIngredientsSchema = z.object({
   ingredients: z.array(IngredientSchema),
 });
 
+const ChangeQuantityIngredientSchema = z.object({
+  ingredient: IngredientSchema,
+  quantity: z.number().int(),
+});
+
 const IncreaseIngredientSchema = z.object({
   ingredient: IngredientSchema,
   amount: z.number().int().positive(),
@@ -112,6 +117,40 @@ export const increaseIngredient = async (
   }
 };
 
+export const changeIngredientQuantity = async (
+  props: z.infer<typeof ChangeQuantityIngredientSchema>,
+): Promise<Ingredient> => {
+  try {
+    const { ingredient, quantity } =
+      ChangeQuantityIngredientSchema.parse(props);
+    if (ingredient.quantity + quantity === 0) {
+      const removedIngredient = await prisma.ingredient.delete({
+        where: {
+          id: ingredient.id,
+        },
+      });
+      revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+      return removedIngredient;
+    }
+    const quantityChangedIngredient = await prisma.ingredient.update({
+      where: {
+        id: ingredient.id,
+      },
+      data: {
+        quantity: { increment: quantity },
+      },
+    });
+    revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+    return quantityChangedIngredient;
+  } catch (error) {
+    console.error("failed to change the quantity of the Ingredient: ", error);
+    if (error instanceof z.ZodError) {
+      throw new Error("Invalid input for changing ingredient quantity");
+    }
+    throw new Error("Failed to change the ingredient's quantity");
+  }
+};
+
 export const addPotionToUser = async (
   props: z.infer<typeof AddPotionToUserSchema>,
 ): Promise<void> => {
@@ -179,7 +218,7 @@ export const addFormulaToUser = async (
 ): Promise<void> => {
   try {
     const { ingredients, potion, userId } = AddFormulaToUserSchema.parse(props);
-    
+
     await prisma.formula.create({
       data: {
         userId,

@@ -225,10 +225,10 @@ export const addFormulaToUser = async (
         name: potion.name,
         description: potion.description,
         rarity: potion.rarity,
-        ingredient1: ingredients[0]?.name ? ingredients[0].name : null,
-        ingredient2: ingredients[1]?.name ? ingredients[1].name : null,
-        ingredient3: ingredients[2]?.name ? ingredients[2].name : null,
-        ingredient4: ingredients[3]?.name ? ingredients[3].name : null,
+        ingredient1: ingredients[0]?.name ? ingredients[0].name : undefined,
+        ingredient2: ingredients[1]?.name ? ingredients[1].name : undefined,
+        ingredient3: ingredients[2]?.name ? ingredients[2].name : undefined,
+        ingredient4: ingredients[3]?.name ? ingredients[3].name : undefined,
       },
     });
     revalidatePath(`${process.env.BASE_URL}/potioncraft`);

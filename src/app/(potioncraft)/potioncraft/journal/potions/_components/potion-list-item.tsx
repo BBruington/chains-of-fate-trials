@@ -23,7 +23,7 @@ export default function PotionListItem({ potion }: PotionListItemProps) {
     >
       <div className="flex w-full items-center justify-start">
         <Image width={37} src={serum} alt="potion icon" />
-        <h1 className="ml-2 w-full text-xl">Potion of {potion.name}</h1>
+        <h1 className="ml-2 w-full text-xl">{potion.name}</h1>
       </div>
       {/* <h2>Effect: {potion.description}</h2> */}
     </Button>

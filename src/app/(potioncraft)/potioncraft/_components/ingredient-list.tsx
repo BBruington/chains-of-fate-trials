@@ -33,13 +33,13 @@ export default function IngredientList({
     <>
       <h2 className="py-2 text-2xl">Ingredients</h2>
       <Input
-        className="m-2 mr-5"
+        className="m-2"
         onChange={(event) => handleFilterIngredients({ event })}
         aria-label="Filter ingredients"
         placeholder="Search"
       />
       <Select onValueChange={(e) => handleOrderFilteredIngredients(e)}>
-        <SelectTrigger className="mb-2 w-[180px]">
+        <SelectTrigger className="mb-4 w-[180px]">
           <SelectValue placeholder="All Ingredients" />
         </SelectTrigger>
         <SelectContent>
@@ -51,7 +51,7 @@ export default function IngredientList({
           </SelectGroup>
         </SelectContent>
       </Select>
-      <div className="flex w-full flex-col items-center overflow-y-auto">
+      <div className="flex w-full flex-col space-y-1 items-center">
         {ingredients.length === 0 ? (
           <Draggable id={"empty"} item={EMPTY_INGREDIENT} disabled={true} />
         ) : (
@@ -87,7 +87,7 @@ function IngredientItem({ ingredient, onQuantityChange }: IngredientItemProps) {
   return (
     <div
       className={cn(
-        "flex items-center rounded-sm border-b px-2",
+        "flex items-center rounded-md border-b px-2",
         rarityStyles[ingredient.rarity as keyof RarityStyleProps],
       )}
     >
@@ -104,14 +104,14 @@ function IngredientItem({ ingredient, onQuantityChange }: IngredientItemProps) {
       />
       <Button
         onClick={() => onQuantityChange({ ingredient, quantity: -1 })}
-        className="ml-1 h-6 w-10 text-xs"
+        className="h-5 w-8 rounded-lg border border-secondary bg-primary text-xs hover:primary-60"
         aria-label={`Decrease ${ingredient.name}`}
       >
         -
       </Button>
       <Button
         onClick={() => onQuantityChange({ ingredient, quantity: 1 })}
-        className="ml-1 h-6 w-10 text-xs"
+        className="ml-1 h-5 w-8 border border-secondary bg-primary text-xs hover:primary-60"
         aria-label={`Add ${ingredient.name}`}
       >
         +

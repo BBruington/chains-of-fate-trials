@@ -63,20 +63,22 @@ export default function PotionCraftComponent({
         <DragOverlay>
           {activeIngredient ? (
             <Draggable
-              className={rarityStyles[activeIngredient.rarity as keyof RarityStyleProps]}
+              className={
+                rarityStyles[activeIngredient.rarity as keyof RarityStyleProps]
+              }
               id={activeIngredient.id}
               item={activeIngredient}
               showQuantity={false}
             />
           ) : null}
         </DragOverlay>
-        <div className="flex min-w-fit flex-col items-center justify-center">
+        <div className="flex min-w-fit flex-col mt-10">
           <h1 className="mb-7 text-3xl">Add Ingredients to Make a Potion</h1>
           <div className="grid grid-cols-2 content-center gap-5">
             {mixture.map((mix, index) => (
               <Droppable
                 key={index}
-                className={`h-32 min-w-52 rounded-none bg-secondary text-xs ${mix.id === "empty" ? "bg-secondary/60 text-primary/60" : ""} ${index === 0 && "rounded-tl-lg"} ${index === 1 && "rounded-tr-lg"} ${index === 2 && "rounded-bl-lg"} ${index === 3 && "rounded-br-lg"}`}
+                className={`h-32 min-w-52 rounded-none bg-primary text-xs text-secondary ${mix.id === "empty" ? "bg-primary/80 text-secondary/80" : ""} ${index === 0 && "rounded-tl-lg"} ${index === 1 && "rounded-tr-lg"} ${index === 2 && "rounded-bl-lg"} ${index === 3 && "rounded-br-lg"}`}
                 accepts={ingredients.map((ingredient) => ingredient.id)}
                 id={index}
                 item={mix}
@@ -98,8 +100,8 @@ export default function PotionCraftComponent({
             </Button>
           </div>
         </div>
-        <div className="flex h-screen w-96 justify-end">
-          <div className="flex h-screen w-96 flex-col items-center overflow-y-auto bg-secondary p-3">
+        <div className="flex h-screen w-96 justify-end rounded-sm bg-secondary">
+          <div className="flex h-screen w-full flex-col items-center overflow-y-auto border border-r-0 border-primary/40 bg-secondary p-2">
             <IngredientList
               ingredients={filteredUserIngredients}
               handleFilterIngredients={handleFilterIngredients}

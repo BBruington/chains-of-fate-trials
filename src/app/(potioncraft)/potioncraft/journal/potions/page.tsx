@@ -16,15 +16,15 @@ export default async function PotionJournal() {
   return (
     <div className="flex w-screen justify-between">
       <div></div>
-      <div className="flex w-full justify-center items-center">
-          <DisplayPotion />
+      <div className="mt-16 flex w-full justify-center">
+        <DisplayPotion />
       </div>
-        <div className="flex h-full w-96 flex-col items-center space-y-3 overflow-y-auto bg-secondary p-3">
-          <h2>My Potions</h2>
-          {userPotions?.map((potion) => (
-            <PotionListItem key={potion.id} potion={potion} />
-          ))}
-        </div>
+      <div className="flex h-full w-96 flex-col items-center space-y-3 overflow-y-auto bg-secondary p-3">
+        <h2>My Potions</h2>
+        {userPotions?.map((potion) => (
+          <PotionListItem key={potion.id} potion={potion} />
+        ))}
+      </div>
     </div>
   );
 }

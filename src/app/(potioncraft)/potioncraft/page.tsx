@@ -5,7 +5,6 @@ import { cache } from "react";
 
 export const getUser = cache(async (userId: string) => {
   try {
-    console.log("here")
     const user = await prisma.user.findUnique({
       where: {
         clerkId: userId,

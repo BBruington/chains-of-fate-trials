@@ -29,9 +29,20 @@ const THEME_OPTIONS = [
   { value: "system", label: "System" },
 ];
 
+const findBaseUrl = (href: string) => {
+  let baseUrl = "";
+  for (let character of href) {
+    if (character === "/" && baseUrl.length > 1) break;
+    baseUrl = baseUrl += character;
+  }
+  if (baseUrl === "/") baseUrl = "Home";
+  return baseUrl;
+};
+
 export default function Navigation() {
   const { theme, setTheme } = useTheme();
   const pathName = usePathname();
+  const baseUrl = findBaseUrl(pathName);
 
   return (
     <nav className="flex items-center justify-end space-x-3 border-b-2 border-secondary px-2">
@@ -40,7 +51,7 @@ export default function Navigation() {
           <Link
             className={cn(
               "transition-colors hover:text-primary/80",
-              pathName === href &&
+              (href.includes(baseUrl) || label === baseUrl) &&
                 "pointer-events-none font-semibold text-secondary",
             )}
             href={href}

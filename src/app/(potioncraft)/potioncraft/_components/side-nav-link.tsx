@@ -2,25 +2,38 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import Image, { StaticImageData } from "next/image";
 
 interface SideNavLinkProps {
   href: string;
   label: string;
+  icon: StaticImageData;
 }
 
-export default function SideNavLink({ href, label }: SideNavLinkProps) {
+export default function SideNavLink({ href, label, icon }: SideNavLinkProps) {
   const pathName = usePathname();
 
   return (
-    <Link
+    <div
       className={cn(
-        "flex h-10 w-full items-center rounded-lg border-b pl-2 hover:bg-secondary hover:text-primary/80",
-        pathName === href && "pointer-events-none font-semibold text-primary/60",
+        "flex w-full rounded-lg border-b hover:bg-secondary hover:text-primary/80",
+        pathName === href &&
+          "pointer-events-none border-b-primary/60 bg-secondary/60 font-semibold text-primary/60",
       )}
-      key={label}
-      href={href}
     >
-      {label}
-    </Link>
+      <Image
+        className="p-1"
+        width={40}
+        src={icon}
+        alt="side nav icon"
+      />
+      <Link
+        className={"flex h-10 w-full items-center pl-2"}
+        key={label}
+        href={href}
+      >
+        {label}
+      </Link>
+    </div>
   );
 }

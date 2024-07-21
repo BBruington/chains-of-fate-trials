@@ -19,7 +19,7 @@ export default async function PotionJournal() {
       <div className="mt-16 flex w-full justify-center">
         <DisplayPotion />
       </div>
-      <div className="flex h-full w-96 flex-col items-center space-y-2 overflow-y-auto bg-secondary p-3">
+      <div className="flex h-full w-96 flex-col items-center space-y-2 overflow-y-auto border border-r-0 border-primary/40 bg-secondary p-3">
         <h2>My Potions</h2>
         {userPotions?.map((potion) => (
           <PotionListItem key={potion.id} potion={potion} />

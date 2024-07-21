@@ -15,11 +15,11 @@ export default async function IngredientJournal() {
   const userIngredients = user?.Ingredients;
   return (
     <div className="flex w-screen justify-between">
-      <div></div>
-      <div className="flex w-full items-center justify-center">
+      <div />
+      <div className="mt-16 flex w-full justify-center">
         <DisplayIngredient />
       </div>
-      <div className="flex h-full w-96 flex-col items-center space-y-3 overflow-y-auto bg-secondary p-3">
+      <div className="flex h-full w-96 flex-col items-center space-y-3 overflow-y-auto border border-r-0 border-primary/40 bg-secondary p-3">
         <h2>My Ingredients</h2>
         {userIngredients?.map((ingredient) => (
           <IngredientListItem key={ingredient.id} ingredient={ingredient} />

@@ -30,8 +30,8 @@ const THEME_OPTIONS = [
 ];
 
 export default function Navigation() {
-  const pathName = usePathname();
   const { theme, setTheme } = useTheme();
+  const pathName = usePathname();
 
   return (
     <nav className="flex items-center justify-end space-x-3 border-b-2 border-secondary px-2">
@@ -83,7 +83,7 @@ export default function Navigation() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {THEME_OPTIONS.map(({value, label}) => (
+            {THEME_OPTIONS.map(({ value, label }) => (
               <DropdownMenuItem key={value} onClick={() => setTheme(value)}>
                 {label}
                 {theme === value && <span className="ml-2">✓</span>}

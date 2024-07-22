@@ -1,0 +1,26 @@
+.CollapsibleContent {
+  overflow: hidden;
+}
+.CollapsibleContent[data-state="open"] {
+  animation: slideRight 300ms ease-out;
+}
+.CollapsibleContent[data-state="closed"] {
+  animation: slideLeft 300ms ease-out;
+}
+
+@keyframes slideRight {
+  from {
+    width: 0;
+  }
+  to {
+    width: var(--radix-collapsible-content-width);
+  }
+}
+@keyframes slideLeft {
+  from {
+    width: var(--radix-collapsible-content-width);
+  }
+  to {
+    width: 0;
+  }
+}

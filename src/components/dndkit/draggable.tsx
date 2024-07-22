@@ -34,7 +34,7 @@ export default function Draggable({
   return (
     <button
       className={cn(
-        "inline-flex w-64 items-center justify-center whitespace-nowrap rounded-sm bg-accent p-3 text-xs font-medium",
+        "inline-flex w-64 items-center justify-center whitespace-nowrap rounded-sm p-3 text-xs font-medium",
         className,
       )}
       ref={setNodeRef}

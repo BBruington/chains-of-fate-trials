@@ -105,8 +105,7 @@ export default function PotionCraftComponent({
             </Button>
           </div>
         </div>
-        <div className="flex h-screen w-96 justify-end rounded-sm bg-secondary">
-          <div className="flex h-screen w-full flex-col items-center overflow-y-auto border border-r-0 border-primary/40 bg-secondary p-2">
+          <div className="flex h-screen w-96 flex-col items-center overflow-y-auto border-l border-primary/40 p-2">
             <IngredientList
               ingredients={filteredUserIngredients}
               handleFilterIngredients={handleFilterIngredients}
@@ -114,7 +113,6 @@ export default function PotionCraftComponent({
               handleChangeIngredientQuantity={handleChangeIngredientQuantity}
             />
           </div>
-        </div>
       </DndContext>
     </div>
   );

@@ -21,6 +21,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import Image from "next/image";
 
 export default function IngredientList({
@@ -51,7 +56,7 @@ export default function IngredientList({
           </SelectGroup>
         </SelectContent>
       </Select>
-      <div className="flex w-full flex-col space-y-1 items-center">
+      <div className="flex w-full flex-col items-center space-y-1">
         {ingredients.length === 0 ? (
           <Draggable id={"empty"} item={EMPTY_INGREDIENT} disabled={true} />
         ) : (
@@ -70,11 +75,11 @@ export default function IngredientList({
 
 function IngredientItem({ ingredient, onQuantityChange }: IngredientItemProps) {
   const rarityStyles: RarityStyleProps = {
-    COMMON: "bg-slate-600",
-    UNCOMMON: "bg-green-900",
-    RARE: "bg-blue-900",
-    VERYRARE: "bg-purple-900",
-    LEGENDARY: "bg-orange-800",
+    COMMON: "text-slate-600",
+    UNCOMMON: "text-green-900",
+    RARE: "text-blue-900",
+    VERYRARE: "text-purple-900",
+    LEGENDARY: "text-orange-800",
   };
 
   const ingredientIcon: IngredientIconProps = {
@@ -85,37 +90,50 @@ function IngredientItem({ ingredient, onQuantityChange }: IngredientItemProps) {
   };
 
   return (
-    <div
-      className={cn(
-        "flex items-center rounded-md border-b px-2",
-        rarityStyles[ingredient.rarity as keyof RarityStyleProps],
-      )}
-    >
-      <Image
-        className="w-4"
-        src={ingredientIcon[ingredient.type as keyof IngredientIconProps]}
-        alt="Ingredient Type Icon"
-      />
-      <Draggable
-        showQuantity={true}
-        id={ingredient.id}
-        item={ingredient}
-        className={`text-white ${rarityStyles[ingredient.rarity as keyof RarityStyleProps]}`}
-      />
-      <Button
-        onClick={() => onQuantityChange({ ingredient, quantity: -1 })}
-        className="h-5 w-8 rounded-lg border border-black bg-white text-xs text-black hover:primary-60"
-        aria-label={`Decrease ${ingredient.name}`}
+    <HoverCard>
+      <div
+        className={cn(
+          "flex items-center rounded-md border-b px-2",
+          rarityStyles[ingredient.rarity as keyof RarityStyleProps],
+        )}
       >
-        -
-      </Button>
-      <Button
-        onClick={() => onQuantityChange({ ingredient, quantity: 1 })}
-        className="ml-1 h-5 w-8 border border-black bg-white text-xs text-black hover:primary-60"
-        aria-label={`Add ${ingredient.name}`}
-      >
-        +
-      </Button>
-    </div>
+        <HoverCardTrigger className="flex">
+          <Image
+            className="w-4"
+            src={ingredientIcon[ingredient.type as keyof IngredientIconProps]}
+            alt="Ingredient Type Icon"
+          />
+          <Draggable
+            showQuantity={true}
+            id={ingredient.id}
+            item={ingredient}
+            className={`text-white ${rarityStyles[ingredient.rarity as keyof RarityStyleProps]}`}
+          />
+        </HoverCardTrigger>
+        <HoverCardContent>
+          <div className="flex flex-col space-y-2 text-sm">
+            <h2 className="flex justify-center border-b mb-2 text-lg">{ingredient.name}</h2>
+            <span>Rarity: {ingredient.rarity}</span>
+            <span>Type: {ingredient.type}</span>
+            <span>Primary Attribute: {ingredient.primaryAttribute}</span>
+            <p className="text-xs">{ingredient.description}</p>
+          </div>
+        </HoverCardContent>
+        <Button
+          onClick={() => onQuantityChange({ ingredient, quantity: -1 })}
+          className="hover:primary-60 h-5 w-8 rounded-lg border border-black bg-white text-xs text-black"
+          aria-label={`Decrease ${ingredient.name}`}
+        >
+          -
+        </Button>
+        <Button
+          onClick={() => onQuantityChange({ ingredient, quantity: 1 })}
+          className="hover:primary-60 ml-1 h-5 w-8 border border-black bg-white text-xs text-black"
+          aria-label={`Add ${ingredient.name}`}
+        >
+          +
+        </Button>
+      </div>
+    </HoverCard>
   );
 }

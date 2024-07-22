@@ -16,7 +16,7 @@ export default function RootLayout({
 
   return (
     <div className="flex">
-      <div className="flex h-screen w-80 flex-col items-center space-y-2 overflow-y-auto bg-secondary/60 p-3 border border-primary/40 border-l-0">
+      <div className="flex h-screen w-80 flex-col items-center space-y-2 overflow-y-auto bg-secondary/70 p-3 border border-primary/40 border-l-0">
         {NAV_LINKS.map((link) => (
           <SideNavLink key={link.label} href={link.href} label={link.label} icon={link.icon} />
         ))}

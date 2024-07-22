@@ -104,14 +104,14 @@ function IngredientItem({ ingredient, onQuantityChange }: IngredientItemProps) {
       />
       <Button
         onClick={() => onQuantityChange({ ingredient, quantity: -1 })}
-        className="h-5 w-8 rounded-lg border border-secondary bg-primary text-xs hover:primary-60"
+        className="h-5 w-8 rounded-lg border border-black bg-white text-xs text-black hover:primary-60"
         aria-label={`Decrease ${ingredient.name}`}
       >
         -
       </Button>
       <Button
         onClick={() => onQuantityChange({ ingredient, quantity: 1 })}
-        className="ml-1 h-5 w-8 border border-secondary bg-primary text-xs hover:primary-60"
+        className="ml-1 h-5 w-8 border border-black bg-white text-xs text-black hover:primary-60"
         aria-label={`Add ${ingredient.name}`}
       >
         +

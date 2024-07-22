@@ -11,6 +11,7 @@ import { RarityStyleProps, IngredientIconProps } from "../_types";
 import skull from "@/../public/icons/skull.svg";
 import wizardHat from "@/../public/icons/wizard-hat.svg";
 import scroll from "@/../public/icons/scroll.svg";
+import { cn } from "@/lib/utils";
 
 interface PotionCraftComponentProps {
   ingredients: Ingredient[];
@@ -63,16 +64,17 @@ export default function PotionCraftComponent({
         <DragOverlay>
           {activeIngredient ? (
             <Draggable
-              className={
-                rarityStyles[activeIngredient.rarity as keyof RarityStyleProps]
-              }
+              className={cn(
+                "rounded-lg",
+                rarityStyles[activeIngredient.rarity as keyof RarityStyleProps],
+              )}
               id={activeIngredient.id}
               item={activeIngredient}
               showQuantity={false}
             />
           ) : null}
         </DragOverlay>
-        <div className="flex min-w-fit flex-col mt-10">
+        <div className="mt-10 flex min-w-fit flex-col">
           <h1 className="mb-7 text-3xl">Add Ingredients to Make a Potion</h1>
           <div className="grid grid-cols-2 content-center gap-5">
             {mixture.map((mix, index) => (
@@ -89,7 +91,10 @@ export default function PotionCraftComponent({
             <Button className="w-36" onClick={handleCraftPotion}>
               Craft Potion
             </Button>
-            <Button className="w-36" onClick={handleResetIngredients}>
+            <Button
+              className="w-36"
+              onClick={handleResetIngredients}
+            >
               Reset Mixture
             </Button>
             <Button

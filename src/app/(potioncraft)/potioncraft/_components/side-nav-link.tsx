@@ -18,7 +18,7 @@ export default function SideNavLink({ href, label, icon }: SideNavLinkProps) {
       className={cn(
         "flex w-full rounded-lg border-b hover:bg-secondary hover:text-primary/80",
         pathName === href &&
-          "pointer-events-none border-b-primary/60 bg-secondary/60 font-semibold text-primary/60",
+          "pointer-events-none border-b-red-900/70 bg-secondary/30 font-semibold text-red-900/70",
       )}
     >
       <Image

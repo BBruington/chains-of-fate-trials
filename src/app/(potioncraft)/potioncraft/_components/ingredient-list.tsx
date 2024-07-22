@@ -75,11 +75,11 @@ export default function IngredientList({
 
 function IngredientItem({ ingredient, onQuantityChange }: IngredientItemProps) {
   const rarityStyles: RarityStyleProps = {
-    COMMON: "text-slate-600",
-    UNCOMMON: "text-green-900",
-    RARE: "text-blue-900",
-    VERYRARE: "text-purple-900",
-    LEGENDARY: "text-orange-800",
+    COMMON: "text-slate-500",
+    UNCOMMON: "text-green-600",
+    RARE: "text-blue-500",
+    VERYRARE: "text-purple-600",
+    LEGENDARY: "text-orange-600",
   };
 
   const ingredientIcon: IngredientIconProps = {
@@ -112,10 +112,14 @@ function IngredientItem({ ingredient, onQuantityChange }: IngredientItemProps) {
         </HoverCardTrigger>
         <HoverCardContent>
           <div className="flex flex-col space-y-2 text-sm">
-            <h2 className="flex justify-center border-b mb-2 text-lg">{ingredient.name}</h2>
-            <span>Rarity: {ingredient.rarity}</span>
-            <span>Type: {ingredient.type}</span>
-            <span>Primary Attribute: {ingredient.primaryAttribute}</span>
+            <h2 className="mb-2 flex justify-center border-b text-lg">
+              {ingredient.name}
+            </h2>
+            <ul>
+              <li>Rarity: <span className={rarityStyles[ingredient.rarity as keyof RarityStyleProps]}>{ingredient.rarity}</span></li>
+              <li>Type: {ingredient.type}</li>
+              <li>Primary Attribute: {ingredient.primaryAttribute}</li>
+            </ul>
             <p className="text-xs">{ingredient.description}</p>
           </div>
         </HoverCardContent>

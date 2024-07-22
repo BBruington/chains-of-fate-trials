@@ -7,11 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Potion, Ingredient, Formula } from "@prisma/client";
 import { User } from "@prisma/client";
 import { usePotionCraft } from "./usePotionCraft";
-import { RarityStyleProps, IngredientIconProps } from "../_types";
-import skull from "@/../public/icons/skull.svg";
-import wizardHat from "@/../public/icons/wizard-hat.svg";
-import scroll from "@/../public/icons/scroll.svg";
+import { RarityStyleProps } from "../_types";
 import { cn } from "@/lib/utils";
+import MixturePropertiesChart from "./mixture-properties-chart";
 
 interface PotionCraftComponentProps {
   ingredients: Ingredient[];
@@ -46,11 +44,11 @@ export default function PotionCraftComponent({
   } = usePotionCraft(ingredients, userId);
 
   const rarityStyles: RarityStyleProps = {
-    COMMON: "bg-slate-600",
-    UNCOMMON: "bg-green-900",
-    RARE: "bg-blue-900",
-    VERYRARE: "bg-purple-900",
-    LEGENDARY: "bg-orange-800",
+    COMMON: "text-slate-500",
+    UNCOMMON: "text-green-600",
+    RARE: "text-blue-500",
+    VERYRARE: "text-purple-600",
+    LEGENDARY: "text-orange-600",
   };
 
   return (
@@ -65,7 +63,7 @@ export default function PotionCraftComponent({
           {activeIngredient ? (
             <Draggable
               className={cn(
-                "rounded-lg",
+                "rounded-lg bg-secondary",
                 rarityStyles[activeIngredient.rarity as keyof RarityStyleProps],
               )}
               id={activeIngredient.id}
@@ -87,14 +85,11 @@ export default function PotionCraftComponent({
               />
             ))}
           </div>
-          <div className="mt-8 flex space-x-3">
+          <div className="mt-8 flex justify-center space-x-3">
             <Button className="w-36" onClick={handleCraftPotion}>
               Craft Potion
             </Button>
-            <Button
-              className="w-36"
-              onClick={handleResetIngredients}
-            >
+            <Button className="w-36" onClick={handleResetIngredients}>
               Reset Mixture
             </Button>
             <Button
@@ -104,15 +99,16 @@ export default function PotionCraftComponent({
               Add to formulas
             </Button>
           </div>
+          {/* <MixturePropertiesChart /> */}
         </div>
-          <div className="flex h-screen w-96 flex-col items-center overflow-y-auto border-l border-primary/40 p-2">
-            <IngredientList
-              ingredients={filteredUserIngredients}
-              handleFilterIngredients={handleFilterIngredients}
-              handleOrderFilteredIngredients={handleOrderFilteredIngredients}
-              handleChangeIngredientQuantity={handleChangeIngredientQuantity}
-            />
-          </div>
+        <div className="flex h-screen w-96 flex-col items-center overflow-y-auto border-l border-primary/40 p-2">
+          <IngredientList
+            ingredients={filteredUserIngredients}
+            handleFilterIngredients={handleFilterIngredients}
+            handleOrderFilteredIngredients={handleOrderFilteredIngredients}
+            handleChangeIngredientQuantity={handleChangeIngredientQuantity}
+          />
+        </div>
       </DndContext>
     </div>
   );

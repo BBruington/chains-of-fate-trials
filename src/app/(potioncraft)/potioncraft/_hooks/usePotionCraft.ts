@@ -1,52 +1,47 @@
 "use client";
 import { EMPTY_INGREDIENT, EMPTY_POTION } from "@/constants";
-import { User } from "@prisma/client";
 import { useState } from "react";
 import { z } from "zod";
 import { IngredientHooks } from "./ingredients-hooks";
+import { PotionHooks } from "./potions-hooks";
 import {
   IngredientSchema,
   RarityType,
-} from "../../../../../../prisma/generated/zod";
-import { PotionSchema } from "@/types";
+} from "../../../../../prisma/generated/zod";
 import {
-  spendIngredients,
-  addPotionToUser,
   addFormulaToUser,
   changeIngredientQuantity,
-} from "../../actions";
-import { commonPotions } from "../testData";
+} from "../actions";
 import {
   HandleIngredientQuantityChangeProps,
   UsePotionCraftProps,
   MagicProperties,
   AddFormulaProps,
   mixturePropertiesSchema,
-  findPotionSchema,
 } from "./types";
 
+const initialPotionProperties = {
+  magicTypes: ["EMPTY"],
+  rarity: "EMPTY",
+  primaryAttribute: "EMPTY",
+  abjuration: 0,
+  conjuration: 0,
+  divination: 0,
+  enchantment: 0,
+  evocation: 0,
+  illusion: 0,
+  necromancy: 0,
+  transmutation: 0,
+};
+
+const emptyMixture = [
+  EMPTY_INGREDIENT,
+  EMPTY_INGREDIENT,
+  EMPTY_INGREDIENT,
+  EMPTY_INGREDIENT,
+];
+
 export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
-  const initialPotionProperties = {
-    magicTypes: ["EMPTY"],
-    rarity: "EMPTY",
-    primaryAttribute: "EMPTY",
-    abjuration: 0,
-    conjuration: 0,
-    divination: 0,
-    enchantment: 0,
-    evocation: 0,
-    illusion: 0,
-    necromancy: 0,
-    transmutation: 0,
-  };
-
-  const emptyMixture = [
-    EMPTY_INGREDIENT,
-    EMPTY_INGREDIENT,
-    EMPTY_INGREDIENT,
-    EMPTY_INGREDIENT,
-  ];
-
   const [mixture, setMixture] =
     useState<z.infer<typeof IngredientSchema>[]>(emptyMixture);
   const [userIngredients, setUserIngredients] =
@@ -81,24 +76,18 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
     setMixture,
   });
 
+  const { findPotion, handleCraftPotion } = PotionHooks({
+    mixtureProperties,
+    mixture,
+    userId,
+    setMixture,
+    findMixtureProperties,
+  });
+
   const handleResetIngredients = () => {
     setUserIngredients(ingredients);
     handleFilterIngredients({ ingredients });
     setMixture(emptyMixture);
-  };
-
-  const handleCraftPotion = async () => {
-    const potion = findPotion({ mixture: mixtureProperties });
-    const spentIngredients = mixture.filter((mix) => mix.id !== "empty");
-    await spendIngredients({ ingredients: spentIngredients });
-    const resetMix = { ...EMPTY_INGREDIENT };
-    setMixture(emptyMixture);
-    if (potion === undefined) {
-      console.log("potion craft failed! D:");
-    } else {
-      await addPotionToUser({ potion, userId });
-    }
-    findMixtureProperties([resetMix]);
   };
 
   const handleChangeIngredientQuantity = async ({
@@ -120,71 +109,6 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
       handleFilterIngredients({ ingredients: changedIngredients });
     }
   };
-
-  //get potions of appropriate rarity
-  //find craftable potion(s) with mixture: potion primary attribute === mixture primary attribute
-  //check requirements for potion vs mixture ie: required type(s)
-  //check secondary attributes to define quality / which potion to use
-
-  function findPotion(
-    props: z.infer<typeof findPotionSchema>,
-  ): z.infer<typeof PotionSchema> | undefined {
-    const { mixture } = findPotionSchema.parse(props);
-
-    let potions = commonPotions;
-
-    if (mixture.rarity === "COMMON") potions = commonPotions;
-
-    const potionsMatchingPrimaryAttribute = potions?.filter(
-      (potion) =>
-        potion[mixture.primaryAttribute as keyof MagicProperties] ===
-        mixture[mixture.primaryAttribute as keyof MagicProperties],
-    );
-
-    if (
-      potionsMatchingPrimaryAttribute === undefined ||
-      potionsMatchingPrimaryAttribute.length === 0
-    )
-      return;
-
-    const potionSecondaryAttributes = potionsMatchingPrimaryAttribute.map(
-      (potion) => {
-        const potionKeys = Object.keys(initialPotionProperties);
-        const matchingSecondaryAttributes = potionKeys.filter((key) => {
-          const potionValue = Math.max(potion[key as keyof MagicProperties], 0);
-          const combinedValue = Math.max(
-            mixtureProperties[key as keyof MagicProperties],
-            0,
-          );
-          return (
-            potionValue === combinedValue &&
-            potionValue !== 0 &&
-            key.toUpperCase() !== potion.primaryAttribute
-          );
-        });
-        return { potion, secondaryAttributes: matchingSecondaryAttributes };
-      },
-    );
-
-    const answer = potionSecondaryAttributes.reduce(
-      (initialPotion, nextPotion) => {
-        if (
-          initialPotion.secondaryAttributes.length ===
-          nextPotion.secondaryAttributes.length
-        ) {
-          const randomPotion = Math.floor(Math.random() * 2);
-          return [initialPotion, nextPotion][randomPotion];
-        }
-        if (
-          initialPotion.secondaryAttributes.length >
-          nextPotion.secondaryAttributes.length
-        ) {
-          return initialPotion;
-        } else return nextPotion;
-      },
-    );
-    return answer.potion;
-  }
 
   function findMixtureProperties(
     ingredients: z.infer<typeof IngredientSchema>[],

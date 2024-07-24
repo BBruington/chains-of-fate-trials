@@ -1,7 +1,29 @@
 import { $Enums, Ingredient, User } from "@prisma/client";
 import { Dispatch, SetStateAction, ChangeEvent } from "react";
 import { z } from "zod";
-import { IngredientSchema } from "../../../../../../prisma/generated/zod";
+import { IngredientSchema } from "../../../../../prisma/generated/zod";
+
+export type PotionHooksProps = {
+  mixtureProperties: {
+    magicTypes: string[];
+    rarity: string;
+    primaryAttribute: string;
+    abjuration: number;
+    conjuration: number;
+    divination: number;
+    enchantment: number;
+    evocation: number;
+    illusion: number;
+    necromancy: number;
+    transmutation: number;
+  };
+  mixture: z.infer<typeof IngredientSchema>[];
+  setMixture: Dispatch<SetStateAction<z.infer<typeof IngredientSchema>[]>>;
+  findMixtureProperties: (
+    ingredients: z.infer<typeof IngredientSchema>[],
+  ) => z.infer<typeof mixturePropertiesSchema>;
+  userId: User["clerkId"];
+};
 
 export type IngredientState = {
   id: string;

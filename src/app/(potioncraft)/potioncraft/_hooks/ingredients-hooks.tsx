@@ -1,6 +1,10 @@
-import { addIngredientsToUser } from "../../actions";
+import { addIngredientsToUser } from "../actions";
 import { DragOverEvent, DragStartEvent } from "@dnd-kit/core";
-import { IngredientHooksProps, AddIngredientsProps, HandleFilterIngredientsProps } from "./types";
+import {
+  IngredientHooksProps,
+  AddIngredientsProps,
+  HandleFilterIngredientsProps,
+} from "./types";
 
 export function IngredientHooks({
   filteredIngredientsInput,
@@ -15,8 +19,6 @@ export function IngredientHooks({
   setFilteredUserIngredients,
   setFilteredIngredientsInput,
 }: IngredientHooksProps) {
-  
-
   const handleAddIngredients = async ({
     ingredients,
     userId,

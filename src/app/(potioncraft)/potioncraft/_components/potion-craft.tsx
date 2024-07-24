@@ -6,7 +6,7 @@ import Draggable from "@/components/dndkit/draggable";
 import { Button } from "@/components/ui/button";
 import { Potion, Ingredient, Formula } from "@prisma/client";
 import { User } from "@prisma/client";
-import { usePotionCraft } from "./_hooks/usePotionCraft";
+import { usePotionCraft } from "../_hooks/usePotionCraft";
 import { RarityStyleProps } from "../_types";
 import { cn } from "@/lib/utils";
 import MixturePropertiesChart from "./mixture-properties-chart";

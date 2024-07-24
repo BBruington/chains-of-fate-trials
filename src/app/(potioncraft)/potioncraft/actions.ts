@@ -18,14 +18,14 @@ const PotionSchema = z.object({
   primaryAttribute: PrimaryAttributeSchema,
   name: z.string(),
   description: z.string(),
-  abjuration: z.number().nonnegative(),
-  conjuration: z.number().nonnegative(),
-  divination: z.number().nonnegative(),
-  enchantment: z.number().nonnegative(),
-  evocation: z.number().nonnegative(),
-  illusion: z.number().nonnegative(),
-  necromancy: z.number().nonnegative(),
-  transmutation: z.number().nonnegative(),
+  abjuration: z.number().min(0).default(0),
+  conjuration: z.number().min(0).default(0),
+  divination: z.number().min(0).default(0),
+  enchantment: z.number().min(0).default(0),
+  evocation: z.number().min(0).default(0),
+  illusion: z.number().min(0).default(0),
+  necromancy: z.number().min(0).default(0),
+  transmutation: z.number().min(0).default(0),
 });
 
 const SpendIngredientsSchema = z.object({

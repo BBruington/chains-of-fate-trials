@@ -1,8 +1,9 @@
-import { CommonPotionSchema } from "@/types";
+import { CommonPotionSchema, PotionSchema } from "@/types";
+import { IngredientSchema } from "../../../../../prisma/generated/zod";
 import { MagicType, PrimaryAttribute, Rarity } from "@prisma/client";
 import { z } from "zod";
 
-export const commonPotions: z.infer<typeof CommonPotionSchema> = [
+export const commonPotions: z.infer<typeof PotionSchema>[] = [
   {
     id: 1,
     name: "Blade Ward",
@@ -360,7 +361,7 @@ export const commonPotions: z.infer<typeof CommonPotionSchema> = [
   },
 ];
 
-export const playerIngredients = [
+export const playerIngredients: z.infer<typeof IngredientSchema>[] = [
   {
     id: "1",
     name: "Evergreen Herb",

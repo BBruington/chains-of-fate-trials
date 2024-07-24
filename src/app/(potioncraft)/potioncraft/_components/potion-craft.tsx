@@ -6,7 +6,7 @@ import Draggable from "@/components/dndkit/draggable";
 import { Button } from "@/components/ui/button";
 import { Potion, Ingredient, Formula } from "@prisma/client";
 import { User } from "@prisma/client";
-import { usePotionCraft } from "./usePotionCraft";
+import { usePotionCraft } from "./_hooks/usePotionCraft";
 import { RarityStyleProps } from "../_types";
 import { cn } from "@/lib/utils";
 import MixturePropertiesChart from "./mixture-properties-chart";
@@ -41,7 +41,7 @@ export default function PotionCraftComponent({
     handleChangeIngredientQuantity,
     handleIngredientDragStart,
     handleIngredientDragEnd,
-  } = usePotionCraft(ingredients, userId);
+  } = usePotionCraft({ ingredients, userId });
 
   const rarityStyles: RarityStyleProps = {
     COMMON: "text-slate-500",
@@ -53,7 +53,7 @@ export default function PotionCraftComponent({
 
   return (
     <div className="flex w-screen justify-between">
-      <div></div>
+      <div />
       <DndContext
         onDragStart={handleIngredientDragStart}
         onDragEnd={handleIngredientDragEnd}

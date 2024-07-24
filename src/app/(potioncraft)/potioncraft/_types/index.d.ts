@@ -1,16 +1,6 @@
 import { Ingredient } from "@prisma/client";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
-export interface HandleFilterIngredientsProps {
-  event?: ChangeEvent<HTMLInputElement> | undefined;
-  ingredients?: Ingredient[] | undefined;
-}
-
-export interface HandleIngredientQuantityChangeProps {
-  ingredient: Ingredient;
-  quantity: number;
-}
-
 export interface IngredientListProps {
   ingredients: Ingredient[];
   handleFilterIngredients: ({

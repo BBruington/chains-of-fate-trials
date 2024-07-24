@@ -21,7 +21,7 @@ export default function IngredientListItem({ ingredient }: IngredientListItemPro
       className="flex h-fit min-h-32 w-72 flex-col items-center rounded-sm border border-secondary bg-secondary-foreground/70 text-secondary hover:cursor-pointer hover:bg-secondary-foreground/60"
     >
       <h1 className="w-full border-b border-secondary line-clamp-3 whitespace-normal text-center text-2xl">
-        {ingredient.name}
+        {ingredient.name} ({ingredient.quantity})
       </h1>
       <p className="whitespace-normal">{ingredient.description}</p>
     </Button>

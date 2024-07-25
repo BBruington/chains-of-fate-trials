@@ -11,12 +11,12 @@ import { RarityStyleProps } from "../_types";
 import { cn } from "@/lib/utils";
 import MixturePropertiesChart from "./mixture-properties-chart";
 
-interface PotionCraftComponentProps {
+type PotionCraftComponentProps = {
   ingredients: Ingredient[];
   userId: User["clerkId"];
   potions: Potion[];
   formulas: Formula[];
-}
+};
 
 export default function PotionCraftComponent({
   ingredients,

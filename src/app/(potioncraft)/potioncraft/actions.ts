@@ -47,9 +47,28 @@ const AddPotionToUserSchema = z.object({
   potion: PotionSchema,
 });
 
-const AddIngredientToUserSchema = z.object({
+const AddIngredientsToUserSchema = z.object({
   userId: z.string(),
-  ingredients: z.array(IngredientSchema),
+  ingredients: z.array(
+    z.object({
+      rarity: RaritySchema,
+      type: MagicTypeSchema,
+      primaryAttribute: PrimaryAttributeSchema,
+      id: z.string(),
+      name: z.string(),
+      description: z.string(),
+      quantity: z.number().int(),
+      abjuration: z.number().int(),
+      conjuration: z.number().int(),
+      divination: z.number().int(),
+      enchantment: z.number().int(),
+      evocation: z.number().int(),
+      illusion: z.number().int(),
+      necromancy: z.number().int(),
+      transmutation: z.number().int(),
+      userId: z.string(),
+    }),
+  ),
 });
 
 const AddFormulaToUserSchema = z.object({
@@ -190,19 +209,53 @@ export const addPotionToUser = async (
 };
 
 export const addIngredientsToUser = async (
-  props: z.infer<typeof AddIngredientToUserSchema>,
+  props: z.infer<typeof AddIngredientsToUserSchema>,
 ): Promise<void> => {
   try {
-    const { userId, ingredients } = AddIngredientToUserSchema.parse(props);
-    await prisma.ingredient.createMany({
-      data: ingredients.map((ingredient) => ({
-        ...ingredient,
-        name: ingredient.name,
-        description: ingredient.description,
-        id: undefined,
-        userId,
-      })),
+    const { userId, ingredients } = AddIngredientsToUserSchema.parse(props);
+    const userIngredients = await prisma.ingredient.findMany({
+      where: {
+        userId: userId,
+      },
     });
+    let existingIngredients = [];
+    let notExistingIngredients = [];
+    for (let ingredient of ingredients) {
+      const foundItem = userIngredients.find(
+        (item) => ingredient.name === item.name,
+      );
+      if (foundItem) {
+        existingIngredients.push(foundItem);
+      } else {
+        notExistingIngredients.push(ingredient);
+      }
+    }
+
+    if (notExistingIngredients.length > 0) {
+      await prisma.ingredient.createMany({
+        data: notExistingIngredients.map((ingredient) => ({
+          ...ingredient,
+          name: ingredient.name,
+          description: ingredient.description,
+          id: undefined,
+          userId,
+        })),
+      });
+    }
+
+    if (existingIngredients.length > 0) {
+      existingIngredients.forEach(
+        async (ingredient) =>
+          await prisma.ingredient.update({
+            where: {
+              id: ingredient.id,
+            },
+            data: {
+              quantity: ingredient.quantity + 1,
+            },
+          }),
+      );
+    }
     revalidatePath(`${process.env.BASE_URL}/potioncraft`);
   } catch (error) {
     console.error("Error adding ingredients to user: ", error);

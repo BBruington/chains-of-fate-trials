@@ -9,9 +9,16 @@ import { Button } from "@/components/ui/button";
 type IngredientShopProps = {
   userId: User["clerkId"];
 };
+
 export default function IngredientShop({ userId }: IngredientShopProps) {
   return (
-    <div className="flex flex-col">
+    <div className="ml-1 flex w-full flex-col">
+      <div className="mb-1 flex w-full items-center border-b-2 border-red-800">
+        <span className="w-32 text-xl">Name</span>
+        <span className="mx-2 w-28 text-xl">Type</span>
+        <span className="w-28 text-xl">Rarity</span>
+        <span className="ml-3 w-24 text-xl">Buy</span>
+      </div>
       {playerIngredients.map((ingredient) => (
         <IngredientShopItem
           key={ingredient.name}
@@ -34,11 +41,15 @@ function IngredientShopItem({ ingredient, userId }: IngredientShopItemProps) {
   };
 
   return (
-    <div className="flex">
-      <span>{ingredient.name}</span>
-      <Button onClick={handleAddIngredientToUser} className="ml-3 h-7">
-        Add
-      </Button>
+    <div className="flex min-h-8 w-full items-center border-b text-sm">
+      <span className="w-32">{ingredient.name}</span>
+      <span className="mx-2 w-28">{ingredient.type}</span>
+      <span className="w-28">{ingredient.rarity}</span>
+      <div className="w-24">
+        <Button onClick={handleAddIngredientToUser} className="ml-3 h-6">
+          Add
+        </Button>
+      </div>
     </div>
   );
 }

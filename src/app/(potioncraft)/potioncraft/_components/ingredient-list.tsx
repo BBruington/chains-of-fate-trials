@@ -84,12 +84,13 @@ function IngredientItem({
 }: IngredientItemProps) {
   const [isOpen, setIsOpen] = useState(false);
   const handleOpenHoverCard = (event: boolean) => {
-    if (activeIngredient === null && event === true ) {
+    if (activeIngredient === null && event === true) {
       setIsOpen(true);
     } else {
-      setIsOpen(false)
+      setIsOpen(false);
     }
   };
+  
   const rarityStyles: RarityStyleProps = {
     COMMON: "text-slate-500",
     UNCOMMON: "text-green-600",
@@ -106,7 +107,10 @@ function IngredientItem({
   };
 
   return (
-    <HoverCard open={isOpen} onOpenChange={(event) => handleOpenHoverCard(event)}>
+    <HoverCard
+      open={isOpen}
+      onOpenChange={(event) => handleOpenHoverCard(event)}
+    >
       <div
         className={cn(
           "flex items-center rounded-md border-b px-2",

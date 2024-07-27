@@ -10,19 +10,19 @@ export const getUser = cache(async (userId: string) => {
         clerkId: userId,
       },
       select: {
-        Ingredients: true,
-        Potions: true,
-        Formulas: true,
+        Ingredients: { orderBy: { name: "asc" } },
+        Potions: { orderBy: { name: "asc" } },
+        Formulas: { orderBy: { name: "asc" } },
       },
     });
-  
+
     return {
       user,
       ingredients: user?.Ingredients,
       potions: user?.Potions,
       formulas: user?.Formulas,
     };
-    } catch (error) {
+  } catch (error) {
     console.error("Error getting user: ", error);
     throw new Error("Failed to get user");
   }

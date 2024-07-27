@@ -1,3 +1,4 @@
+"use client";
 import Draggable from "@/components/dndkit/draggable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -27,9 +28,11 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function IngredientList({
   ingredients,
+  activeIngredient,
   handleFilterIngredients,
   handleOrderFilteredIngredients,
   handleChangeIngredientQuantity,
@@ -64,6 +67,7 @@ export default function IngredientList({
             <IngredientItem
               key={ingredient.id}
               ingredient={ingredient}
+              activeIngredient={activeIngredient}
               onQuantityChange={handleChangeIngredientQuantity}
             />
           ))
@@ -73,7 +77,19 @@ export default function IngredientList({
   );
 }
 
-function IngredientItem({ ingredient, onQuantityChange }: IngredientItemProps) {
+function IngredientItem({
+  ingredient,
+  activeIngredient,
+  onQuantityChange,
+}: IngredientItemProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const handleOpenHoverCard = (event: boolean) => {
+    if (activeIngredient === null && event === true ) {
+      setIsOpen(true);
+    } else {
+      setIsOpen(false)
+    }
+  };
   const rarityStyles: RarityStyleProps = {
     COMMON: "text-slate-500",
     UNCOMMON: "text-green-600",
@@ -90,14 +106,14 @@ function IngredientItem({ ingredient, onQuantityChange }: IngredientItemProps) {
   };
 
   return (
-    <HoverCard>
+    <HoverCard open={isOpen} onOpenChange={(event) => handleOpenHoverCard(event)}>
       <div
         className={cn(
           "flex items-center rounded-md border-b px-2",
           rarityStyles[ingredient.rarity as keyof RarityStyleProps],
         )}
       >
-        <HoverCardTrigger className="flex">
+        <HoverCardTrigger onClick={() => setIsOpen(false)} className="flex">
           <Image
             className="w-4"
             src={ingredientIcon[ingredient.type as keyof IngredientIconProps]}
@@ -116,7 +132,16 @@ function IngredientItem({ ingredient, onQuantityChange }: IngredientItemProps) {
               {ingredient.name}
             </h2>
             <ul>
-              <li>Rarity: <span className={rarityStyles[ingredient.rarity as keyof RarityStyleProps]}>{ingredient.rarity}</span></li>
+              <li>
+                Rarity:{" "}
+                <span
+                  className={
+                    rarityStyles[ingredient.rarity as keyof RarityStyleProps]
+                  }
+                >
+                  {ingredient.rarity}
+                </span>
+              </li>
               <li>Type: {ingredient.type}</li>
               <li>Primary Attribute: {ingredient.primaryAttribute}</li>
             </ul>

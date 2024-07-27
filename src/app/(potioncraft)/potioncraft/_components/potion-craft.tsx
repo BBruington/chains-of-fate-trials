@@ -104,6 +104,7 @@ export default function PotionCraftComponent({
         <div className="flex h-screen w-96 flex-col items-center overflow-y-auto border-l border-primary/40 p-2">
           <IngredientList
             ingredients={filteredUserIngredients}
+            activeIngredient={activeIngredient}
             handleFilterIngredients={handleFilterIngredients}
             handleOrderFilteredIngredients={handleOrderFilteredIngredients}
             handleChangeIngredientQuantity={handleChangeIngredientQuantity}

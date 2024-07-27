@@ -3,6 +3,7 @@ import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 export interface IngredientListProps {
   ingredients: Ingredient[];
+  activeIngredient: Ingredient | null;
   handleFilterIngredients: ({
     event,
     ingredients,
@@ -13,6 +14,7 @@ export interface IngredientListProps {
 
 export interface IngredientItemProps {
   ingredient: Ingredient;
+  activeIngredient: Ingredient | null;
   onQuantityChange: ({ ingredient, quantity }: HandleIngredientQuantityChangeProps) => Promise<void>
 }
 

@@ -20,7 +20,7 @@ export default function Draggable({
   disabled,
   showQuantity,
 }: DraggableProps) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: id,
     data: {
       type: item.id,

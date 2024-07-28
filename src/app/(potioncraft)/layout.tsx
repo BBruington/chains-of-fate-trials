@@ -1,6 +1,9 @@
 "use client";
 import SideNavLink from "./potioncraft/_components/side-nav-link";
-import serum from "@/../public/icons/serum.png";
+import scroll from "@/../public/icons/scroll.svg"
+import potion from "@/../public/icons/potion.svg"
+import herb from "@/../public/icons/herb.svg"
+import anvil from "@/../public/icons/anvil.svg"
 import { useState } from "react";
 import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
@@ -14,14 +17,14 @@ export default function RootLayout({
   const [isOpenNav, setIsOpenNav] = useState(false);
 
   const NAV_LINKS = [
-    { href: "/potioncraft", label: "Craft", icon: serum },
-    { href: "/potioncraft/journal/potions", label: "Potions", icon: serum },
+    { href: "/potioncraft", label: "Craft", icon: anvil },
+    { href: "/potioncraft/journal/potions", label: "Potions", icon: potion },
     {
       href: "/potioncraft/journal/ingredients",
       label: "Ingredients",
-      icon: serum,
+      icon: herb,
     },
-    { href: "/potioncraft/formulas", label: "Formulas", icon: serum },
+    { href: "/potioncraft/formulas", label: "Formulas", icon: scroll },
   ];
 
   return (

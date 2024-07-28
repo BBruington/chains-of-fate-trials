@@ -1,7 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
-import IngredientListItem from "./_components/ingredient-list-item";
-import DisplayIngredient from "./_components/display-ingredient";
-import IngredientShop from "./_components/ingredient-shop";
+import IngredientsPage from "./_components/ingredients";
 import { getUser } from "../../page";
 
 export default async function IngredientJournal() {
@@ -15,16 +13,7 @@ export default async function IngredientJournal() {
   return (
     <div className="flex w-screen justify-between">
       <div />
-      <div className="mt-16 flex w-full justify-center">
-        {/* <DisplayIngredient /> */}
-        <IngredientShop userId={clerkUser.id} />
-      </div>
-      <div className="flex h-full w-96 flex-col items-center space-y-3 overflow-y-auto border border-r-0 border-primary/40 bg-secondary p-3">
-        <h2>My Ingredients</h2>
-        {ingredients?.map((ingredient) => (
-          <IngredientListItem key={ingredient.id} ingredient={ingredient} />
-        ))}
-      </div>
+      <IngredientsPage userId={clerkUser.id} ingredients={ingredients} />
     </div>
   );
 }

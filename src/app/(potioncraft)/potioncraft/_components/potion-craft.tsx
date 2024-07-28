@@ -96,7 +96,7 @@ export default function PotionCraftComponent({
               className="w-36"
               onClick={() => addFormula({ mixture, userId })}
             >
-              Add to formulas
+              Add to Formulas
             </Button>
           </div>
           {/* <MixturePropertiesChart /> */}

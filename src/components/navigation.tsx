@@ -52,7 +52,7 @@ export default function Navigation() {
             className={cn(
               "transition-colors hover:text-primary/80",
               (href.includes(baseUrl) || label === baseUrl) &&
-                "pointer-events-none font-semibold text-secondary",
+                "pointer-events-none text-primary/50 border-b border-primary/50",
             )}
             href={href}
             key={href}

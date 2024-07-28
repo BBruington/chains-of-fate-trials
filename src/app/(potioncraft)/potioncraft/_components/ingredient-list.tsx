@@ -12,7 +12,7 @@ import { EMPTY_INGREDIENT } from "@/constants";
 import { cn } from "@/lib/utils";
 import skull from "@/../public/icons/skull.svg";
 import wizardHat from "@/../public/icons/wizard-hat.svg";
-import scroll from "@/../public/icons/scroll.svg";
+import herb from "@/../public/icons/herb.svg"
 import {
   Select,
   SelectContent,
@@ -103,7 +103,7 @@ function IngredientItem({
     ARCANE: wizardHat,
     DIVINE: wizardHat,
     OCCULT: skull,
-    PRIMAL: scroll,
+    PRIMAL: herb,
   };
 
   return (

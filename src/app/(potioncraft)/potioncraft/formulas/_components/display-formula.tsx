@@ -29,20 +29,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import IngredientFormfield from "./ingredient-formfield";
+import {
+  FormFormulaSchema,
+  FormulaIngredientsProps,
+  FormData,
+} from "../../_types";
 
 export default function DisplayFormula() {
   const [selectedFormula, setSelectedFormula] =
     useAtom<Formula>(displayFormaula);
-
-  interface FormulaIngredient {
-    ingredientNum:
-      | "ingredient1"
-      | "ingredient2"
-      | "ingredient3"
-      | "ingredient4";
-    ingredientName: string | null;
-  }
-  type FormulaIngredientsProps = FormulaIngredient[];
 
   const formulaIngredients: FormulaIngredientsProps = [
     {
@@ -98,25 +93,6 @@ export default function DisplayFormula() {
     await removeFormula({ formula: selectedFormula });
     setSelectedFormula(BLANK_FORMULA);
   };
-
-  type FormData = z.infer<typeof FormFormulaSchema>;
-
-  const FormFormulaSchema = z.object({
-    rarity: z.enum([
-      "EMPTY",
-      "COMMON",
-      "UNCOMMON",
-      "RARE",
-      "VERYRARE",
-      "LEGENDARY",
-    ]),
-    name: z.string(),
-    description: z.string(),
-    ingredient1: z.string(),
-    ingredient2: z.string(),
-    ingredient3: z.string(),
-    ingredient4: z.string(),
-  });
 
   const form = useForm<FormData>({
     resolver: zodResolver(FormFormulaSchema),
@@ -179,7 +155,7 @@ export default function DisplayFormula() {
           className="flex w-full flex-col items-center justify-center border bg-secondary-foreground/60 text-secondary"
           onSubmit={handleSubmit(handleSaveFormula)}
         >
-          <div className="flex flex-col w-100 bg-primary px-12 py-8">
+          <div className="w-100 flex flex-col bg-primary px-12 py-8">
             <FormField
               control={form.control}
               name="name"

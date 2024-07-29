@@ -11,6 +11,15 @@ type IngredientShopProps = {
 };
 
 export default function IngredientShop({ userId }: IngredientShopProps) {
+  playerIngredients.sort((a, b) => {
+    if (a.name < b.name) {
+      return -1;
+    }
+    if (a.name > b.name) {
+      return 1;
+    }
+    return 0;
+  });
   return (
     <div className="ml-1 flex w-full flex-col">
       <div className="mb-1 flex w-full items-center border-b-2 border-red-800">

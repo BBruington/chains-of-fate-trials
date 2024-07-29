@@ -32,3 +32,33 @@ export interface IngredientIconProps {
   OCCULT: StaticImport;
   PRIMAL: StaticImport;
 }
+
+export type FormulaIngredient = {
+  ingredientNum:
+    | "ingredient1"
+    | "ingredient2"
+    | "ingredient3"
+    | "ingredient4";
+  ingredientName: string | null;
+}
+export type FormulaIngredientsProps = FormulaIngredient[];
+
+
+export const FormFormulaSchema = z.object({
+  rarity: z.enum([
+    "EMPTY",
+    "COMMON",
+    "UNCOMMON",
+    "RARE",
+    "VERYRARE",
+    "LEGENDARY",
+  ]),
+  name: z.string(),
+  description: z.string(),
+  ingredient1: z.string(),
+  ingredient2: z.string(),
+  ingredient3: z.string(),
+  ingredient4: z.string(),
+});
+
+export type FormData = z.infer<typeof FormFormulaSchema>;

@@ -31,7 +31,7 @@ export default function RootLayout({
     <Collapsible open={isOpenNav} onOpenChange={setIsOpenNav} className="flex">
       <div
         className={
-          "flex h-screen min-w-[70px] flex-col items-center space-y-5 overflow-y-auto border-r border-primary/40 p-3"
+          "flex h-screen min-w-[70px] flex-col items-center space-y-2 overflow-y-auto border-r border-primary/40 p-3"
         }
       >
         <CollapsibleTrigger className="flex w-full justify-end px-2">

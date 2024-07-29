@@ -1,5 +1,11 @@
 import { Ingredient } from "@prisma/client";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import { Dispatch, SetStateAction } from "react";
+import { z } from "zod";
+import {
+  HandleFilterIngredientsProps,
+  HandleIngredientQuantityChangeProps,
+} from "../_hooks/types";
 
 export interface IngredientListProps {
   ingredients: Ingredient[];
@@ -9,13 +15,19 @@ export interface IngredientListProps {
     ingredients,
   }: HandleFilterIngredientsProps) => void;
   handleOrderFilteredIngredients: (e: string) => void;
-  handleChangeIngredientQuantity: ({ ingredient, quantity }: HandleIngredientQuantityChangeProps) => Promise<void>
+  handleChangeIngredientQuantity: ({
+    ingredient,
+    quantity,
+  }: HandleIngredientQuantityChangeProps) => Promise<void>;
 }
 
 export interface IngredientItemProps {
   ingredient: Ingredient;
   activeIngredient: Ingredient | null;
-  onQuantityChange: ({ ingredient, quantity }: HandleIngredientQuantityChangeProps) => Promise<void>
+  onQuantityChange: ({
+    ingredient,
+    quantity,
+  }: HandleIngredientQuantityChangeProps) => Promise<void>;
 }
 
 export interface RarityStyleProps {
@@ -34,15 +46,10 @@ export interface IngredientIconProps {
 }
 
 export type FormulaIngredient = {
-  ingredientNum:
-    | "ingredient1"
-    | "ingredient2"
-    | "ingredient3"
-    | "ingredient4";
+  ingredientNum: "ingredient1" | "ingredient2" | "ingredient3" | "ingredient4";
   ingredientName: string | null;
-}
+};
 export type FormulaIngredientsProps = FormulaIngredient[];
-
 
 export const FormFormulaSchema = z.object({
   rarity: z.enum([
@@ -62,3 +69,21 @@ export const FormFormulaSchema = z.object({
 });
 
 export type FormData = z.infer<typeof FormFormulaSchema>;
+
+export type IngredientListItemProps = {
+  ingredient: Ingredient;
+  displayUi: {
+    shop: boolean;
+    ingredient: boolean;
+  };
+  setDisplayUi: Dispatch<
+    SetStateAction<{
+      shop: boolean;
+      ingredient: boolean;
+    }>
+  >;
+  handleChangeIngredientQuantity: ({
+    ingredient,
+    quantity,
+  }: HandleIngredientQuantityChangeProps) => Promise<void>;
+};

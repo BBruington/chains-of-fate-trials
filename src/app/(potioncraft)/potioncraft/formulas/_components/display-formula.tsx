@@ -1,6 +1,4 @@
 "use client";
-
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +32,8 @@ import {
   FormulaIngredientsProps,
   FormData,
 } from "../../_types";
+import Image from "next/image";
+import parchment from "@/../public/background/parchment.png";
 
 export default function DisplayFormula() {
   const [selectedFormula, setSelectedFormula] =
@@ -155,7 +155,16 @@ export default function DisplayFormula() {
           className="flex w-full flex-col items-center justify-center border bg-secondary-foreground/60 text-secondary"
           onSubmit={handleSubmit(handleSaveFormula)}
         >
-          <div className="w-100 flex flex-col bg-primary px-12 py-8">
+          <div className="fixed flex h-[600px]" style={{ zIndex: -1 }}>
+            <div className="flex h-full">
+              <Image
+                src={parchment}
+                alt="Cover Image"
+                className="mx-auto h-full w-96"
+              />
+            </div>
+          </div>
+          <div className="flex w-96 flex-col p-12">
             <FormField
               control={form.control}
               name="name"

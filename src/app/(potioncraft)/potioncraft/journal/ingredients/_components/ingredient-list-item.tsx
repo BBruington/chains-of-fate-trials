@@ -2,33 +2,14 @@
 
 import { Ingredient } from "@prisma/client";
 import { Button } from "@/components/ui/button";
-import { SetStateAction, useAtom } from "jotai";
+import { useAtom } from "jotai";
 import { displayIngredient } from "../jotaiAtoms";
-import { Dispatch } from "react";
-import { usePotionCraft } from "../../../_hooks/usePotionCraft";
-import { HandleIngredientQuantityChangeProps } from "../../../_hooks/types";
+import { IngredientListItemProps } from "../../../_types";
 
-type IngredientListItemProps = {
-  ingredient: Ingredient;
-  displayUi: {
-    shop: boolean;
-    ingredient: boolean;
-  };
-  setDisplayUi: Dispatch<
-    SetStateAction<{
-      shop: boolean;
-      ingredient: boolean;
-    }>
-  >;
-  handleChangeIngredientQuantity: ({
-    ingredient,
-    quantity,
-  }: HandleIngredientQuantityChangeProps) => Promise<void>;
-};
 export default function IngredientListItem({
   ingredient,
-  setDisplayUi,
   displayUi,
+  setDisplayUi,
   handleChangeIngredientQuantity,
 }: IngredientListItemProps) {
   const [selectedIngredient, setSelectedIngredient] =

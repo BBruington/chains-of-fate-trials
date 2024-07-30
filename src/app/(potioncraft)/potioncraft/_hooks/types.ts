@@ -47,7 +47,7 @@ export type IngredientState = {
 export type IngredientHooksProps = {
   userIngredients: IngredientState[];
   filteredUserIngredients: IngredientState[];
-  userId: User["clerkId"];
+  ingredients: z.infer<typeof IngredientSchema>[];
   mixture: IngredientState[];
   filteredIngredientsInput: string;
   findMixtureProperties: (ingredients: z.infer<typeof IngredientSchema>[]) => {

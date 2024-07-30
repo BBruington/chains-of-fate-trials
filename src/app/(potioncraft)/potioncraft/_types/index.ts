@@ -7,7 +7,7 @@ import {
   HandleIngredientQuantityChangeProps,
 } from "../_hooks/types";
 
-export interface IngredientListProps {
+export type IngredientListProps = {
   ingredients: Ingredient[];
   activeIngredient: Ingredient | null;
   handleFilterIngredients: ({
@@ -21,7 +21,7 @@ export interface IngredientListProps {
   }: HandleIngredientQuantityChangeProps) => Promise<void>;
 }
 
-export interface IngredientItemProps {
+export type IngredientItemProps = {
   ingredient: Ingredient;
   activeIngredient: Ingredient | null;
   onQuantityChange: ({
@@ -42,7 +42,7 @@ export type QuantityButtonsProps = {
   }: HandleIngredientQuantityChangeProps) => Promise<void>;
 };
 
-export interface RarityStyleProps {
+export type RarityStyleProps = {
   COMMON: string;
   UNCOMMON: string;
   RARE: string;
@@ -50,7 +50,7 @@ export interface RarityStyleProps {
   LEGENDARY: string;
 }
 
-export interface IngredientIconProps {
+export type IngredientIconProps = {
   ARCANE: StaticImport;
   DIVINE: StaticImport;
   OCCULT: StaticImport;

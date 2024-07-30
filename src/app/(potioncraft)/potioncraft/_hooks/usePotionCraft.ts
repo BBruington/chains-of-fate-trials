@@ -1,56 +1,34 @@
 "use client";
-import { EMPTY_INGREDIENT, EMPTY_POTION } from "@/constants";
+import {
+  ALL_RARITIES,
+  BLANK_MIXTURE_PROPERTIES,
+  EMPTY_MIXTURE,
+  EMPTY_POTION,
+  INGREDIENT_RARITY_ORDER,
+} from "@/constants";
 import { useState } from "react";
 import { z } from "zod";
 import { IngredientHooks } from "./ingredients-hooks";
 import { PotionHooks } from "./potions-hooks";
+import { IngredientSchema } from "../../../../../prisma/generated/zod";
+import { addFormulaToUser } from "../actions";
 import {
-  IngredientSchema,
-  RarityType,
-} from "../../../../../prisma/generated/zod";
-import {
-  addFormulaToUser,
-  changeIngredientQuantity,
-} from "../actions";
-import {
-  HandleIngredientQuantityChangeProps,
   UsePotionCraftProps,
   MagicProperties,
   AddFormulaProps,
   mixturePropertiesSchema,
 } from "./types";
 
-const initialPotionProperties = {
-  magicTypes: ["EMPTY"],
-  rarity: "EMPTY",
-  primaryAttribute: "EMPTY",
-  abjuration: 0,
-  conjuration: 0,
-  divination: 0,
-  enchantment: 0,
-  evocation: 0,
-  illusion: 0,
-  necromancy: 0,
-  transmutation: 0,
-};
-
-const emptyMixture = [
-  EMPTY_INGREDIENT,
-  EMPTY_INGREDIENT,
-  EMPTY_INGREDIENT,
-  EMPTY_INGREDIENT,
-];
-
 export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
   const [mixture, setMixture] =
-    useState<z.infer<typeof IngredientSchema>[]>(emptyMixture);
+    useState<z.infer<typeof IngredientSchema>[]>(EMPTY_MIXTURE);
   const [userIngredients, setUserIngredients] =
     useState<z.infer<typeof IngredientSchema>[]>(ingredients);
   const [filteredUserIngredients, setFilteredUserIngredients] =
     useState(userIngredients);
   const [filteredIngredientsInput, setFilteredIngredientsInput] = useState("");
   const [mixtureProperties, setMixtureProperties] = useState(
-    initialPotionProperties,
+    BLANK_MIXTURE_PROPERTIES
   );
   const [activeIngredient, setActiveIngredient] = useState<null | z.infer<
     typeof IngredientSchema
@@ -62,11 +40,13 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
     handleOrderFilteredIngredients,
     handleIngredientDragStart,
     handleIngredientDragEnd,
+    handleResetIngredients,
+    handleChangeIngredientQuantity,
   } = IngredientHooks({
+    mixture,
+    ingredients,
     userIngredients,
     filteredUserIngredients,
-    mixture,
-    userId,
     filteredIngredientsInput,
     findMixtureProperties,
     setFilteredUserIngredients,
@@ -84,68 +64,28 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
     findMixtureProperties,
   });
 
-  const handleResetIngredients = () => {
-    setUserIngredients(ingredients);
-    handleFilterIngredients({ ingredients });
-    setMixture(emptyMixture);
-  };
-
-  const handleChangeIngredientQuantity = async ({
-    ingredient,
-    quantity,
-  }: HandleIngredientQuantityChangeProps) => {
-    const res = await changeIngredientQuantity({ ingredient, quantity });
-    const changedIngredients = userIngredients.map((userIngredient) => {
-      if (userIngredient.id === ingredient.id) {
-        return {
-          ...userIngredient,
-          quantity: userIngredient.quantity + quantity,
-        };
-      }
-      return userIngredient;
-    });
-    if (res) {
-      setUserIngredients(changedIngredients);
-      handleFilterIngredients({ ingredients: changedIngredients });
-    }
-  };
-
   function findMixtureProperties(
     ingredients: z.infer<typeof IngredientSchema>[],
   ): z.infer<typeof mixturePropertiesSchema> {
     if (ingredients.length === 0) {
-      setMixtureProperties(initialPotionProperties);
-      return initialPotionProperties;
+      setMixtureProperties(BLANK_MIXTURE_PROPERTIES);
+      return BLANK_MIXTURE_PROPERTIES;
     }
-    const ingredientRarity = {
-      EMPTY: 0,
-      COMMON: 1,
-      UNCOMMON: 2,
-      RARE: 3,
-      VERYRARE: 4,
-      LEGENDARY: 5,
-    };
+
     let currentRarity = 0;
-    const allRarities: RarityType[] = [
-      "EMPTY",
-      "COMMON",
-      "UNCOMMON",
-      "RARE",
-      "VERYRARE",
-      "LEGENDARY",
-    ];
+
     for (let ingredient of ingredients) {
       currentRarity = Math.max(
-        ingredientRarity[ingredient.rarity],
+        INGREDIENT_RARITY_ORDER[ingredient.rarity],
         currentRarity,
       );
     }
 
-    const allIngredientsHighesRarity = ingredients.filter(
-      (ingredient) => allRarities[currentRarity] === ingredient.rarity,
+    const allIngredientsHighestRarity = ingredients.filter(
+      (ingredient) => ALL_RARITIES[currentRarity] === ingredient.rarity,
     );
 
-    const magicTypesOfHighestRarity = allIngredientsHighesRarity.map(
+    const magicTypesOfHighestRarity = allIngredientsHighestRarity.map(
       (ingredient) => {
         return ingredient.type;
       },
@@ -159,7 +99,7 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
           description: "",
           quantity: 0,
           userId: "",
-          rarity: allRarities[currentRarity],
+          rarity: ALL_RARITIES[currentRarity],
           type: "ARCANE",
           primaryAttribute: "ABJURATION",
           abjuration: ingredientSum.abjuration + currentIngretient.abjuration,
@@ -196,22 +136,19 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
     );
 
     if (primaryAttribute.length !== 1) {
-      setMixtureProperties(initialPotionProperties);
-      return initialPotionProperties;
+      setMixtureProperties(BLANK_MIXTURE_PROPERTIES);
+      return BLANK_MIXTURE_PROPERTIES;
     }
 
-    setMixtureProperties({
+    const mix = {
       ...properties,
       primaryAttribute: primaryAttribute[0],
-      rarity: allRarities[currentRarity],
-      magicTypes: magicTypesOfHighestRarity,
-    });
-    return {
-      ...properties,
-      primaryAttribute: primaryAttribute[0],
-      rarity: allRarities[currentRarity],
+      rarity: ALL_RARITIES[currentRarity],
       magicTypes: magicTypesOfHighestRarity,
     };
+
+    setMixtureProperties(mix);
+    return mix;
   }
 
   const addFormula = async ({ mixture, userId }: AddFormulaProps) => {
@@ -225,19 +162,19 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
   return {
     mixture,
     userIngredients,
-    filteredUserIngredients,
     activeIngredient,
     mixtureProperties,
-    findMixtureProperties,
+    filteredUserIngredients,
     findPotion,
     addFormula,
-    handleFilterIngredients,
-    handleOrderFilteredIngredients,
-    handleResetIngredients,
-    handleAddIngredients,
     handleCraftPotion,
-    handleChangeIngredientQuantity,
-    handleIngredientDragStart,
+    handleAddIngredients,
+    findMixtureProperties,
+    handleResetIngredients,
     handleIngredientDragEnd,
+    handleFilterIngredients,
+    handleIngredientDragStart,
+    handleOrderFilteredIngredients,
+    handleChangeIngredientQuantity,
   };
 }

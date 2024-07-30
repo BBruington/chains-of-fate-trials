@@ -6,6 +6,7 @@ import { MagicType, Rarity, PrimaryAttribute } from "@prisma/client";
 import wizardHat from "@/../public/icons/wizard-hat.svg";
 import skull from "@/../public/icons/skull.svg";
 import herb from "@/../public/icons/herb.svg";
+import { RarityType } from "../../prisma/generated/zod";
 
 export const EMPTY_INGREDIENT = {
   id: "empty",
@@ -25,6 +26,13 @@ export const EMPTY_INGREDIENT = {
   necromancy: 0,
   transmutation: 0,
 };
+
+export const EMPTY_MIXTURE = [
+  EMPTY_INGREDIENT,
+  EMPTY_INGREDIENT,
+  EMPTY_INGREDIENT,
+  EMPTY_INGREDIENT,
+];
 
 export const EMPTY_USER_POTION = {
   id: "empty",
@@ -104,4 +112,27 @@ export const INGREDIENT_RARITY_ORDER = {
   RARE: 3,
   VERYRARE: 4,
   LEGENDARY: 5,
+};
+
+export const ALL_RARITIES: RarityType[] = [
+  "EMPTY",
+  "COMMON",
+  "UNCOMMON",
+  "RARE",
+  "VERYRARE",
+  "LEGENDARY",
+];
+
+export const BLANK_MIXTURE_PROPERTIES = {
+  magicTypes: ["EMPTY"],
+  rarity: "EMPTY",
+  primaryAttribute: "EMPTY",
+  abjuration: 0,
+  conjuration: 0,
+  divination: 0,
+  enchantment: 0,
+  evocation: 0,
+  illusion: 0,
+  necromancy: 0,
+  transmutation: 0,
 };

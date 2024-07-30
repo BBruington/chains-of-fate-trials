@@ -1,19 +1,24 @@
-import { addIngredientsToUser } from "../actions";
+import { addIngredientsToUser, changeIngredientQuantity } from "../actions";
 import { DragOverEvent, DragStartEvent } from "@dnd-kit/core";
 import {
   IngredientHooksProps,
   AddIngredientsProps,
   HandleFilterIngredientsProps,
+  HandleIngredientQuantityChangeProps,
 } from "./types";
 import { Ingredient } from "@prisma/client";
-import { INGREDIENT_RARITY_ORDER, INGREDIENT_TYPE_ORDER } from "@/constants";
+import {
+  EMPTY_MIXTURE,
+  INGREDIENT_RARITY_ORDER,
+  INGREDIENT_TYPE_ORDER,
+} from "@/constants";
 
 export function IngredientHooks({
   filteredIngredientsInput,
   filteredUserIngredients,
   userIngredients,
   mixture,
-  userId,
+  ingredients,
   findMixtureProperties,
   setMixture,
   setUserIngredients,
@@ -21,6 +26,7 @@ export function IngredientHooks({
   setFilteredUserIngredients,
   setFilteredIngredientsInput,
 }: IngredientHooksProps) {
+  
   const handleAddIngredients = async ({
     ingredients,
     userId,
@@ -94,11 +100,39 @@ export function IngredientHooks({
     handleFilterIngredients({ ingredients: updatedUserIngredients });
   }
 
+  const handleResetIngredients = () => {
+    setUserIngredients(ingredients);
+    handleFilterIngredients({ ingredients });
+    setMixture(EMPTY_MIXTURE);
+  };
+
+  const handleChangeIngredientQuantity = async ({
+    ingredient,
+    quantity,
+  }: HandleIngredientQuantityChangeProps) => {
+    const res = await changeIngredientQuantity({ ingredient, quantity });
+    const changedIngredients = userIngredients.map((userIngredient) => {
+      if (userIngredient.id === ingredient.id) {
+        return {
+          ...userIngredient,
+          quantity: userIngredient.quantity + quantity,
+        };
+      }
+      return userIngredient;
+    });
+    if (res) {
+      setUserIngredients(changedIngredients);
+      handleFilterIngredients({ ingredients: changedIngredients });
+    }
+  };
+
   return {
     handleAddIngredients,
     handleFilterIngredients,
     handleOrderFilteredIngredients,
     handleIngredientDragStart,
     handleIngredientDragEnd,
+    handleResetIngredients,
+    handleChangeIngredientQuantity,
   };
 }

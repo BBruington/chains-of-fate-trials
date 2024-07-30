@@ -9,7 +9,6 @@ import { User } from "@prisma/client";
 import { usePotionCraft } from "../_hooks/usePotionCraft";
 import { RarityStyleProps } from "../_types";
 import { cn } from "@/lib/utils";
-import MixturePropertiesChart from "./mixture-properties-chart";
 
 type PotionCraftComponentProps = {
   ingredients: Ingredient[];

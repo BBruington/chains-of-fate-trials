@@ -1,41 +1,31 @@
 import React from "react";
-import { useDraggable } from "@dnd-kit/core";
+import { UniqueIdentifier, useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
+import { Ingredient } from "@prisma/client";
 
 type DraggableProps = {
-  id: string;
-  children: string | React.JSX.Element;
-  abjuration: number;
-  conjuration: number;
-  divination: number;
-  enchantment: number;
-  evocation: number;
-  illusion: number;
-  necromancy: number;
-  transmutation: number;
-  name: string;
-  description: string;
+  id: UniqueIdentifier;
+  children?: string | React.JSX.Element;
+  item: Ingredient;
   className?: string | undefined;
+  disabled?: boolean;
+  showQuantity?: boolean;
 };
 
 export default function Draggable({
   id,
-  name,
-  description,
-  abjuration,
-  conjuration,
-  divination,
-  enchantment,
-  evocation,
-  illusion,
-  necromancy,
-  transmutation,
-  children,
+  item,
   className,
+  disabled,
+  showQuantity,
 }: DraggableProps) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: id,
+    data: {
+      type: item.id,
+    },
+    disabled: disabled ? disabled : false,
   });
   const style = {
     transform: CSS.Translate.toString(transform),
@@ -44,15 +34,15 @@ export default function Draggable({
   return (
     <button
       className={cn(
-        "p-3 bg-accent inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium",
-        className
+        "inline-flex w-64 items-center justify-center whitespace-nowrap rounded-sm p-3 text-xs font-medium",
+        className,
       )}
       ref={setNodeRef}
       style={style}
       {...listeners}
       {...attributes}
     >
-      {children}
+      {item.name} {showQuantity ? `(${item.quantity})` : ""}
     </button>
   );
 }

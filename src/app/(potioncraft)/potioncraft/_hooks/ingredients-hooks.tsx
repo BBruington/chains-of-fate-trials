@@ -5,6 +5,8 @@ import {
   AddIngredientsProps,
   HandleFilterIngredientsProps,
 } from "./types";
+import { Ingredient } from "@prisma/client";
+import { INGREDIENT_RARITY_ORDER, INGREDIENT_TYPE_ORDER } from "@/constants";
 
 export function IngredientHooks({
   filteredIngredientsInput,
@@ -19,127 +21,77 @@ export function IngredientHooks({
   setFilteredUserIngredients,
   setFilteredIngredientsInput,
 }: IngredientHooksProps) {
-  
   const handleAddIngredients = async ({
     ingredients,
     userId,
   }: AddIngredientsProps) => {
-    if (userIngredients.length === 0) return;
-    await addIngredientsToUser({ userId, ingredients });
+    if (userIngredients.length > 0)
+      await addIngredientsToUser({ userId, ingredients });
   };
+
+  const filterIngredients = (ingredients: Ingredient[], input: string) =>
+    ingredients.filter(({ name }) =>
+      name.toLowerCase().includes(input.toLowerCase()),
+    );
 
   const handleFilterIngredients = ({
     event,
-    ingredients,
+    ingredients = userIngredients,
   }: HandleFilterIngredientsProps) => {
-    if (event?.target.value === "") {
-      setFilteredUserIngredients(userIngredients);
-      setFilteredIngredientsInput("");
-      return;
-    }
-    const ingredientInput = event?.target.value
-      ? event?.target.value
-      : filteredIngredientsInput;
-    setFilteredIngredientsInput(ingredientInput);
-    if (ingredients) {
-      const filteredIngredients = ingredients.filter((filter) => {
-        const name = filter.name.toLowerCase();
-        return name.includes(ingredientInput.toLowerCase());
-      });
-      setFilteredUserIngredients(filteredIngredients);
-    } else {
-      const filteredIngredients = userIngredients.filter((filter) => {
-        const name = filter.name.toLowerCase();
-        return name.includes(ingredientInput.toLowerCase());
-      });
-      setFilteredUserIngredients(filteredIngredients);
-    }
+    const input = event?.target.value ?? filteredIngredientsInput;
+
+    setFilteredIngredientsInput(input);
+    setFilteredUserIngredients(
+      input ? filterIngredients(ingredients, input) : ingredients,
+    );
   };
 
-  const handleOrderFilteredIngredients = (e: string) => {
-    if (e === "alphabet") {
-      const ingredientsByName = filteredUserIngredients.sort((a, b) =>
-        a.name.localeCompare(b.name),
-      );
-
-      handleFilterIngredients({ ingredients: ingredientsByName });
-    }
-    if (e === "type") {
-      const ingredientType = {
-        EMPTY: 0,
-        ARCANE: 1,
-        DIVINE: 2,
-        OCCULT: 3,
-        PRIMAL: 4,
-      };
-      const ingredientsByType = filteredUserIngredients.sort((a, b) => {
-        const typeA = a.type;
-        const typeB = b.type;
-        return ingredientType[typeA] - ingredientType[typeB];
-      });
-      handleFilterIngredients({ ingredients: ingredientsByType });
-    }
-    if (e === "rarity") {
-      const ingredientRarity = {
-        EMPTY: 0,
-        COMMON: 1,
-        UNCOMMON: 2,
-        RARE: 3,
-        VERYRARE: 4,
-        LEGENDARY: 5,
-      };
-      const ingredientsByRarity = filteredUserIngredients.sort((a, b) => {
-        const rarityA = a.rarity;
-        const rarityB = b.rarity;
-        return ingredientRarity[rarityA] - ingredientRarity[rarityB];
-      });
-      handleFilterIngredients({ ingredients: ingredientsByRarity });
-    }
+  const handleOrderFilteredIngredients = (orderBy: string) => {
+    const sortedIngredients = [...filteredUserIngredients].sort((a, b) => {
+      if (orderBy === "alphabet") return a.name.localeCompare(b.name);
+      if (orderBy === "type")
+        return INGREDIENT_TYPE_ORDER[a.type] - INGREDIENT_TYPE_ORDER[b.type];
+      if (orderBy === "rarity")
+        return (
+          INGREDIENT_RARITY_ORDER[a.rarity] - INGREDIENT_RARITY_ORDER[b.rarity]
+        );
+      return 0;
+    });
+    handleFilterIngredients({ ingredients: sortedIngredients });
   };
 
-  function handleIngredientDragStart(event: DragStartEvent) {
-    const { active } = event;
+  function handleIngredientDragStart({ active }: DragStartEvent) {
     const activeIng = userIngredients.find(
       (ingredient) => ingredient.id === active.id,
     );
     if (activeIng) setActiveIngredient(activeIng);
   }
 
-  function handleIngredientDragEnd(event: DragOverEvent) {
+  function handleIngredientDragEnd({ active, over }: DragOverEvent) {
     setActiveIngredient(null);
-    const { active, over } = event;
+    if (!over || mixture[Number(over.id)].id !== "empty") return;
+
     const draggedIngredient = userIngredients.find(
       (item) => item.id === active.id,
     );
-    const mixtureSpot = over !== null;
-    if (mixtureSpot && draggedIngredient !== undefined) {
-      const mixtureSpotFilled = mixture[Number(over?.id)].id !== "empty";
-      if (mixtureSpotFilled) return;
-      const mixtureWithDraggedIngredient = mixture.map((mix, index) => {
-        if (index === over.id) {
-          return draggedIngredient;
-        }
-        return mix;
-      });
-      setMixture(mixtureWithDraggedIngredient);
-      findMixtureProperties(mixtureWithDraggedIngredient);
-      if (draggedIngredient.quantity === 1) {
-        const ingredientsWithoutDragged = userIngredients.filter(
-          (item) => item !== draggedIngredient,
-        );
-        setUserIngredients(ingredientsWithoutDragged);
-        handleFilterIngredients({ ingredients: ingredientsWithoutDragged });
-      } else {
-        const ingredientsUpdatedQuantity = userIngredients.map((ingredient) => {
-          if (ingredient.id === draggedIngredient.id) {
-            return { ...ingredient, quantity: ingredient.quantity - 1 };
-          }
-          return ingredient;
-        });
-        setUserIngredients(ingredientsUpdatedQuantity);
-        handleFilterIngredients({ ingredients: ingredientsUpdatedQuantity });
-      }
-    }
+    if (!draggedIngredient) return;
+
+    const updatedMixture = mixture.map((mix, index) =>
+      index === over.id ? draggedIngredient : mix,
+    );
+    setMixture(updatedMixture);
+    findMixtureProperties(updatedMixture);
+
+    const updatedUserIngredients = userIngredients
+      .map((ingredient) =>
+        ingredient.id === draggedIngredient.id
+          ? { ...ingredient, quantity: ingredient.quantity - 1 }
+          : ingredient,
+      )
+      .filter((ingredient) => ingredient.quantity > 0);
+
+    setUserIngredients(updatedUserIngredients);
+    handleFilterIngredients({ ingredients: updatedUserIngredients });
   }
 
   return {

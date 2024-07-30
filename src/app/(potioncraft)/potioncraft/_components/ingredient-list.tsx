@@ -7,12 +7,11 @@ import {
   IngredientItemProps,
   RarityStyleProps,
   IngredientIconProps,
+  IngredientDetailsProps,
+  QuantityButtonsProps,
 } from "../_types";
-import { EMPTY_INGREDIENT } from "@/constants";
+import { EMPTY_INGREDIENT, INGREDIENT_ICONS, RARITY_STYLES } from "@/constants";
 import { cn } from "@/lib/utils";
-import skull from "@/../public/icons/skull.svg";
-import wizardHat from "@/../public/icons/wizard-hat.svg";
-import herb from "@/../public/icons/herb.svg"
 import {
   Select,
   SelectContent,
@@ -84,89 +83,89 @@ function IngredientItem({
 }: IngredientItemProps) {
   const [isOpen, setIsOpen] = useState(false);
   const handleOpenHoverCard = (event: boolean) => {
-    if (activeIngredient === null && event === true) {
-      setIsOpen(true);
-    } else {
-      setIsOpen(false);
-    }
-  };
-  
-  const rarityStyles: RarityStyleProps = {
-    COMMON: "text-slate-500",
-    UNCOMMON: "text-green-600",
-    RARE: "text-blue-500",
-    VERYRARE: "text-purple-600",
-    LEGENDARY: "text-orange-600",
-  };
-
-  const ingredientIcon: IngredientIconProps = {
-    ARCANE: wizardHat,
-    DIVINE: wizardHat,
-    OCCULT: skull,
-    PRIMAL: herb,
+    setIsOpen(activeIngredient === null && event);
   };
 
   return (
-    <HoverCard
-      open={isOpen}
-      onOpenChange={(event) => handleOpenHoverCard(event)}
-    >
+    <HoverCard open={isOpen} onOpenChange={handleOpenHoverCard}>
       <div
         className={cn(
           "flex items-center rounded-md border-b px-2",
-          rarityStyles[ingredient.rarity as keyof RarityStyleProps],
+          RARITY_STYLES[ingredient.rarity as keyof RarityStyleProps],
         )}
       >
         <HoverCardTrigger onClick={() => setIsOpen(false)} className="flex">
           <Image
             className="w-4"
-            src={ingredientIcon[ingredient.type as keyof IngredientIconProps]}
+            src={INGREDIENT_ICONS[ingredient.type as keyof IngredientIconProps]}
             alt="Ingredient Type Icon"
           />
           <Draggable
             showQuantity={true}
             id={ingredient.id}
             item={ingredient}
-            className={`text-white ${rarityStyles[ingredient.rarity as keyof RarityStyleProps]}`}
+            className={`text-white ${RARITY_STYLES[ingredient.rarity as keyof RarityStyleProps]}`}
           />
         </HoverCardTrigger>
         <HoverCardContent>
-          <div className="flex flex-col space-y-2 text-sm">
-            <h2 className="mb-2 flex justify-center border-b text-lg">
-              {ingredient.name}
-            </h2>
-            <ul>
-              <li>
-                Rarity:{" "}
-                <span
-                  className={
-                    rarityStyles[ingredient.rarity as keyof RarityStyleProps]
-                  }
-                >
-                  {ingredient.rarity}
-                </span>
-              </li>
-              <li>Type: {ingredient.type}</li>
-              <li>Primary Attribute: {ingredient.primaryAttribute}</li>
-            </ul>
-            <p className="text-xs">{ingredient.description}</p>
-          </div>
+          <IngredientDetails ingredient={ingredient} />
         </HoverCardContent>
-        <Button
-          onClick={() => onQuantityChange({ ingredient, quantity: -1 })}
-          className="hover:primary-60 h-5 w-8 rounded-lg border border-black bg-white text-xs text-black"
-          aria-label={`Decrease ${ingredient.name}`}
-        >
-          -
-        </Button>
-        <Button
-          onClick={() => onQuantityChange({ ingredient, quantity: 1 })}
-          className="hover:primary-60 ml-1 h-5 w-8 border border-black bg-white text-xs text-black"
-          aria-label={`Add ${ingredient.name}`}
-        >
-          +
-        </Button>
+        <QuantityButtons
+          ingredient={ingredient}
+          onQuantityChange={onQuantityChange}
+        />
       </div>
     </HoverCard>
+  );
+}
+
+function IngredientDetails({ ingredient }: IngredientDetailsProps) {
+  return (
+    <div className="flex flex-col space-y-2 text-sm">
+      <h2 className="mb-2 flex justify-center border-b text-lg">
+        {ingredient.name}
+      </h2>
+      <ul>
+        <li>
+          Rarity:{" "}
+          <span
+            className={
+              RARITY_STYLES[ingredient.rarity as keyof RarityStyleProps]
+            }
+          >
+            {ingredient.rarity}
+          </span>
+        </li>
+        <li>Type: {ingredient.type}</li>
+        <li>Primary Attribute: {ingredient.primaryAttribute}</li>
+      </ul>
+      <p className="text-xs">{ingredient.description}</p>
+    </div>
+  );
+}
+
+function QuantityButtons({
+  ingredient,
+  onQuantityChange,
+}: QuantityButtonsProps) {
+  const buttonClass =
+    "hover:primary-60 h-5 w-8 border border-black bg-white text-xs text-black";
+  return (
+    <>
+      <Button
+        onClick={() => onQuantityChange({ ingredient, quantity: -1 })}
+        className={cn(buttonClass, "rounded-lg")}
+        aria-label={`Decrease ${ingredient.name}`}
+      >
+        -
+      </Button>
+      <Button
+        onClick={() => onQuantityChange({ ingredient, quantity: 1 })}
+        className={cn(buttonClass, "ml-1")}
+        aria-label={`Add ${ingredient.name}`}
+      >
+        +
+      </Button>
+    </>
   );
 }

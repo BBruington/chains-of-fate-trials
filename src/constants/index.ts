@@ -1,4 +1,11 @@
+import {
+  RarityStyleProps,
+  IngredientIconProps,
+} from "@/app/(potioncraft)/potioncraft/_types";
 import { MagicType, Rarity, PrimaryAttribute } from "@prisma/client";
+import wizardHat from "@/../public/icons/wizard-hat.svg";
+import skull from "@/../public/icons/skull.svg";
+import herb from "@/../public/icons/herb.svg";
 
 export const EMPTY_INGREDIENT = {
   id: "empty",
@@ -20,7 +27,7 @@ export const EMPTY_INGREDIENT = {
 };
 
 export const EMPTY_USER_POTION = {
-  id: 'empty',
+  id: "empty",
   userId: "empty",
   name: "Empty",
   type: MagicType["EMPTY"],
@@ -65,4 +72,36 @@ export const BLANK_FORMULA = {
   ingredient2: null,
   ingredient3: null,
   ingredient4: null,
-}
+};
+
+export const RARITY_STYLES: RarityStyleProps = {
+  COMMON: "text-slate-500",
+  UNCOMMON: "text-green-600",
+  RARE: "text-blue-500",
+  VERYRARE: "text-purple-600",
+  LEGENDARY: "text-orange-600",
+};
+
+export const INGREDIENT_ICONS: IngredientIconProps = {
+  ARCANE: wizardHat,
+  DIVINE: wizardHat,
+  OCCULT: skull,
+  PRIMAL: herb,
+};
+
+export const INGREDIENT_TYPE_ORDER = {
+  EMPTY: 0,
+  ARCANE: 1,
+  DIVINE: 2,
+  OCCULT: 3,
+  PRIMAL: 4,
+};
+
+export const INGREDIENT_RARITY_ORDER = {
+  EMPTY: 0,
+  COMMON: 1,
+  UNCOMMON: 2,
+  RARE: 3,
+  VERYRARE: 4,
+  LEGENDARY: 5,
+};

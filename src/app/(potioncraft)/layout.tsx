@@ -1,13 +1,10 @@
 "use client";
 import SideNavLink from "./potioncraft/_components/side-nav-link";
-import scroll from "@/../public/icons/scroll.svg"
-import potion from "@/../public/icons/potion.svg"
-import herb from "@/../public/icons/herb.svg"
-import anvil from "@/../public/icons/anvil.svg"
 import { useState } from "react";
 import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { ChevronsRight } from "lucide-react";
+import { NAV_LINKS } from "@/constants/navigation";
 
 export default function RootLayout({
   children,
@@ -15,17 +12,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const [isOpenNav, setIsOpenNav] = useState(false);
-
-  const NAV_LINKS = [
-    { href: "/potioncraft", label: "Craft", icon: anvil },
-    { href: "/potioncraft/journal/potions", label: "Potions", icon: potion },
-    {
-      href: "/potioncraft/journal/ingredients",
-      label: "Ingredients",
-      icon: herb,
-    },
-    { href: "/potioncraft/formulas", label: "Formulas", icon: scroll },
-  ];
 
   return (
     <Collapsible open={isOpenNav} onOpenChange={setIsOpenNav} className="flex">
@@ -36,23 +22,18 @@ export default function RootLayout({
       >
         <CollapsibleTrigger className="flex w-full justify-end px-2">
           <ChevronsRight
-            className={cn(
-              "rotate-0 duration-300",
-              isOpenNav && "rotate-180 duration-300",
-            )}
+            className={cn("rotate-0 duration-300", isOpenNav && "rotate-180")}
           />
         </CollapsibleTrigger>
-        {NAV_LINKS.map((link) => (
+        {NAV_LINKS.map(({ label, ...props }) => (
           <SideNavLink
+            {...props}
             isOpenNav={isOpenNav}
-            key={link.label}
-            href={link.href}
-            label={link.label}
-            icon={link.icon}
+            key={label}
+            label={label}
           />
         ))}
       </div>
-
       {children}
     </Collapsible>
   );

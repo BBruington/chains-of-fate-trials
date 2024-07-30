@@ -30,6 +30,18 @@ export interface IngredientItemProps {
   }: HandleIngredientQuantityChangeProps) => Promise<void>;
 }
 
+export type IngredientDetailsProps = {
+  ingredient: Ingredient;
+};
+
+export type QuantityButtonsProps = {
+  ingredient: Ingredient;
+  onQuantityChange: ({
+    ingredient,
+    quantity,
+  }: HandleIngredientQuantityChangeProps) => Promise<void>;
+};
+
 export interface RarityStyleProps {
   COMMON: string;
   UNCOMMON: string;

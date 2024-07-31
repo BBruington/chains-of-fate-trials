@@ -10,10 +10,12 @@ import { Formula } from "@prisma/client";
 import { useAtom } from "jotai";
 import { displayFormaula } from "../jotaiAtoms";
 import { UseFormReturn } from "react-hook-form";
+import { cn } from "@/lib/utils";
 
 interface IngredientFormfieldProps {
+  className?: string;
   form: UseFormReturn<
-    {
+  {
       name: string;
       description: string;
       rarity:
@@ -39,6 +41,7 @@ export default function IngredientFormfield({
   form,
   ingredientNum,
   ingredientName,
+  className
 }: IngredientFormfieldProps) {
   const [selectedFormula, setSelectedFormula] =
     useAtom<Formula>(displayFormaula);
@@ -84,19 +87,20 @@ export default function IngredientFormfield({
       name={ingredientNum}
       render={({ field }) => (
         <FormItem>
-          <div>
-            <FormLabel htmlFor={ingredientNum}>
-              Ingredient {ingredientName}
+          <div className="flex flex-col">
+            <FormLabel className="text-lg w-[204px]" htmlFor={ingredientNum}>
+              {ingredientName}
             </FormLabel>
             <FormControl>
               <div className="flex items-center">
                 <Input
-                  className="mr-5"
+                  className={cn(className,"mr-5")}
                   id={ingredientNum}
+                  placeholder="Ingredient Name"
                   disabled={selectedFormula.id === "blank"}
                   {...field}
                 />
-                <Button className="w-16 h-8"  type="button" onClick={handleRemoveIngredient}>
+                <Button className={cn(className, "w-16")}  type="button" onClick={handleRemoveIngredient}>
                   remove
                 </Button>
               </div>

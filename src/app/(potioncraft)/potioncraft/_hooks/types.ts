@@ -1,4 +1,4 @@
-import { $Enums, Ingredient, User } from "@prisma/client";
+import { $Enums, Ingredient, Potion, User } from "@prisma/client";
 import { Dispatch, SetStateAction, ChangeEvent } from "react";
 import { z } from "zod";
 import { IngredientSchema } from "../../../../../prisma/generated/zod";
@@ -78,6 +78,11 @@ export type HandleFilterIngredientsProps = {
 export type AddIngredientsProps = {
   userId: User["clerkId"];
   ingredients: Ingredient[];
+};
+
+export type HandlePotionQuantityChangeProps = {
+  potion: Potion;
+  quantity: number;
 };
 
 export type HandleIngredientQuantityChangeProps = {

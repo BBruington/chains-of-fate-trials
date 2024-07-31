@@ -1,9 +1,18 @@
 import { z } from "zod";
 import { commonPotions } from "../_components/testData";
 import { PotionSchema } from "@/types";
-import { findPotionSchema, MagicProperties, PotionHooksProps } from "./types";
+import {
+  findPotionSchema,
+  HandlePotionQuantityChangeProps,
+  MagicProperties,
+  PotionHooksProps,
+} from "./types";
 import { EMPTY_INGREDIENT } from "@/constants";
-import { spendIngredients, addPotionToUser } from "../actions";
+import {
+  spendIngredients,
+  addPotionToUser,
+  changePotionQuantity,
+} from "../actions";
 
 const emptyMixture = [
   EMPTY_INGREDIENT,
@@ -12,7 +21,7 @@ const emptyMixture = [
   EMPTY_INGREDIENT,
 ];
 
-export function PotionHooks({
+export default function PotionHooks({
   mixtureProperties,
   mixture,
   setMixture,

@@ -20,7 +20,7 @@ export default function RootLayout({
           "flex h-screen min-w-[70px] flex-col items-center space-y-2 overflow-y-auto border-r border-primary/40 p-3"
         }
       >
-        <CollapsibleTrigger className="flex w-full justify-end px-2">
+        <CollapsibleTrigger className={cn("flex w-full justify-center px-2", isOpenNav && "justify-end")}>
           <ChevronsRight
             className={cn("rotate-0 duration-300", isOpenNav && "rotate-180")}
           />

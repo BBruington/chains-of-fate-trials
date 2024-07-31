@@ -34,6 +34,7 @@ import {
 } from "../../_types";
 import Image from "next/image";
 import parchment from "@/../public/background/parchment.png";
+import { cn } from "@/lib/utils";
 
 export default function DisplayFormula() {
   const [selectedFormula, setSelectedFormula] =
@@ -144,6 +145,9 @@ export default function DisplayFormula() {
     });
   };
 
+  const formBackground =
+    "hover:bg-yellow-100 border border-slate-400 bg-transparent text-black";
+
   return (
     <Form {...form}>
       {selectedFormula.id === "empty" ? (
@@ -155,29 +159,34 @@ export default function DisplayFormula() {
           className="flex w-full flex-col items-center justify-center border bg-secondary-foreground/60 text-secondary"
           onSubmit={handleSubmit(handleSaveFormula)}
         >
-          <div className="fixed flex h-[600px]" style={{ zIndex: -1 }}>
-            <div className="flex h-full">
-              <Image
-                src={parchment}
-                alt="Cover Image"
-                className="mx-auto h-full w-96"
-              />
-            </div>
-          </div>
-          <div className="flex w-96 flex-col p-12">
+          <div
+            className="fixed flex w-96 flex-col overflow-y-auto p-12"
+            style={{ position: "relative" }}
+          >
+            <Image
+              src={parchment}
+              alt="Cover Image"
+              className="mx-auto h-full w-full"
+              style={{
+                zIndex: -1,
+                position: "absolute",
+                right: 10,
+                bottom: 10,
+              }}
+            />
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <div>
+                  <div className="mb-3">
                     <FormLabel className="text-2xl" htmlFor="name">
-                      Formula Name
+                      Potion of {selectedFormula.name}
                     </FormLabel>
                     <FormControl>
                       <Input
                         id="name"
-                        className="text-secondary-foreground"
+                        className={formBackground}
                         disabled={selectedFormula.id === "Blank"}
                         placeholder="Formula Name"
                         {...field}
@@ -192,16 +201,16 @@ export default function DisplayFormula() {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <div>
+                  <div className="mb-3">
                     <FormLabel className="text-2xl" htmlFor="description">
-                      Formula Description
+                      {selectedFormula.description}
                     </FormLabel>
                     <FormControl>
                       <Input
                         id="description"
                         disabled={selectedFormula.id === "Blank"}
-                        className="text-secondary-foreground"
-                        placeholder="formula title"
+                        className={formBackground}
+                        placeholder="Formula Description"
                         {...field}
                       />
                     </FormControl>
@@ -214,16 +223,21 @@ export default function DisplayFormula() {
               name="rarity"
               render={({ field }) => (
                 <FormItem>
-                  <div>
-                    <FormLabel className="text-2xl" htmlFor="rarity">
-                      Potion Rarity
+                  <div className="flex items-center mb-1">
+                    <FormLabel className={"w-40 text-xl"} htmlFor="rarity">
+                      Potion Rarity:
                     </FormLabel>
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
-                        <SelectTrigger className="w-[180px] text-secondary-foreground">
+                        <SelectTrigger
+                          className={cn(
+                            formBackground,
+                            "w-[180px] text-xl text-black",
+                          )}
+                        >
                           <SelectValue
                             className="text-secondary-foreground"
                             placeholder="Rarity"
@@ -279,8 +293,20 @@ export default function DisplayFormula() {
                 </FormItem>
               )}
             />
+            <div className="h-0.5 w-4/5 my-2 self-center bg-slate-400"/>
+            <div className="space-y-2">
+              {formulaIngredients.map((ingredient) => (
+                <IngredientFormfield
+                  key={ingredient.ingredientNum}
+                  ingredientNum={ingredient.ingredientNum}
+                  ingredientName={ingredient.ingredientName}
+                  className={formBackground}
+                  form={form}
+                />
+              ))}
+            </div>
             <Button
-              className="my-5"
+              className={cn(formBackground, "my-5", selectedFormula.ingredient4 !== null && "invisible h-0 my-0")}
               type="button"
               onClick={handleAddIngredient}
               disabled={
@@ -290,18 +316,9 @@ export default function DisplayFormula() {
             >
               Add Ingredient
             </Button>
-
-            {formulaIngredients.map((ingredient) => (
-              <IngredientFormfield
-                key={ingredient.ingredientNum}
-                ingredientNum={ingredient.ingredientNum}
-                ingredientName={ingredient.ingredientName}
-                form={form}
-              />
-            ))}
-            <div className="mt-5">
+            <div>
               <Button
-                className="mr-3"
+                className={cn(formBackground, "mr-3 hover:bg-red-200")}
                 type="button"
                 variant={"destructive"}
                 disabled={selectedFormula.id === "empty"}
@@ -309,7 +326,11 @@ export default function DisplayFormula() {
               >
                 Delete Formula
               </Button>
-              <Button type="submit" disabled={selectedFormula.id === "empty"}>
+              <Button
+                className={cn(formBackground, "hover:bg-green-200")}
+                type="submit"
+                disabled={selectedFormula.id === "empty"}
+              >
                 Save Changes
               </Button>
             </div>

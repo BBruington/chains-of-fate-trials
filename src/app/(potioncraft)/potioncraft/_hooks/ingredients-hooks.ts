@@ -13,7 +13,7 @@ import {
   INGREDIENT_TYPE_ORDER,
 } from "@/constants";
 
-export function IngredientHooks({
+export default function IngredientHooks({
   filteredIngredientsInput,
   filteredUserIngredients,
   userIngredients,

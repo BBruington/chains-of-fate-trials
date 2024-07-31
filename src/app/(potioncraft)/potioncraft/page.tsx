@@ -2,19 +2,28 @@ import { currentUser } from "@clerk/nextjs/server";
 import PotionCraftComponent from "./_components/potion-craft";
 import { prisma } from "@/app/utils/context";
 import { cache } from "react";
+import { Formula, Ingredient, Potion, User } from "@prisma/client";
 
-export const getUser = cache(async (userId: string) => {
+type GetUserPromise = {
+  user: User | null;
+  ingredients?: Ingredient[];
+  potions?: Potion[];
+  formulas?: Formula[];
+};
+
+export const getUser = cache(async (userId: string): Promise<GetUserPromise> => {
   try {
     const user = await prisma.user.findUnique({
       where: {
         clerkId: userId,
       },
-      select: {
+      include: {
         Ingredients: { orderBy: { name: "asc" } },
         Potions: { orderBy: { name: "asc" } },
         Formulas: { orderBy: { name: "asc" } },
       },
     });
+
 
     return {
       user,

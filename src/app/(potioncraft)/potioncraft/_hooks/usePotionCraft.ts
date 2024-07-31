@@ -8,8 +8,8 @@ import {
 } from "@/constants";
 import { useState } from "react";
 import { z } from "zod";
-import { IngredientHooks } from "./ingredients-hooks";
-import { PotionHooks } from "./potions-hooks";
+import IngredientHooks from "./ingredients-hooks";
+import PotionHooks from "./potions-hooks";
 import { IngredientSchema } from "../../../../../prisma/generated/zod";
 import { addFormulaToUser } from "../actions";
 import {
@@ -28,7 +28,7 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
     useState(userIngredients);
   const [filteredIngredientsInput, setFilteredIngredientsInput] = useState("");
   const [mixtureProperties, setMixtureProperties] = useState(
-    BLANK_MIXTURE_PROPERTIES
+    BLANK_MIXTURE_PROPERTIES,
   );
   const [activeIngredient, setActiveIngredient] = useState<null | z.infer<
     typeof IngredientSchema
@@ -56,13 +56,14 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
     setMixture,
   });
 
-  const { findPotion, handleCraftPotion } = PotionHooks({
-    mixtureProperties,
-    mixture,
-    userId,
-    setMixture,
-    findMixtureProperties,
-  });
+  const { findPotion, handleCraftPotion } =
+    PotionHooks({
+      mixtureProperties,
+      mixture,
+      userId,
+      setMixture,
+      findMixtureProperties,
+    });
 
   function findMixtureProperties(
     ingredients: z.infer<typeof IngredientSchema>[],

@@ -9,6 +9,7 @@ import { User } from "@prisma/client";
 import { usePotionCraft } from "../_hooks/usePotionCraft";
 import { RarityStyleProps } from "../_types";
 import { cn } from "@/lib/utils";
+import { EMPTY_MIXTURE } from "@/constants";
 
 type PotionCraftComponentProps = {
   ingredients: Ingredient[];
@@ -72,7 +73,7 @@ export default function PotionCraftComponent({
           ) : null}
         </DragOverlay>
         <div className="mt-10 flex min-w-fit flex-col">
-          <h1 className="mb-7 text-3xl">Add Ingredients to Make a Potion</h1>
+          <h1 className={cn("mb-7 text-3xl", mixture === EMPTY_MIXTURE && "animate-pulse")}>Drag Ingredients to Make a Potion</h1>
           <div className="grid grid-cols-2 content-center gap-5">
             {mixture.map((mix, index) => (
               <Droppable

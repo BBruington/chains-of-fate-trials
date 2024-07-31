@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/app/utils/context";
-import { Ingredient } from "@prisma/client";
+import { Ingredient, Potion } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
@@ -9,9 +9,10 @@ import {
   RaritySchema,
   MagicTypeSchema,
   PrimaryAttributeSchema,
+  PotionSchema,
 } from "../../../../prisma/generated/zod";
 
-const PotionSchema = z.object({
+const LocalPotionSchema = z.object({
   id: z.number(),
   rarity: RaritySchema,
   type: MagicTypeSchema,
@@ -32,6 +33,11 @@ const SpendIngredientsSchema = z.object({
   ingredients: z.array(IngredientSchema),
 });
 
+const ChangeQuantityLocalPotionSchema = z.object({
+  potion: PotionSchema,
+  quantity: z.number().int(),
+});
+
 const ChangeQuantityIngredientSchema = z.object({
   ingredient: IngredientSchema,
   quantity: z.number().int(),
@@ -44,7 +50,7 @@ const IncreaseIngredientSchema = z.object({
 
 const AddPotionToUserSchema = z.object({
   userId: z.string(),
-  potion: PotionSchema,
+  potion: LocalPotionSchema,
 });
 
 const AddIngredientsToUserSchema = z.object({
@@ -74,7 +80,7 @@ const AddIngredientsToUserSchema = z.object({
 const AddFormulaToUserSchema = z.object({
   userId: z.string(),
   ingredients: z.array(IngredientSchema),
-  potion: PotionSchema,
+  potion: LocalPotionSchema,
 });
 
 export const spendIngredients = async (
@@ -133,6 +139,41 @@ export const increaseIngredient = async (
       throw new Error("Invalid input for increasing ingredient");
     }
     throw new Error("Failed to increase ingredient");
+  }
+};
+
+export const changePotionQuantity = async (
+  props: z.infer<typeof ChangeQuantityLocalPotionSchema>,
+): Promise<Potion> => {
+  try {
+    const { potion, quantity } = ChangeQuantityLocalPotionSchema.parse(props);
+
+    if(potion.quantity + quantity === 0 ) {
+      const removedPotion = await prisma.potion.delete({
+        where: {
+          id: potion.id,
+        }
+      })
+      revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+      return removedPotion;
+    }
+
+    const quantityChangedPotion = await prisma.potion.update({
+      where: {
+        id: potion.id,
+      },
+      data: {
+        quantity: { increment: quantity },
+      },
+    });
+    revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+    return quantityChangedPotion;
+  } catch (error) {
+    console.error("failed to change the quantity of the Potion: ", error);
+    if (error instanceof z.ZodError) {
+      throw new Error("Invalid input for changing potion quantity");
+    }
+    throw new Error("Failed to change the potion's quantity");
   }
 };
 

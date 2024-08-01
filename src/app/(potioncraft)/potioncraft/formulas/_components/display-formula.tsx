@@ -2,9 +2,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Toggle } from "@/components/ui/toggle";
 import { Formula, Rarity } from "@prisma/client";
 import { useAtom } from "jotai";
 import { displayFormaula } from "../jotaiAtoms";
+import { LockIcon, LockOpen } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -35,11 +37,13 @@ import {
 import Image from "next/image";
 import parchment from "@/../public/background/parchment.png";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 export default function DisplayFormula() {
   const [selectedFormula, setSelectedFormula] =
     useAtom<Formula>(displayFormaula);
 
+  const [editMode, setEditMode] = useState(false);
   const formulaIngredients: FormulaIngredientsProps = [
     {
       ingredientNum: "ingredient1",
@@ -148,6 +152,8 @@ export default function DisplayFormula() {
   const formBackground =
     "hover:bg-yellow-100 border border-slate-400 bg-transparent text-black";
 
+  const hiddenStyles = "invisible h-0";
+
   return (
     <Form {...form}>
       {selectedFormula.id === "empty" ? (
@@ -174,6 +180,20 @@ export default function DisplayFormula() {
                 bottom: 10,
               }}
             />
+            <Toggle
+              className={cn(
+                formBackground,
+                "absolute right-8 top-5 w-9 border-none bg-transparent data-[state=on]:bg-yellow-100",
+              )}
+              pressed={editMode}
+              onPressedChange={(event) => setEditMode(event)}
+            >
+              {editMode ? (
+                <LockOpen className="bg-transparent text-black" />
+              ) : (
+                <LockIcon className="bg-transparent text-black" />
+              )}
+            </Toggle>
             <FormField
               control={form.control}
               name="name"
@@ -186,7 +206,10 @@ export default function DisplayFormula() {
                     <FormControl>
                       <Input
                         id="name"
-                        className={formBackground}
+                        className={cn(
+                          formBackground,
+                          !editMode && hiddenStyles,
+                        )}
                         disabled={selectedFormula.id === "Blank"}
                         placeholder="Formula Name"
                         {...field}
@@ -209,7 +232,10 @@ export default function DisplayFormula() {
                       <Input
                         id="description"
                         disabled={selectedFormula.id === "Blank"}
-                        className={formBackground}
+                        className={cn(
+                          formBackground,
+                          !editMode && hiddenStyles,
+                        )}
                         placeholder="Formula Description"
                         {...field}
                       />
@@ -223,7 +249,7 @@ export default function DisplayFormula() {
               name="rarity"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center mb-1">
+                  <div className="mb-1 flex items-center">
                     <FormLabel className={"w-40 text-xl"} htmlFor="rarity">
                       Potion Rarity:
                     </FormLabel>
@@ -293,43 +319,58 @@ export default function DisplayFormula() {
                 </FormItem>
               )}
             />
-            <div className="h-0.5 w-4/5 my-2 self-center bg-slate-400"/>
+            <div className="my-2 h-0.5 w-4/5 self-center bg-slate-400" />
             <div className="space-y-2">
               {formulaIngredients.map((ingredient) => (
                 <IngredientFormfield
                   key={ingredient.ingredientNum}
                   ingredientNum={ingredient.ingredientNum}
                   ingredientName={ingredient.ingredientName}
+                  editMode={editMode}
                   className={formBackground}
                   form={form}
                 />
               ))}
             </div>
             <Button
-              className={cn(formBackground, "my-5", selectedFormula.ingredient4 !== null && "invisible h-0 my-0")}
+              className={cn(
+                formBackground,
+                "my-5",
+                selectedFormula.ingredient4 !== null && "invisible my-0 h-0",
+                !editMode && hiddenStyles,
+              )}
               type="button"
               onClick={handleAddIngredient}
               disabled={
                 selectedFormula.ingredient4 !== null ||
-                selectedFormula.id === "empty"
+                selectedFormula.id === "empty" ||
+                !editMode
               }
             >
               Add Ingredient
             </Button>
             <div>
               <Button
-                className={cn(formBackground, "mr-3 hover:bg-red-200")}
+                className={cn(
+                  formBackground,
+                  "mr-3 hover:bg-red-200",
+                  !editMode && hiddenStyles,
+                )}
                 type="button"
                 variant={"destructive"}
-                disabled={selectedFormula.id === "empty"}
+                disabled={selectedFormula.id === "empty" || !editMode}
                 onClick={handleRemoveFormula}
               >
                 Delete Formula
               </Button>
               <Button
-                className={cn(formBackground, "hover:bg-green-200")}
+                className={cn(
+                  formBackground,
+                  "hover:bg-green-200",
+                  !editMode && hiddenStyles,
+                )}
                 type="submit"
-                disabled={selectedFormula.id === "empty"}
+                disabled={selectedFormula.id === "empty" || !editMode}
               >
                 Save Changes
               </Button>

@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 interface IngredientFormfieldProps {
   className?: string;
   form: UseFormReturn<
-  {
+    {
       name: string;
       description: string;
       rarity:
@@ -33,6 +33,7 @@ interface IngredientFormfieldProps {
     any,
     undefined
   >;
+  editMode: boolean;
   ingredientNum: "ingredient1" | "ingredient2" | "ingredient3" | "ingredient4";
   ingredientName: string | null;
 }
@@ -40,8 +41,9 @@ interface IngredientFormfieldProps {
 export default function IngredientFormfield({
   form,
   ingredientNum,
+  editMode,
   ingredientName,
-  className
+  className,
 }: IngredientFormfieldProps) {
   const [selectedFormula, setSelectedFormula] =
     useAtom<Formula>(displayFormaula);
@@ -88,21 +90,29 @@ export default function IngredientFormfield({
       render={({ field }) => (
         <FormItem>
           <div className="flex flex-col">
-            <FormLabel className="text-lg w-[204px]" htmlFor={ingredientNum}>
+            <FormLabel className="w-[204px] text-lg" htmlFor={ingredientNum}>
               {ingredientName}
             </FormLabel>
             <FormControl>
               <div className="flex items-center">
-                <Input
-                  className={cn(className,"mr-5")}
-                  id={ingredientNum}
-                  placeholder="Ingredient Name"
-                  disabled={selectedFormula.id === "blank"}
-                  {...field}
-                />
-                <Button className={cn(className, "w-16")}  type="button" onClick={handleRemoveIngredient}>
-                  remove
-                </Button>
+                {editMode && (
+                  <>
+                    <Input
+                      className={cn(className, "mr-5")}
+                      id={ingredientNum}
+                      placeholder="Ingredient Name"
+                      disabled={selectedFormula.id === "blank"}
+                      {...field}
+                    />
+                    <Button
+                      className={cn(className, "w-16")}
+                      type="button"
+                      onClick={handleRemoveIngredient}
+                    >
+                      remove
+                    </Button>
+                  </>
+                )}
               </div>
             </FormControl>
           </div>

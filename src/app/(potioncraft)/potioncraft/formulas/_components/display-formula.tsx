@@ -152,7 +152,7 @@ export default function DisplayFormula() {
   const formBackground =
     "hover:bg-yellow-100 border border-slate-400 bg-transparent text-black";
 
-  const hiddenStyles = "invisible h-0";
+  const hidden = "invisible h-0";
 
   return (
     <Form {...form}>
@@ -170,6 +170,7 @@ export default function DisplayFormula() {
             style={{ position: "relative" }}
           >
             <Image
+              aria-label="parchment background image"
               src={parchment}
               alt="Cover Image"
               className="mx-auto h-full w-full"
@@ -181,6 +182,7 @@ export default function DisplayFormula() {
               }}
             />
             <Toggle
+              aria-label="edit mode toggle"
               className={cn(
                 formBackground,
                 "absolute right-8 top-5 w-9 border-none bg-transparent data-[state=on]:bg-yellow-100",
@@ -206,10 +208,7 @@ export default function DisplayFormula() {
                     <FormControl>
                       <Input
                         id="name"
-                        className={cn(
-                          formBackground,
-                          !editMode && hiddenStyles,
-                        )}
+                        className={cn(formBackground, !editMode && hidden)}
                         disabled={selectedFormula.id === "Blank"}
                         placeholder="Formula Name"
                         {...field}
@@ -225,17 +224,19 @@ export default function DisplayFormula() {
               render={({ field }) => (
                 <FormItem>
                   <div className="mb-3">
-                    <FormLabel className="text-2xl" htmlFor="description">
+                    <FormLabel
+                      aria-label={`${selectedFormula.description} label`}
+                      className="text-2xl"
+                      htmlFor="description"
+                    >
                       {selectedFormula.description}
                     </FormLabel>
                     <FormControl>
                       <Input
+                        aria-label={`${selectedFormula.description} input`}
                         id="description"
                         disabled={selectedFormula.id === "Blank"}
-                        className={cn(
-                          formBackground,
-                          !editMode && hiddenStyles,
-                        )}
+                        className={cn(formBackground, !editMode && hidden)}
                         placeholder="Formula Description"
                         {...field}
                       />
@@ -250,11 +251,17 @@ export default function DisplayFormula() {
               render={({ field }) => (
                 <FormItem>
                   <div className="mb-1 flex items-center">
-                    <FormLabel className={"w-40 text-xl"} htmlFor="rarity">
+                    <FormLabel
+                      aria-label={`potion rarity label`}
+                      className={"w-40 text-xl"}
+                      htmlFor="rarity"
+                    >
                       Potion Rarity:
                     </FormLabel>
                     <FormControl>
                       <Select
+                        disabled={!editMode}
+                        aria-label={`potion rarity selecte`}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
@@ -262,11 +269,14 @@ export default function DisplayFormula() {
                           className={cn(
                             formBackground,
                             "w-[180px] text-xl text-black",
+                            !editMode &&
+                              "border-none hover:bg-transparent disabled:cursor-default disabled:opacity-100",
                           )}
                         >
                           <SelectValue
                             className="text-secondary-foreground"
                             placeholder="Rarity"
+                            aria-label={`select rarity value ${selectedFormula.rarity}`}
                           >
                             {field.value === "EMPTY"
                               ? selectedFormula.rarity
@@ -277,6 +287,7 @@ export default function DisplayFormula() {
                           <SelectGroup>
                             <SelectLabel>Rarities</SelectLabel>
                             <SelectItem
+                              aria-label={`common rarity select`}
                               {...field}
                               id="rarity"
                               value={Rarity["COMMON"]}
@@ -284,6 +295,7 @@ export default function DisplayFormula() {
                               Common
                             </SelectItem>
                             <SelectItem
+                              aria-label={`uncommon rarity select`}
                               {...field}
                               id="rarity"
                               value={"UNCOMMON"}
@@ -291,6 +303,7 @@ export default function DisplayFormula() {
                               Uncommon
                             </SelectItem>
                             <SelectItem
+                              aria-label={`rare rarity select`}
                               {...field}
                               id="rarity"
                               value={Rarity["RARE"]}
@@ -298,6 +311,7 @@ export default function DisplayFormula() {
                               Rare
                             </SelectItem>
                             <SelectItem
+                              aria-label={`very rare rarity select`}
                               {...field}
                               id="rarity"
                               value={Rarity["VERYRARE"]}
@@ -305,6 +319,7 @@ export default function DisplayFormula() {
                               Very Rare
                             </SelectItem>
                             <SelectItem
+                              aria-label={`legendary rarity select`}
                               {...field}
                               id="rarity"
                               value={Rarity["LEGENDARY"]}
@@ -320,6 +335,8 @@ export default function DisplayFormula() {
               )}
             />
             <div className="my-2 h-0.5 w-4/5 self-center bg-slate-400" />
+            <h2 className="flex w-full justify-center text-2xl">Ingredients</h2>
+            <div className="mb-2 h-[1px] w-3/5 self-center bg-slate-700" />
             <div className="space-y-2">
               {formulaIngredients.map((ingredient) => (
                 <IngredientFormfield
@@ -333,11 +350,12 @@ export default function DisplayFormula() {
               ))}
             </div>
             <Button
+              aria-label={`add new ingredient button`}
               className={cn(
                 formBackground,
                 "my-5",
                 selectedFormula.ingredient4 !== null && "invisible my-0 h-0",
-                !editMode && hiddenStyles,
+                !editMode && hidden,
               )}
               type="button"
               onClick={handleAddIngredient}
@@ -354,8 +372,9 @@ export default function DisplayFormula() {
                 className={cn(
                   formBackground,
                   "mr-3 hover:bg-red-200",
-                  !editMode && hiddenStyles,
+                  !editMode && hidden,
                 )}
+                aria-label={`save changed button`}
                 type="button"
                 variant={"destructive"}
                 disabled={selectedFormula.id === "empty" || !editMode}
@@ -364,10 +383,11 @@ export default function DisplayFormula() {
                 Delete Formula
               </Button>
               <Button
+                aria-label={`delete formula button`}
                 className={cn(
                   formBackground,
                   "hover:bg-green-200",
-                  !editMode && hiddenStyles,
+                  !editMode && hidden,
                 )}
                 type="submit"
                 disabled={selectedFormula.id === "empty" || !editMode}

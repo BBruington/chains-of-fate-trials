@@ -90,7 +90,11 @@ export default function IngredientFormfield({
       render={({ field }) => (
         <FormItem>
           <div className="flex flex-col">
-            <FormLabel className="w-[204px] text-lg" htmlFor={ingredientNum}>
+            <FormLabel
+              aria-label={`${ingredientName} label`}
+              className="w-[204px] text-lg"
+              htmlFor={ingredientNum}
+            >
               {ingredientName}
             </FormLabel>
             <FormControl>
@@ -98,6 +102,7 @@ export default function IngredientFormfield({
                 {editMode && (
                   <>
                     <Input
+                      aria-label={`edit ingredient name input`}
                       className={cn(className, "mr-5")}
                       id={ingredientNum}
                       placeholder="Ingredient Name"
@@ -105,6 +110,7 @@ export default function IngredientFormfield({
                       {...field}
                     />
                     <Button
+                      aria-label="remove ingredient button"
                       className={cn(className, "w-16")}
                       type="button"
                       onClick={handleRemoveIngredient}

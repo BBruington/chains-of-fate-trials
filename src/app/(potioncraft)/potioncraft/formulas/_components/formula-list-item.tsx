@@ -17,6 +17,7 @@ export default function FormulaListItem({ formula }: FormulaProps) {
 
   return (
     <Button
+    aria-label={`select formula button`}
       onClick={handleSelectFormula}
       className="flex h-fit w-72 flex-col items-center rounded-lg border border-secondary bg-secondary-foreground/70 text-secondary hover:cursor-pointer hover:bg-secondary-foreground/60"
     >

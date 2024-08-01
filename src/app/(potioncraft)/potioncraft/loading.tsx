@@ -24,7 +24,7 @@ export default function Loading() {
     <div className="flex w-screen justify-between">
       <div />
       <div className="mt-10 flex min-w-fit flex-col">
-        <h1 className="mb-7 text-3xl">Add Ingredients to Make a Potion</h1>
+        <h1 className="mb-7 text-3xl">Drag Ingredients to Make a Potion</h1>
         <div className="grid grid-cols-2 content-center gap-5">
           {emptyMixture.map((mix, index) => (
             <div

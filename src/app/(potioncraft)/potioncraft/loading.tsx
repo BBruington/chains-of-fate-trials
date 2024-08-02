@@ -29,16 +29,20 @@ export default function Loading() {
           {emptyMixture.map((mix, index) => (
             <div
               key={index}
-              className={`flex flex-col items-center justify-center space-y-5 whitespace-nowrap font-medium h-32 min-w-52 rounded-none bg-primary text-xs text-secondary ${mix.id === "empty" ? "bg-primary/80 text-secondary/80" : ""} ${index === 0 && "rounded-tl-lg"} ${index === 1 && "rounded-tr-lg"} ${index === 2 && "rounded-bl-lg"} ${index === 3 && "rounded-br-lg"}`}
+              className={`flex h-32 min-w-52 flex-col items-center justify-center space-y-5 whitespace-nowrap rounded-none bg-primary text-xs font-medium text-secondary ${mix.id === "empty" ? "bg-primary/80 text-secondary/80" : ""} ${index === 0 && "rounded-tl-lg"} ${index === 1 && "rounded-tr-lg"} ${index === 2 && "rounded-bl-lg"} ${index === 3 && "rounded-br-lg"}`}
             >
               {mix.name}
             </div>
           ))}
         </div>
-        <div className="mt-8 flex justify-center space-x-3">
-          <Button className="w-36">Craft Potion</Button>
-          <Button className="w-36">Reset Mixture</Button>
-          <Button className="w-36">Add to Formulas</Button>
+        <div className="mt-8 flex flex-col items-center justify-center">
+          <Button className="mb-8 h-16 w-80 bg-gradient-to-tr from-purple-600 to-blue-600 hover:animate-pulse hover:from-purple-700 hover:to-blue-700">
+            Craft Potion
+          </Button>
+          <div className="flex space-x-5">
+            <Button className="w-36">Reset Mixture</Button>
+            <Button className="w-36">Add to Formulas</Button>
+          </div>
         </div>
       </div>
       <div className="flex h-screen w-96 justify-end">

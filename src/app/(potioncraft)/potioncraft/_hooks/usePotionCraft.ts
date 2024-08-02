@@ -17,6 +17,7 @@ import {
   MagicProperties,
   AddFormulaProps,
   mixturePropertiesSchema,
+  AddIngredientsToMixtureProps,
 } from "./types";
 
 export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
@@ -41,7 +42,8 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
     handleIngredientDragStart,
     handleIngredientDragEnd,
     handleResetIngredients,
-    handleChangeIngredientQuantity,
+    updateClientIngredientQuantity,
+    updateServerIngredientQuantity,
   } = IngredientHooks({
     mixture,
     ingredients,
@@ -56,14 +58,13 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
     setMixture,
   });
 
-  const { findPotion, handleCraftPotion } =
-    PotionHooks({
-      mixtureProperties,
-      mixture,
-      userId,
-      setMixture,
-      findMixtureProperties,
-    });
+  const { findPotion, handleCraftPotion } = PotionHooks({
+    mixtureProperties,
+    mixture,
+    userId,
+    setMixture,
+    findMixtureProperties,
+  });
 
   function findMixtureProperties(
     ingredients: z.infer<typeof IngredientSchema>[],
@@ -160,6 +161,27 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
     await addFormulaToUser({ ingredients, potion, userId });
   };
 
+  const addIngredientToMixture = ({
+    ingredient,
+    mixture,
+  }: AddIngredientsToMixtureProps) => {
+    const emptyMixtureIndex = mixture.findIndex((ing) => ing.id === "empty");
+    if (emptyMixtureIndex === -1) return;
+    const updatedMixture = mixture.map((ing, index) => {
+      if (index === emptyMixtureIndex) {
+        return ingredient;
+      }
+      return ing;
+    });
+    setMixture(updatedMixture);
+    findMixtureProperties(updatedMixture);
+    updateClientIngredientQuantity({
+      ingredients: userIngredients,
+      activeIng: ingredient,
+      quantity: -1,
+    });
+  };
+
   return {
     mixture,
     userIngredients,
@@ -172,10 +194,11 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
     handleAddIngredients,
     findMixtureProperties,
     handleResetIngredients,
+    addIngredientToMixture,
     handleIngredientDragEnd,
     handleFilterIngredients,
     handleIngredientDragStart,
     handleOrderFilteredIngredients,
-    handleChangeIngredientQuantity,
+    updateServerIngredientQuantity,
   };
 }

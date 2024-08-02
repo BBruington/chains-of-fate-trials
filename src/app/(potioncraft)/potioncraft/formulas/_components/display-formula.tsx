@@ -335,8 +335,7 @@ export default function DisplayFormula() {
               )}
             />
             <div className="my-2 h-0.5 w-4/5 self-center bg-slate-400" />
-            <h2 className="flex w-full justify-center text-2xl">Ingredients</h2>
-            <div className="mb-2 h-[1px] w-3/5 self-center bg-slate-700" />
+            <h2 className="flex w-full justify-center text-2xl mb-2">Ingredients</h2>
             <div className="space-y-2">
               {formulaIngredients.map((ingredient) => (
                 <IngredientFormfield

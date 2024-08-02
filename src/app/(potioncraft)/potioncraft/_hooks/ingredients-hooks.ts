@@ -26,7 +26,6 @@ export default function IngredientHooks({
   setFilteredUserIngredients,
   setFilteredIngredientsInput,
 }: IngredientHooksProps) {
-  
   const handleAddIngredients = async ({
     ingredients,
     userId,
@@ -73,6 +72,29 @@ export default function IngredientHooks({
     if (activeIng) setActiveIngredient(activeIng);
   }
 
+  type UpdateIngredientsQuantityProps = {
+    ingredients: Ingredient[];
+    activeIng: Ingredient;
+    quantity: number;
+  };
+
+  function updateClientIngredientQuantity({
+    ingredients,
+    activeIng,
+    quantity,
+  }: UpdateIngredientsQuantityProps) {
+    const updatedUserIngredients = ingredients
+      .map((ingredient) =>
+        ingredient.id === activeIng.id
+          ? { ...ingredient, quantity: ingredient.quantity + quantity }
+          : ingredient,
+      )
+      .filter((ingredient) => ingredient.quantity > 0);
+
+    setUserIngredients(updatedUserIngredients);
+    handleFilterIngredients({ ingredients: updatedUserIngredients });
+  }
+
   function handleIngredientDragEnd({ active, over }: DragOverEvent) {
     setActiveIngredient(null);
     if (!over || mixture[Number(over.id)].id !== "empty") return;
@@ -88,16 +110,11 @@ export default function IngredientHooks({
     setMixture(updatedMixture);
     findMixtureProperties(updatedMixture);
 
-    const updatedUserIngredients = userIngredients
-      .map((ingredient) =>
-        ingredient.id === draggedIngredient.id
-          ? { ...ingredient, quantity: ingredient.quantity - 1 }
-          : ingredient,
-      )
-      .filter((ingredient) => ingredient.quantity > 0);
-
-    setUserIngredients(updatedUserIngredients);
-    handleFilterIngredients({ ingredients: updatedUserIngredients });
+    updateClientIngredientQuantity({
+      ingredients: userIngredients,
+      activeIng: draggedIngredient,
+      quantity: -1,
+    });
   }
 
   const handleResetIngredients = () => {
@@ -106,7 +123,7 @@ export default function IngredientHooks({
     setMixture(EMPTY_MIXTURE);
   };
 
-  const handleChangeIngredientQuantity = async ({
+  const updateServerIngredientQuantity = async ({
     ingredient,
     quantity,
   }: HandleIngredientQuantityChangeProps) => {
@@ -133,6 +150,7 @@ export default function IngredientHooks({
     handleIngredientDragStart,
     handleIngredientDragEnd,
     handleResetIngredients,
-    handleChangeIngredientQuantity,
+    updateClientIngredientQuantity,
+    updateServerIngredientQuantity,
   };
 }

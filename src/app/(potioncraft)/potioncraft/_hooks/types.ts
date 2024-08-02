@@ -111,6 +111,11 @@ export type AddFormulaProps = {
   userId: User["clerkId"];
 };
 
+export type AddIngredientsToMixtureProps = {
+  ingredient: Ingredient;
+  mixture: Ingredient[];
+}
+
 export const mixturePropertiesSchema = z.object({
   magicTypes: z.array(z.string()),
   rarity: z.string(),

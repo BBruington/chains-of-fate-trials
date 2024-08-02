@@ -12,7 +12,7 @@ export default function Loading() {
         </div>
       </div>
       <div className="flex h-full w-96 flex-col items-center space-y-2 overflow-y-auto border border-r-0 border-primary/40 bg-secondary p-3">
-        <h2>Getting Items</h2>
+        <h2>My Potions</h2>
         <Spinner />
       </div>
     </div>

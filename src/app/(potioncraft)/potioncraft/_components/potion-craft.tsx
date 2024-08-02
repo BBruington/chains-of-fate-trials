@@ -35,10 +35,11 @@ export default function PotionCraftComponent({
     addFormula,
     handleResetIngredients,
     handleFilterIngredients,
+    addIngredientToMixture,
     handleOrderFilteredIngredients,
     handleAddIngredients,
     handleCraftPotion,
-    handleChangeIngredientQuantity,
+    updateServerIngredientQuantity,
     handleIngredientDragStart,
     handleIngredientDragEnd,
   } = usePotionCraft({ ingredients, userId });
@@ -73,7 +74,14 @@ export default function PotionCraftComponent({
           ) : null}
         </DragOverlay>
         <div className="mt-10 flex min-w-fit flex-col">
-          <h1 className={cn("mb-7 text-3xl", mixture === EMPTY_MIXTURE && "animate-pulse")}>Drag Ingredients to Make a Potion</h1>
+          <h1
+            className={cn(
+              "mb-7 text-3xl",
+              mixture === EMPTY_MIXTURE && "animate-pulse",
+            )}
+          >
+            Drag Ingredients to Make a Potion
+          </h1>
           <div className="grid grid-cols-2 content-center gap-5">
             {mixture.map((mix, index) => (
               <Droppable
@@ -85,29 +93,34 @@ export default function PotionCraftComponent({
               />
             ))}
           </div>
-          <div className="mt-8 flex justify-center space-x-3">
-            <Button className="w-36" onClick={handleCraftPotion}>
+          <div className="mt-8 flex flex-col items-center justify-center">
+            <Button
+              className="mb-8 h-16 w-80 bg-gradient-to-tr from-purple-600 to-blue-600 hover:animate-pulse hover:from-purple-700 hover:to-blue-700"
+              onClick={handleCraftPotion}
+            >
               Craft Potion
             </Button>
-            <Button className="w-36" onClick={handleResetIngredients}>
-              Reset Mixture
-            </Button>
-            <Button
-              className="w-36"
-              onClick={() => addFormula({ mixture, userId })}
-            >
-              Add to Formulas
-            </Button>
+            <div className="flex space-x-5">
+              <Button className="w-36" onClick={handleResetIngredients}>
+                Reset Mixture
+              </Button>
+              <Button
+                className="w-36"
+                onClick={() => addFormula({ mixture, userId })}
+              >
+                Add to Formulas
+              </Button>
+            </div>
           </div>
-          {/* <MixturePropertiesChart /> */}
         </div>
         <div className="flex h-screen w-96 flex-col items-center overflow-y-auto border-l border-primary/40 p-2">
           <IngredientList
             ingredients={filteredUserIngredients}
             activeIngredient={activeIngredient}
+            mixture={mixture}
             handleFilterIngredients={handleFilterIngredients}
+            addIngredientToMixture={addIngredientToMixture}
             handleOrderFilteredIngredients={handleOrderFilteredIngredients}
-            handleChangeIngredientQuantity={handleChangeIngredientQuantity}
           />
         </div>
       </DndContext>

@@ -16,7 +16,10 @@ export default function IngredientsPage({
   ingredients,
   userId,
 }: IngredientsPageProps) {
-  const { handleChangeIngredientQuantity } = usePotionCraft({ ingredients, userId });
+  const { updateServerIngredientQuantity } = usePotionCraft({
+    ingredients,
+    userId,
+  });
   const [displayUi, setDisplayUi] = useState({
     shop: true,
     ingredient: false,
@@ -37,7 +40,7 @@ export default function IngredientsPage({
         <h2>My Ingredients</h2>
         {ingredients?.map((ingredient) => (
           <IngredientListItem
-          handleChangeIngredientQuantity={handleChangeIngredientQuantity}
+            handleChangeIngredientQuantity={updateServerIngredientQuantity}
             key={ingredient.id}
             ingredient={ingredient}
             setDisplayUi={setDisplayUi}

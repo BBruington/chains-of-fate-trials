@@ -25,6 +25,10 @@ export default function IngredientListItem({
     setSelectedIngredient(ingredient);
   };
 
+  const handeIngredientQuantity = async (quantity: number) => {
+    await handleChangeIngredientQuantity({ ingredient, quantity });
+  };
+
   return (
     <div className="flex h-fit min-h-28 w-72 flex-col items-center rounded-lg border border-secondary bg-secondary-foreground/70 text-secondary hover:cursor-pointer hover:bg-secondary-foreground/60">
       <Button
@@ -39,18 +43,14 @@ export default function IngredientListItem({
       <div className="flex h-full w-full">
         <Button
           aria-label={`decrement ${ingredient.name} button`}
-          onClick={() =>
-            handleChangeIngredientQuantity({ ingredient, quantity: -1 })
-          }
+          onClick={() => handeIngredientQuantity(-1)}
           className="h-full w-1/2 rounded-none rounded-bl-lg border-r border-t"
         >
           -
         </Button>
         <Button
           aria-label={`increment ${ingredient.name} button`}
-          onClick={() =>
-            handleChangeIngredientQuantity({ ingredient, quantity: 1 })
-          }
+          onClick={() => handeIngredientQuantity(1)}
           className="h-full w-1/2 rounded-none rounded-br-lg border-t"
         >
           +

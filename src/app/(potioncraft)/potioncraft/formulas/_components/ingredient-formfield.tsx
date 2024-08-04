@@ -11,9 +11,15 @@ import { useAtom } from "jotai";
 import { displayFormaula } from "../jotaiAtoms";
 import { UseFormReturn } from "react-hook-form";
 import { cn } from "@/lib/utils";
+import { ChangeEvent } from "react";
+import { Trash2 } from "lucide-react";
 
-interface IngredientFormfieldProps {
+type IngredientFormfieldProps = {
   className?: string;
+  handleChangeFormula: (
+    event: ChangeEvent<HTMLInputElement>,
+    key: string,
+  ) => void;
   form: UseFormReturn<
     {
       name: string;
@@ -36,7 +42,7 @@ interface IngredientFormfieldProps {
   editMode: boolean;
   ingredientNum: "ingredient1" | "ingredient2" | "ingredient3" | "ingredient4";
   ingredientName: string | null;
-}
+};
 
 export default function IngredientFormfield({
   form,
@@ -44,6 +50,7 @@ export default function IngredientFormfield({
   editMode,
   ingredientName,
   className,
+  handleChangeFormula,
 }: IngredientFormfieldProps) {
   const [selectedFormula, setSelectedFormula] =
     useAtom<Formula>(displayFormaula);
@@ -83,6 +90,9 @@ export default function IngredientFormfield({
 
   if (ingredientName === null) return <></>;
 
+  const notEditable =
+    "border-none text-center hover:bg-transparent cursor-default";
+
   return (
     <FormField
       control={form.control}
@@ -90,34 +100,37 @@ export default function IngredientFormfield({
       render={({ field }) => (
         <FormItem>
           <div className="flex flex-col">
-            <FormLabel
-              aria-label={`${ingredientName} label`}
-              className="w-[204px] text-lg"
-              htmlFor={ingredientNum}
-            >
-              {ingredientName}
-            </FormLabel>
             <FormControl>
               <div className="flex items-center">
+                <Input
+                  aria-label={`edit ingredient name input`}
+                  className={cn(
+                    className,
+                    "mr-5 text-base",
+                    !editMode && `${notEditable} text-lg`,
+                  )}
+                  id={ingredientNum}
+                  placeholder="Ingredient Name"
+                  disabled={selectedFormula.id === "blank"}
+                  {...field}
+                  value={ingredientName}
+                  onChange={(event) =>
+                    handleChangeFormula(event, ingredientNum)
+                  }
+                />
                 {editMode && (
-                  <>
-                    <Input
-                      aria-label={`edit ingredient name input`}
-                      className={cn(className, "mr-5")}
-                      id={ingredientNum}
-                      placeholder="Ingredient Name"
-                      disabled={selectedFormula.id === "blank"}
-                      {...field}
-                    />
-                    <Button
-                      aria-label="remove ingredient button"
-                      className={cn(className, "w-16")}
-                      type="button"
-                      onClick={handleRemoveIngredient}
-                    >
-                      remove
-                    </Button>
-                  </>
+                  <Button
+                    aria-label="remove ingredient button"
+                    className={cn(
+                      className,
+                      "relative h-8 w-14 hover:bg-red-100",
+                      !editMode && notEditable,
+                    )}
+                    type="button"
+                    onClick={handleRemoveIngredient}
+                  >
+                    <Trash2 className="absolute h-5" />
+                  </Button>
                 )}
               </div>
             </FormControl>

@@ -95,7 +95,7 @@ export default function PotionCraftComponent({
           </div>
           <div className="mt-8 flex flex-col items-center justify-center">
             <Button
-              className="mb-8 h-16 w-80 bg-gradient-to-tr from-purple-600 to-blue-600 hover:animate-pulse hover:from-purple-700 hover:to-blue-700"
+              className="mb-8 h-16 w-80 text-white bg-gradient-to-tr from-purple-600 to-blue-600 hover:animate-pulse hover:from-purple-700 hover:to-blue-700"
               onClick={handleCraftPotion}
             >
               Craft Potion

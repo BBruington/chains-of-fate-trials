@@ -39,11 +39,11 @@ export default function IngredientList({
 }: IngredientListProps) {
   return (
     <>
-      <h2 className="py-2 text-2xl">Ingredients</h2>
+      <h2 className="py-2 text-2xl">My Ingredients</h2>
       <Input
         className="m-2"
         onChange={(event) => handleFilterIngredients({ event })}
-        aria-label="Filter ingredients"
+        aria-label="Filter ingredients input"
         placeholder="Search"
       />
       <Select onValueChange={(e) => handleOrderFilteredIngredients(e)}>

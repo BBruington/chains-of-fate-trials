@@ -7,6 +7,7 @@ import { Formula, Rarity } from "@prisma/client";
 import { useAtom } from "jotai";
 import { displayFormaula } from "../jotaiAtoms";
 import { LockIcon, LockOpen } from "lucide-react";
+import { Cinzel } from "next/font/google";
 import {
   Form,
   FormControl,
@@ -37,13 +38,39 @@ import {
 import Image from "next/image";
 import parchment from "@/../public/background/parchment.png";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
+import { HandleFilterFormulasProps } from "./formula-page";
 
-export default function DisplayFormula() {
+const font = Cinzel({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
+
+type DisplayFormulaProps = {
+  filteredFormulas: Formula[];
+  handleFilterFormulas: ({
+    event,
+    formulas,
+  }: HandleFilterFormulasProps) => void;
+};
+
+export default function DisplayFormula({
+  filteredFormulas,
+  handleFilterFormulas,
+}: DisplayFormulaProps) {
   const [selectedFormula, setSelectedFormula] =
     useAtom<Formula>(displayFormaula);
 
   const [editMode, setEditMode] = useState(false);
+
+  const handleChangeFormula = (
+    event: ChangeEvent<HTMLInputElement>,
+    key: string,
+  ) => {
+      setSelectedFormula({ ...selectedFormula, [key]: event.target.value });
+  };
+
   const formulaIngredients: FormulaIngredientsProps = [
     {
       ingredientNum: "ingredient1",
@@ -96,6 +123,11 @@ export default function DisplayFormula() {
 
   const handleRemoveFormula = async () => {
     await removeFormula({ formula: selectedFormula });
+    handleFilterFormulas({
+      formulas: filteredFormulas.filter(
+        (formula) => formula.id !== selectedFormula.id,
+      ),
+    });
     setSelectedFormula(BLANK_FORMULA);
   };
 
@@ -144,6 +176,13 @@ export default function DisplayFormula() {
     };
     reset();
     setSelectedFormula(updatedFormula);
+    const updatedIndex = filteredFormulas.findIndex(
+      (formula) => formula.id === updatedFormula.id,
+    );
+    filteredFormulas.splice(updatedIndex, 1, updatedFormula)
+    handleFilterFormulas({
+      formulas: filteredFormulas,
+    });
     await saveFormula({
       formula: updatedFormula,
     });
@@ -152,7 +191,10 @@ export default function DisplayFormula() {
   const formBackground =
     "hover:bg-yellow-100 border border-slate-400 bg-transparent text-black";
 
-  const hidden = "invisible h-0";
+  const notEditable =
+    "border-none text-center hover:bg-transparent cursor-default";
+
+  const hiddent = "h-0 invisible";
 
   return (
     <Form {...form}>
@@ -162,11 +204,11 @@ export default function DisplayFormula() {
         </div>
       ) : (
         <form
-          className="flex w-full flex-col items-center justify-center border bg-secondary-foreground/60 text-secondary"
+          className={`${font.className} flex w-full flex-col items-center justify-center border bg-secondary-foreground/60 text-secondary`}
           onSubmit={handleSubmit(handleSaveFormula)}
         >
           <div
-            className="fixed flex w-96 flex-col overflow-y-auto p-12"
+            className={`fixed flex w-96 flex-col overflow-y-auto p-12`}
             style={{ position: "relative" }}
           >
             <Image
@@ -182,18 +224,24 @@ export default function DisplayFormula() {
               }}
             />
             <Toggle
-              aria-label="edit mode toggle"
+              aria-label="enable edit mode toggle"
               className={cn(
                 formBackground,
-                "absolute right-8 top-5 w-9 border-none bg-transparent data-[state=on]:bg-yellow-100",
+                "absolute right-8 top-5 h-6 w-16 border-none bg-transparent data-[state=on]:bg-yellow-100",
               )}
               pressed={editMode}
-              onPressedChange={(event) => setEditMode(event)}
+              onPressedChange={(event: boolean) => setEditMode(event)}
             >
               {editMode ? (
-                <LockOpen className="bg-transparent text-black" />
+                <div className="flex">
+                  <span className="text-black">Edit</span>
+                  <LockOpen className="h-4 shrink-0 bg-transparent text-black" />
+                </div>
               ) : (
-                <LockIcon className="bg-transparent text-black" />
+                <div className="flex">
+                  <span className="text-black">Edit</span>
+                  <LockIcon className="h-4 shrink-0 bg-transparent text-black" />
+                </div>
               )}
             </Toggle>
             <FormField
@@ -202,49 +250,26 @@ export default function DisplayFormula() {
               render={({ field }) => (
                 <FormItem>
                   <div className="mb-3">
-                    <FormLabel className="text-2xl" htmlFor="name">
-                      Potion of {selectedFormula.name}
-                    </FormLabel>
                     <FormControl>
                       <Input
                         id="name"
-                        className={cn(formBackground, !editMode && hidden)}
+                        className={cn(
+                          formBackground,
+                          !editMode && notEditable,
+                          "text-2xl",
+                        )}
                         disabled={selectedFormula.id === "Blank"}
                         placeholder="Formula Name"
                         {...field}
+                        value={selectedFormula.name}
+                        onChange={(event) => handleChangeFormula(event, "name")}
                       />
                     </FormControl>
                   </div>
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="mb-3">
-                    <FormLabel
-                      aria-label={`${selectedFormula.description} label`}
-                      className="text-2xl"
-                      htmlFor="description"
-                    >
-                      {selectedFormula.description}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        aria-label={`${selectedFormula.description} input`}
-                        id="description"
-                        disabled={selectedFormula.id === "Blank"}
-                        className={cn(formBackground, !editMode && hidden)}
-                        placeholder="Formula Description"
-                        {...field}
-                      />
-                    </FormControl>
-                  </div>
-                </FormItem>
-              )}
-            />
+
             <FormField
               control={form.control}
               name="rarity"
@@ -253,7 +278,7 @@ export default function DisplayFormula() {
                   <div className="mb-1 flex items-center">
                     <FormLabel
                       aria-label={`potion rarity label`}
-                      className={"w-40 text-xl"}
+                      className={"w-44 text-lg"}
                       htmlFor="rarity"
                     >
                       Potion Rarity:
@@ -268,7 +293,7 @@ export default function DisplayFormula() {
                         <SelectTrigger
                           className={cn(
                             formBackground,
-                            "w-[180px] text-xl text-black",
+                            "w-[180px] text-lg text-black",
                             !editMode &&
                               "border-none hover:bg-transparent disabled:cursor-default disabled:opacity-100",
                           )}
@@ -334,8 +359,38 @@ export default function DisplayFormula() {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="mb-3">
+                    <FormControl>
+                      <Input
+                        aria-label={`${selectedFormula.description} input`}
+                        id="description"
+                        disabled={selectedFormula.id === "Blank"}
+                        className={cn(
+                          formBackground,
+                          !editMode && notEditable,
+                          "text-lg",
+                        )}
+                        placeholder="Formula Description"
+                        {...field}
+                        value={selectedFormula.description}
+                        onChange={(event) =>
+                          handleChangeFormula(event, "description")
+                        }
+                      />
+                    </FormControl>
+                  </div>
+                </FormItem>
+              )}
+            />
             <div className="my-2 h-0.5 w-4/5 self-center bg-slate-400" />
-            <h2 className="flex w-full justify-center text-2xl mb-2">Ingredients</h2>
+            <h2 className="mb-2 flex w-full justify-center text-2xl">
+              Ingredients
+            </h2>
             <div className="space-y-2">
               {formulaIngredients.map((ingredient) => (
                 <IngredientFormfield
@@ -345,6 +400,7 @@ export default function DisplayFormula() {
                   editMode={editMode}
                   className={formBackground}
                   form={form}
+                  handleChangeFormula={handleChangeFormula}
                 />
               ))}
             </div>
@@ -354,7 +410,7 @@ export default function DisplayFormula() {
                 formBackground,
                 "my-5",
                 selectedFormula.ingredient4 !== null && "invisible my-0 h-0",
-                !editMode && hidden,
+                !editMode && hiddent,
               )}
               type="button"
               onClick={handleAddIngredient}
@@ -366,12 +422,12 @@ export default function DisplayFormula() {
             >
               Add Ingredient
             </Button>
-            <div>
+            <div className="flex justify-center">
               <Button
                 className={cn(
                   formBackground,
-                  "mr-3 hover:bg-red-200",
-                  !editMode && hidden,
+                  "mr-3 bg-red-100 hover:bg-red-200",
+                  !editMode && hiddent,
                 )}
                 aria-label={`save changed button`}
                 type="button"
@@ -385,8 +441,8 @@ export default function DisplayFormula() {
                 aria-label={`delete formula button`}
                 className={cn(
                   formBackground,
-                  "hover:bg-green-200",
-                  !editMode && hidden,
+                  "bg-green-50 hover:bg-green-200",
+                  !editMode && hiddent,
                 )}
                 type="submit"
                 disabled={selectedFormula.id === "empty" || !editMode}

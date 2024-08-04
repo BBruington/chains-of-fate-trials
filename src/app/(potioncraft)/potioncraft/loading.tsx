@@ -36,7 +36,7 @@ export default function Loading() {
           ))}
         </div>
         <div className="mt-8 flex flex-col items-center justify-center">
-          <Button className="mb-8 h-16 w-80 bg-gradient-to-tr from-purple-600 to-blue-600 hover:animate-pulse hover:from-purple-700 hover:to-blue-700">
+          <Button className="mb-8 h-16 w-80 bg-gradient-to-tr from-purple-600 to-blue-600 text-white hover:animate-pulse hover:from-purple-700 hover:to-blue-700">
             Craft Potion
           </Button>
           <div className="flex space-x-5">

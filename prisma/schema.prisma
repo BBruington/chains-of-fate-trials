@@ -72,10 +72,7 @@ model Formula {
   name String
   description String
   rarity Rarity @default(COMMON)
-  ingredient1 String?
-  ingredient2 String?
-  ingredient3 String?
-  ingredient4 String?
+  ingredients String[]
   user User @relation(fields: [userId], references: [clerkId])
 }
 

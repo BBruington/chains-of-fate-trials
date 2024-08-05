@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { removeFormula, saveFormula } from "../actions";
-import { BLANK_FORMULA } from "@/constants";
+import { BLANK_FORMULA, MIXTURE_LIMIT } from "@/constants";
 import {
   Select,
   SelectContent,
@@ -32,7 +32,6 @@ import {
 import IngredientFormfield from "./ingredient-formfield";
 import {
   FormFormulaSchema,
-  FormulaIngredientsProps,
   FormData,
 } from "../../_types";
 import Image from "next/image";
@@ -68,56 +67,19 @@ export default function DisplayFormula({
     event: ChangeEvent<HTMLInputElement>,
     key: string,
   ) => {
-      setSelectedFormula({ ...selectedFormula, [key]: event.target.value });
+    setSelectedFormula({ ...selectedFormula, [key]: event.target.value });
   };
 
-  const formulaIngredients: FormulaIngredientsProps = [
-    {
-      ingredientNum: "ingredient1",
-      ingredientName: selectedFormula.ingredient1,
-    },
-    {
-      ingredientNum: "ingredient2",
-      ingredientName: selectedFormula.ingredient2,
-    },
-    {
-      ingredientNum: "ingredient3",
-      ingredientName: selectedFormula.ingredient3,
-    },
-    {
-      ingredientNum: "ingredient4",
-      ingredientName: selectedFormula.ingredient4,
-    },
-  ];
+  const formulaIngredients = selectedFormula.ingredients.map((ing, index) => {
+    return { name: ing, id: index };
+  });
 
   const handleAddIngredient = () => {
-    if (selectedFormula.ingredient1 === null) {
+    if (selectedFormula.ingredients.length < MIXTURE_LIMIT) {
       setSelectedFormula({
         ...selectedFormula,
-        ingredient1: "Blank Ingredient",
+        ingredients: [...selectedFormula.ingredients, "New Ingredient"],
       });
-      return;
-    }
-    if (selectedFormula.ingredient2 === null) {
-      setSelectedFormula({
-        ...selectedFormula,
-        ingredient2: "Blank Ingredient",
-      });
-      return;
-    }
-    if (selectedFormula.ingredient3 === null) {
-      setSelectedFormula({
-        ...selectedFormula,
-        ingredient3: "Blank Ingredient",
-      });
-      return;
-    }
-    if (selectedFormula.ingredient4 === null) {
-      setSelectedFormula({
-        ...selectedFormula,
-        ingredient4: "Blank Ingredient",
-      });
-      return;
     }
   };
 
@@ -136,10 +98,7 @@ export default function DisplayFormula({
     defaultValues: {
       name: "",
       description: "",
-      ingredient1: "",
-      ingredient2: "",
-      ingredient3: "",
-      ingredient4: "",
+      ingredients: ["Blank Ingredient"],
       rarity: "EMPTY",
     },
   });
@@ -157,29 +116,14 @@ export default function DisplayFormula({
           : formula.description,
       rarity:
         formula.rarity === "EMPTY" ? selectedFormula.rarity : formula.rarity,
-      ingredient1:
-        formula.ingredient1 === ""
-          ? selectedFormula.ingredient1
-          : formula.ingredient1,
-      ingredient2:
-        formula.ingredient2 === ""
-          ? selectedFormula.ingredient2
-          : formula.ingredient2,
-      ingredient3:
-        formula.ingredient3 === ""
-          ? selectedFormula.ingredient3
-          : formula.ingredient3,
-      ingredient4:
-        formula.ingredient4 === ""
-          ? selectedFormula.ingredient4
-          : formula.ingredient4,
+      ingredients: [...selectedFormula.ingredients],
     };
     reset();
     setSelectedFormula(updatedFormula);
     const updatedIndex = filteredFormulas.findIndex(
       (formula) => formula.id === updatedFormula.id,
     );
-    filteredFormulas.splice(updatedIndex, 1, updatedFormula)
+    filteredFormulas.splice(updatedIndex, 1, updatedFormula);
     handleFilterFormulas({
       formulas: filteredFormulas,
     });
@@ -194,7 +138,7 @@ export default function DisplayFormula({
   const notEditable =
     "border-none text-center hover:bg-transparent cursor-default";
 
-  const hiddent = "h-0 invisible";
+  const hidden = "h-0 invisible";
 
   return (
     <Form {...form}>
@@ -392,30 +336,48 @@ export default function DisplayFormula({
               Ingredients
             </h2>
             <div className="space-y-2">
-              {formulaIngredients.map((ingredient) => (
-                <IngredientFormfield
-                  key={ingredient.ingredientNum}
-                  ingredientNum={ingredient.ingredientNum}
-                  ingredientName={ingredient.ingredientName}
-                  editMode={editMode}
-                  className={formBackground}
-                  form={form}
-                  handleChangeFormula={handleChangeFormula}
-                />
-              ))}
+              <FormField
+                control={form.control}
+                name={"ingredients"}
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex flex-col">
+                      <FormControl>
+                        <>
+                          {selectedFormula.ingredients.map(
+                            (ingredient, index) => (
+                              <IngredientFormfield
+                                key={index}
+                                field={field}
+                                formulaIngredients={formulaIngredients}
+                                ingredientName={ingredient}
+                                ingredientIndex={index}
+                                editMode={editMode}
+                                className={formBackground}
+                                form={form}
+                              />
+                            ),
+                          )}
+                        </>
+                      </FormControl>
+                    </div>
+                  </FormItem>
+                )}
+              />
             </div>
             <Button
               aria-label={`add new ingredient button`}
               className={cn(
                 formBackground,
                 "my-5",
-                selectedFormula.ingredient4 !== null && "invisible my-0 h-0",
-                !editMode && hiddent,
+                selectedFormula.ingredients.length === MIXTURE_LIMIT &&
+                  "invisible my-0 h-0",
+                !editMode && hidden,
               )}
               type="button"
               onClick={handleAddIngredient}
               disabled={
-                selectedFormula.ingredient4 !== null ||
+                selectedFormula.ingredients.length === MIXTURE_LIMIT ||
                 selectedFormula.id === "empty" ||
                 !editMode
               }
@@ -427,7 +389,7 @@ export default function DisplayFormula({
                 className={cn(
                   formBackground,
                   "mr-3 bg-red-100 hover:bg-red-200",
-                  !editMode && hiddent,
+                  !editMode && hidden,
                 )}
                 aria-label={`save changed button`}
                 type="button"
@@ -442,7 +404,7 @@ export default function DisplayFormula({
                 className={cn(
                   formBackground,
                   "bg-green-50 hover:bg-green-200",
-                  !editMode && hiddent,
+                  !editMode && hidden,
                 )}
                 type="submit"
                 disabled={selectedFormula.id === "empty" || !editMode}

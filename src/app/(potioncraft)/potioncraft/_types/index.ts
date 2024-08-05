@@ -78,10 +78,7 @@ export const FormFormulaSchema = z.object({
   ]),
   name: z.string(),
   description: z.string(),
-  ingredient1: z.string(),
-  ingredient2: z.string(),
-  ingredient3: z.string(),
-  ingredient4: z.string(),
+  ingredients: z.array(z.string())
 });
 
 export type FormData = z.infer<typeof FormFormulaSchema>;

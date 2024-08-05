@@ -27,10 +27,7 @@ export default function AddFormulaButton({
       name: "New Formula",
       description: "Add effect here",
       rarity: Rarity["EMPTY"],
-      ingredient1: null,
-      ingredient2: null,
-      ingredient3: null,
-      ingredient4: null,
+      ingredients: [],
     };
     const createdFormula = await addNewFormula({ userId, formula: newFormula });
     handleFilterFormulas({ formulas: [...filteredFormulas, createdFormula] });

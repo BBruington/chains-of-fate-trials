@@ -12,10 +12,7 @@ const FormulaSchema = z.object({
   name: z.string(),
   userId: z.string(),
   description: z.string(),
-  ingredient1: z.string().nullable(),
-  ingredient2: z.string().nullable(),
-  ingredient3: z.string().nullable(),
-  ingredient4: z.string().nullable(),
+  ingredients: z.array(z.string()),
 });
 
 const AddNewFormulaSchema = z.object({

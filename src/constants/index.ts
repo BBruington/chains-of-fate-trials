@@ -8,6 +8,8 @@ import skull from "@/../public/icons/skull.svg";
 import herb from "@/../public/icons/herb.svg";
 import { RarityType } from "../../prisma/generated/zod";
 
+export const MIXTURE_LIMIT = 4;
+
 export const EMPTY_INGREDIENT = {
   id: "empty",
   name: "Empty",
@@ -76,10 +78,7 @@ export const BLANK_FORMULA = {
   name: "Blank",
   description: "blank",
   rarity: Rarity["EMPTY"],
-  ingredient1: null,
-  ingredient2: null,
-  ingredient3: null,
-  ingredient4: null,
+  ingredients: ['Blank Ingredient'],
 };
 
 export const RARITY_STYLES: RarityStyleProps = {

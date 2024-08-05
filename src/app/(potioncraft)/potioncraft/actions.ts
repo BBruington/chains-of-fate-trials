@@ -313,16 +313,15 @@ export const addFormulaToUser = async (
   try {
     const { ingredients, potion, userId } = AddFormulaToUserSchema.parse(props);
 
+    const ingredientNames = ingredients.map(ing => ing.name)
+
     await prisma.formula.create({
       data: {
         userId,
         name: potion.name,
         description: potion.description,
         rarity: potion.rarity,
-        ingredient1: ingredients[0]?.name ? ingredients[0].name : undefined,
-        ingredient2: ingredients[1]?.name ? ingredients[1].name : undefined,
-        ingredient3: ingredients[2]?.name ? ingredients[2].name : undefined,
-        ingredient4: ingredients[3]?.name ? ingredients[3].name : undefined,
+        ingredients: ingredientNames,
       },
     });
     revalidatePath(`${process.env.BASE_URL}/potioncraft`);

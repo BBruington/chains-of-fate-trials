@@ -16,10 +16,7 @@ export default function FormulaListItem({ formula }: FormulaProps) {
   };
 
   const allIngredients: string[] = [
-    formula.ingredient1 !== null ? formula.ingredient1 : "",
-    formula.ingredient2 !== null ? formula.ingredient2 : "",
-    formula.ingredient3 !== null ? formula.ingredient3 : "",
-    formula.ingredient4 !== null ? formula.ingredient4 : "",
+    ...formula.ingredients
   ];
 
   type FilteredIngredientsProps = {
@@ -69,7 +66,7 @@ export default function FormulaListItem({ formula }: FormulaProps) {
       </h1>
       <h2>Effect: {formula.description}</h2>
 
-      {formula.ingredient1 === null ? (
+      {formula.ingredients.length === 0 ? (
         <></>
       ) : (
         <>

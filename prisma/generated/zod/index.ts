@@ -66,7 +66,7 @@ export const PuzzleTypeScalarFieldEnumSchema = z.enum(['name','id']);
 
 export const UserScalarFieldEnumSchema = z.enum(['id','clerkId','imgUrl','username','email','createdAt','updatedAt']);
 
-export const FormulaScalarFieldEnumSchema = z.enum(['id','userId','name','description','rarity','ingredient1','ingredient2','ingredient3','ingredient4']);
+export const FormulaScalarFieldEnumSchema = z.enum(['id','userId','name','description','rarity','ingredients']);
 
 export const IngredientScalarFieldEnumSchema = z.enum(['id','rarity','type','primaryAttribute','name','description','quantity','abjuration','conjuration','divination','enchantment','evocation','illusion','necromancy','transmutation','userId']);
 
@@ -178,10 +178,7 @@ export const FormulaSchema = z.object({
   userId: z.string(),
   name: z.string(),
   description: z.string(),
-  ingredient1: z.string().nullable(),
-  ingredient2: z.string().nullable(),
-  ingredient3: z.string().nullable(),
-  ingredient4: z.string().nullable(),
+  ingredients: z.string().array(),
 })
 
 export type Formula = z.infer<typeof FormulaSchema>
@@ -420,10 +417,7 @@ export const FormulaSelectSchema: z.ZodType<Prisma.FormulaSelect> = z.object({
   name: z.boolean().optional(),
   description: z.boolean().optional(),
   rarity: z.boolean().optional(),
-  ingredient1: z.boolean().optional(),
-  ingredient2: z.boolean().optional(),
-  ingredient3: z.boolean().optional(),
-  ingredient4: z.boolean().optional(),
+  ingredients: z.boolean().optional(),
   user: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
 }).strict()
 
@@ -842,10 +836,7 @@ export const FormulaWhereInputSchema: z.ZodType<Prisma.FormulaWhereInput> = z.ob
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   description: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   rarity: z.union([ z.lazy(() => EnumRarityFilterSchema),z.lazy(() => RaritySchema) ]).optional(),
-  ingredient1: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  ingredient2: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  ingredient3: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  ingredient4: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  ingredients: z.lazy(() => StringNullableListFilterSchema).optional(),
   user: z.union([ z.lazy(() => UserRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
 }).strict();
 
@@ -855,10 +846,7 @@ export const FormulaOrderByWithRelationInputSchema: z.ZodType<Prisma.FormulaOrde
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
   rarity: z.lazy(() => SortOrderSchema).optional(),
-  ingredient1: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  ingredient2: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  ingredient3: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  ingredient4: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  ingredients: z.lazy(() => SortOrderSchema).optional(),
   user: z.lazy(() => UserOrderByWithRelationInputSchema).optional()
 }).strict();
 
@@ -874,10 +862,7 @@ export const FormulaWhereUniqueInputSchema: z.ZodType<Prisma.FormulaWhereUniqueI
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   description: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   rarity: z.union([ z.lazy(() => EnumRarityFilterSchema),z.lazy(() => RaritySchema) ]).optional(),
-  ingredient1: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  ingredient2: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  ingredient3: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  ingredient4: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  ingredients: z.lazy(() => StringNullableListFilterSchema).optional(),
   user: z.union([ z.lazy(() => UserRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
 }).strict());
 
@@ -887,10 +872,7 @@ export const FormulaOrderByWithAggregationInputSchema: z.ZodType<Prisma.FormulaO
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
   rarity: z.lazy(() => SortOrderSchema).optional(),
-  ingredient1: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  ingredient2: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  ingredient3: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  ingredient4: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  ingredients: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => FormulaCountOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => FormulaMaxOrderByAggregateInputSchema).optional(),
   _min: z.lazy(() => FormulaMinOrderByAggregateInputSchema).optional()
@@ -905,10 +887,7 @@ export const FormulaScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Formu
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   description: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   rarity: z.union([ z.lazy(() => EnumRarityWithAggregatesFilterSchema),z.lazy(() => RaritySchema) ]).optional(),
-  ingredient1: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
-  ingredient2: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
-  ingredient3: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
-  ingredient4: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  ingredients: z.lazy(() => StringNullableListFilterSchema).optional()
 }).strict();
 
 export const IngredientWhereInputSchema: z.ZodType<Prisma.IngredientWhereInput> = z.object({
@@ -1469,10 +1448,7 @@ export const FormulaCreateInputSchema: z.ZodType<Prisma.FormulaCreateInput> = z.
   name: z.string(),
   description: z.string(),
   rarity: z.lazy(() => RaritySchema).optional(),
-  ingredient1: z.string().optional().nullable(),
-  ingredient2: z.string().optional().nullable(),
-  ingredient3: z.string().optional().nullable(),
-  ingredient4: z.string().optional().nullable(),
+  ingredients: z.union([ z.lazy(() => FormulaCreateingredientsInputSchema),z.string().array() ]).optional(),
   user: z.lazy(() => UserCreateNestedOneWithoutFormulasInputSchema)
 }).strict();
 
@@ -1482,10 +1458,7 @@ export const FormulaUncheckedCreateInputSchema: z.ZodType<Prisma.FormulaUnchecke
   name: z.string(),
   description: z.string(),
   rarity: z.lazy(() => RaritySchema).optional(),
-  ingredient1: z.string().optional().nullable(),
-  ingredient2: z.string().optional().nullable(),
-  ingredient3: z.string().optional().nullable(),
-  ingredient4: z.string().optional().nullable()
+  ingredients: z.union([ z.lazy(() => FormulaCreateingredientsInputSchema),z.string().array() ]).optional(),
 }).strict();
 
 export const FormulaUpdateInputSchema: z.ZodType<Prisma.FormulaUpdateInput> = z.object({
@@ -1493,10 +1466,7 @@ export const FormulaUpdateInputSchema: z.ZodType<Prisma.FormulaUpdateInput> = z.
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rarity: z.union([ z.lazy(() => RaritySchema),z.lazy(() => EnumRarityFieldUpdateOperationsInputSchema) ]).optional(),
-  ingredient1: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient2: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient3: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient4: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  ingredients: z.union([ z.lazy(() => FormulaUpdateingredientsInputSchema),z.string().array() ]).optional(),
   user: z.lazy(() => UserUpdateOneRequiredWithoutFormulasNestedInputSchema).optional()
 }).strict();
 
@@ -1506,10 +1476,7 @@ export const FormulaUncheckedUpdateInputSchema: z.ZodType<Prisma.FormulaUnchecke
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rarity: z.union([ z.lazy(() => RaritySchema),z.lazy(() => EnumRarityFieldUpdateOperationsInputSchema) ]).optional(),
-  ingredient1: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient2: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient3: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient4: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  ingredients: z.union([ z.lazy(() => FormulaUpdateingredientsInputSchema),z.string().array() ]).optional(),
 }).strict();
 
 export const FormulaCreateManyInputSchema: z.ZodType<Prisma.FormulaCreateManyInput> = z.object({
@@ -1518,10 +1485,7 @@ export const FormulaCreateManyInputSchema: z.ZodType<Prisma.FormulaCreateManyInp
   name: z.string(),
   description: z.string(),
   rarity: z.lazy(() => RaritySchema).optional(),
-  ingredient1: z.string().optional().nullable(),
-  ingredient2: z.string().optional().nullable(),
-  ingredient3: z.string().optional().nullable(),
-  ingredient4: z.string().optional().nullable()
+  ingredients: z.union([ z.lazy(() => FormulaCreateingredientsInputSchema),z.string().array() ]).optional(),
 }).strict();
 
 export const FormulaUpdateManyMutationInputSchema: z.ZodType<Prisma.FormulaUpdateManyMutationInput> = z.object({
@@ -1529,10 +1493,7 @@ export const FormulaUpdateManyMutationInputSchema: z.ZodType<Prisma.FormulaUpdat
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rarity: z.union([ z.lazy(() => RaritySchema),z.lazy(() => EnumRarityFieldUpdateOperationsInputSchema) ]).optional(),
-  ingredient1: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient2: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient3: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient4: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  ingredients: z.union([ z.lazy(() => FormulaUpdateingredientsInputSchema),z.string().array() ]).optional(),
 }).strict();
 
 export const FormulaUncheckedUpdateManyInputSchema: z.ZodType<Prisma.FormulaUncheckedUpdateManyInput> = z.object({
@@ -1541,10 +1502,7 @@ export const FormulaUncheckedUpdateManyInputSchema: z.ZodType<Prisma.FormulaUnch
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rarity: z.union([ z.lazy(() => RaritySchema),z.lazy(() => EnumRarityFieldUpdateOperationsInputSchema) ]).optional(),
-  ingredient1: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient2: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient3: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient4: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  ingredients: z.union([ z.lazy(() => FormulaUpdateingredientsInputSchema),z.string().array() ]).optional(),
 }).strict();
 
 export const IngredientCreateInputSchema: z.ZodType<Prisma.IngredientCreateInput> = z.object({
@@ -2203,6 +2161,14 @@ export const EnumRarityFilterSchema: z.ZodType<Prisma.EnumRarityFilter> = z.obje
   not: z.union([ z.lazy(() => RaritySchema),z.lazy(() => NestedEnumRarityFilterSchema) ]).optional(),
 }).strict();
 
+export const StringNullableListFilterSchema: z.ZodType<Prisma.StringNullableListFilter> = z.object({
+  equals: z.string().array().optional().nullable(),
+  has: z.string().optional().nullable(),
+  hasEvery: z.string().array().optional(),
+  hasSome: z.string().array().optional(),
+  isEmpty: z.boolean().optional()
+}).strict();
+
 export const UserRelationFilterSchema: z.ZodType<Prisma.UserRelationFilter> = z.object({
   is: z.lazy(() => UserWhereInputSchema).optional(),
   isNot: z.lazy(() => UserWhereInputSchema).optional()
@@ -2214,10 +2180,7 @@ export const FormulaCountOrderByAggregateInputSchema: z.ZodType<Prisma.FormulaCo
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
   rarity: z.lazy(() => SortOrderSchema).optional(),
-  ingredient1: z.lazy(() => SortOrderSchema).optional(),
-  ingredient2: z.lazy(() => SortOrderSchema).optional(),
-  ingredient3: z.lazy(() => SortOrderSchema).optional(),
-  ingredient4: z.lazy(() => SortOrderSchema).optional()
+  ingredients: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const FormulaMaxOrderByAggregateInputSchema: z.ZodType<Prisma.FormulaMaxOrderByAggregateInput> = z.object({
@@ -2225,11 +2188,7 @@ export const FormulaMaxOrderByAggregateInputSchema: z.ZodType<Prisma.FormulaMaxO
   userId: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
-  rarity: z.lazy(() => SortOrderSchema).optional(),
-  ingredient1: z.lazy(() => SortOrderSchema).optional(),
-  ingredient2: z.lazy(() => SortOrderSchema).optional(),
-  ingredient3: z.lazy(() => SortOrderSchema).optional(),
-  ingredient4: z.lazy(() => SortOrderSchema).optional()
+  rarity: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const FormulaMinOrderByAggregateInputSchema: z.ZodType<Prisma.FormulaMinOrderByAggregateInput> = z.object({
@@ -2237,11 +2196,7 @@ export const FormulaMinOrderByAggregateInputSchema: z.ZodType<Prisma.FormulaMinO
   userId: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
-  rarity: z.lazy(() => SortOrderSchema).optional(),
-  ingredient1: z.lazy(() => SortOrderSchema).optional(),
-  ingredient2: z.lazy(() => SortOrderSchema).optional(),
-  ingredient3: z.lazy(() => SortOrderSchema).optional(),
-  ingredient4: z.lazy(() => SortOrderSchema).optional()
+  rarity: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const EnumRarityWithAggregatesFilterSchema: z.ZodType<Prisma.EnumRarityWithAggregatesFilter> = z.object({
@@ -2864,6 +2819,10 @@ export const FormulaUncheckedUpdateManyWithoutUserNestedInputSchema: z.ZodType<P
   deleteMany: z.union([ z.lazy(() => FormulaScalarWhereInputSchema),z.lazy(() => FormulaScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
+export const FormulaCreateingredientsInputSchema: z.ZodType<Prisma.FormulaCreateingredientsInput> = z.object({
+  set: z.string().array()
+}).strict();
+
 export const UserCreateNestedOneWithoutFormulasInputSchema: z.ZodType<Prisma.UserCreateNestedOneWithoutFormulasInput> = z.object({
   create: z.union([ z.lazy(() => UserCreateWithoutFormulasInputSchema),z.lazy(() => UserUncheckedCreateWithoutFormulasInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => UserCreateOrConnectWithoutFormulasInputSchema).optional(),
@@ -2872,6 +2831,11 @@ export const UserCreateNestedOneWithoutFormulasInputSchema: z.ZodType<Prisma.Use
 
 export const EnumRarityFieldUpdateOperationsInputSchema: z.ZodType<Prisma.EnumRarityFieldUpdateOperationsInput> = z.object({
   set: z.lazy(() => RaritySchema).optional()
+}).strict();
+
+export const FormulaUpdateingredientsInputSchema: z.ZodType<Prisma.FormulaUpdateingredientsInput> = z.object({
+  set: z.string().array().optional(),
+  push: z.union([ z.string(),z.string().array() ]).optional(),
 }).strict();
 
 export const UserUpdateOneRequiredWithoutFormulasNestedInputSchema: z.ZodType<Prisma.UserUpdateOneRequiredWithoutFormulasNestedInput> = z.object({
@@ -3602,10 +3566,7 @@ export const FormulaCreateWithoutUserInputSchema: z.ZodType<Prisma.FormulaCreate
   name: z.string(),
   description: z.string(),
   rarity: z.lazy(() => RaritySchema).optional(),
-  ingredient1: z.string().optional().nullable(),
-  ingredient2: z.string().optional().nullable(),
-  ingredient3: z.string().optional().nullable(),
-  ingredient4: z.string().optional().nullable()
+  ingredients: z.union([ z.lazy(() => FormulaCreateingredientsInputSchema),z.string().array() ]).optional(),
 }).strict();
 
 export const FormulaUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.FormulaUncheckedCreateWithoutUserInput> = z.object({
@@ -3613,10 +3574,7 @@ export const FormulaUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.Form
   name: z.string(),
   description: z.string(),
   rarity: z.lazy(() => RaritySchema).optional(),
-  ingredient1: z.string().optional().nullable(),
-  ingredient2: z.string().optional().nullable(),
-  ingredient3: z.string().optional().nullable(),
-  ingredient4: z.string().optional().nullable()
+  ingredients: z.union([ z.lazy(() => FormulaCreateingredientsInputSchema),z.string().array() ]).optional(),
 }).strict();
 
 export const FormulaCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.FormulaCreateOrConnectWithoutUserInput> = z.object({
@@ -3746,10 +3704,7 @@ export const FormulaScalarWhereInputSchema: z.ZodType<Prisma.FormulaScalarWhereI
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   description: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   rarity: z.union([ z.lazy(() => EnumRarityFilterSchema),z.lazy(() => RaritySchema) ]).optional(),
-  ingredient1: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  ingredient2: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  ingredient3: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  ingredient4: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  ingredients: z.lazy(() => StringNullableListFilterSchema).optional()
 }).strict();
 
 export const UserCreateWithoutFormulasInputSchema: z.ZodType<Prisma.UserCreateWithoutFormulasInput> = z.object({
@@ -4154,10 +4109,7 @@ export const FormulaCreateManyUserInputSchema: z.ZodType<Prisma.FormulaCreateMan
   name: z.string(),
   description: z.string(),
   rarity: z.lazy(() => RaritySchema).optional(),
-  ingredient1: z.string().optional().nullable(),
-  ingredient2: z.string().optional().nullable(),
-  ingredient3: z.string().optional().nullable(),
-  ingredient4: z.string().optional().nullable()
+  ingredients: z.union([ z.lazy(() => FormulaCreateingredientsInputSchema),z.string().array() ]).optional(),
 }).strict();
 
 export const PuzzleSessionUpdateWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleSessionUpdateWithoutPlayersInput> = z.object({
@@ -4298,10 +4250,7 @@ export const FormulaUpdateWithoutUserInputSchema: z.ZodType<Prisma.FormulaUpdate
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rarity: z.union([ z.lazy(() => RaritySchema),z.lazy(() => EnumRarityFieldUpdateOperationsInputSchema) ]).optional(),
-  ingredient1: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient2: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient3: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient4: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  ingredients: z.union([ z.lazy(() => FormulaUpdateingredientsInputSchema),z.string().array() ]).optional(),
 }).strict();
 
 export const FormulaUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.FormulaUncheckedUpdateWithoutUserInput> = z.object({
@@ -4309,10 +4258,7 @@ export const FormulaUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.Form
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rarity: z.union([ z.lazy(() => RaritySchema),z.lazy(() => EnumRarityFieldUpdateOperationsInputSchema) ]).optional(),
-  ingredient1: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient2: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient3: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient4: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  ingredients: z.union([ z.lazy(() => FormulaUpdateingredientsInputSchema),z.string().array() ]).optional(),
 }).strict();
 
 export const FormulaUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.FormulaUncheckedUpdateManyWithoutUserInput> = z.object({
@@ -4320,10 +4266,7 @@ export const FormulaUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rarity: z.union([ z.lazy(() => RaritySchema),z.lazy(() => EnumRarityFieldUpdateOperationsInputSchema) ]).optional(),
-  ingredient1: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient2: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient3: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  ingredient4: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  ingredients: z.union([ z.lazy(() => FormulaUpdateingredientsInputSchema),z.string().array() ]).optional(),
 }).strict();
 
 /////////////////////////////////////////

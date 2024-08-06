@@ -14,6 +14,7 @@ export default function PoseImage(props: Props) {
       height={116}
       layout="responsive"
       objectFit="cover"
+      className="rounded-lg border-2 border-neutral-800"
     />
   );
 }

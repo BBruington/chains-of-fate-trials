@@ -8,6 +8,38 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      keyframes: {
+        posepulse: {
+          "0%, 100%": {
+            opacity: ".25",
+          },
+          "50%": {
+            opacity: ".75",
+          },
+        },
+        swipe: {
+          "0%": {
+            transform: "translateX(-50%) skew(-30deg)",
+          },
+          "100%": {
+            transform: "translateX(0%) skew(-30deg)",
+          },
+        },
+      },
+      animation: {
+        posePulse: "posepulse 3s ease-in-out infinite",
+        swipe: "swipe .2s 1",
+      },
+      cursor: {
+        pinkCursor: "url(/cursors/pink-cursor.png), auto",
+        pinkCursorPointer: "url(/cursors/pink-cursor-pointer.png), pointer",
+        blueCursor: "url(/cursors/blue-cursor.png), auto",
+        blueCursorPointer: "url(/cursors/blue-cursor-pointer.png), pointer",
+        greenCursor: "url(/cursors/green-cursor.png), auto",
+        greenCursorPointer: "url(/cursors/green-cursor-pointer.png), pointer",
+        purpleCursor: "url(/cursors/purple-cursor.png), auto",
+        purpleCursorPointer: "url(/cursors/purple-cursor-pointer.png), pointer",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

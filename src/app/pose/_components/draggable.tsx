@@ -89,7 +89,7 @@ export default function Draggable({
       style={draggableStyle}
       {...listeners}
       {...attributes}
-      className={`${bodySizes[bodyPart].height} ${bodySizes[bodyPart].width} bg-black rounded-full`}
+      className={`${bodySizes[bodyPart].height} ${bodySizes[bodyPart].width} rounded-full bg-black`}
     ></div>
   );
 }

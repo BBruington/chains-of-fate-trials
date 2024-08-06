@@ -21,7 +21,7 @@ export default function UserItem(props: UserItemProps) {
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-blue-200 p-4 rounded shadow-md flex justify-between"
+      className="flex justify-between rounded bg-blue-200 p-4 shadow-md"
     >
       <h1>
         <h3 className="text-lg font-semibold">{name}</h3>

@@ -1,4 +1,4 @@
-import { $Enums, Ingredient, Potion, User } from "@prisma/client";
+import { $Enums, Formula, Ingredient, Potion, User } from "@prisma/client";
 import { Dispatch, SetStateAction, ChangeEvent } from "react";
 import { z } from "zod";
 import { IngredientSchema } from "../../../../../prisma/generated/zod";
@@ -107,14 +107,28 @@ export type MagicProperties = {
 };
 
 export type AddFormulaProps = {
+  potion: Potion;
   mixture: z.infer<typeof IngredientSchema>[];
   userId: User["clerkId"];
+};
+
+export type DoesFormulaExistProps = {
+  formulaName: string;
+  userFormulas: Formula[];
+  mixtureIngredients: Ingredient[];
+};
+
+export type GetUserPromise = {
+  user: User | null;
+  ingredients?: Ingredient[];
+  potions?: Potion[];
+  formulas?: Formula[];
 };
 
 export type AddIngredientsToMixtureProps = {
   ingredient: Ingredient;
   mixture: Ingredient[];
-}
+};
 
 export const mixturePropertiesSchema = z.object({
   magicTypes: z.array(z.string()),

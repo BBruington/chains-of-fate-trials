@@ -3,7 +3,6 @@ import {
   ALL_RARITIES,
   BLANK_MIXTURE_PROPERTIES,
   EMPTY_MIXTURE,
-  EMPTY_POTION,
   INGREDIENT_RARITY_ORDER,
 } from "@/constants";
 import { useState } from "react";
@@ -18,6 +17,7 @@ import {
   AddFormulaProps,
   mixturePropertiesSchema,
   AddIngredientsToMixtureProps,
+  DoesFormulaExistProps,
 } from "./types";
 
 export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
@@ -153,11 +153,8 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
     return mix;
   }
 
-  const addFormula = async ({ mixture, userId }: AddFormulaProps) => {
+  const addFormula = async ({ mixture, userId, potion }: AddFormulaProps) => {
     const ingredients = mixture.filter((mix) => mix.id !== "empty");
-    let potion = findPotion({ mixture: mixtureProperties });
-    if (potion === undefined) potion = EMPTY_POTION;
-
     await addFormulaToUser({ ingredients, potion, userId });
   };
 
@@ -182,6 +179,43 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
     });
   };
 
+  function compareArrays(array1: string[], array2: string[]) {
+    if (array1.length != array2.length) {
+      return false;
+    }
+
+    array1 = array1.slice();
+    array1.sort();
+    array2 = array2.slice();
+    array2.sort();
+
+    for (let i = 0; i < array1.length; i++) {
+      if (array1[i] != array2[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  const isFormulaSaved = ({
+    mixtureIngredients,
+    userFormulas,
+    formulaName,
+  }: DoesFormulaExistProps): boolean => {
+    const foundFormulas = userFormulas.filter(
+      (formula) => formula.name === formulaName,
+    );
+    if (foundFormulas.length > 0) {
+      const ingredientNames = mixtureIngredients.map((ing) => ing.name);
+      for (let formula of foundFormulas) {
+        const doesExist = compareArrays(formula.ingredients, ingredientNames);
+        if (doesExist) return true;
+      }
+    }
+
+    return false;
+  };
+
   return {
     mixture,
     userIngredients,
@@ -190,6 +224,7 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
     filteredUserIngredients,
     findPotion,
     addFormula,
+    isFormulaSaved,
     handleCraftPotion,
     handleAddIngredients,
     findMixtureProperties,

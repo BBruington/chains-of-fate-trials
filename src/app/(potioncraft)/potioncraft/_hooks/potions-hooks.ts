@@ -3,7 +3,6 @@ import { commonPotions } from "../_components/testData";
 import { PotionSchema } from "@/types";
 import {
   findPotionSchema,
-  HandlePotionQuantityChangeProps,
   MagicProperties,
   PotionHooksProps,
 } from "./types";
@@ -11,7 +10,6 @@ import { EMPTY_INGREDIENT } from "@/constants";
 import {
   spendIngredients,
   addPotionToUser,
-  changePotionQuantity,
 } from "../actions";
 
 const emptyMixture = [
@@ -115,10 +113,13 @@ export default function PotionHooks({
     setMixture(emptyMixture);
     if (potion === undefined) {
       console.log("potion craft failed! D:");
+      findMixtureProperties([resetMix]);
+      return null;
     } else {
-      await addPotionToUser({ potion, userId });
+      const createdPotion = await addPotionToUser({ potion, userId });
+      findMixtureProperties([resetMix]);
+      return createdPotion;
     }
-    findMixtureProperties([resetMix]);
   };
 
   return { findPotion, handleCraftPotion };

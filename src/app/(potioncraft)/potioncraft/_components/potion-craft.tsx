@@ -32,6 +32,7 @@ export default function PotionCraftComponent({
     mixtureProperties,
     findPotion,
     findMixtureProperties,
+    isFormulaSaved,
     addFormula,
     handleResetIngredients,
     handleFilterIngredients,
@@ -50,6 +51,21 @@ export default function PotionCraftComponent({
     RARE: "text-blue-500",
     VERYRARE: "text-purple-600",
     LEGENDARY: "text-orange-600",
+  };
+
+  const handleCraftPotionButton = async () => {
+    const createdPotion = await handleCraftPotion();
+    const spentIngredients = mixture.filter((mix) => mix.id !== "empty");
+    if (
+      createdPotion !== null &&
+      !isFormulaSaved({
+        formulaName: createdPotion.name,
+        mixtureIngredients: spentIngredients,
+        userFormulas: formulas,
+      })
+    ) {
+      await addFormula({ mixture, userId, potion: createdPotion });
+    }
   };
 
   return (
@@ -95,20 +111,14 @@ export default function PotionCraftComponent({
           </div>
           <div className="mt-8 flex flex-col items-center justify-center">
             <Button
-              className="mb-8 h-16 w-80 text-white bg-gradient-to-tr from-purple-600 to-blue-600 hover:animate-pulse hover:from-purple-700 hover:to-blue-700"
-              onClick={handleCraftPotion}
+              className="mb-8 h-16 w-80 bg-gradient-to-tr from-purple-600 to-blue-600 text-white hover:animate-pulse hover:from-purple-700 hover:to-blue-700"
+              onClick={handleCraftPotionButton}
             >
               Craft Potion
             </Button>
             <div className="flex space-x-5">
               <Button className="w-36" onClick={handleResetIngredients}>
                 Reset Mixture
-              </Button>
-              <Button
-                className="w-36"
-                onClick={() => addFormula({ mixture, userId })}
-              >
-                Add to Formulas
               </Button>
             </div>
           </div>

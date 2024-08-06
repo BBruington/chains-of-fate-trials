@@ -80,7 +80,7 @@ const AddIngredientsToUserSchema = z.object({
 const AddFormulaToUserSchema = z.object({
   userId: z.string(),
   ingredients: z.array(IngredientSchema),
-  potion: LocalPotionSchema,
+  potion: PotionSchema,
 });
 
 export const spendIngredients = async (
@@ -148,12 +148,12 @@ export const changePotionQuantity = async (
   try {
     const { potion, quantity } = ChangeQuantityLocalPotionSchema.parse(props);
 
-    if(potion.quantity + quantity === 0 ) {
+    if (potion.quantity + quantity === 0) {
       const removedPotion = await prisma.potion.delete({
         where: {
           id: potion.id,
-        }
-      })
+        },
+      });
       revalidatePath(`${process.env.BASE_URL}/potioncraft`);
       return removedPotion;
     }
@@ -213,15 +213,15 @@ export const changeIngredientQuantity = async (
 
 export const addPotionToUser = async (
   props: z.infer<typeof AddPotionToUserSchema>,
-): Promise<void> => {
+): Promise<Potion> => {
   try {
     const { userId, potion } = AddPotionToUserSchema.parse(props);
-    await prisma.$transaction(async (prisma) => {
+    const createdPotion = await prisma.$transaction(async (prisma) => {
       const existingPotion = await prisma.potion.findFirst({
         where: { userId, name: potion.name },
       });
       if (existingPotion === null) {
-        await prisma.potion.create({
+        const createdPotion = await prisma.potion.create({
           data: {
             ...potion,
             name: potion.name,
@@ -231,15 +231,18 @@ export const addPotionToUser = async (
             userId,
           },
         });
+        revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+        return createdPotion;
       } else {
-        await prisma.potion.update({
+        const createdPotion = await prisma.potion.update({
           where: { id: existingPotion.id },
           data: { quantity: { increment: 1 } },
         });
+        revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+        return createdPotion;
       }
     });
-
-    revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+    return createdPotion;
   } catch (error) {
     console.error("Error adding potion to user: ", error);
     if (error instanceof z.ZodError) {
@@ -313,7 +316,7 @@ export const addFormulaToUser = async (
   try {
     const { ingredients, potion, userId } = AddFormulaToUserSchema.parse(props);
 
-    const ingredientNames = ingredients.map(ing => ing.name)
+    const ingredientNames = ingredients.map((ing) => ing.name);
 
     await prisma.formula.create({
       data: {

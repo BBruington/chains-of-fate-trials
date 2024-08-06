@@ -15,9 +15,7 @@ export default function FormulaListItem({ formula }: FormulaProps) {
     setSelectedFormula(formula);
   };
 
-  const allIngredients: string[] = [
-    ...formula.ingredients
-  ];
+  const allIngredients: string[] = [...formula.ingredients];
 
   type FilteredIngredientsProps = {
     name: string;
@@ -64,7 +62,9 @@ export default function FormulaListItem({ formula }: FormulaProps) {
       <h1 className="w-full border-b border-secondary text-center text-2xl">
         {formula.name}
       </h1>
-      <h2>Effect: {formula.description}</h2>
+      <h2 className="line-clamp-3 w-full px-2 whitespace-normal">
+        Effect: {formula.description}
+      </h2>
 
       {formula.ingredients.length === 0 ? (
         <></>

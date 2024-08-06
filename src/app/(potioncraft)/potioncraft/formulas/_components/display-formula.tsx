@@ -30,15 +30,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import IngredientFormfield from "./ingredient-formfield";
-import {
-  FormFormulaSchema,
-  FormData,
-} from "../../_types";
+import { FormFormulaSchema, FormData } from "../../_types";
 import Image from "next/image";
 import parchment from "@/../public/background/parchment.png";
 import { cn } from "@/lib/utils";
 import { ChangeEvent, useState } from "react";
 import { HandleFilterFormulasProps } from "./formula-page";
+import { Textarea } from "@/components/ui/textarea";
 
 const font = Cinzel({
   subsets: ["latin"],
@@ -64,7 +62,7 @@ export default function DisplayFormula({
   const [editMode, setEditMode] = useState(false);
 
   const handleChangeFormula = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>,
     key: string,
   ) => {
     setSelectedFormula({ ...selectedFormula, [key]: event.target.value });
@@ -143,12 +141,17 @@ export default function DisplayFormula({
   return (
     <Form {...form}>
       {selectedFormula.id === "empty" ? (
-        <div className="flex h-full w-full flex-col items-center border bg-secondary-foreground/60 pt-10 text-3xl text-secondary">
+        <div
+          style={{
+            zIndex: -2,
+          }}
+          className="flex h-full w-full flex-col items-center border pt-10 text-3xl text-white"
+        >
           Select a Formula to Edit
         </div>
       ) : (
         <form
-          className={`${font.className} flex w-full flex-col items-center justify-center border bg-secondary-foreground/60 text-secondary`}
+          className={`${font.className} flex w-full flex-col items-center justify-center border text-black`}
           onSubmit={handleSubmit(handleSaveFormula)}
         >
           <div
@@ -195,19 +198,27 @@ export default function DisplayFormula({
                 <FormItem>
                   <div className="mb-3">
                     <FormControl>
-                      <Input
-                        id="name"
-                        className={cn(
-                          formBackground,
-                          !editMode && notEditable,
-                          "text-2xl",
-                        )}
-                        disabled={selectedFormula.id === "Blank"}
-                        placeholder="Formula Name"
-                        {...field}
-                        value={selectedFormula.name}
-                        onChange={(event) => handleChangeFormula(event, "name")}
-                      />
+                      {editMode ? (
+                        <Input
+                          id="name"
+                          className={cn(
+                            formBackground,
+                            !editMode && notEditable,
+                            "text-2xl",
+                          )}
+                          disabled={selectedFormula.id === "Blank"}
+                          placeholder="Formula Name"
+                          {...field}
+                          value={selectedFormula.name}
+                          onChange={(event) =>
+                            handleChangeFormula(event, "name")
+                          }
+                        />
+                      ) : (
+                        <h2 className={cn(notEditable, "text-center text-2xl font-bold")}>
+                          {selectedFormula.name}
+                        </h2>
+                      )}
                     </FormControl>
                   </div>
                 </FormItem>
@@ -310,29 +321,33 @@ export default function DisplayFormula({
                 <FormItem>
                   <div className="mb-3">
                     <FormControl>
-                      <Input
-                        aria-label={`${selectedFormula.description} input`}
-                        id="description"
-                        disabled={selectedFormula.id === "Blank"}
-                        className={cn(
-                          formBackground,
-                          !editMode && notEditable,
-                          "text-lg",
-                        )}
-                        placeholder="Formula Description"
-                        {...field}
-                        value={selectedFormula.description}
-                        onChange={(event) =>
-                          handleChangeFormula(event, "description")
-                        }
-                      />
+                      {editMode ? (
+                        <Textarea
+                          aria-label={`${selectedFormula.description} input`}
+                          id="description"
+                          disabled={selectedFormula.id === "Blank"}
+                          className={cn(
+                            formBackground,
+                            !editMode && notEditable,
+                            "text-sm",
+                          )}
+                          placeholder="Formula Description"
+                          {...field}
+                          value={selectedFormula.description}
+                          onChange={(event) =>
+                            handleChangeFormula(event, "description")
+                          }
+                        />
+                      ) : (
+                        <p className={cn(notEditable, "text-sm text-left")}>{selectedFormula.description}</p>
+                      )}
                     </FormControl>
                   </div>
                 </FormItem>
               )}
             />
             <div className="my-2 h-0.5 w-4/5 self-center bg-slate-400" />
-            <h2 className="mb-2 flex w-full justify-center text-2xl">
+            <h2 className={cn(notEditable, "mb-2 flex w-full justify-center text-2xl")}>
               Ingredients
             </h2>
             <div className="space-y-2">

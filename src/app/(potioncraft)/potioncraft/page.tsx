@@ -1,5 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
-import PotionCraftComponent from "./_components/potion-craft";
+import PotionCraftComponent from "./_components/potion-craft-page";
 import { prisma } from "@/app/utils/context";
 import { cache } from "react";
 import { GetUserPromise } from "./_hooks/types";

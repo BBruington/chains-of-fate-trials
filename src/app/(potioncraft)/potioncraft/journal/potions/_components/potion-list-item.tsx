@@ -6,6 +6,14 @@ import { useAtom } from "jotai";
 import { displayPotion } from "../jotaiAtoms";
 import serum from "@/../public/icons/serum.png";
 import { changePotionQuantity } from "../../../actions";
+import { cn } from "@/lib/utils";
+import { Luxurious_Roman } from "next/font/google";
+
+const fontList = Luxurious_Roman({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
 
 interface PotionListItemProps {
   potion: Potion;
@@ -22,7 +30,12 @@ export default function PotionListItem({ potion }: PotionListItemProps) {
   };
 
   return (
-    <div className="flex h-fit w-72 flex-col rounded-lg border border-secondary bg-secondary-foreground/70 text-secondary hover:cursor-pointer hover:bg-secondary-foreground/60">
+    <div
+      className={cn(
+        fontList.className,
+        "flex h-fit w-72 flex-col rounded-lg border border-secondary bg-secondary-foreground/70 text-secondary hover:cursor-pointer hover:bg-secondary-foreground/60",
+      )}
+    >
       <Button
         onClick={handleSelectPotion}
         className="min-h-20 rounded-none rounded-t-lg"
@@ -37,14 +50,14 @@ export default function PotionListItem({ potion }: PotionListItemProps) {
           <Button
             aria-label={`decrement ${potion.name} button`}
             onClick={() => handleChangePotionQuantity(-1)}
-            className="h-full w-1/2 rounded-none rounded-bl-lg border-r border-t"
+            className="h-full w-1/2 text-lg rounded-none rounded-bl-lg border-r border-t"
           >
             -
           </Button>
           <Button
             aria-label={`increment ${potion.name} button`}
             onClick={() => handleChangePotionQuantity(1)}
-            className="h-full w-1/2 rounded-none rounded-br-lg border-t"
+            className="h-full w-1/2 text-lg rounded-none rounded-br-lg border-t"
           >
             +
           </Button>

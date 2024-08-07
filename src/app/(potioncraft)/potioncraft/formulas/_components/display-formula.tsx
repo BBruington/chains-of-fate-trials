@@ -33,6 +33,7 @@ import IngredientFormfield from "./ingredient-formfield";
 import { FormFormulaSchema, FormData } from "../../_types";
 import Image from "next/image";
 import parchment from "@/../public/background/parchment.png";
+import woodBackground from "@/../public/background/wood_table.jpg";
 import { cn } from "@/lib/utils";
 import { ChangeEvent, useState } from "react";
 import { HandleFilterFormulasProps } from "./formula-page";
@@ -141,19 +142,28 @@ export default function DisplayFormula({
   return (
     <Form {...form}>
       {selectedFormula.id === "empty" ? (
-        <div
-          style={{
-            zIndex: -2,
-          }}
-          className="flex h-full w-full flex-col items-center border pt-10 text-3xl text-white"
-        >
-          Select a Formula to Edit
+        <div className="relative flex h-full w-full">
+          <div className="flex h-full w-full flex-col items-center border pt-10 text-3xl text-white">
+            Select a Formula to Edit
+          </div>
+          <Image
+            className="absolute h-full w-full"
+            style={{ zIndex: -2 }}
+            src={woodBackground}
+            alt="wooden background image"
+          />
         </div>
       ) : (
         <form
-          className={`${font.className} flex w-full flex-col items-center justify-center border text-black`}
+          className={`${font.className} relative flex w-full flex-col items-center justify-center border text-black`}
           onSubmit={handleSubmit(handleSaveFormula)}
         >
+          <Image
+            className="absolute h-full w-full"
+            style={{ zIndex: -2 }}
+            src={woodBackground}
+            alt="wooden background image"
+          />
           <div
             className={`fixed flex w-96 flex-col overflow-y-auto p-12`}
             style={{ position: "relative" }}
@@ -215,7 +225,12 @@ export default function DisplayFormula({
                           }
                         />
                       ) : (
-                        <h2 className={cn(notEditable, "text-center text-2xl font-bold")}>
+                        <h2
+                          className={cn(
+                            notEditable,
+                            "text-center text-2xl font-bold",
+                          )}
+                        >
                           {selectedFormula.name}
                         </h2>
                       )}
@@ -339,7 +354,9 @@ export default function DisplayFormula({
                           }
                         />
                       ) : (
-                        <p className={cn(notEditable, "text-sm text-left")}>{selectedFormula.description}</p>
+                        <p className={cn(notEditable, "text-left text-sm")}>
+                          {selectedFormula.description}
+                        </p>
                       )}
                     </FormControl>
                   </div>
@@ -347,7 +364,12 @@ export default function DisplayFormula({
               )}
             />
             <div className="my-2 h-0.5 w-4/5 self-center bg-slate-400" />
-            <h2 className={cn(notEditable, "mb-2 flex w-full justify-center text-2xl")}>
+            <h2
+              className={cn(
+                notEditable,
+                "mb-2 flex w-full justify-center text-2xl",
+              )}
+            >
               Ingredients
             </h2>
             <div className="space-y-2">

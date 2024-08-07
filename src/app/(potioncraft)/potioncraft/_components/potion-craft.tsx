@@ -10,6 +10,8 @@ import { usePotionCraft } from "../_hooks/usePotionCraft";
 import { RarityStyleProps } from "../_types";
 import { cn } from "@/lib/utils";
 import { EMPTY_MIXTURE } from "@/constants";
+import Image from "next/image";
+import alchemistLab from "@/../public/background/laboratory.jpg";
 
 type PotionCraftComponentProps = {
   ingredients: Ingredient[];
@@ -69,7 +71,7 @@ export default function PotionCraftComponent({
   };
 
   return (
-    <div className="flex w-screen justify-between">
+    <div className="relative flex h-full w-full justify-between">
       <div />
       <DndContext
         onDragStart={handleIngredientDragStart}
@@ -89,10 +91,16 @@ export default function PotionCraftComponent({
             />
           ) : null}
         </DragOverlay>
-        <div className="mt-10 flex min-w-fit flex-col">
+        <div className="flex h-screen w-full flex-col items-center">
+          {/* <Image
+            alt="alchemist's lab background"
+            src={alchemistLab}
+            className="absolute h-full w-full"
+            style={{ zIndex: -1 }}
+          /> */}
           <h1
             className={cn(
-              "mb-7 text-3xl",
+              "mb-7 mt-10 text-3xl",
               mixture === EMPTY_MIXTURE && "animate-pulse",
             )}
           >
@@ -123,7 +131,7 @@ export default function PotionCraftComponent({
             </div>
           </div>
         </div>
-        <div className="flex h-screen w-96 flex-col items-center overflow-y-auto border-l border-primary/40 p-2">
+        <div className="flex h-screen min-w-96 flex-col items-center overflow-y-auto border-l border-primary/40 p-2">
           <IngredientList
             ingredients={filteredUserIngredients}
             activeIngredient={activeIngredient}

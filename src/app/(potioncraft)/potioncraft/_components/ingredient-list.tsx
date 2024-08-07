@@ -38,7 +38,7 @@ export default function IngredientList({
   handleOrderFilteredIngredients,
 }: IngredientListProps) {
   return (
-    <>
+    <div className="w-full h-full flex flex-col items-center">
       <h2 className="py-2 text-2xl">My Ingredients</h2>
       <Input
         className="m-2"
@@ -74,7 +74,7 @@ export default function IngredientList({
           ))
         )}
       </div>
-    </>
+    </div>
   );
 }
 

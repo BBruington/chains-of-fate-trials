@@ -6,6 +6,13 @@ import IngredientShop from "./ingredient-shop";
 import { useState } from "react";
 import DisplayIngredient from "./display-ingredient";
 import { usePotionCraft } from "../../../_hooks/usePotionCraft";
+import { Cinzel } from "next/font/google";
+import { cn } from "@/lib/utils";
+const fontHeader = Cinzel({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
 
 type IngredientsPageProps = {
   ingredients: Ingredient[];
@@ -37,7 +44,14 @@ export default function IngredientsPage({
         {displayUi.shop === true && <IngredientShop userId={userId} />}
       </div>
       <div className="flex h-full w-96 flex-col items-center space-y-3 overflow-y-auto border border-r-0 border-primary/40 bg-secondary p-3">
-        <h2>My Ingredients</h2>
+        <h2
+          className={cn(
+            fontHeader.className,
+            "w-full border-b text-center text-[28px]",
+          )}
+        >
+          My Ingredients
+        </h2>
         {ingredients?.map((ingredient) => (
           <IngredientListItem
             handleChangeIngredientQuantity={updateServerIngredientQuantity}

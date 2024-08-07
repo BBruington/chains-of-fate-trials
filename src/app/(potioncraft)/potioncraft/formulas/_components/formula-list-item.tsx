@@ -21,6 +21,7 @@ export default function FormulaListItem({ formula }: FormulaProps) {
     name: string;
     quantity: number;
   };
+  
   const filterDuplicates = (
     ingredients: string[],
   ): FilteredIngredientsProps[] => {
@@ -59,24 +60,24 @@ export default function FormulaListItem({ formula }: FormulaProps) {
       onClick={handleSelectFormula}
       className="flex h-fit w-72 flex-col items-center rounded-lg border border-secondary bg-secondary-foreground/70 text-secondary hover:cursor-pointer hover:bg-secondary-foreground/60"
     >
-      <h1 className="w-full border-b border-secondary text-center text-2xl">
+      <h1 className="w-fit px-5 border-b border-slate-500 text-center text-2xl font-bold">
         {formula.name}
       </h1>
       <h2 className="line-clamp-3 w-full px-2 whitespace-normal">
-        Effect: {formula.description}
+        <span className="font-bold">Effect:</span> {formula.description}
       </h2>
 
       {formula.ingredients.length === 0 ? (
         <></>
       ) : (
         <>
-          <h2 className="border-b border-secondary text-lg">Ingredients</h2>
+          <h2 className="px-3 font-bold border-b border-slate-500 text-lg">Ingredients</h2>
           <ul className="list-disc">
             {filteredIng.map(
               (ingredient: FilteredIngredientsProps, index: number) => (
                 <li
                   key={index}
-                  className={`${ingredient.name === "" && "hidden h-0"}`}
+                  className={`${ingredient.name === "" && "hidden h-0"} text-left`}
                 >
                   {ingredient.quantity} {ingredient.name}
                 </li>

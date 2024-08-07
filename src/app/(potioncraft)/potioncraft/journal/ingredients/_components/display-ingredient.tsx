@@ -2,9 +2,9 @@
 import { Ingredient } from "@prisma/client";
 import { SetStateAction, useAtom } from "jotai";
 import { displayIngredient } from "../jotaiAtoms";
-import { Button } from "@/components/ui/button";
 import { Dispatch } from "react";
 import { ArrowLeft } from "lucide-react";
+
 
 type DisplayIngredientProps = {
   displayUi: {
@@ -35,7 +35,10 @@ export default function DisplayIngredient({
   return (
     <>
       {selectedIngredient.id === "empty" ? (
-        <div className="cursor-normal flex h-60 w-96 flex-col justify-center rounded-lg bg-primary/80 text-center text-secondary">
+        <div
+          className="cursor-normal flex h-60 w-96 flex-col justify-center rounded-lg bg-primary/80 text-center text-secondary"
+          
+        >
           <h1 className="p-2 text-2xl">
             Select a Ingredient to view its properties
           </h1>

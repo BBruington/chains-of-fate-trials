@@ -41,7 +41,6 @@ export default function Loading() {
           </Button>
           <div className="flex space-x-5">
             <Button className="w-36">Reset Mixture</Button>
-            <Button className="w-36">Add to Formulas</Button>
           </div>
         </div>
       </div>

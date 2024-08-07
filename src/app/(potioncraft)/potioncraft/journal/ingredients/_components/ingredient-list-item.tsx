@@ -5,6 +5,14 @@ import { Button } from "@/components/ui/button";
 import { useAtom } from "jotai";
 import { displayIngredient } from "../jotaiAtoms";
 import { IngredientListItemProps } from "../../../_types";
+import { Luxurious_Roman } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const fontList = Luxurious_Roman({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
 
 export default function IngredientListItem({
   ingredient,
@@ -30,7 +38,11 @@ export default function IngredientListItem({
   };
 
   return (
-    <div className="flex h-fit min-h-28 w-72 flex-col items-center rounded-lg border border-secondary bg-secondary-foreground/70 text-secondary hover:cursor-pointer hover:bg-secondary-foreground/60">
+    <div
+      className={cn(
+        fontList.className, "flex h-fit min-h-28 w-72 flex-col items-center rounded-lg border border-secondary bg-secondary-foreground/70 text-secondary hover:cursor-pointer hover:bg-secondary-foreground/60",
+      )}
+    >
       <Button
         aria-label={`Display ${ingredient.name} properties`}
         onClick={handleSelectIngredient}
@@ -44,14 +56,14 @@ export default function IngredientListItem({
         <Button
           aria-label={`decrement ${ingredient.name} button`}
           onClick={() => handeIngredientQuantity(-1)}
-          className="h-full w-1/2 rounded-none rounded-bl-lg border-r border-t"
+          className="h-full text-lg w-1/2 rounded-none rounded-bl-lg border-r border-t"
         >
           -
         </Button>
         <Button
           aria-label={`increment ${ingredient.name} button`}
           onClick={() => handeIngredientQuantity(1)}
-          className="h-full w-1/2 rounded-none rounded-br-lg border-t"
+          className="h-full text-lg w-1/2 rounded-none rounded-br-lg border-t"
         >
           +
         </Button>

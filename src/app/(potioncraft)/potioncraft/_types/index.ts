@@ -1,12 +1,36 @@
-import { Ingredient } from "@prisma/client";
+import { Formula, Ingredient, Potion, User } from "@prisma/client";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { Dispatch, SetStateAction } from "react";
 import { z } from "zod";
 import {
+  AddFormulaProps,
   AddIngredientsToMixtureProps,
+  DoesFormulaExistProps,
   HandleFilterIngredientsProps,
   HandleIngredientQuantityChangeProps,
 } from "../_hooks/types";
+
+export type CraftPotionStationProps = {
+  mixture: Ingredient[];
+  handleCraftPotion: () => Promise<Potion | null>;
+  isFormulaSaved: ({
+    mixtureIngredients,
+    userFormulas,
+    formulaName,
+  }: DoesFormulaExistProps) => boolean;
+  addFormula: ({ mixture, userId, potion }: AddFormulaProps) => Promise<void>;
+  userId: string;
+  formulas: Formula[];
+  ingredients: Ingredient[];
+  handleResetIngredients: () => void;
+};
+
+export type PotionCraftComponentProps = {
+  ingredients: Ingredient[];
+  userId: User["clerkId"];
+  potions: Potion[];
+  formulas: Formula[];
+};
 
 export type IngredientListProps = {
   mixture: Ingredient[];
@@ -78,7 +102,7 @@ export const FormFormulaSchema = z.object({
   ]),
   name: z.string(),
   description: z.string(),
-  ingredients: z.array(z.string())
+  ingredients: z.array(z.string()),
 });
 
 export type FormData = z.infer<typeof FormFormulaSchema>;

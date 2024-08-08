@@ -3,6 +3,7 @@ import PotionCraftComponent from "./_components/potion-craft-page";
 import { prisma } from "@/app/utils/context";
 import { cache } from "react";
 import { GetUserPromise } from "./_hooks/types";
+import { Toaster } from "react-hot-toast";
 
 export const getUser = cache(
   async (userId: string): Promise<GetUserPromise> => {
@@ -42,11 +43,14 @@ export default async function PotionCraftPage() {
     return <div>Failed to get user Data</div>;
 
   return (
-    <PotionCraftComponent
-      ingredients={ingredients}
-      userId={clerkUser.id}
-      potions={potions}
-      formulas={formulas}
-    />
+    <>
+      <Toaster position="top-center" />
+      <PotionCraftComponent
+        ingredients={ingredients}
+        userId={clerkUser.id}
+        potions={potions}
+        formulas={formulas}
+      />
+    </>
   );
 }

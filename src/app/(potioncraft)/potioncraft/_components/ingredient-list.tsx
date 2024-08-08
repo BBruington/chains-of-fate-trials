@@ -10,7 +10,7 @@ import {
   IngredientDetailsProps,
   AddToMixtureButtonProps,
 } from "../_types";
-import { EMPTY_INGREDIENT, INGREDIENT_ICONS, RARITY_STYLES } from "@/constants";
+import { EMPTY_INGREDIENT, INGREDIENT_ICONS, RARITY_STYLES_TEXT } from "@/constants";
 import { cn } from "@/lib/utils";
 import {
   Select,
@@ -94,7 +94,7 @@ function IngredientItem({
       <div
         className={cn(
           "flex items-center rounded-md border-b px-2",
-          RARITY_STYLES[ingredient.rarity as keyof RarityStyleProps],
+          RARITY_STYLES_TEXT[ingredient.rarity as keyof RarityStyleProps],
         )}
       >
         <HoverCardTrigger onClick={() => setIsOpen(false)} className="flex">
@@ -107,7 +107,7 @@ function IngredientItem({
             showQuantity={true}
             id={ingredient.id}
             item={ingredient}
-            className={`text-white ${RARITY_STYLES[ingredient.rarity as keyof RarityStyleProps]}`}
+            className={`text-white ${RARITY_STYLES_TEXT[ingredient.rarity as keyof RarityStyleProps]}`}
           />
         </HoverCardTrigger>
 
@@ -136,7 +136,7 @@ function IngredientDetails({ ingredient }: IngredientDetailsProps) {
           Rarity:{" "}
           <span
             className={
-              RARITY_STYLES[ingredient.rarity as keyof RarityStyleProps]
+              RARITY_STYLES_TEXT[ingredient.rarity as keyof RarityStyleProps]
             }
           >
             {ingredient.rarity}

@@ -144,7 +144,7 @@ export function usePotionCraft({ ingredients, userId }: UsePotionCraftProps) {
 
     const mix = {
       ...properties,
-      primaryAttribute: primaryAttribute[0],
+      primaryAttribute: primaryAttribute[0].toUpperCase(),
       rarity: ALL_RARITIES[currentRarity],
       magicTypes: magicTypesOfHighestRarity,
     };

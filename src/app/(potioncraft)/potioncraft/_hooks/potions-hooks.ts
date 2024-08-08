@@ -51,17 +51,16 @@ export default function PotionHooks({
     const { mixture } = findPotionSchema.parse(props);
 
     let potions = commonPotions;
-
+    if(mixture.rarity === "EMPTY") return;
     if (mixture.rarity === "COMMON") potions = commonPotions;
 
     const potionsMatchingPrimaryAttribute = potions?.filter(
       (potion) =>
-        potion[mixture.primaryAttribute as keyof MagicProperties] ===
-        mixture[mixture.primaryAttribute as keyof MagicProperties],
+        potion.primaryAttribute ===
+        mixture.primaryAttribute && potion[mixture.primaryAttribute.toLowerCase() as keyof MagicProperties] === mixture[mixture.primaryAttribute.toLowerCase() as keyof MagicProperties]
     );
-
+    
     if (
-      potionsMatchingPrimaryAttribute === undefined ||
       potionsMatchingPrimaryAttribute.length === 0
     )
       return;

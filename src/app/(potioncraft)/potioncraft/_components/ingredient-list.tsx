@@ -10,7 +10,7 @@ import {
   IngredientDetailsProps,
   AddToMixtureButtonProps,
 } from "../_types";
-import { EMPTY_INGREDIENT, INGREDIENT_ICONS, RARITY_STYLES_TEXT } from "@/constants";
+import { EMPTY_INGREDIENT, INGREDIENT_ICONS } from "@/constants";
 import { cn } from "@/lib/utils";
 import {
   Select,
@@ -28,6 +28,21 @@ import {
 } from "@/components/ui/hover-card";
 import Image from "next/image";
 import { useState } from "react";
+import { Cinzel } from "next/font/google";
+
+const fontHeader = Cinzel({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
+
+const RARITY_STYLES_TEXT: RarityStyleProps = {
+  COMMON: "text-slate-500",
+  UNCOMMON: "text-green-600",
+  RARE: "text-blue-500",
+  VERYRARE: "text-purple-600",
+  LEGENDARY: "text-orange-600",
+};
 
 export default function IngredientList({
   mixture,
@@ -38,8 +53,8 @@ export default function IngredientList({
   handleOrderFilteredIngredients,
 }: IngredientListProps) {
   return (
-    <div className="w-full h-full flex flex-col items-center">
-      <h2 className="py-2 text-2xl">My Ingredients</h2>
+    <div className="flex h-full w-full flex-col items-center">
+      <h2 className={cn(fontHeader.className,"py-2 text-2xl")}>My Ingredients</h2>
       <Input
         className="m-2"
         onChange={(event) => handleFilterIngredients({ event })}
@@ -107,7 +122,7 @@ function IngredientItem({
             showQuantity={true}
             id={ingredient.id}
             item={ingredient}
-            className={`text-white ${RARITY_STYLES_TEXT[ingredient.rarity as keyof RarityStyleProps]}`}
+            className={`${RARITY_STYLES_TEXT[ingredient.rarity as keyof RarityStyleProps]}`}
           />
         </HoverCardTrigger>
 
@@ -156,7 +171,7 @@ function AddToMixtureButton({
   addIngredientToMixture,
 }: AddToMixtureButtonProps) {
   const buttonClass =
-    "hover:primary-60 h-6 w-16 border border-black bg-white text-xs text-black rounded-lg";
+    "hover:bg-slate-300 h-6 w-16 border border-black bg-white text-xs text-black rounded-lg";
   return (
     <div className="flex space-x-1">
       <Button

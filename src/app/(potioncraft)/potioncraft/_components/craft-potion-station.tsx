@@ -7,6 +7,13 @@ import { Button } from "@/components/ui/button";
 import { CraftPotionStationProps } from "../_types";
 import SuccessToast from "./craft-potion-toast";
 import toast from "react-hot-toast";
+import { Cinzel } from "next/font/google";
+
+const fontHeader = Cinzel({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
 
 export default function CraftPotionStation({
   addFormula,
@@ -41,7 +48,7 @@ export default function CraftPotionStation({
   return (
     <>
       <h1
-        className={cn(
+        className={cn(fontHeader.className,
           "mb-7 mt-10 text-3xl",
           mixture === EMPTY_MIXTURE && "animate-pulse",
         )}

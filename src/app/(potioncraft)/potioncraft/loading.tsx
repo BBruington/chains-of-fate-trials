@@ -11,6 +11,13 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import Spinner from "@/components/spinner";
+import { Cinzel } from "next/font/google";
+
+const fontHeader = Cinzel({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
 
 export default function Loading() {
   const emptyMixture = [
@@ -21,10 +28,14 @@ export default function Loading() {
   ];
 
   return (
-    <div className="flex w-screen justify-between">
+    <div className="relative flex h-full w-full justify-between">
       <div />
-      <div className="mt-10 flex min-w-fit flex-col">
-        <h1 className="mb-7 text-3xl">Drag Ingredients to Make a Potion</h1>
+      <div className="flex h-screen w-full flex-col items-center">
+        <h1
+          className={`${fontHeader.className} mb-7 mt-10 animate-pulse text-3xl`}
+        >
+          Drag Ingredients to Make a Potion
+        </h1>
         <div className="grid grid-cols-2 content-center gap-5">
           {emptyMixture.map((mix, index) => (
             <div
@@ -46,7 +57,7 @@ export default function Loading() {
       </div>
       <div className="flex h-screen w-96 justify-end">
         <div className="flex h-screen w-96 flex-col items-center overflow-y-auto border-l border-primary/40 p-2">
-          <h2 className="py-2 text-2xl">Ingredients</h2>
+          <h2 className={`${fontHeader.className} py-2 text-2xl`}>My Ingredients</h2>
           <Input
             className="m-2"
             aria-label="Filter ingredients"

@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Image, { StaticImageData } from "next/image";
@@ -33,7 +32,7 @@ export default function SideNavLink({
         <button
           onClick={() => router.push(href)}
           className={cn(
-            "flex h-12 min-w-14 justify-center items-center rounded-lg border-b hover:bg-secondary hover:text-primary/80",
+            "flex h-12 min-w-14 items-center justify-center rounded-lg border-b hover:bg-secondary hover:text-primary/80",
             pathName === href &&
               "pointer-events-none border-b-red-900/70 bg-secondary/30 font-semibold text-red-900/70",
           )}
@@ -47,7 +46,10 @@ export default function SideNavLink({
         </button>
       </HoverCardTrigger>
       <HoverCardContent
-        className="mb-5 ml-[2px] flex h-7 w-fit items-center justify-center"
+        className={cn(
+          "mb-5 ml-[2px] flex h-7 w-fit items-center justify-center",
+          isOpenNav && "invisible h-0",
+        )}
         side="right"
       >
         {label}

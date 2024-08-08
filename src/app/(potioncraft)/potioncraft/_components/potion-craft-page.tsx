@@ -38,7 +38,6 @@ export default function PotionCraftComponent({
 
   return (
     <>
-      
       <div className="relative flex h-full w-full justify-between">
         <div />
         <DndContext

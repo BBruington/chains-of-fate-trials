@@ -8,7 +8,7 @@ import skull from "@/../public/icons/skull.svg";
 import herb from "@/../public/icons/herb.svg";
 import { RarityType } from "../../prisma/generated/zod";
 
-export const  RARITY_STYLES_TEXT: RarityStyleProps = {
+export const RARITY_STYLES_TEXT: RarityStyleProps = {
   COMMON: "text-slate-500",
   UNCOMMON: "text-green-600",
   RARE: "text-blue-500",

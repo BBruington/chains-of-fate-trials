@@ -7,12 +7,51 @@ import { useSubscribe } from "@rocicorp/reflect/react";
 import { mutators } from "./utils/reflect/mutators";
 
 export default function Home() {
+<<<<<<< HEAD
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
 <<<<<<< HEAD
       Testing PR
 =======
       <button className="bg-secondary h-12 w-32" onClick={handleCount}>
+=======
+  const reflect = new Reflect({
+    server: "http://127.0.0.1:8080/",
+    roomID: "myRoom",
+    userID: "myUser",
+    mutators,
+  });
+
+  const count = useSubscribe(reflect, (tx) => tx.get<number>("count"), 0);
+  const dragEvent = useSubscribe(
+    reflect,
+    (tx) => tx.get<string | null>("dragevent"),
+    null,
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { over } = event;
+    const newId = over ? over.id : null;
+    await reflect.mutate.handleDragEnd(
+      typeof newId === "string" ? newId : null,
+    );
+  };
+
+  const handleCount = async () => {
+    await reflect.mutate.increment(1);
+  };
+
+  const containers = ["A", "B", "C"];
+  const draggableMarkup = (
+    <Draggable className="bg-primary text-secondary" id="draggable">
+      Drag me
+    </Draggable>
+  );
+
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <button className="h-12 w-32 bg-secondary" onClick={handleCount}>
+>>>>>>> 49bf17f (Websockets update)
         {count}
       </button>
       <DndContext onDragEnd={handleDragEnd}>

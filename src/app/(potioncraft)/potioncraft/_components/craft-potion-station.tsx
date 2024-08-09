@@ -55,7 +55,7 @@ export default function CraftPotionStation({
       >
         Drag Ingredients to Make a Potion
       </h1>
-      <div className="grid grid-cols-2 content-center gap-5">
+      <div className="flex justify-around space-x-10 content-center ">
         {mixture.map((mix, index) => (
           <Droppable
             key={index}

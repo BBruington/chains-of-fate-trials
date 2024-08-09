@@ -100,32 +100,45 @@ export default function IngredientFormfield({
 
   return (
     <div className="flex items-center">
-      <Input
-        aria-label={`edit ingredient name input`}
-        className={cn(
-          className,
-          "mr-5 text-base",
-          !editMode && `${notEditable} text-lg`,
-        )}
-        placeholder="Ingredient Name"
-        disabled={selectedFormula.id === "blank"}
-        {...field}
-        value={ingredientName}
-        onChange={handleIngredientOnChange}
-      />
-      {editMode && (
-        <Button
-          aria-label="remove ingredient button"
+      {editMode ? (
+        <>
+          <Input
+            aria-label={`edit ingredient name input`}
+            className={cn(
+              className,
+              "mr-5 text-base",
+              !editMode && `${notEditable} text-lg`,
+            )}
+            placeholder="Ingredient Name"
+            disabled={selectedFormula.id === "blank"}
+            {...field}
+            value={ingredientName}
+            onChange={handleIngredientOnChange}
+          />
+          <Button
+            aria-label="remove ingredient button"
+            className={cn(
+              className,
+              "relative h-8 w-14 hover:bg-red-100",
+              !editMode && notEditable,
+            )}
+            type="button"
+            onClick={handleRemoveIngredient}
+          >
+            <Trash2 className="absolute h-5" />
+          </Button>
+        </>
+      ) : (
+        <h2
+          aria-label={`edit ingredient name input`}
           className={cn(
             className,
-            "relative h-8 w-14 hover:bg-red-100",
-            !editMode && notEditable,
+            "mr-5 w-full text-center text-base",
+            !editMode && `${notEditable} text-lg`,
           )}
-          type="button"
-          onClick={handleRemoveIngredient}
         >
-          <Trash2 className="absolute h-5" />
-        </Button>
+          {ingredientName}
+        </h2>
       )}
     </div>
   );

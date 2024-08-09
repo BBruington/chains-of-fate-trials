@@ -1,6 +1,6 @@
 import { Formula, Ingredient, Potion, User } from "@prisma/client";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
-import { Dispatch, SetStateAction } from "react";
+import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { z } from "zod";
 import {
   AddFormulaProps,
@@ -23,6 +23,24 @@ export type CraftPotionStationProps = {
   formulas: Formula[];
   ingredients: Ingredient[];
   handleResetIngredients: () => void;
+};
+
+export type FormulaListProps = {
+  userId: string;
+  formulas: Formula[];
+};
+
+export type HandleFilterFormulasProps = {
+  event?: ChangeEvent<HTMLInputElement> | undefined;
+  formulas: Formula[];
+};
+
+export type DisplayFormulaProps = {
+  filteredFormulas: Formula[];
+  handleFilterFormulas: ({
+    event,
+    formulas,
+  }: HandleFilterFormulasProps) => void;
 };
 
 export type PotionCraftComponentProps = {

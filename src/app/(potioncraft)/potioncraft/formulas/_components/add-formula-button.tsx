@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Formula, Rarity } from "@prisma/client";
 import { addNewFormula } from "../actions";
 import { User } from "@prisma/client";
-import { HandleFilterFormulasProps } from "./formula-page";
+import { HandleFilterFormulasProps } from "../../_types";
 
 interface AddFormulaButtonProps {
   userId: User["clerkId"];

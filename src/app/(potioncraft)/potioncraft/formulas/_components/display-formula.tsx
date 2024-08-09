@@ -30,13 +30,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import IngredientFormfield from "./ingredient-formfield";
-import { FormFormulaSchema, FormData } from "../../_types";
+import {
+  FormFormulaSchema,
+  FormData,
+  DisplayFormulaProps,
+} from "../../_types";
 import Image from "next/image";
 import parchment from "@/../public/background/parchment.png";
 import woodBackground from "@/../public/background/wood_table.jpg";
 import { cn } from "@/lib/utils";
 import { ChangeEvent, useState } from "react";
-import { HandleFilterFormulasProps } from "./formula-page";
 import { Textarea } from "@/components/ui/textarea";
 
 const font = Cinzel({
@@ -44,14 +47,6 @@ const font = Cinzel({
   weight: ["400"],
   display: "swap",
 });
-
-type DisplayFormulaProps = {
-  filteredFormulas: Formula[];
-  handleFilterFormulas: ({
-    event,
-    formulas,
-  }: HandleFilterFormulasProps) => void;
-};
 
 export default function DisplayFormula({
   filteredFormulas,

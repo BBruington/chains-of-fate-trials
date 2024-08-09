@@ -48,14 +48,15 @@ export default function CraftPotionStation({
   return (
     <>
       <h1
-        className={cn(fontHeader.className,
+        className={cn(
+          fontHeader.className,
           "mb-7 mt-10 text-3xl",
           mixture === EMPTY_MIXTURE && "animate-pulse",
         )}
       >
         Drag Ingredients to Make a Potion
       </h1>
-      <div className="flex justify-around space-x-10 content-center ">
+      <div className="flex content-center justify-around space-x-10">
         {mixture.map((mix, index) => (
           <Droppable
             key={index}

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import Spinner from "@/components/spinner";
 import { Cinzel } from "next/font/google";
+import { cn } from "@/lib/utils";
 
 const fontHeader = Cinzel({
   subsets: ["latin"],
@@ -36,13 +37,20 @@ export default function Loading() {
         >
           Drag Ingredients to Make a Potion
         </h1>
-        <div className="grid grid-cols-2 content-center gap-5">
+        <div className="flex content-center justify-around space-x-10">
           {emptyMixture.map((mix, index) => (
             <div
               key={index}
-              className={`flex h-32 min-w-52 flex-col items-center justify-center space-y-5 whitespace-nowrap rounded-none bg-primary text-xs font-medium text-secondary ${mix.id === "empty" ? "bg-primary/80 text-secondary/80" : ""} ${index === 0 && "rounded-tl-lg"} ${index === 1 && "rounded-tr-lg"} ${index === 2 && "rounded-bl-lg"} ${index === 3 && "rounded-br-lg"}`}
+              className="flex flex-col items-center"
             >
-              {mix.name}
+              <div className="vial">
+                <div
+                  className={cn(mix.id !== "empty" && "liquid")}
+                ></div>
+              </div>
+              <h2 className="mt-3 min-h-[32px] min-w-[89px] max-w-[130px] text-center text-xs">
+                {mix.name}
+              </h2>
             </div>
           ))}
         </div>
@@ -57,7 +65,9 @@ export default function Loading() {
       </div>
       <div className="flex h-screen w-96 justify-end">
         <div className="flex h-screen w-96 flex-col items-center overflow-y-auto border-l border-primary/40 p-2">
-          <h2 className={`${fontHeader.className} py-2 text-2xl`}>My Ingredients</h2>
+          <h2 className={`${fontHeader.className} py-2 text-2xl`}>
+            My Ingredients
+          </h2>
           <Input
             className="m-2"
             aria-label="Filter ingredients"

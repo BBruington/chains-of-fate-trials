@@ -3,7 +3,7 @@ import type { DroppableProps } from "../types";
 
 export default function Droppable(props: DroppableProps) {
   const { isOver, setNodeRef } = useDroppable({
-    id: props.name, // Needs to have a unique id
+    id: props.id, // Needs to have a unique id
     disabled: props.disabled,
   });
 

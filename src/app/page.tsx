@@ -18,14 +18,14 @@ export default function Home() {
   const dragEvent = useSubscribe(
     reflect,
     (tx) => tx.get<string | null>("dragevent"),
-    null
+    null,
   );
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { over } = event;
     const newId = over ? over.id : null;
     await reflect.mutate.handleDragEnd(
-      typeof newId === "string" ? newId : null
+      typeof newId === "string" ? newId : null,
     );
   };
 
@@ -42,7 +42,7 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <button className="bg-secondary h-12 w-32" onClick={handleCount}>
+      <button className="h-12 w-32 bg-secondary" onClick={handleCount}>
         {count}
       </button>
       <DndContext onDragEnd={handleDragEnd}>

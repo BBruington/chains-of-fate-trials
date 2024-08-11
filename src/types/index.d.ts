@@ -57,6 +57,8 @@ export const CommonPotionSchema = z
     transmutation: z.number().min(0).max(30),
   })
 
+  export const PotionRecord = z.record(z.string(), PotionSchema)
+
   export const PotionSchema = z
   .object({
     id: z.number(),

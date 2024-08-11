@@ -39,7 +39,7 @@ export default function FormulaListByName({ formulas }: FormulaProps) {
                 </h2>
               </AccordionTrigger>
               <AccordionContent className="w-full">
-                <h2 className="border-b border-slate-500 px-3 text-center text-lg font-bold">
+                <h2 className="mb-2 border-b border-slate-500 px-3 text-center text-lg font-bold">
                   Ingredients
                 </h2>
                 {formulas.map((formula, index) => (
@@ -51,7 +51,7 @@ export default function FormulaListByName({ formulas }: FormulaProps) {
                       handleSelectFormula={handleSelectFormula}
                     />
                     {index !== formulas.length - 1 && (
-                      <div className="flex items-center w-full justify-center">
+                      <div className="flex w-full items-center justify-center">
                         <div className="h-[1px] w-1/3 bg-black" />
                         <span className="mx-1">OR</span>
                         <div className="h-[1px] w-1/3 bg-black" />

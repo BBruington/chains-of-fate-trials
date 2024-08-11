@@ -148,7 +148,7 @@ export const changePotionQuantity = async (
   try {
     const { potion, quantity } = ChangeQuantityLocalPotionSchema.parse(props);
 
-    if (potion.quantity + quantity === 0) {
+    if (potion.quantity + quantity <= 0) {
       const removedPotion = await prisma.potion.delete({
         where: {
           id: potion.id,
@@ -183,7 +183,7 @@ export const changeIngredientQuantity = async (
   try {
     const { ingredient, quantity } =
       ChangeQuantityIngredientSchema.parse(props);
-    if (ingredient.quantity + quantity === 0) {
+    if (ingredient.quantity + quantity <= 0) {
       const removedIngredient = await prisma.ingredient.delete({
         where: {
           id: ingredient.id,

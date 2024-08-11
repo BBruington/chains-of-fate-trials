@@ -59,7 +59,7 @@ export default function RecipeCombination({
       )}
       onClick={() => handleSelectFormula(formula)}
     >
-      <ul className="list-disc">
+      <ul className="list-disc py-2 px-5">
         {filteredIng.map(
           (ingredient: FilteredIngredientsProps, index: number) => (
             <li

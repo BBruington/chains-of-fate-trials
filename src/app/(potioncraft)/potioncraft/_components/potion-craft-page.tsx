@@ -6,7 +6,7 @@ import { usePotionCraft } from "../_hooks/usePotionCraft";
 import { PotionCraftComponentProps, RarityStyleProps } from "../_types";
 import { cn } from "@/lib/utils";
 import { RARITY_STYLES_TEXT } from "@/constants";
-import alchemistLab from "@/../public/background/laboratory.jpg";
+import { commonPotions } from "./testData";
 import CraftPotionStation from "./craft-potion-station";
 
 export default function PotionCraftComponent({

@@ -1,5 +1,4 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Toggle } from "@/components/ui/toggle";
@@ -17,9 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { removeFormula, saveFormula } from "../actions";
-import { BLANK_FORMULA, MIXTURE_LIMIT } from "@/constants";
+import { MIXTURE_LIMIT } from "@/constants";
 import {
   Select,
   SelectContent,
@@ -30,17 +27,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import IngredientFormfield from "./ingredient-formfield";
-import {
-  FormFormulaSchema,
-  FormData,
-  DisplayFormulaProps,
-} from "../../_types";
+import { DisplayFormulaProps } from "../../_types";
 import Image from "next/image";
 import parchment from "@/../public/background/parchment.png";
 import woodBackground from "@/../public/background/wood_table.jpg";
 import { cn } from "@/lib/utils";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
+import useFormulaForm from "../_hooks/useFormulaForm";
 
 const font = Cinzel({
   subsets: ["latin"],
@@ -52,79 +46,23 @@ export default function DisplayFormula({
   filteredFormulas,
   handleFilterFormulas,
 }: DisplayFormulaProps) {
-  const [selectedFormula, setSelectedFormula] =
-    useAtom<Formula>(displayFormaula);
+  const [selectedFormula] = useAtom<Formula>(displayFormaula);
 
   const [editMode, setEditMode] = useState(false);
 
-  const handleChangeFormula = (
-    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>,
-    key: string,
-  ) => {
-    setSelectedFormula({ ...selectedFormula, [key]: event.target.value });
-  };
-
-  const formulaIngredients = selectedFormula.ingredients.map((ing, index) => {
-    return { name: ing, id: index };
+  const {
+    form,
+    formulaIngredients,
+    handleSaveFormula,
+    handleSubmit,
+    handleRemoveFormula,
+    handleAddIngredient,
+    handleChangeFormula,
+  } = useFormulaForm({
+    filteredFormulas,
+    handleFilterFormulas,
+    selectedFormula,
   });
-
-  const handleAddIngredient = () => {
-    if (selectedFormula.ingredients.length < MIXTURE_LIMIT) {
-      setSelectedFormula({
-        ...selectedFormula,
-        ingredients: [...selectedFormula.ingredients, "New Ingredient"],
-      });
-    }
-  };
-
-  const handleRemoveFormula = async () => {
-    await removeFormula({ formula: selectedFormula });
-    handleFilterFormulas({
-      formulas: filteredFormulas.filter(
-        (formula) => formula.id !== selectedFormula.id,
-      ),
-    });
-    setSelectedFormula(BLANK_FORMULA);
-  };
-
-  const form = useForm<FormData>({
-    resolver: zodResolver(FormFormulaSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      ingredients: ["Blank Ingredient"],
-      rarity: "EMPTY",
-    },
-  });
-
-  const { handleSubmit, reset } = form;
-
-  const handleSaveFormula = async (formula: FormData) => {
-    const updatedFormula = {
-      id: selectedFormula.id,
-      userId: selectedFormula.userId,
-      name: formula.name === "" ? selectedFormula.name : formula.name,
-      description:
-        formula.description === ""
-          ? selectedFormula.description
-          : formula.description,
-      rarity:
-        formula.rarity === "EMPTY" ? selectedFormula.rarity : formula.rarity,
-      ingredients: [...selectedFormula.ingredients],
-    };
-    reset();
-    setSelectedFormula(updatedFormula);
-    const updatedIndex = filteredFormulas.findIndex(
-      (formula) => formula.id === updatedFormula.id,
-    );
-    filteredFormulas.splice(updatedIndex, 1, updatedFormula);
-    handleFilterFormulas({
-      formulas: filteredFormulas,
-    });
-    await saveFormula({
-      formula: updatedFormula,
-    });
-  };
 
   const formBackground =
     "hover:bg-yellow-100 border border-slate-400 bg-transparent text-black";

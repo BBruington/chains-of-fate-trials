@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { commonPotions } from "../_components/testData";
-import { PotionSchema } from "@/types";
+import { PotionRecord, PotionSchema } from "@/types";
 import {
   findPotionSchema,
   MagicProperties,
@@ -50,9 +50,12 @@ export default function PotionHooks({
   ): z.infer<typeof PotionSchema> | undefined {
     const { mixture } = findPotionSchema.parse(props);
 
-    let potions = commonPotions;
+    let potionRecords: z.infer<typeof PotionSchema> | z.infer<typeof PotionRecord> = commonPotions;
     if(mixture.rarity === "EMPTY") return;
-    if (mixture.rarity === "COMMON") potions = commonPotions;
+    if (mixture.rarity === "COMMON") potionRecords = commonPotions
+      else return
+
+    const potions = Object.values(potionRecords);
 
     const potionsMatchingPrimaryAttribute = potions?.filter(
       (potion) =>

@@ -1,4 +1,4 @@
-import { Formula, Ingredient, Potion, User } from "@prisma/client";
+import { Formula, Ingredient, Potion, User, $Enums } from "@prisma/client";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { z } from "zod";
@@ -124,6 +124,22 @@ export const FormFormulaSchema = z.object({
 });
 
 export type FormData = z.infer<typeof FormFormulaSchema>;
+
+export type UseFormulaFormProps = {
+  selectedFormula: Formula;
+  handleFilterFormulas: ({
+    event,
+    formulas,
+  }: HandleFilterFormulasProps) => void;
+  filteredFormulas: {
+    id: string;
+    userId: string;
+    name: string;
+    description: string;
+    rarity: $Enums.Rarity;
+    ingredients: string[];
+  }[];
+};
 
 export type IngredientListItemProps = {
   ingredient: Ingredient;

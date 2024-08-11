@@ -1,15 +1,22 @@
-import { CommonPotionSchema, PotionSchema } from "@/types";
-import { IngredientSchema } from "../../../../../prisma/generated/zod";
-import { MagicType, PrimaryAttribute, Rarity } from "@prisma/client";
+import { IngredientSchema, PotionRecord, PotionSchema } from "@/types";
+import { Rarity, MagicType, PrimaryAttribute } from "@prisma/client";
 import { z } from "zod";
 
-export const commonPotions: z.infer<typeof PotionSchema>[] = [
-  {
+// const convert = (arr) => {
+//   const resultObj = arr.reduce((acc, potion, index) => {
+//     acc[index + 1] = { ...potion, id: index + 1 };
+//     return acc;
+//   }, {})
+//   console.log(resultObj)
+// }
+
+export const commonPotions: z.infer<typeof PotionRecord> = {
+  "1": {
     id: 1,
     name: "Blade Ward",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["ABJURATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "ABJURATION",
     description:
       "You extend your hand and trace a sigil of warding in the air. Until the end of your next turn, you have resistance against bludgeoning, piercing, and slashing damage dealt by weapon attacks.",
     abjuration: 15,
@@ -21,12 +28,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "2": {
     id: 2,
     name: "Resistance",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["ABJURATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "ABJURATION",
     description:
       "You touch one willing creature. Once before the spell ends, the target can roll a d4 and add the number rolled to one saving throw of its choice. It can roll the die before or after the saving throw. The spell then ends.",
     abjuration: 10,
@@ -38,12 +45,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 3,
   },
-  {
+  "3": {
     id: 3,
     name: "Acid Splash",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["CONJURATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "CONJURATION",
     description:
       "You hurl a bubble of acid. Choose one creature you can see within range, or choose two creatures you can see within range that are within 5 feet of each other. A target must succeed on a Dexterity saving throw or take 1d6 acid damage.",
     abjuration: 0,
@@ -55,12 +62,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "4": {
     id: 4,
     name: "Create Bonfire",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["CONJURATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "CONJURATION",
     description:
       "You create a bonfire on ground that you can see within range. Until the spell ends, the bonfire fills a 5-foot cube. Any creature in the bonfire’s space when you cast the spell must succeed on a Dexterity saving throw or take 1d8 fire damage. A creature must also make the saving throw when it enters the bonfire’s space for the first time on a turn or ends its turn there.",
     abjuration: 0,
@@ -72,12 +79,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "5": {
     id: 5,
     name: "Infestation",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["CONJURATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "CONJURATION",
     description:
       "You cause a cloud of mites, fleas, and other parasites to appear momentarily on one creature you can see within range. The target must succeed on a Constitution saving throw, or it takes 1d6 poison damage and moves 5 feet in a random direction if it can move and its speed is at least 5 feet. Roll a d4 for the direction: 1, north; 2, south; 3, east; or 4, west. This movement doesn’t provoke opportunity attacks, and if the direction rolled is blocked, the target doesn't move.",
     abjuration: 0,
@@ -89,12 +96,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "6": {
     id: 6,
     name: "Mage Hand",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["CONJURATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "CONJURATION",
     description:
       "A spectral, floating hand appears at a point you choose within range. The hand lasts for the duration or until you dismiss it as an action. The hand vanishes if it is ever more than 30 feet away from you or if you cast this spell again. You can use your action to control the hand. You can use the hand to manipulate an object, open an unlocked door or container, stow or retrieve an item from an open container, or pour the contents out of a vial. You can move the hand up to 30 feet each time you use it. The hand can’t attack, activate magical items, or carry more than 10 pounds.",
     abjuration: 0,
@@ -106,12 +113,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "7": {
     id: 7,
     name: "Poison Spray",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["CONJURATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "CONJURATION",
     description:
       "You extend your hand toward a creature you can see within range and project a puff of noxious gas from your palm. The creature must succeed on a Constitution saving throw or take 1d12 poison damage.",
     abjuration: 0,
@@ -123,12 +130,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "8": {
     id: 8,
     name: "Sword Burst",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["CONJURATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "CONJURATION",
     description:
       "You create a momentary circle of spectral blades that sweep around you. All other creatures within 5 feet of you must succeed on a Dexterity saving throw or take 1d6 force damage.",
     abjuration: 0,
@@ -140,12 +147,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 3,
   },
-  {
+  "9": {
     id: 9,
     name: "Produce Flame",
-    rarity: Rarity["COMMON"],
-    type: MagicType["PRIMAL"],
-    primaryAttribute: PrimaryAttribute["CONJURATION"],
+    rarity: "COMMON",
+    type: "PRIMAL",
+    primaryAttribute: "CONJURATION",
     description:
       "A flickering flame appears in your hand. The flame remains there for the duration and harms neither you nor your equipment. The flame sheds bright light in a 10-foot radius and dim light for an additional 10 feet. The spell ends if you dismiss it as an action or if you cast it again. You can also attack with the flame, although doing so ends the spell. When you cast this spell, or as an action on a later turn, you can hurl the flame at a creature within 30 feet of you. Make a ranged spell attack. On a hit, the target takes 1d8 fire damage.",
     abjuration: 3,
@@ -157,12 +164,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "10": {
     id: 10,
     name: "True Strike",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["DIVINATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "DIVINATION",
     description:
       "You extend your hand and point a finger at a target in range. Your magic grants you a brief insight into the target’s defenses. On your next turn, you gain advantage on your first attack roll against the target, provided that this spell hasn’t ended.",
     abjuration: 0,
@@ -174,12 +181,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "11": {
     id: 11,
     name: "Guidance",
-    rarity: Rarity["COMMON"],
-    type: MagicType["DIVINE"],
-    primaryAttribute: PrimaryAttribute["DIVINATION"],
+    rarity: "COMMON",
+    type: "DIVINE",
+    primaryAttribute: "DIVINATION",
     description:
       "You touch one willing creature. Once before the spell ends, the target can roll a d4 and add the number rolled to one ability check of its choice. It can roll the die before or after making the ability check. The spell then ends.",
     abjuration: 0,
@@ -191,12 +198,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "12": {
     id: 12,
     name: "Encode Thoughts",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["ENCHANTMENT"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "ENCHANTMENT",
     description:
       "You pull a memory, an idea, or a message from your mind and transform it into a tangible string of glowing energy called a thought strand, which persists for the duration or until you cast this spell again. The thought strand appears in an unoccupied space within 5 feet of you as a Tiny, weightless, semisolid object that can be held and carried like a ribbon. It is otherwise stationary. If you cast this spell while concentrating on a spell or an ability that allows you to read or manipulate the thoughts of others (such as detect thoughts or modify memory), you can transform the thoughts or memories you read, rather than your own, into a thought strand. Casting this spell while holding a thought strand allows you to instantly receive whatever memory, idea, or message the thought strand contains. (Casting detect thoughts on the strand has the same effect.)",
     abjuration: 0,
@@ -208,12 +215,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "13": {
     id: 13,
     name: "Friends",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["ENCHANTMENT"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "ENCHANTMENT",
     description:
       "For the duration, you have advantage on all Charisma checks directed at one creature of your choice that isn't hostile toward you. When the spell ends, the creature realizes that you used magic to influence its mood and becomes hostile toward you. A creature prone to violence might attack you. Another creature might seek retribution in other ways (at the DM's discretion), depending on the nature of your interaction with it.",
     abjuration: 0,
@@ -225,12 +232,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "14": {
     id: 14,
     name: "Mind Sliver",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["ENCHANTMENT"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "ENCHANTMENT",
     description:
       "You drive a disorienting spike of psychic energy into the mind of one creature you can see within range. The target must succeed on an Intelligence saving throw or take 1d6 psychic damage and subtract 1d4 from the next saving throw it makes before the end of your next turn.",
     abjuration: 0,
@@ -242,12 +249,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "15": {
     id: 15,
     name: "Vicious Mockery",
-    rarity: Rarity["COMMON"],
-    type: MagicType["OCCULT"],
-    primaryAttribute: PrimaryAttribute["ENCHANTMENT"],
+    rarity: "COMMON",
+    type: "OCCULT",
+    primaryAttribute: "ENCHANTMENT",
     description:
       "You unleash a string of insults laced with subtle enchantments at a creature you can see within range. If the target can hear you (though it need not understand you), it must succeed on a Wisdom saving throw or take 1d4 psychic damage and have disadvantage on the next attack roll it makes before the end of its next turn.",
     abjuration: 0,
@@ -259,12 +266,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "16": {
     id: 16,
     name: "Booming Blade",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["EVOCATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "EVOCATION",
     description:
       "You brandish the weapon used in the spell’s casting and make a melee attack with it against one creature within 5 feet of you. On a hit, the target suffers the weapon attack’s normal effects and then becomes sheathed in booming energy until the start of your next turn. If the target willingly moves 5 feet or more before then, the target takes 1d8 thunder damage, and the spell ends.",
     abjuration: 0,
@@ -276,12 +283,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 3,
   },
-  {
+  "17": {
     id: 17,
     name: "Dancing Lights",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["EVOCATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "EVOCATION",
     description:
       "You create up to four torch-sized lights within range, making them appear as torches, lanterns, or glowing orbs that hover in the air for the duration. You can also combine the four lights into one glowing vaguely humanoid form of Medium size. Whichever form you choose, each light sheds dim light in a 10-foot radius. As a bonus action on your turn, you can move the lights up to 60 feet to a new spot within range. A light must be within 20 feet of another light created by this spell, and a light winks out if it exceeds the spell’s range.",
     abjuration: 0,
@@ -293,12 +300,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "18": {
     id: 18,
     name: "Light",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["EVOCATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "EVOCATION",
     description:
       "You touch one object that is no larger than 10 feet in any dimension. Until the spell ends, the object sheds bright light in a 20-foot radius and dim light for an additional 20 feet. The light can be colored as you like. Completely covering the object with something opaque blocks the light. The spell ends if you cast it again or dismiss it as an action. If you target an object held or worn by a hostile creature, that creature must succeed on a Dexterity saving throw to avoid the spell.",
     abjuration: 0,
@@ -310,12 +317,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "19": {
     id: 19,
     name: "Thunderclap",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["EVOCATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "EVOCATION",
     description:
       "You create a burst of thunderous sound, which can be heard 100 feet away. Each creature other than you within 5 feet of you must make a Constitution saving throw. On a failed save, the creature takes 1d6 thunder damage.",
     abjuration: 3,
@@ -327,12 +334,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "20": {
     id: 20,
     name: "Sacred Flame",
-    rarity: Rarity["COMMON"],
-    type: MagicType["DIVINE"],
-    primaryAttribute: PrimaryAttribute["EVOCATION"],
+    rarity: "COMMON",
+    type: "DIVINE",
+    primaryAttribute: "EVOCATION",
     description:
       "Flame-like radiance descends on a creature that you can see within range. The target must succeed on a Dexterity saving throw or take 1d8 radiant damage. The target gains no benefit from cover for this saving throw.",
     abjuration: 0,
@@ -344,12 +351,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "21": {
     id: 21,
     name: "Word of Radiance",
-    rarity: Rarity["COMMON"],
-    type: MagicType["DIVINE"],
-    primaryAttribute: PrimaryAttribute["EVOCATION"],
+    rarity: "COMMON",
+    type: "DIVINE",
+    primaryAttribute: "EVOCATION",
     description:
       "You utter a divine word, and burning radiance erupts from you. Each creature of your choice that you can see within range must succeed on a Constitution saving throw or take 1d6 radiant damage.",
     abjuration: 0,
@@ -361,12 +368,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 3,
   },
-  {
+  "22": {
     id: 22,
     name: "Frostbite",
-    rarity: Rarity["COMMON"],
-    type: MagicType["PRIMAL"],
-    primaryAttribute: PrimaryAttribute["EVOCATION"],
+    rarity: "COMMON",
+    type: "PRIMAL",
+    primaryAttribute: "EVOCATION",
     description:
       "You cause numbing frost to form on one creature that you can see within range. The target must make a Constitution saving throw. On a failed save, the target takes 1d6 cold damage, and it has disadvantage on the next weapon attack roll it makes before the end of its next turn.",
     abjuration: 0,
@@ -378,12 +385,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 3,
     transmutation: 0,
   },
-  {
+  "23": {
     id: 23,
     name: "Firebolt",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["EVOCATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "EVOCATION",
     description:
       "You hurl a mote of fire at a creature or object within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 fire damage. A flammable object hit by this spell ignites if it isn’t being worn or carried.",
     abjuration: 0,
@@ -395,12 +402,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 4,
   },
-  {
+  "24": {
     id: 24,
     name: "Green-Flame Blade",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["EVOCATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "EVOCATION",
     description:
       "You brandish the weapon used in the spell’s casting and make a melee attack with it against one creature within 5 feet of you. On a hit, the target suffers the weapon attack’s normal effects, and you can cause green fire to leap from the target to a different creature of your choice that you can see within 5 feet of it. The second creature takes fire damage equal to your spellcasting ability modifier.",
     abjuration: 0,
@@ -412,12 +419,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 4,
   },
-  {
+  "25": {
     id: 25,
     name: "Lightning Lure",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["EVOCATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "EVOCATION",
     description:
       "You create a lash of lightning energy that strikes at one creature of your choice that you can see within 15 feet of you. The target must succeed on a Strength saving throw or be pulled up to 10 feet in a straight line toward you and then take 1d8 lightning damage if it is within 5 feet of you.",
     abjuration: 3,
@@ -429,12 +436,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
+  "26": {
     id: 26,
     name: "Ray of Frost",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["EVOCATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "EVOCATION",
     description:
       "A frigid beam of blue-white light streaks toward a creature within range. Make a ranged spell attack against the target. On a hit, it takes 1d8 cold damage, and its speed is reduced by 10 feet until the start of your next turn.",
     abjuration: 0,
@@ -446,12 +453,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 4,
     transmutation: 0,
   },
-  {
+  "27": {
     id: 27,
     name: "Shocking Grasp",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["EVOCATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "EVOCATION",
     description:
       "Lightning springs from your hand to deliver a shock to a creature you try to touch. Make a melee spell attack against the target. You have advantage on the attack roll if the target is wearing armor made of metal. On a hit, the target takes 1d8 lightning damage, and it can’t take reactions until the start of its next turn.",
     abjuration: 0,
@@ -463,12 +470,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 3,
   },
-  {
-    id: 2,
+  "28": {
+    id: 28,
     name: "Alarm",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["ABJURATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "ABJURATION",
     description:
       "You touch a willing creature who isn't wearing armor, and a protective magical force surrounds it until the spell ends. The target's base AC becomes 13 + its Dexterity modifier. The spell ends if the target dons armor or if you dismiss the spell as an action.",
     abjuration: 25,
@@ -480,12 +487,12 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
-    id: 2,
+  "29": {
+    id: 29,
     name: "Mage Armor",
-    rarity: Rarity["COMMON"],
-    type: MagicType["ARCANE"],
-    primaryAttribute: PrimaryAttribute["ABJURATION"],
+    rarity: "COMMON",
+    type: "ARCANE",
+    primaryAttribute: "ABJURATION",
     description:
       "You touch a willing creature who isn't wearing armor, and a protective magical force surrounds it until the spell ends. The target's base AC becomes 13 + its Dexterity modifier. The spell ends if the target dons armor or if you dismiss the spell as an action.",
     abjuration: 20,
@@ -497,8 +504,8 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 0,
     transmutation: 0,
   },
-  {
-    id: 1,
+  "30": {
+    id: 30,
     name: "False Life",
     rarity: "COMMON",
     type: "ARCANE",
@@ -514,8 +521,8 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 20,
     transmutation: 3,
   },
-  {
-    id: 2,
+  "31": {
+    id: 31,
     name: "Cure Wounds",
     rarity: "COMMON",
     type: "DIVINE",
@@ -530,7 +537,7 @@ export const commonPotions: z.infer<typeof PotionSchema>[] = [
     necromancy: 20,
     transmutation: 0,
   },
-];
+};
 
 export const playerIngredients: z.infer<typeof IngredientSchema>[] = [
   {
@@ -539,7 +546,6 @@ export const playerIngredients: z.infer<typeof IngredientSchema>[] = [
     rarity: Rarity["COMMON"],
     type: MagicType["PRIMAL"],
     quantity: 1,
-    userId: "empty",
     primaryAttribute: PrimaryAttribute["NECROMANCY"],
     description: "It's good for healing",
     abjuration: 3,
@@ -558,7 +564,6 @@ export const playerIngredients: z.infer<typeof IngredientSchema>[] = [
     rarity: Rarity["COMMON"],
     type: MagicType["PRIMAL"],
     quantity: 1,
-    userId: "empty",
     primaryAttribute: PrimaryAttribute["NECROMANCY"],
     abjuration: 0,
     conjuration: 0,
@@ -576,7 +581,6 @@ export const playerIngredients: z.infer<typeof IngredientSchema>[] = [
     rarity: Rarity["UNCOMMON"],
     type: MagicType["OCCULT"],
     quantity: 1,
-    userId: "empty",
     primaryAttribute: PrimaryAttribute["NECROMANCY"],
     abjuration: 0,
     conjuration: 0,
@@ -594,7 +598,6 @@ export const playerIngredients: z.infer<typeof IngredientSchema>[] = [
     rarity: Rarity["RARE"],
     type: MagicType["ARCANE"],
     quantity: 1,
-    userId: "empty",
     primaryAttribute: PrimaryAttribute["TRANSMUTATION"],
     abjuration: 0,
     conjuration: 10,

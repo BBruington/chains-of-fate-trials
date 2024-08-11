@@ -4,9 +4,26 @@ import Droppable from "@/components/dndkit/dropable";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { Reflect } from "@rocicorp/reflect/client";
 import { useSubscribe } from "@rocicorp/reflect/react";
+import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import { mutators } from "./utils/reflect/mutators";
 
 export default function Home() {
+  const [testRes, setTestRes] = useState("");
+  const socket = io("http://localhost:3001");
+
+  const sendMessage = () => {
+    socket.emit("send_message", { message: "Hello" });
+  };
+
+  useEffect(() => {
+    console.log("test");
+    socket.on("receive_message", (data) => {
+      console.log("messaged test");
+      setTestRes(data.message);
+    });
+  }, [socket]);
+
   const reflect = new Reflect({
     server: "http://127.0.0.1:8080/",
     roomID: "myRoom",
@@ -45,6 +62,8 @@ export default function Home() {
       <button className="h-12 w-32 bg-secondary" onClick={handleCount}>
         {count}
       </button>
+      <h1>{testRes}</h1>
+      <button onClick={() => sendMessage()}>Send Message</button>
       <DndContext onDragEnd={handleDragEnd}>
         {dragEvent === null ? draggableMarkup : null}
 

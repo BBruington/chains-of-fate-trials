@@ -7,6 +7,18 @@ import BodyPartDisplay from "./body-parts-display";
 import PoseOrder from "./pose-order";
 
 export default function SilentPose() {
+  // useEffect(() => {
+  //   console.log("body part moved");
+
+  //   socket.on("received_body_part_moved", (data) => {
+  //     setTestRes(data.message);
+  //   });
+
+  //   return () => {
+  //     socket.off("received_body_part_moved");
+  //   };
+  // }, [socket]);
+
   const isFirstRender = useRef(true);
 
   const [imageArray, setImageArray] = useState([
@@ -102,14 +114,12 @@ export default function SilentPose() {
   return (
     <div className="flex h-[calc(100%-48px)] flex-col items-center justify-evenly lg:flex-row">
       <PoseOrder imageArray={imageArray} />
-
       <div className="flex h-full w-[48%] items-center justify-center lg:h-[calc(100vh-60px)]">
         <div
           ref={poseContainerRef}
           className="relative mb-5 flex h-[calc(156px*4)] w-[95%] flex-col border-2 border-neutral-800 lg:mb-0 lg:w-[calc(108px*4)]"
         >
           <BodyPartConnectors />
-
           <BodyPartDisplay />
         </div>
       </div>

@@ -1,9 +1,16 @@
 import { z } from "zod";
 import { commonPotions } from "../_components/testData";
-import { PotionSchema } from "@/types";
-import { findPotionSchema, MagicProperties, PotionHooksProps } from "./types";
+import { PotionRecord, PotionSchema } from "@/types";
+import {
+  findPotionSchema,
+  MagicProperties,
+  PotionHooksProps,
+} from "./types";
 import { EMPTY_INGREDIENT } from "@/constants";
-import { spendIngredients, addPotionToUser } from "../actions";
+import {
+  spendIngredients,
+  addPotionToUser,
+} from "../actions";
 
 const emptyMixture = [
   EMPTY_INGREDIENT,
@@ -12,7 +19,7 @@ const emptyMixture = [
   EMPTY_INGREDIENT,
 ];
 
-export function PotionHooks({
+export default function PotionHooks({
   mixtureProperties,
   mixture,
   setMixture,
@@ -43,18 +50,20 @@ export function PotionHooks({
   ): z.infer<typeof PotionSchema> | undefined {
     const { mixture } = findPotionSchema.parse(props);
 
-    let potions = commonPotions;
+    let potionRecords: z.infer<typeof PotionSchema> | z.infer<typeof PotionRecord> = commonPotions;
+    if(mixture.rarity === "EMPTY") return;
+    if (mixture.rarity === "COMMON") potionRecords = commonPotions
+      else return
 
-    if (mixture.rarity === "COMMON") potions = commonPotions;
+    const potions = Object.values(potionRecords);
 
     const potionsMatchingPrimaryAttribute = potions?.filter(
       (potion) =>
-        potion[mixture.primaryAttribute as keyof MagicProperties] ===
-        mixture[mixture.primaryAttribute as keyof MagicProperties],
+        potion.primaryAttribute ===
+        mixture.primaryAttribute && potion[mixture.primaryAttribute.toLowerCase() as keyof MagicProperties] === mixture[mixture.primaryAttribute.toLowerCase() as keyof MagicProperties]
     );
-
+    
     if (
-      potionsMatchingPrimaryAttribute === undefined ||
       potionsMatchingPrimaryAttribute.length === 0
     )
       return;
@@ -106,10 +115,13 @@ export function PotionHooks({
     setMixture(emptyMixture);
     if (potion === undefined) {
       console.log("potion craft failed! D:");
+      findMixtureProperties([resetMix]);
+      return null;
     } else {
-      await addPotionToUser({ potion, userId });
+      const createdPotion = await addPotionToUser({ potion, userId });
+      findMixtureProperties([resetMix]);
+      return createdPotion;
     }
-    findMixtureProperties([resetMix]);
   };
 
   return { findPotion, handleCraftPotion };

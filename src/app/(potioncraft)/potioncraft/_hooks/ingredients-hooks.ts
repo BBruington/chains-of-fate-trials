@@ -1,19 +1,24 @@
-import { addIngredientsToUser } from "../actions";
+import { addIngredientsToUser, changeIngredientQuantity } from "../actions";
 import { DragOverEvent, DragStartEvent } from "@dnd-kit/core";
 import {
   IngredientHooksProps,
   AddIngredientsProps,
   HandleFilterIngredientsProps,
+  HandleIngredientQuantityChangeProps,
 } from "./types";
 import { Ingredient } from "@prisma/client";
-import { INGREDIENT_RARITY_ORDER, INGREDIENT_TYPE_ORDER } from "@/constants";
+import {
+  EMPTY_MIXTURE,
+  INGREDIENT_RARITY_ORDER,
+  INGREDIENT_TYPE_ORDER,
+} from "@/constants";
 
-export function IngredientHooks({
+export default function IngredientHooks({
   filteredIngredientsInput,
   filteredUserIngredients,
   userIngredients,
   mixture,
-  userId,
+  ingredients,
   findMixtureProperties,
   setMixture,
   setUserIngredients,
@@ -67,6 +72,29 @@ export function IngredientHooks({
     if (activeIng) setActiveIngredient(activeIng);
   }
 
+  type UpdateIngredientsQuantityProps = {
+    ingredients: Ingredient[];
+    activeIng: Ingredient;
+    quantity: number;
+  };
+
+  function updateClientIngredientQuantity({
+    ingredients,
+    activeIng,
+    quantity,
+  }: UpdateIngredientsQuantityProps) {
+    const updatedUserIngredients = ingredients
+      .map((ingredient) =>
+        ingredient.id === activeIng.id
+          ? { ...ingredient, quantity: ingredient.quantity + quantity }
+          : ingredient,
+      )
+      .filter((ingredient) => ingredient.quantity > 0);
+
+    setUserIngredients(updatedUserIngredients);
+    handleFilterIngredients({ ingredients: updatedUserIngredients });
+  }
+
   function handleIngredientDragEnd({ active, over }: DragOverEvent) {
     setActiveIngredient(null);
     if (!over || mixture[Number(over.id)].id !== "empty") return;
@@ -82,17 +110,38 @@ export function IngredientHooks({
     setMixture(updatedMixture);
     findMixtureProperties(updatedMixture);
 
-    const updatedUserIngredients = userIngredients
-      .map((ingredient) =>
-        ingredient.id === draggedIngredient.id
-          ? { ...ingredient, quantity: ingredient.quantity - 1 }
-          : ingredient,
-      )
-      .filter((ingredient) => ingredient.quantity > 0);
-
-    setUserIngredients(updatedUserIngredients);
-    handleFilterIngredients({ ingredients: updatedUserIngredients });
+    updateClientIngredientQuantity({
+      ingredients: userIngredients,
+      activeIng: draggedIngredient,
+      quantity: -1,
+    });
   }
+
+  const handleResetIngredients = () => {
+    setUserIngredients(ingredients);
+    handleFilterIngredients({ ingredients });
+    setMixture(EMPTY_MIXTURE);
+  };
+
+  const updateServerIngredientQuantity = async ({
+    ingredient,
+    quantity,
+  }: HandleIngredientQuantityChangeProps) => {
+    const res = await changeIngredientQuantity({ ingredient, quantity });
+    const changedIngredients = userIngredients.map((userIngredient) => {
+      if (userIngredient.id === ingredient.id) {
+        return {
+          ...userIngredient,
+          quantity: userIngredient.quantity + quantity,
+        };
+      }
+      return userIngredient;
+    });
+    if (res) {
+      setUserIngredients(changedIngredients);
+      handleFilterIngredients({ ingredients: changedIngredients });
+    }
+  };
 
   return {
     handleAddIngredients,
@@ -100,5 +149,8 @@ export function IngredientHooks({
     handleOrderFilteredIngredients,
     handleIngredientDragStart,
     handleIngredientDragEnd,
+    handleResetIngredients,
+    updateClientIngredientQuantity,
+    updateServerIngredientQuantity,
   };
 }

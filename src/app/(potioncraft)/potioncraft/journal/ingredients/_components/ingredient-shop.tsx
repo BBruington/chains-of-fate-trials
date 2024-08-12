@@ -1,6 +1,6 @@
 "use client";
 import { playerIngredients } from "../../../_components/testData";
-import { IngredientSchema } from "../../../../../../../prisma/generated/zod";
+import { IngredientSchema } from "@/types";
 import { addIngredientsToUser } from "../../../actions";
 import { z } from "zod";
 import { User } from "@prisma/client";

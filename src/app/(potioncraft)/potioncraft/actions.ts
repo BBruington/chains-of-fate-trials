@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/app/utils/context";
-import { Ingredient } from "@prisma/client";
+import { Ingredient, Potion } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
@@ -9,9 +9,10 @@ import {
   RaritySchema,
   MagicTypeSchema,
   PrimaryAttributeSchema,
+  PotionSchema,
 } from "../../../../prisma/generated/zod";
 
-const PotionSchema = z.object({
+const LocalPotionSchema = z.object({
   id: z.number(),
   rarity: RaritySchema,
   type: MagicTypeSchema,
@@ -32,6 +33,11 @@ const SpendIngredientsSchema = z.object({
   ingredients: z.array(IngredientSchema),
 });
 
+const ChangeQuantityLocalPotionSchema = z.object({
+  potion: PotionSchema,
+  quantity: z.number().int(),
+});
+
 const ChangeQuantityIngredientSchema = z.object({
   ingredient: IngredientSchema,
   quantity: z.number().int(),
@@ -44,30 +50,47 @@ const IncreaseIngredientSchema = z.object({
 
 const AddPotionToUserSchema = z.object({
   userId: z.string(),
-  potion: PotionSchema,
+  potion: LocalPotionSchema,
 });
 
 const AddIngredientsToUserSchema = z.object({
   userId: z.string(),
   ingredients: z.array(
     z.object({
+      id: z.string().or(z.number()),
       rarity: RaritySchema,
       type: MagicTypeSchema,
       primaryAttribute: PrimaryAttributeSchema,
-      id: z.string(),
       name: z.string(),
+      quantity: z.number().min(0).default(0),
       description: z.string(),
-      quantity: z.number().int(),
-      abjuration: z.number().int(),
-      conjuration: z.number().int(),
-      divination: z.number().int(),
-      enchantment: z.number().int(),
-      evocation: z.number().int(),
-      illusion: z.number().int(),
-      necromancy: z.number().int(),
-      transmutation: z.number().int(),
-      userId: z.string(),
-    }),
+      abjuration: z.number().min(0).default(0),
+      conjuration: z.number().min(0).default(0),
+      divination: z.number().min(0).default(0),
+      enchantment: z.number().min(0).default(0),
+      evocation: z.number().min(0).default(0),
+      illusion: z.number().min(0).default(0),
+      necromancy: z.number().min(0).default(0),
+      transmutation: z.number().min(0).default(0),
+    })
+    // z.object({
+    //   rarity: RaritySchema,
+    //   type: MagicTypeSchema,
+    //   primaryAttribute: PrimaryAttributeSchema,
+    //   id: z.string(),
+    //   name: z.string(),
+    //   description: z.string(),
+    //   quantity: z.number().int(),
+    //   abjuration: z.number().int(),
+    //   conjuration: z.number().int(),
+    //   divination: z.number().int(),
+    //   enchantment: z.number().int(),
+    //   evocation: z.number().int(),
+    //   illusion: z.number().int(),
+    //   necromancy: z.number().int(),
+    //   transmutation: z.number().int(),
+    //   userId: z.string(),
+    // }),
   ),
 });
 
@@ -136,13 +159,48 @@ export const increaseIngredient = async (
   }
 };
 
+export const changePotionQuantity = async (
+  props: z.infer<typeof ChangeQuantityLocalPotionSchema>,
+): Promise<Potion> => {
+  try {
+    const { potion, quantity } = ChangeQuantityLocalPotionSchema.parse(props);
+
+    if (potion.quantity + quantity <= 0) {
+      const removedPotion = await prisma.potion.delete({
+        where: {
+          id: potion.id,
+        },
+      });
+      revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+      return removedPotion;
+    }
+
+    const quantityChangedPotion = await prisma.potion.update({
+      where: {
+        id: potion.id,
+      },
+      data: {
+        quantity: { increment: quantity },
+      },
+    });
+    revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+    return quantityChangedPotion;
+  } catch (error) {
+    console.error("failed to change the quantity of the Potion: ", error);
+    if (error instanceof z.ZodError) {
+      throw new Error("Invalid input for changing potion quantity");
+    }
+    throw new Error("Failed to change the potion's quantity");
+  }
+};
+
 export const changeIngredientQuantity = async (
   props: z.infer<typeof ChangeQuantityIngredientSchema>,
 ): Promise<Ingredient> => {
   try {
     const { ingredient, quantity } =
       ChangeQuantityIngredientSchema.parse(props);
-    if (ingredient.quantity + quantity === 0) {
+    if (ingredient.quantity + quantity <= 0) {
       const removedIngredient = await prisma.ingredient.delete({
         where: {
           id: ingredient.id,
@@ -172,15 +230,15 @@ export const changeIngredientQuantity = async (
 
 export const addPotionToUser = async (
   props: z.infer<typeof AddPotionToUserSchema>,
-): Promise<void> => {
+): Promise<Potion> => {
   try {
     const { userId, potion } = AddPotionToUserSchema.parse(props);
-    await prisma.$transaction(async (prisma) => {
+    const createdPotion = await prisma.$transaction(async (prisma) => {
       const existingPotion = await prisma.potion.findFirst({
         where: { userId, name: potion.name },
       });
       if (existingPotion === null) {
-        await prisma.potion.create({
+        const createdPotion = await prisma.potion.create({
           data: {
             ...potion,
             name: potion.name,
@@ -190,15 +248,18 @@ export const addPotionToUser = async (
             userId,
           },
         });
+        revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+        return createdPotion;
       } else {
-        await prisma.potion.update({
+        const createdPotion = await prisma.potion.update({
           where: { id: existingPotion.id },
           data: { quantity: { increment: 1 } },
         });
+        revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+        return createdPotion;
       }
     });
-
-    revalidatePath(`${process.env.BASE_URL}/potioncraft`);
+    return createdPotion;
   } catch (error) {
     console.error("Error adding potion to user: ", error);
     if (error instanceof z.ZodError) {
@@ -272,16 +333,15 @@ export const addFormulaToUser = async (
   try {
     const { ingredients, potion, userId } = AddFormulaToUserSchema.parse(props);
 
+    const ingredientNames = ingredients.map((ing) => ing.name);
+
     await prisma.formula.create({
       data: {
         userId,
         name: potion.name,
         description: potion.description,
         rarity: potion.rarity,
-        ingredient1: ingredients[0]?.name ? ingredients[0].name : undefined,
-        ingredient2: ingredients[1]?.name ? ingredients[1].name : undefined,
-        ingredient3: ingredients[2]?.name ? ingredients[2].name : undefined,
-        ingredient4: ingredients[3]?.name ? ingredients[3].name : undefined,
+        ingredients: ingredientNames,
       },
     });
     revalidatePath(`${process.env.BASE_URL}/potioncraft`);

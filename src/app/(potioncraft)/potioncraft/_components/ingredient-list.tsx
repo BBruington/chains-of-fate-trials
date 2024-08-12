@@ -8,9 +8,9 @@ import {
   RarityStyleProps,
   IngredientIconProps,
   IngredientDetailsProps,
-  QuantityButtonsProps,
+  AddToMixtureButtonProps,
 } from "../_types";
-import { EMPTY_INGREDIENT, INGREDIENT_ICONS, RARITY_STYLES } from "@/constants";
+import { EMPTY_INGREDIENT, INGREDIENT_ICONS } from "@/constants";
 import { cn } from "@/lib/utils";
 import {
   Select,
@@ -28,21 +28,37 @@ import {
 } from "@/components/ui/hover-card";
 import Image from "next/image";
 import { useState } from "react";
+import { Cinzel } from "next/font/google";
+
+const fontHeader = Cinzel({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
+
+const RARITY_STYLES_TEXT: RarityStyleProps = {
+  COMMON: "text-slate-500",
+  UNCOMMON: "text-green-600",
+  RARE: "text-blue-500",
+  VERYRARE: "text-purple-600",
+  LEGENDARY: "text-orange-600",
+};
 
 export default function IngredientList({
+  mixture,
   ingredients,
   activeIngredient,
   handleFilterIngredients,
+  addIngredientToMixture,
   handleOrderFilteredIngredients,
-  handleChangeIngredientQuantity,
 }: IngredientListProps) {
   return (
-    <>
-      <h2 className="py-2 text-2xl">Ingredients</h2>
+    <div className="flex h-full w-full flex-col items-center">
+      <h2 className={cn(fontHeader.className,"py-2 text-2xl")}>My Ingredients</h2>
       <Input
         className="m-2"
         onChange={(event) => handleFilterIngredients({ event })}
-        aria-label="Filter ingredients"
+        aria-label="Filter ingredients input"
         placeholder="Search"
       />
       <Select onValueChange={(e) => handleOrderFilteredIngredients(e)}>
@@ -65,21 +81,23 @@ export default function IngredientList({
           ingredients.map((ingredient) => (
             <IngredientItem
               key={ingredient.id}
+              mixture={mixture}
               ingredient={ingredient}
               activeIngredient={activeIngredient}
-              onQuantityChange={handleChangeIngredientQuantity}
+              addIngredientToMixture={addIngredientToMixture}
             />
           ))
         )}
       </div>
-    </>
+    </div>
   );
 }
 
 function IngredientItem({
+  mixture,
   ingredient,
   activeIngredient,
-  onQuantityChange,
+  addIngredientToMixture,
 }: IngredientItemProps) {
   const [isOpen, setIsOpen] = useState(false);
   const handleOpenHoverCard = (event: boolean) => {
@@ -91,7 +109,7 @@ function IngredientItem({
       <div
         className={cn(
           "flex items-center rounded-md border-b px-2",
-          RARITY_STYLES[ingredient.rarity as keyof RarityStyleProps],
+          RARITY_STYLES_TEXT[ingredient.rarity as keyof RarityStyleProps],
         )}
       >
         <HoverCardTrigger onClick={() => setIsOpen(false)} className="flex">
@@ -104,15 +122,17 @@ function IngredientItem({
             showQuantity={true}
             id={ingredient.id}
             item={ingredient}
-            className={`text-white ${RARITY_STYLES[ingredient.rarity as keyof RarityStyleProps]}`}
+            className={`${RARITY_STYLES_TEXT[ingredient.rarity as keyof RarityStyleProps]}`}
           />
         </HoverCardTrigger>
+
         <HoverCardContent>
           <IngredientDetails ingredient={ingredient} />
         </HoverCardContent>
-        <QuantityButtons
+        <AddToMixtureButton
           ingredient={ingredient}
-          onQuantityChange={onQuantityChange}
+          addIngredientToMixture={addIngredientToMixture}
+          mixture={mixture}
         />
       </div>
     </HoverCard>
@@ -125,12 +145,13 @@ function IngredientDetails({ ingredient }: IngredientDetailsProps) {
       <h2 className="mb-2 flex justify-center border-b text-lg">
         {ingredient.name}
       </h2>
+
       <ul>
         <li>
           Rarity:{" "}
           <span
             className={
-              RARITY_STYLES[ingredient.rarity as keyof RarityStyleProps]
+              RARITY_STYLES_TEXT[ingredient.rarity as keyof RarityStyleProps]
             }
           >
             {ingredient.rarity}
@@ -144,28 +165,22 @@ function IngredientDetails({ ingredient }: IngredientDetailsProps) {
   );
 }
 
-function QuantityButtons({
+function AddToMixtureButton({
+  mixture,
   ingredient,
-  onQuantityChange,
-}: QuantityButtonsProps) {
+  addIngredientToMixture,
+}: AddToMixtureButtonProps) {
   const buttonClass =
-    "hover:primary-60 h-5 w-8 border border-black bg-white text-xs text-black";
+    "hover:bg-slate-300 h-6 w-16 border border-black bg-white text-xs text-black rounded-lg";
   return (
-    <>
+    <div className="flex space-x-1">
       <Button
-        onClick={() => onQuantityChange({ ingredient, quantity: -1 })}
-        className={cn(buttonClass, "rounded-lg")}
-        aria-label={`Decrease ${ingredient.name}`}
+        className={buttonClass}
+        onClick={() => addIngredientToMixture({ ingredient, mixture })}
+        aria-label={`Add ${ingredient.name} to mixture`}
       >
-        -
+        add
       </Button>
-      <Button
-        onClick={() => onQuantityChange({ ingredient, quantity: 1 })}
-        className={cn(buttonClass, "ml-1")}
-        aria-label={`Add ${ingredient.name}`}
-      >
-        +
-      </Button>
-    </>
+    </div>
   );
 }

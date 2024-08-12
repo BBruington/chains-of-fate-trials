@@ -1,18 +1,22 @@
-import { prisma } from "@/app/utils/context";
 import { currentUser } from "@clerk/nextjs/server";
 import DisplayPotion from "./_components/display-potion";
 import PotionListItem from "./_components/potion-list-item";
+import { getUser } from "../../page";
+import { cn } from "@/lib/utils";
+import { Cinzel } from "next/font/google";
+const fontHeader = Cinzel({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
 
 export default async function PotionJournal() {
-  const getUser = await currentUser();
-  if (!getUser) return <div>Not signed in</div>;
+  const clerkUser = await currentUser();
+  if (!clerkUser) return <div>Not signed in</div>;
 
-  const user = await prisma.user.findUnique({
-    where: { clerkId: getUser.id },
-    include: { Potions: true },
-  });
+  const { potions, ingredients } = await getUser(clerkUser.id);
+  if (!potions) return <div>failed to fetch user potions</div>;
 
-  const userPotions = user?.Potions;
   return (
     <div className="flex w-screen justify-between">
       <div />
@@ -20,8 +24,15 @@ export default async function PotionJournal() {
         <DisplayPotion />
       </div>
       <div className="flex h-full w-96 flex-col items-center space-y-2 overflow-y-auto border border-r-0 border-primary/40 bg-secondary p-3">
-        <h2>My Potions</h2>
-        {userPotions?.map((potion) => (
+        <h2
+          className={cn(
+            fontHeader.className,
+            "w-full border-b text-center text-[28px]",
+          )}
+        >
+          My Potions
+        </h2>
+        {potions?.map((potion) => (
           <PotionListItem key={potion.id} potion={potion} />
         ))}
       </div>

@@ -4,6 +4,7 @@ import { prisma } from "@/app/utils/context";
 import { RaritySchema } from "../../../../../prisma/generated/zod";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { Formula } from "@prisma/client";
 
 const FormulaSchema = z.object({
   id: z.string(),
@@ -11,10 +12,7 @@ const FormulaSchema = z.object({
   name: z.string(),
   userId: z.string(),
   description: z.string(),
-  ingredient1: z.string().nullable(),
-  ingredient2: z.string().nullable(),
-  ingredient3: z.string().nullable(),
-  ingredient4: z.string().nullable(),
+  ingredients: z.array(z.string()),
 });
 
 const AddNewFormulaSchema = z.object({
@@ -53,11 +51,11 @@ export const removeFormula = async (
 
 export const addNewFormula = async (
   props: z.infer<typeof AddNewFormulaSchema>,
-): Promise<void> => {
+): Promise<Formula> => {
   try {
     const { formula, userId } = AddNewFormulaSchema.parse(props);
 
-    await prisma.formula.create({
+    const newFormula = await prisma.formula.create({
       data: {
         ...formula,
         id: undefined,
@@ -66,6 +64,7 @@ export const addNewFormula = async (
     });
 
     revalidatePath(`${process.env.BASE_URL}/potioncraft/formulas`);
+    return newFormula;
   } catch (error) {
     console.error("Error adding formula: ", error);
     if (error instanceof z.ZodError) {

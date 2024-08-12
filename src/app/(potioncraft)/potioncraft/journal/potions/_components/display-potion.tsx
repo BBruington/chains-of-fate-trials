@@ -3,6 +3,7 @@ import { Potion } from "@prisma/client";
 import Link from "next/link";
 import { useAtom } from "jotai";
 import { displayPotion } from "../jotaiAtoms";
+import { ExternalLinkIcon } from "lucide-react";
 
 export default function DisplayPotion() {
   const [selectedPotion] = useAtom<Potion>(displayPotion);
@@ -10,7 +11,9 @@ export default function DisplayPotion() {
     <>
       {selectedPotion.id === "empty" ? (
         <div className="cursor-normal flex h-60 w-96 flex-col justify-center rounded-lg bg-primary/80 text-center text-secondary">
-          <h1 className="p-2 text-2xl">Select a Potion to view its properties</h1>
+          <h1 className="p-2 text-2xl">
+            Select a Potion to view its properties
+          </h1>
         </div>
       ) : (
         <div className="cursor-normal flex h-60 w-96 flex-col justify-center rounded-lg bg-primary/80 text-center text-secondary">
@@ -26,11 +29,12 @@ export default function DisplayPotion() {
           </span>
           <span>Quantity: {selectedPotion.quantity}</span>
           <Link
+            className="flex h-8 items-center justify-center hover:text-primary-foreground/70"
             target="_blank"
             prefetch={false}
             href={`http://dnd5e.wikidot.com/spell:${selectedPotion.name.toLowerCase().replace(" ", "-")}`}
           >
-            Look Up Effect
+            Effect <ExternalLinkIcon className="ml-2 h-5" />
           </Link>
         </div>
       )}

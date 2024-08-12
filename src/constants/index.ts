@@ -6,6 +6,17 @@ import { MagicType, Rarity, PrimaryAttribute } from "@prisma/client";
 import wizardHat from "@/../public/icons/wizard-hat.svg";
 import skull from "@/../public/icons/skull.svg";
 import herb from "@/../public/icons/herb.svg";
+import { RarityType } from "../../prisma/generated/zod";
+
+export const RARITY_STYLES_TEXT: RarityStyleProps = {
+  COMMON: "text-slate-500",
+  UNCOMMON: "text-green-600",
+  RARE: "text-blue-500",
+  VERYRARE: "text-purple-600",
+  LEGENDARY: "text-orange-600",
+};
+
+export const MIXTURE_LIMIT = 4;
 
 export const EMPTY_INGREDIENT = {
   id: "empty",
@@ -25,6 +36,13 @@ export const EMPTY_INGREDIENT = {
   necromancy: 0,
   transmutation: 0,
 };
+
+export const EMPTY_MIXTURE = [
+  EMPTY_INGREDIENT,
+  EMPTY_INGREDIENT,
+  EMPTY_INGREDIENT,
+  EMPTY_INGREDIENT,
+];
 
 export const EMPTY_USER_POTION = {
   id: "empty",
@@ -68,18 +86,7 @@ export const BLANK_FORMULA = {
   name: "Blank",
   description: "blank",
   rarity: Rarity["EMPTY"],
-  ingredient1: null,
-  ingredient2: null,
-  ingredient3: null,
-  ingredient4: null,
-};
-
-export const RARITY_STYLES: RarityStyleProps = {
-  COMMON: "text-slate-500",
-  UNCOMMON: "text-green-600",
-  RARE: "text-blue-500",
-  VERYRARE: "text-purple-600",
-  LEGENDARY: "text-orange-600",
+  ingredients: ['Blank Ingredient'],
 };
 
 export const INGREDIENT_ICONS: IngredientIconProps = {
@@ -104,4 +111,27 @@ export const INGREDIENT_RARITY_ORDER = {
   RARE: 3,
   VERYRARE: 4,
   LEGENDARY: 5,
+};
+
+export const ALL_RARITIES: RarityType[] = [
+  "EMPTY",
+  "COMMON",
+  "UNCOMMON",
+  "RARE",
+  "VERYRARE",
+  "LEGENDARY",
+];
+
+export const BLANK_MIXTURE_PROPERTIES = {
+  magicTypes: ["EMPTY"],
+  rarity: "EMPTY",
+  primaryAttribute: "EMPTY",
+  abjuration: 0,
+  conjuration: 0,
+  divination: 0,
+  enchantment: 0,
+  evocation: 0,
+  illusion: 0,
+  necromancy: 0,
+  transmutation: 0,
 };

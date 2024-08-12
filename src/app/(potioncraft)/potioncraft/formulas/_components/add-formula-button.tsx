@@ -1,15 +1,25 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Rarity } from "@prisma/client";
+import { Formula, Rarity } from "@prisma/client";
 import { addNewFormula } from "../actions";
 import { User } from "@prisma/client";
+import { HandleFilterFormulasProps } from "../../_types";
 
 interface AddFormulaButtonProps {
   userId: User["clerkId"];
+  filteredFormulas: Formula[];
+  handleFilterFormulas: ({
+    event,
+    formulas,
+  }: HandleFilterFormulasProps) => void;
 }
 
-export default function AddFormulaButton({ userId }: AddFormulaButtonProps) {
+export default function AddFormulaButton({
+  userId,
+  handleFilterFormulas,
+  filteredFormulas,
+}: AddFormulaButtonProps) {
   const handleAddNewFormula = async () => {
     const newFormula = {
       id: "",
@@ -17,13 +27,15 @@ export default function AddFormulaButton({ userId }: AddFormulaButtonProps) {
       name: "New Formula",
       description: "Add effect here",
       rarity: Rarity["EMPTY"],
-      ingredient1: null,
-      ingredient2: null,
-      ingredient3: null,
-      ingredient4: null,
+      ingredients: [],
     };
-    await addNewFormula({ userId, formula: newFormula });
+    const createdFormula = await addNewFormula({ userId, formula: newFormula });
+    handleFilterFormulas({ formulas: [...filteredFormulas, createdFormula] });
   };
 
-  return <Button onClick={handleAddNewFormula}>Add New Formula</Button>;
+  return (
+    <Button className="h-9" onClick={handleAddNewFormula}>
+      Add New Formula
+    </Button>
+  );
 }

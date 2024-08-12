@@ -17,12 +17,17 @@ export default function RootLayout({
     <Collapsible open={isOpenNav} onOpenChange={setIsOpenNav} className="flex">
       <div
         className={
-          "flex h-screen min-w-[70px] flex-col items-center space-y-2 overflow-y-auto border-r border-primary/40 p-3"
+          "flex h-screen min-w-[50px] flex-col items-center space-y-2 overflow-y-auto border-r border-primary/40 p-3"
         }
       >
-        <CollapsibleTrigger className="flex w-full justify-end px-2">
+        <CollapsibleTrigger
+          className={cn(
+            "flex w-full justify-center px-2",
+            isOpenNav && "justify-end",
+          )}
+        >
           <ChevronsRight
-            className={cn("rotate-0 duration-300", isOpenNav && "rotate-180")}
+            className={cn("rotate-0 duration-300 shrink-0", isOpenNav && "rotate-180")}
           />
         </CollapsibleTrigger>
         {NAV_LINKS.map(({ label, ...props }) => (

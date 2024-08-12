@@ -1,5 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
-import IngredientsPage from "./_components/ingredients";
+import IngredientsPage from "./_components/ingredients-page";
 import { getUser } from "../../page";
 
 export default async function IngredientJournal() {

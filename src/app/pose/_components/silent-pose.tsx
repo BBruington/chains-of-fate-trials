@@ -7,18 +7,6 @@ import BodyPartDisplay from "./body-parts-display";
 import PoseOrder from "./pose-order";
 
 export default function SilentPose() {
-  // useEffect(() => {
-  //   console.log("body part moved");
-
-  //   socket.on("received_body_part_moved", (data) => {
-  //     setTestRes(data.message);
-  //   });
-
-  //   return () => {
-  //     socket.off("received_body_part_moved");
-  //   };
-  // }, [socket]);
-
   const isFirstRender = useRef(true);
 
   const [imageArray, setImageArray] = useState([

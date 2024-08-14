@@ -32,6 +32,10 @@ export default function Home() {
       console.log("messaged test");
       setTestRes(data.message);
     });
+
+    return () => {
+      socket.off("receive_message");
+    }
   }, [socket]);
 
 >>>>>>> 19a27fd (Websockets Beta)

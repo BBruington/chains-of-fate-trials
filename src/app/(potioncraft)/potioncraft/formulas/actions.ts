@@ -1,10 +1,11 @@
 "use server";
 
-import { prisma } from "@/app/utils/context";
+
 import { RaritySchema } from "../../../../../prisma/generated/zod";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { Formula } from "@prisma/client";
+import { prisma } from "@/lib/db";
 
 const FormulaSchema = z.object({
   id: z.string(),

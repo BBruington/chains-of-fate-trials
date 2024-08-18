@@ -1,6 +1,5 @@
 "use server";
 
-import { prisma } from "@/app/utils/context";
 import { Ingredient, Potion } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -11,6 +10,7 @@ import {
   PrimaryAttributeSchema,
   PotionSchema,
 } from "../../../../prisma/generated/zod";
+import { prisma } from "@/lib/db";
 
 const LocalPotionSchema = z.object({
   id: z.number(),

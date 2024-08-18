@@ -1,7 +1,7 @@
 import type { WebhookEvent } from "@clerk/nextjs/server";
 import { Webhook } from "svix";
 import { headers } from "next/headers";
-import { prisma } from "@/app/utils/context";
+import { prisma } from "@/lib/db";
 
 const webhookSecret: string = process.env.WEBHOOK_SECRET!;
 

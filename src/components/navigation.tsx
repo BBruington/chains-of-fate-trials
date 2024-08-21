@@ -45,7 +45,7 @@ export default function Navigation() {
   const baseUrl = findBaseUrl(pathName);
 
   return (
-    <nav className="flex items-center justify-end space-x-3 border-b-2 border-secondary px-2">
+    <nav className="flex items-center justify-end space-x-3 border-b-2 border-secondary px-2 h-12 w-full">
       <div className="flex items-center space-x-4">
         {NAV_LINKS.map(({ href, label }) => (
           <Link

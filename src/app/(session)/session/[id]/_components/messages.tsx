@@ -49,7 +49,7 @@ const Messages: FC<MessagesProps> = ({ chatMessages, id, username }) => {
   };
 
   return (
-    <div className="flex h-full w-96 flex-col justify-end bg-secondary">
+    <>
       <div className="flex flex-col-reverse overflow-y-auto">
         {messages.map((message, i) => {
           const createdAt = new Date(message.createdAt);
@@ -62,7 +62,8 @@ const Messages: FC<MessagesProps> = ({ chatMessages, id, username }) => {
                     {createdAt.toLocaleDateString("en-US", {
                       day: "2-digit",
                       month: "short",
-                    })},
+                    })}
+                    ,
                   </span>
                   {createdAt.getHours() % 12}:{" "}
                   {createdAt.getMinutes().toString().padStart(2, "0")}{" "}
@@ -86,7 +87,7 @@ const Messages: FC<MessagesProps> = ({ chatMessages, id, username }) => {
           type="text"
         />
       </div>
-    </div>
+    </>
   );
 };
 

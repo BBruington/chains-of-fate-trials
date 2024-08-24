@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/db";
 import { currentUser } from "@clerk/nextjs/server";
 import Messages from "./_components/messages";
+import MemoryGame from "./_components/memory-game";
 import { redirect } from "next/navigation";
+import Inventory from "./_components/inventory";
+import SessionPage from "./_components/session-page";
 
 interface PageProps {
   params: {
@@ -31,13 +34,8 @@ const page = async ({ params }: PageProps) => {
   const chatMessages = existingMessages.map((message) => message.message);
 
   return (
-    <div className="flex h-[calc(100vh-48px)] justify-between">
-      <div></div>
-      <Messages
-        id={id}
-        chatMessages={existingMessages}
-        username={user.username ? user.username : ""}
-      />
+    <div className="flex h-[calc(100vh-48px)]">
+      <SessionPage sessionId={id} username={user.username ? user.username : ""} chatMessages={existingMessages}/>
     </div>
   );
 };

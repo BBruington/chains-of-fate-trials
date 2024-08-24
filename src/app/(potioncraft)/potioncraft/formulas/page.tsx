@@ -8,7 +8,7 @@ export default async function page() {
   if (!formulas) return <div>Failed to fetch formulas</div>;
 
   return (
-    <div className="flex h-screen w-screen">
+    <div className="flex h-[calc(100vh-48px)] w-screen">
       <FormulaPage formulas={formulas} userId={user.id} />
     </div>
   );

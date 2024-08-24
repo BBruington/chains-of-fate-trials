@@ -1,28 +1,25 @@
 import { UniqueIdentifier, useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
-import { Ingredient } from "@prisma/client";
 
 type DraggableProps = {
   id: UniqueIdentifier;
   children?: string | React.JSX.Element;
-  item: Ingredient;
+  item: string;
   className?: string | undefined;
   disabled?: boolean;
-  showQuantity?: boolean;
 };
 
-export default function Draggable({
+export default function DraggableInvItem({
   id,
   item,
   className,
   disabled,
-  showQuantity,
 }: DraggableProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: id,
+    id: item,
     data: {
-      type: item.id,
+      type: item,
     },
     disabled: disabled ? disabled : false,
   });
@@ -33,7 +30,7 @@ export default function Draggable({
   return (
     <button
       className={cn(
-        "inline-flex w-64 items-center justify-center whitespace-nowrap rounded-sm p-3 text-xs font-medium",
+        "inline-flex w-full items-center justify-center whitespace-nowrap rounded-sm p-3 text-xs font-medium",
         className,
       )}
       ref={setNodeRef}
@@ -41,7 +38,7 @@ export default function Draggable({
       {...listeners}
       {...attributes}
     >
-      {item.name} {showQuantity ? `(${item.quantity})` : ""}
+      {item}
     </button>
   );
 }

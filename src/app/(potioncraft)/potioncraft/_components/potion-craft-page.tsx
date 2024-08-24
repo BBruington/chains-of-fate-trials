@@ -38,7 +38,7 @@ export default function PotionCraftComponent({
 
   return (
     <>
-      <div className="relative flex h-full w-full justify-between">
+      <div className="relative flex h-[calc(100vh-48px)] w-full justify-between">
         <div />
         <DndContext
           onDragStart={handleIngredientDragStart}
@@ -60,7 +60,7 @@ export default function PotionCraftComponent({
               />
             ) : null}
           </DragOverlay>
-          <div className="flex h-screen w-full flex-col items-center">
+          <div className="flex h-full w-full flex-col items-center">
             {/* <Image
             alt="alchemist's lab background"
             src={alchemistLab}
@@ -78,7 +78,7 @@ export default function PotionCraftComponent({
               ingredients={ingredients}
             />
           </div>
-          <div className="flex h-screen min-w-96 flex-col items-center overflow-y-auto border-l border-primary/40 p-2">
+          <div className="flex h-full min-w-96 flex-col items-center overflow-y-auto border-l border-primary/40 p-2">
             <IngredientList
               ingredients={filteredUserIngredients}
               activeIngredient={activeIngredient}

@@ -1,6 +1,6 @@
 import { useDroppable } from "@dnd-kit/core";
 import React from "react";
-import { PuzzleEnums } from "./session-page";
+import { PuzzleEnums } from "../../_types";
 
 export default function DoorPuzzle() {
   const { setNodeRef } = useDroppable({

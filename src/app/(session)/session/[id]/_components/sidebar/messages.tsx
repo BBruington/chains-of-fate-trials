@@ -1,9 +1,9 @@
 "use client";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { pusherClient } from "@/lib/pusher";
-import { handleAddNewMessage } from "../actions";
 import { Input } from "@/components/ui/input";
 import { PuzzleChatMessage } from "@prisma/client";
+import { handleAddNewMessage } from "../../actions";
 
 interface MessagesProps {
   chatMessages: PuzzleChatMessage[];
@@ -50,7 +50,7 @@ const Messages: FC<MessagesProps> = ({ chatMessages, id, username }) => {
 
   return (
     <>
-      <div className="flex flex-col-reverse overflow-y-auto">
+      <div className="flex h-full flex-col-reverse overflow-y-auto">
         {messages.map((message, i) => {
           const createdAt = new Date(message.createdAt);
           return (

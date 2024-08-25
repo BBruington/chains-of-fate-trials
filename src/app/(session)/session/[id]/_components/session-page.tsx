@@ -2,12 +2,6 @@
 import Inventory from "./sidebar/inventory";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { useState } from "react";
-import {
-  MessageSquare,
-  Backpack,
-  LucideMessageCircleQuestion,
-} from "lucide-react";
-import Messages from "./sidebar/messages";
 import { Button } from "@/components/ui/button";
 import {
   SessionPageProps,
@@ -20,26 +14,18 @@ import SidebarNavItem from "./sidebar/sidebar-nav-item";
 import Description from "./sidebar/description";
 import { useAtom } from "jotai";
 import { puzzleDescription, inventoryItems } from "../jotaiAtoms";
+import Messages from "./sidebar/messages";
+import InventoryItemDialogue from "./sidebar/inventory-item-dialogue";
+
 import MemoryGame from "./puzzles/memory-game";
 import DoorPuzzle from "./puzzles/door-puzzle";
+import { sidebarNavItems } from "../_constants/sidebar-nav-constants";
 
 export default function SessionPage({
   sessionId,
   chatMessages,
   username,
 }: SessionPageProps) {
-  const sidebarNavItems: PuzzleSideBarItem[] = [
-    { sideBarEnum: SideBarEnums.CHAT, Icon: MessageSquare },
-    {
-      sideBarEnum: SideBarEnums.INVENTORY,
-      Icon: Backpack,
-      className: "border-x",
-    },
-    {
-      sideBarEnum: SideBarEnums.DESCRIPTION,
-      Icon: LucideMessageCircleQuestion,
-    },
-  ];
   const [desc, setDesc] = useAtom(puzzleDescription);
   const [invItems, setInvItems] = useAtom(inventoryItems);
   const [sideBar, setSidebar] = useState<SideBarEnums>(SideBarEnums.CHAT);
@@ -69,6 +55,7 @@ export default function SessionPage({
         console.log("you make it to the stones");
         break;
       default:
+        setIsOpen(true);
         console.log("nothing happens");
         break;
     }
@@ -78,6 +65,8 @@ export default function SessionPage({
     setPuzzle(name);
     setDesc(description);
   };
+
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="flex w-full justify-between">

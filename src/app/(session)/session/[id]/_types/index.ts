@@ -61,3 +61,9 @@ export type DraggableProps = {
   className?: string | undefined;
   disabled?: boolean;
 };
+
+export interface MessagesProps {
+  chatMessages: PuzzleChatMessage[];
+  id: string;
+  username: string;
+}

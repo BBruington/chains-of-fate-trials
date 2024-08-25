@@ -4,12 +4,7 @@ import { pusherClient } from "@/lib/pusher";
 import { Input } from "@/components/ui/input";
 import { PuzzleChatMessage } from "@prisma/client";
 import { handleAddNewMessage } from "../../actions";
-
-interface MessagesProps {
-  chatMessages: PuzzleChatMessage[];
-  id: string;
-  username: string;
-}
+import { MessagesProps } from "../../_types";
 
 const Messages: FC<MessagesProps> = ({ chatMessages, id, username }) => {
   async function createMessage() {
@@ -19,7 +14,6 @@ const Messages: FC<MessagesProps> = ({ chatMessages, id, username }) => {
   }
 
   const [messageInput, setInput] = useState("");
-
   const [messages, setMessages] = useState<PuzzleChatMessage[]>(chatMessages);
 
   //the function triggered by "incoming-message" updates the useState

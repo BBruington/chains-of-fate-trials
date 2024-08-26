@@ -60,7 +60,7 @@ export default function Navigation() {
             {label}
           </Link>
         ))}
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger className="w-32" asChild>
             <Button variant="ghost" size="icon">
               Puzzle Session
@@ -82,7 +82,7 @@ export default function Navigation() {
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
       </div>
       <div className="my-1 flex items-center space-x-2">
         <DropdownMenu>

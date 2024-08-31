@@ -37,8 +37,8 @@ const config: Config = {
         blueCursorPointer: "url(/cursors/blue-cursor-pointer.png), pointer",
         greenCursor: "url(/cursors/green-cursor.png), auto",
         greenCursorPointer: "url(/cursors/green-cursor-pointer.png), pointer",
-        purpleCursor: "url(/cursors/purple-cursor.png), auto",
-        purpleCursorPointer: "url(/cursors/purple-cursor-pointer.png), pointer",
+        redCursor: "url(/cursors/red-cursor.png), auto",
+        redCursorPointer: "url(/cursors/red-cursor-pointer.png), pointer",
       },
       colors: {
         border: "hsl(var(--border))",

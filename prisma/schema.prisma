@@ -1,7 +1,10 @@
-
 generator client {
   provider = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
+}
+
+generator zod {
+  provider       = "zod-prisma-types"
 }
 
 datasource db {
@@ -49,10 +52,116 @@ model PuzzleType {
 
 model User {
   id                String    @default(cuid()) @id
-  username          String?
+  clerkId           String    @unique
+  imgUrl            String?
+  username          String?   
   email             String?   @unique
   createdAt         DateTime  @default(now()) @map(name: "created_at")
   updatedAt         DateTime  @updatedAt @map(name: "updated_at")
   puzzleSessions    PuzzleSession[]
+  Ingredients       Ingredient[]
+  Potions           Potion[]
+  Formulas          Formula[]
+  cursorImg         String?
   @@map(name: "users")
 }
+
+model Formula {
+  id String @default(cuid()) @id
+  userId String
+  name String
+  description String
+  rarity Rarity @default(COMMON)
+  ingredients String[]
+  user User @relation(fields: [userId], references: [clerkId])
+}
+
+model Ingredient {
+  id                String    @default(cuid()) @id  
+  rarity  Rarity @default(COMMON)
+  type    MagicType @default(PRIMAL)
+  primaryAttribute   PrimaryAttribute @default(ABJURATION)
+  name String @unique
+  description String
+  quantity   Int @default(1) 
+  abjuration Int @default(0)
+  conjuration Int @default(0)
+  divination Int @default(0)
+  enchantment Int @default(0)
+  evocation Int @default(0)
+  illusion Int @default(0)
+  necromancy Int @default(0)
+  transmutation Int @default(0)
+  userId   String
+  User   User @relation(fields: [userId], references: [clerkId])
+}
+
+model Potion {
+  id                String    @default(cuid()) @id  
+  rarity  Rarity @default(COMMON)
+  type    MagicType @default(ARCANE)
+  primaryAttribute   PrimaryAttribute
+  name String
+  description String
+  quantity   Int @default(1)
+  abjuration Int @default(0)
+  conjuration Int @default(0)
+  divination Int @default(0)
+  enchantment Int @default(0)
+  evocation Int @default(0)
+  illusion Int @default(0)
+  necromancy Int @default(0)
+  transmutation Int @default(0)
+  userId   String
+  User   User @relation(fields: [userId], references: [clerkId])
+}
+
+enum MagicType {
+  EMPTY
+  ARCANE
+  PRIMAL
+  DIVINE
+  OCCULT
+}
+
+enum Rarity {
+  EMPTY
+  COMMON
+  UNCOMMON
+  RARE
+  VERYRARE
+  LEGENDARY
+}
+
+enum PrimaryAttribute {
+  EMPTY
+  ABJURATION
+  CONJURATION
+  DIVINATION
+  ENCHANTMENT
+  EVOCATION
+  ILLUSION
+  NECROMANCY
+  TRANSMUTATION
+}
+
+model Coordinates {
+  id String @default(cuid()) @id
+  head Json
+  torso Json
+  waist Json
+  leftForearm Json
+  leftHand Json
+  rightForearm Json
+  rightHand Json
+  leftKnee Json
+  leftFoot Json
+  rightKnee Json
+  rightFoot Json
+}
+
+model SolutionOrder{
+  id String  @default(cuid()) @id
+  order Json
+}
+

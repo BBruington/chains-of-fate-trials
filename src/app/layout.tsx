@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Navigation from "@/components/navigation";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Inter } from "next/font/google";
+import React from "react";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });

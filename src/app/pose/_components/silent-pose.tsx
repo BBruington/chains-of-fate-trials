@@ -112,7 +112,7 @@ export default function SilentPose({ user, prismaCoordinates }) {
     };
 
     const handleGameStart = (solutionOrder) => {
-      console.log(solutionOrder.solutionOrder);
+      console.log("newSetSolution", solutionOrder.solutionOrder);
       gameStart(solutionOrder.solutionOrder);
     };
 

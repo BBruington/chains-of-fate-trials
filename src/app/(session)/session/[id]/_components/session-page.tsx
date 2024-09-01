@@ -71,7 +71,7 @@ export default function SessionPage({
   return (
     <div className="flex w-full justify-between">
       <DndContext onDragEnd={handleDragEnd}>
-        <div className="flex w-[calc(100vw-256px)] flex-col items-center">
+        <div className="flex w-full flex-col items-center">
           <div className="flex space-x-7">
             <Button
               onClick={() =>
@@ -104,7 +104,7 @@ export default function SessionPage({
           {puzzle === PuzzleEnums.DOOR && <DoorPuzzle />}
           {puzzle === PuzzleEnums.SOUNDSTONES && <MemoryGame />}
         </div>
-        <div className="flex h-full w-96 flex-col border-l bg-secondary">
+        <div className="flex h-[calc(100vh-48px)] w-96 flex-col border-l bg-secondary">
           <div className="flex h-12 w-full justify-between border-b">
             {sidebarNavItems.map((navItem) => (
               <SidebarNavItem

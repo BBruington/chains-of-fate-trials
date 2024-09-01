@@ -29,7 +29,7 @@ const page = async ({ params }: PageProps) => {
   });
 
   return (
-    <div className="flex h-[calc(100vh-48px)]">
+    <div className="flex w-screen">
       <SessionPage
         sessionId={id}
         username={user.username ? user.username : ""}

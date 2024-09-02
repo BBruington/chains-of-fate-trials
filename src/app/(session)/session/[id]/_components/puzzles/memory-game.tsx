@@ -3,38 +3,48 @@
 import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { PuzzleEnums } from "../../_types";
+import { cn } from "@/lib/utils";
+
+const SOLUTION = ["A4", "A4", "C2", "C2", "A4"];
+
+const STONE_POSITIONS = [
+  { className: "top-0 left-1/2 -translate-x-1/2", stone: "A4" },
+  { className: "top-1/4 left-full -translate-x-1/2", stone: "C2" },
+  { className: "top-1/2 left-full -translate-x-1/2" },
+  { className: "top-3/4 left-full -translate-x-1/2" },
+  { className: "bottom-0 left-1/2 -translate-x-1/2" },
+  { className: "top-3/4 right-full translate-x-1/2" },
+  { className: "top-1/2 right-full translate-x-1/2" },
+  { className: "top-1/4 right-full translate-x-1/2" },
+];
 
 export default function MemoryGame() {
   const { setNodeRef } = useDroppable({
     id: PuzzleEnums.SOUNDSTONES,
   });
-  const solution = ["A4", "A4", "C2", "C2", "A4"];
-  const checkOrderWithSolution = (stone: string) => {
-    const checking = [...stoneOrder, stone];
-    if (solution[checking.length - 1] === checking[checking.length - 1]) {
-      console.log(checking);
-      if (solution.length === checking.length) {
-        setStoneOrder([]);
+  const [stoneOrder, setStoneOrder] = useState<string[]>([]);
+
+  const checkSolution = (stone: string) => {
+    const newOrder = [...stoneOrder, stone];
+    if (SOLUTION[newOrder.length - 1] === newOrder[newOrder.length - 1]) {
+      console.log(newOrder);
+      if (SOLUTION.length === newOrder.length) {
         console.log("YOU WIN YIPPEE");
+        setStoneOrder([]);
+      } else {
+        setStoneOrder(newOrder);
       }
-      return;
     } else {
-      console.log([]);
       setStoneOrder([]);
     }
   };
-  type TouchStoneProps = {
-    stone: string;
-  };
-  const [stoneOrder, setStoneOrder] = useState<string[]>([]);
-  const touchStone = ({ stone }: TouchStoneProps) => {
-    setStoneOrder([...stoneOrder, stone]);
+  const touchStone = (stone: string) => {
     const audio = new Audio(`/audio/GrandPiano-${stone}-mf.wav`);
     audio.play();
     setTimeout(() => {
       audio.pause();
     }, 2000);
-    checkOrderWithSolution(stone);
+    checkSolution(stone);
   };
 
   return (
@@ -42,36 +52,25 @@ export default function MemoryGame() {
       className="relative mx-auto flex h-64 w-64 justify-center"
       ref={setNodeRef}
     >
-      <div className="absolute left-1/2 top-0 -translate-x-1/2 transform">
-        <button
-          onClick={() => touchStone({ stone: "A4" })}
-          className="mushroom h-12 w-12 rounded-full bg-green-500"
-        ></button>
-      </div>
-      <div className="absolute left-full top-1/4 -translate-x-1/2 transform">
-        <button
-          onClick={() => touchStone({ stone: "C2" })}
-          className="mushroom h-12 w-12 rounded-full bg-green-500"
-        ></button>
-      </div>
-      <div className="absolute left-full top-1/2 -translate-x-1/2 transform">
-        <button className="mushroom h-12 w-12 rounded-full bg-green-500"></button>
-      </div>
-      <div className="absolute left-full top-3/4 -translate-x-1/2 transform">
-        <button className="mushroom h-12 w-12 rounded-full bg-green-500"></button>
-      </div>
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 transform">
-        <button className="mushroom h-12 w-12 rounded-full bg-green-500"></button>
-      </div>
-      <div className="absolute right-full top-3/4 translate-x-1/2 transform">
-        <button className="mushroom h-12 w-12 rounded-full bg-green-500"></button>
-      </div>
-      <div className="absolute right-full top-1/2 translate-x-1/2 transform">
-        <button className="mushroom h-12 w-12 rounded-full bg-green-500"></button>
-      </div>
-      <div className="absolute right-full top-1/4 translate-x-1/2 transform">
-        <button className="mushroom h-12 w-12 rounded-full bg-green-500"></button>
-      </div>
+      {STONE_POSITIONS.map((pos, index) => (
+        <div
+          key={index}
+          className={cn(
+            "absolute",
+            pos.className,
+            pos.stone && "cursor-pointer hover:opacity-80",
+          )}
+        >
+          <button
+            onClick={() => pos.stone && touchStone(pos.stone)}
+            className={cn(
+              "mushroom h-12 w-12 rounded-full bg-green-500",
+              !pos.stone && "cursor-not-allowed opacity-50",
+            )}
+            disabled={!pos.stone}
+          />
+        </div>
+      ))}
     </div>
   );
 }

@@ -1,82 +1,78 @@
 "use client";
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import { ChangeEvent, FC, useEffect, useState, useCallback } from "react";
 import { pusherClient } from "@/lib/pusher";
 import { Input } from "@/components/ui/input";
 import { PuzzleChatMessage } from "@prisma/client";
 import { handleAddNewMessage } from "../../actions";
 import { MessagesProps } from "../../_types";
+import { cn } from "@/lib/utils";
 
 const Messages: FC<MessagesProps> = ({ chatMessages, id, username }) => {
-  async function createMessage() {
-    if (messageInput === "") return;
-    await handleAddNewMessage({ message: messageInput, username, id });
-    setInput("");
-  }
-
   const [messageInput, setInput] = useState("");
   const [messages, setMessages] = useState<PuzzleChatMessage[]>(chatMessages);
 
-  //the function triggered by "incoming-message" updates the useState
-  //for the messages
-  const handleLiveUpdate = (newMessage: PuzzleChatMessage) => {
-    setMessages([newMessage, ...messages]);
-  };
+  const createMessage = useCallback(async () => {
+    if (messageInput === "") return;
+    await handleAddNewMessage({ message: messageInput, username, id });
+    setInput("");
+  }, [messageInput, username, id]);
+
+  const handleLiveUpdate = useCallback((newMessage: PuzzleChatMessage) => {
+    setMessages((prevMessages) => [newMessage, ...prevMessages]);
+  }, []);
 
   useEffect(() => {
-    //user connects to 'room' id
     pusherClient.subscribe(id);
 
-    //function handleLiveUpdate will run when triggered with provided params
-    //the event trigger is named "incoming-message"
-    //runs on EVERY machine CURRENTLY connected to the 'room' id
-    pusherClient.bind("incoming-message", (newMessage: PuzzleChatMessage) => {
-      handleLiveUpdate(newMessage);
-    });
+    pusherClient.bind("incoming-message", handleLiveUpdate);
 
     return () => {
       pusherClient.unsubscribe(id);
+      pusherClient.unbind("incoming-message", handleLiveUpdate);
     };
-  }, [messages]);
+  }, [id, handleLiveUpdate]);
 
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
   };
 
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat("en-US", {
+      day: "2-digit",
+      month: "short",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }).format(date);
+  };
+
   return (
     <>
-      <div className="flex h-full flex-col-reverse overflow-y-auto">
-        {messages.map((message, i) => {
-          const createdAt = new Date(message.createdAt);
-          return (
-            <div className="m-2 rounded-sm border p-1" key={i}>
-              <div className="flex justify-between border-b-[1px] border-slate-700">
-                <h2>{message.username}:</h2>
-                <div className="self-center text-xs text-primary/70">
-                  <span className="mr-1">
-                    {createdAt.toLocaleDateString("en-US", {
-                      day: "2-digit",
-                      month: "short",
-                    })}
-                    ,
-                  </span>
-                  {createdAt.getHours() % 12}:{" "}
-                  {createdAt.getMinutes().toString().padStart(2, "0")}{" "}
-                  {createdAt.getHours() > 12 ? "PM" : "AM"}
-                </div>
-              </div>
-              <p className="font-light">{message.message}</p>
+      <div className="flex h-full flex-grow flex-col-reverse overflow-y-auto">
+        {messages.map((message, i) => (
+          <div
+            key={i}
+            className={cn(
+              "m-2 rounded-sm border p-1",
+              message.username === username ? "bg-blue-800" : "bg-gray-800",
+            )}
+          >
+            <div className="flex justify-between border-b border-black pb-1">
+              <h2 className="font-semibold">{message.username}:</h2>
+              <span className="text-xs text-primary/70">
+                {formatDate(new Date(message.createdAt))}
+              </span>
             </div>
-          );
-        })}
+            <p className="mt-1 font-light">{message.message}</p>
+          </div>
+        ))}
       </div>
-      <div className="flex">
+      <div className="p-2">
         <Input
           onChange={handleOnChange}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") createMessage();
-          }}
+          onKeyDown={(e) => e.key === "Enter" && createMessage()}
           placeholder="Send Message"
-          className="m-2 mx-3 border border-zinc-300"
+          className="border border-zinc-300"
           value={messageInput}
           type="text"
         />

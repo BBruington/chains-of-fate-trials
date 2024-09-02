@@ -3,6 +3,7 @@ import { PuzzleChatMessage } from "@prisma/client";
 import { LucideProps } from "lucide-react";
 import { StaticImageData } from "next/image";
 import {
+  Dispatch,
   ForwardRefExoticComponent,
   RefAttributes,
   SetStateAction,
@@ -67,3 +68,13 @@ export interface MessagesProps {
   id: string;
   username: string;
 }
+
+type SetAtom<Args extends any[], Result> = (...args: Args) => Result;
+export type UseDragEndProps = {
+  setPuzzle: Dispatch<SetStateAction<PuzzleEnums>>;
+  setInvItems: SetAtom<
+    [SetStateAction<Record<ItemNames, InventoryItemProps>>],
+    void
+  >;
+  setIsDialogOpen: Dispatch<SetStateAction<boolean>>;
+};

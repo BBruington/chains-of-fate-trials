@@ -39,12 +39,13 @@ export default function DraggableInvItem({
   };
 
   return (
-    <div
-      className={cn(
-        "relative flex h-full w-full justify-center",
-        isDragging && "z-20",
-      )}
-    >
+    <Dialog>
+      <div
+        className={cn(
+          "relative flex h-full w-full justify-center",
+          isDragging && "z-20",
+        )}
+      >
         <HoverCard openDelay={1200}>
           <HoverCardTrigger
             className={cn(
@@ -77,9 +78,8 @@ export default function DraggableInvItem({
         >
           {<Inspect />}
         </DialogTrigger>
-        <DialogContent>
-          <InventoryItemDetails item={item} />
-        </DialogContent>
-    </div>
+        <InventoryItemDetails item={item} />
+      </div>
+    </Dialog>
   );
 }

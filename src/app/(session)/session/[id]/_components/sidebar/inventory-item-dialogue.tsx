@@ -1,4 +1,4 @@
-import { DialogTitle } from "@/components/ui/dialog";
+import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { InventoryItemProps } from "../../_types";
 type InventoryItemDialogueProps = {
   item: InventoryItemProps;
@@ -8,7 +8,9 @@ export default function InventoryItemDetails({
 }: InventoryItemDialogueProps) {
   return (
     <div>
-      <DialogTitle>{item.name}</DialogTitle>
+      <DialogContent>
+        <DialogTitle>{item.name}</DialogTitle>
+      </DialogContent>
     </div>
   );
 }

@@ -76,5 +76,4 @@ export type UseDragEndProps = {
     [SetStateAction<Record<ItemNames, InventoryItemProps>>],
     void
   >;
-  setIsDialogOpen: Dispatch<SetStateAction<boolean>>;
 };

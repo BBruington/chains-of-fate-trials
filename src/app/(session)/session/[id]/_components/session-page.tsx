@@ -21,6 +21,8 @@ import { sidebarNavItems } from "../_constants/sidebar-nav-constants";
 import { cn } from "@/lib/utils";
 import { usePuzzle, useSidebar, useDragEnd } from "../_hooks/hooks";
 import { puzzleTransitions } from "../_constants/puzzle-constants";
+import InventoryItemDialogue from "./sidebar/inventory-item-dialogue";
+import { Dialog } from "@/components/ui/dialog";
 
 const puzzleComponents = {
   [PuzzleEnums.DOOR]: DoorPuzzle,
@@ -34,11 +36,10 @@ export default function SessionPage({
 }: SessionPageProps) {
   const [, setDesc] = useAtom(puzzleDescription);
   const [, setInvItems] = useAtom(inventoryItems);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { sideBar, setSidebar } = useSidebar();
   const { puzzle, setPuzzle } = usePuzzle();
 
-  const handleDragEnd = useDragEnd({ setPuzzle, setInvItems, setIsDialogOpen });
+  const dend = useDragEnd({ setPuzzle, setInvItems });
 
   const handlePuzzleTransition = useCallback(
     (name: PuzzleEnums, description: string) => {
@@ -52,7 +53,7 @@ export default function SessionPage({
 
   return (
     <div className="flex w-full justify-between">
-      <DndContext onDragEnd={handleDragEnd}>
+      <DndContext onDragEnd={dend}>
         <div className="flex w-full flex-col items-center">
           <div className="flex space-x-7">
             {puzzleTransitions.map(({ name, desc, label }) => (

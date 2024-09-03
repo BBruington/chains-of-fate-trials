@@ -48,6 +48,8 @@ export const useDragEnd = ({
           console.log("you make it to the stones");
         },
       };
+
+      actions[over.id as PuzzleEnums]();
     },
     [setPuzzle, setInvItems],
   );

@@ -2,10 +2,6 @@ import React from "react";
 import { UniqueIdentifier, useDroppable } from "@dnd-kit/core";
 import { cn } from "@/lib/utils";
 import { Ingredient } from "@prisma/client";
-import { IngredientIconProps } from "@/app/(potioncraft)/potioncraft/_types";
-import skull from "@/../public/icons/skull.svg";
-import wizardHat from "@/../public/icons/wizard-hat.svg";
-import scroll from "@/../public/icons/scroll.svg";
 import "./styles.scss";
 
 type DroppableProps = {

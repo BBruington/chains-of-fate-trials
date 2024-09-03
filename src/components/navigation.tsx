@@ -48,6 +48,7 @@ export default function Navigation() {
 
   return (
     <nav className="flex h-12 w-full items-center justify-end space-x-3 border-b-2 border-secondary px-2">
+      
       <div className="flex items-center space-x-4">
         {NAV_LINKS.map(({ href, label }) => (
           <Link
@@ -62,7 +63,10 @@ export default function Navigation() {
             {label}
           </Link>
         ))}
-        <DropdownMenu open={isDialogeOpen} onOpenChange={() => setIsDialogeOpen(!isDialogeOpen)}>
+        <DropdownMenu
+          open={isDialogeOpen}
+          onOpenChange={() => setIsDialogeOpen(!isDialogeOpen)}
+        >
           <DropdownMenuTrigger className="w-32" asChild>
             <Button variant="ghost" size="icon">
               Puzzle Session

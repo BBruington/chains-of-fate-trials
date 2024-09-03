@@ -35,6 +35,7 @@ export default function Draggable({
       className={cn(
         "inline-flex w-64 items-center justify-center whitespace-nowrap rounded-sm p-3 text-xs font-medium",
         className,
+        item.id === 'empty' && "cursor-default"
       )}
       ref={setNodeRef}
       style={style}

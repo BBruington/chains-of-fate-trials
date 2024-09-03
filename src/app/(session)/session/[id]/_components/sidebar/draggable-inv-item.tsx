@@ -39,8 +39,12 @@ export default function DraggableInvItem({
   };
 
   return (
-    <div className="relative flex h-full w-full justify-center">
-      <Dialog>
+    <div
+      className={cn(
+        "relative flex h-full w-full justify-center",
+        isDragging && "z-20",
+      )}
+    >
         <HoverCard openDelay={1200}>
           <HoverCardTrigger
             className={cn(
@@ -55,7 +59,7 @@ export default function DraggableInvItem({
           >
             {item.image && (
               <Image
-                className="absolute z-10 h-40 w-40"
+                className={"absolute h-40 w-40"}
                 src={item.image}
                 alt={`Inventory item ${item.name}`}
               />
@@ -67,7 +71,7 @@ export default function DraggableInvItem({
         </HoverCard>
         <DialogTrigger
           className={cn(
-            "absolute right-3 top-1 z-30",
+            "absolute right-3 top-1 z-10",
             isDragging && "invisible",
           )}
         >
@@ -76,7 +80,6 @@ export default function DraggableInvItem({
         <DialogContent>
           <InventoryItemDetails item={item} />
         </DialogContent>
-      </Dialog>
     </div>
   );
 }

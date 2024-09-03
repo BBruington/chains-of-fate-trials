@@ -12,6 +12,7 @@ import {
 } from "./ui/dropdown-menu";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -41,18 +42,19 @@ const findBaseUrl = (href: string) => {
 
 export default function Navigation() {
   const { theme, setTheme } = useTheme();
+  const [isDialogeOpen, setIsDialogeOpen] = useState(false);
   const pathName = usePathname();
   const baseUrl = findBaseUrl(pathName);
 
   return (
-    <nav className="flex items-center justify-end space-x-3 border-b-2 border-secondary px-2 h-12 w-full">
+    <nav className="flex h-12 w-full items-center justify-end space-x-3 border-b-2 border-secondary px-2">
       <div className="flex items-center space-x-4">
         {NAV_LINKS.map(({ href, label }) => (
           <Link
             className={cn(
               "transition-colors hover:text-primary/80",
               (href.includes(baseUrl) || label === baseUrl) &&
-                "pointer-events-none text-primary/50 border-b border-primary/50",
+                "pointer-events-none border-b border-primary/50 text-primary/50",
             )}
             href={href}
             key={href}
@@ -60,7 +62,7 @@ export default function Navigation() {
             {label}
           </Link>
         ))}
-        <DropdownMenu>
+        <DropdownMenu open={isDialogeOpen} onOpenChange={() => setIsDialogeOpen(!isDialogeOpen)}>
           <DropdownMenuTrigger className="w-32" asChild>
             <Button variant="ghost" size="icon">
               Puzzle Session
@@ -70,6 +72,7 @@ export default function Navigation() {
             {PUZZLE_SESSION_LINKS.map(({ href, label }) => (
               <DropdownMenuItem key={href}>
                 <Link
+                  onClick={() => setIsDialogeOpen(false)}
                   href={href}
                   className={cn(
                     "w-full transition-colors hover:text-primary/80",

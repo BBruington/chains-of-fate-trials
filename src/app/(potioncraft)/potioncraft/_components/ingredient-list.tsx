@@ -54,7 +54,9 @@ export default function IngredientList({
 }: IngredientListProps) {
   return (
     <div className="flex h-full w-full flex-col items-center">
-      <h2 className={cn(fontHeader.className,"py-2 text-2xl")}>My Ingredients</h2>
+      <h2 className={cn(fontHeader.className, "py-2 text-2xl")}>
+        My Ingredients
+      </h2>
       <Input
         className="m-2"
         onChange={(event) => handleFilterIngredients({ event })}
@@ -114,7 +116,7 @@ function IngredientItem({
       >
         <HoverCardTrigger onClick={() => setIsOpen(false)} className="flex">
           <Image
-            className="w-4"
+            className="w-5 shrink-0 lg:ml-1"
             src={INGREDIENT_ICONS[ingredient.type as keyof IngredientIconProps]}
             alt="Ingredient Type Icon"
           />
@@ -141,10 +143,8 @@ function IngredientItem({
 
 function IngredientDetails({ ingredient }: IngredientDetailsProps) {
   return (
-    <div className="flex flex-col space-y-2 text-sm">
-      <h2 className="mb-2 flex justify-center border-b text-lg">
-        {ingredient.name}
-      </h2>
+    <div className="flex flex-col space-y-2">
+      <h2 className="mb-2 flex justify-center border-b">{ingredient.name}</h2>
 
       <ul>
         <li>
@@ -171,7 +171,7 @@ function AddToMixtureButton({
   addIngredientToMixture,
 }: AddToMixtureButtonProps) {
   const buttonClass =
-    "hover:bg-slate-300 h-6 w-16 border border-black bg-white text-xs text-black rounded-lg";
+    "hover:bg-slate-300 h-6 w-16 lg:mr-1 border border-black bg-white text-xs text-black rounded-lg";
   return (
     <div className="flex space-x-1">
       <Button

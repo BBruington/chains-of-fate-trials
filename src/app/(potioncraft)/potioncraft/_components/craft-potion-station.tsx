@@ -46,17 +46,17 @@ export default function CraftPotionStation({
     }
   };
   return (
-    <>
+    <div className="flex flex-col px-3 lg:px-0">
       <h1
         className={cn(
           fontHeader.className,
-          "mb-7 mt-10 text-3xl",
+          "mb-7 mt-10 flex justify-center text-xl md:text-3xl",
           mixture === EMPTY_MIXTURE && "animate-pulse",
         )}
       >
         Drag Ingredients to Make a Potion
       </h1>
-      <div className="flex content-center justify-around space-x-10">
+      <div className="flex content-center justify-around space-x-7 md:space-x-10">
         {mixture.map((mix, index) => (
           <Droppable
             key={index}
@@ -74,12 +74,10 @@ export default function CraftPotionStation({
         >
           Craft Potion
         </Button>
-        <div className="flex space-x-5">
-          <Button className="w-36" onClick={handleResetIngredients}>
-            Reset Mixture
-          </Button>
-        </div>
+        <Button className="w-36" onClick={handleResetIngredients}>
+          Reset Mixture
+        </Button>
       </div>
-    </>
+    </div>
   );
 }

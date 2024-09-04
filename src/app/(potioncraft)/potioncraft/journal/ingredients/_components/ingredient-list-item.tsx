@@ -7,6 +7,7 @@ import { displayIngredient } from "../jotaiAtoms";
 import { IngredientListItemProps } from "../../../_types";
 import { Luxurious_Roman } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { useOptimistic } from "react";
 
 const fontList = Luxurious_Roman({
   subsets: ["latin"],
@@ -20,8 +21,18 @@ export default function IngredientListItem({
   setDisplayUi,
   handleChangeIngredientQuantity,
 }: IngredientListItemProps) {
+
+  const updateIngredient = (currentIngredient: Ingredient, updatedQuantity: number) => {
+    return {
+      ...currentIngredient,
+      quantity: currentIngredient.quantity + updatedQuantity,
+    };
+  };
+
   const [selectedIngredient, setSelectedIngredient] =
     useAtom<Ingredient>(displayIngredient);
+    const [optimisticIngredient, addOptimistic] = useOptimistic(ingredient, updateIngredient);
+
 
   const handleSelectIngredient = () => {
     if (displayUi.ingredient === false) {
@@ -34,8 +45,11 @@ export default function IngredientListItem({
   };
 
   const handeIngredientQuantity = async (quantity: number) => {
+    addOptimistic(quantity)
     await handleChangeIngredientQuantity({ ingredient, quantity });
   };
+
+  if(optimisticIngredient.quantity < 1) return null;
 
   return (
     <div
@@ -44,24 +58,24 @@ export default function IngredientListItem({
       )}
     >
       <Button
-        aria-label={`Display ${ingredient.name} properties`}
+        aria-label={`Display ${optimisticIngredient.name} properties`}
         onClick={handleSelectIngredient}
         className="flex h-full min-h-20 w-full flex-col rounded-none rounded-t-lg"
       >
         <h1 className="line-clamp-3 w-full whitespace-normal text-center text-2xl">
-          {ingredient.name} ({ingredient.quantity})
+          {optimisticIngredient.name} ({optimisticIngredient.quantity})
         </h1>
       </Button>
       <div className="flex h-full w-full">
         <Button
-          aria-label={`decrement ${ingredient.name} button`}
+          aria-label={`decrement ${optimisticIngredient.name} button`}
           onClick={() => handeIngredientQuantity(-1)}
           className="h-full text-lg w-1/2 rounded-none rounded-bl-lg border-r border-t"
         >
           -
         </Button>
         <Button
-          aria-label={`increment ${ingredient.name} button`}
+          aria-label={`increment ${optimisticIngredient.name} button`}
           onClick={() => handeIngredientQuantity(1)}
           className="h-full text-lg w-1/2 rounded-none rounded-br-lg border-t"
         >

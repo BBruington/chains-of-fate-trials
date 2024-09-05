@@ -8,7 +8,7 @@ import serum from "@/../public/icons/serum.png";
 import { changePotionQuantity } from "../../../actions";
 import { cn } from "@/lib/utils";
 import { Luxurious_Roman } from "next/font/google";
-import { useOptimistic } from "react";
+import { useOptimistic, startTransition } from "react";
 
 const fontList = Luxurious_Roman({
   subsets: ["latin"],
@@ -34,8 +34,10 @@ export default function PotionListItem({ potion }: PotionListItemProps) {
   };
 
   const handleChangePotionQuantity = async (quantity: number) => {
-    addOptimistic(quantity);
-    await changePotionQuantity({ potion, quantity });
+    startTransition(async () => {
+      addOptimistic(quantity);
+      await changePotionQuantity({ potion, quantity });
+    });
   };
 
   if (optimisticPotion.quantity < 1) return null;

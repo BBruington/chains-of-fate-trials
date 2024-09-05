@@ -7,7 +7,7 @@ import { displayIngredient } from "../jotaiAtoms";
 import { IngredientListItemProps } from "../../../_types";
 import { Luxurious_Roman } from "next/font/google";
 import { cn } from "@/lib/utils";
-import { useOptimistic } from "react";
+import { useOptimistic, startTransition } from "react";
 
 const fontList = Luxurious_Roman({
   subsets: ["latin"],
@@ -21,8 +21,10 @@ export default function IngredientListItem({
   setDisplayUi,
   handleChangeIngredientQuantity,
 }: IngredientListItemProps) {
-
-  const updateIngredient = (currentIngredient: Ingredient, updatedQuantity: number) => {
+  const updateIngredient = (
+    currentIngredient: Ingredient,
+    updatedQuantity: number,
+  ) => {
     return {
       ...currentIngredient,
       quantity: currentIngredient.quantity + updatedQuantity,
@@ -31,8 +33,10 @@ export default function IngredientListItem({
 
   const [selectedIngredient, setSelectedIngredient] =
     useAtom<Ingredient>(displayIngredient);
-    const [optimisticIngredient, addOptimistic] = useOptimistic(ingredient, updateIngredient);
-
+  const [optimisticIngredient, addOptimistic] = useOptimistic(
+    ingredient,
+    updateIngredient,
+  );
 
   const handleSelectIngredient = () => {
     if (displayUi.ingredient === false) {
@@ -45,16 +49,19 @@ export default function IngredientListItem({
   };
 
   const handeIngredientQuantity = async (quantity: number) => {
-    addOptimistic(quantity)
-    await handleChangeIngredientQuantity({ ingredient, quantity });
+    startTransition(async () => {
+      addOptimistic(quantity);
+      await handleChangeIngredientQuantity({ ingredient, quantity });
+    });
   };
 
-  if(optimisticIngredient.quantity < 1) return null;
+  if (optimisticIngredient.quantity < 1) return null;
 
   return (
     <div
       className={cn(
-        fontList.className, "flex h-fit min-h-28 w-72 flex-col items-center rounded-lg border border-secondary bg-secondary-foreground/70 text-secondary hover:cursor-pointer hover:bg-secondary-foreground/60",
+        fontList.className,
+        "flex h-fit min-h-28 w-72 flex-col items-center rounded-lg border border-secondary bg-secondary-foreground/70 text-secondary hover:cursor-pointer hover:bg-secondary-foreground/60",
       )}
     >
       <Button
@@ -70,14 +77,14 @@ export default function IngredientListItem({
         <Button
           aria-label={`decrement ${optimisticIngredient.name} button`}
           onClick={() => handeIngredientQuantity(-1)}
-          className="h-full text-lg w-1/2 rounded-none rounded-bl-lg border-r border-t"
+          className="h-full w-1/2 rounded-none rounded-bl-lg border-r border-t text-lg"
         >
           -
         </Button>
         <Button
           aria-label={`increment ${optimisticIngredient.name} button`}
           onClick={() => handeIngredientQuantity(1)}
-          className="h-full text-lg w-1/2 rounded-none rounded-br-lg border-t"
+          className="h-full w-1/2 rounded-none rounded-br-lg border-t text-lg"
         >
           +
         </Button>

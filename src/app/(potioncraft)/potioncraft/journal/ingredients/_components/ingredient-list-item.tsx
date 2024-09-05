@@ -31,7 +31,7 @@ export default function IngredientListItem({
     };
   };
 
-  const [selectedIngredient, setSelectedIngredient] =
+  const [, setSelectedIngredient] =
     useAtom<Ingredient>(displayIngredient);
   const [optimisticIngredient, addOptimistic] = useOptimistic(
     ingredient,

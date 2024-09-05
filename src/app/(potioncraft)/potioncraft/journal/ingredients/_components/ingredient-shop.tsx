@@ -5,12 +5,17 @@ import { addIngredientsToUser } from "../../../actions";
 import { z } from "zod";
 import { User } from "@prisma/client";
 import { Button } from "@/components/ui/button";
+import { startTransition } from "react";
 
 type IngredientShopProps = {
   userId: User["clerkId"];
+  updateIngredients: (action: z.infer<typeof IngredientSchema>) => void;
 };
 
-export default function IngredientShop({ userId }: IngredientShopProps) {
+export default function IngredientShop({
+  userId,
+  updateIngredients,
+}: IngredientShopProps) {
   playerIngredients.sort((a, b) => {
     if (a.name < b.name) {
       return -1;
@@ -30,6 +35,7 @@ export default function IngredientShop({ userId }: IngredientShopProps) {
       </div>
       {playerIngredients.map((ingredient) => (
         <IngredientShopItem
+          updateIngredients={updateIngredients}
           key={ingredient.name}
           userId={userId}
           ingredient={ingredient}
@@ -42,11 +48,19 @@ export default function IngredientShop({ userId }: IngredientShopProps) {
 type IngredientShopItemProps = {
   ingredient: z.infer<typeof IngredientSchema>;
   userId: User["clerkId"];
+  updateIngredients: (action: z.infer<typeof IngredientSchema>) => void;
 };
 
-function IngredientShopItem({ ingredient, userId }: IngredientShopItemProps) {
+function IngredientShopItem({
+  ingredient,
+  userId,
+  updateIngredients,
+}: IngredientShopItemProps) {
   const handleAddIngredientToUser = async () => {
-    await addIngredientsToUser({ userId, ingredients: [ingredient] });
+    startTransition(async () => {
+      updateIngredients(ingredient);
+      await addIngredientsToUser({ userId, ingredients: [ingredient] });
+    });
   };
 
   return (

@@ -3,11 +3,13 @@
 import { Ingredient, User } from "@prisma/client";
 import IngredientListItem from "./ingredient-list-item";
 import IngredientShop from "./ingredient-shop";
-import { useState } from "react";
+import { useState, useOptimistic } from "react";
 import DisplayIngredient from "./display-ingredient";
 import { usePotionCraft } from "../../../_hooks/usePotionCraft";
 import { Cinzel } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { IngredientSchema } from "@/types";
+import { z } from "zod";
 const fontHeader = Cinzel({
   subsets: ["latin"],
   weight: ["400"],
@@ -27,6 +29,35 @@ export default function IngredientsPage({
     ingredients,
     userId,
   });
+
+  const updateIngredientsOptimistically = (
+    curIngredients: Ingredient[],
+    updatedIngredient: z.infer<typeof IngredientSchema>,
+  ) => {
+    const foundItem = curIngredients.find(
+      (ing) => ing.name === updatedIngredient.name,
+    );
+    if (foundItem === undefined) {
+      return [
+        ...curIngredients,
+        { ...updatedIngredient, id: "placeholder", userId: userId },
+      ];
+    }
+    return curIngredients.map((ingredient) => {
+      if (updatedIngredient.name === ingredient.name)
+        return {
+          ...ingredient,
+          quantity: ingredient.quantity + 1,
+        };
+      return ingredient;
+    });
+  };
+
+  const [optimisticIngredients, addOptimisticIngredient] = useOptimistic(
+    ingredients,
+    updateIngredientsOptimistically,
+  );
+
   const [displayUi, setDisplayUi] = useState({
     shop: true,
     ingredient: false,
@@ -41,7 +72,12 @@ export default function IngredientsPage({
             displayUi={displayUi}
           />
         )}
-        {displayUi.shop === true && <IngredientShop userId={userId} />}
+        {displayUi.shop === true && (
+          <IngredientShop
+            updateIngredients={addOptimisticIngredient}
+            userId={userId}
+          />
+        )}
       </div>
       <div className="flex h-full w-96 flex-col items-center space-y-3 overflow-y-auto border border-r-0 border-primary/40 bg-secondary p-3">
         <h2
@@ -52,7 +88,7 @@ export default function IngredientsPage({
         >
           My Ingredients
         </h2>
-        {ingredients?.map((ingredient) => (
+        {optimisticIngredients?.map((ingredient) => (
           <IngredientListItem
             handleChangeIngredientQuantity={updateServerIngredientQuantity}
             key={ingredient.id}

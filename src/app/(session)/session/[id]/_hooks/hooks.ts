@@ -17,14 +17,11 @@ export const usePuzzle = () => {
   return { puzzle, setPuzzle };
 };
 
-export const useDragEnd = ({
-  setPuzzle,
-  setInvItems,
-}: UseDragEndProps) => {
+export const useDragEnd = ({ setPuzzle, setInvItems }: UseDragEndProps) => {
   return useCallback(
     ({ active, over }: DragEndEvent) => {
       if (!over) return;
-
+      console.log(over.id, active.id);
       const actions = {
         [PuzzleEnums.DOOR]: () => {
           if (active.id === "DOORKEY") {
@@ -46,6 +43,11 @@ export const useDragEnd = ({
             }));
           }
           console.log("you make it to the stones");
+        },
+        [PuzzleEnums.PEDESTALS]: () => {
+          const correctItems = ["FIREGEM", "WATERGEM", "EARTHGEM", "AIRGEM"];
+          if(correctItems.find((item) => item === active.id)) {
+          }
         },
       };
 

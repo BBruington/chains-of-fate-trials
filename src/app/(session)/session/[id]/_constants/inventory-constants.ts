@@ -11,10 +11,16 @@ export const inventoryItemsRecords = {
     name: InventoryItemEnums.SCROLL,
     image: parchment,
   },
-  DINV3: {
-    name: InventoryItemEnums.DINV3,
+  FIREGEM: {
+    name: InventoryItemEnums.FIREGEM,
   },
-  DINV4: {
-    name: InventoryItemEnums.DINV4,
+  AIRGEM: {
+    name: InventoryItemEnums.AIRGEM,
+  },
+  EARTHGEM: {
+    name: InventoryItemEnums.EARTHGEM,
+  },
+  WATERGEM: {
+    name: InventoryItemEnums.WATERGEM,
   },
 };

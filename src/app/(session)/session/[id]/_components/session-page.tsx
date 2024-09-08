@@ -13,7 +13,11 @@ import {
 import SidebarNavItem from "./sidebar/sidebar-nav-item";
 import Description from "./sidebar/description";
 import { useAtom } from "jotai";
-import { puzzleDescription, inventoryItems } from "../jotaiAtoms";
+import {
+  puzzleDescription,
+  inventoryItems,
+  pedestals,
+} from "../jotaiAtoms";
 import Messages from "./sidebar/messages";
 import MemoryGame from "./puzzles/memory-game";
 import DoorPuzzle from "./puzzles/door-puzzle";
@@ -21,12 +25,12 @@ import { sidebarNavItems } from "../_constants/sidebar-nav-constants";
 import { cn } from "@/lib/utils";
 import { usePuzzle, useSidebar, useDragEnd } from "../_hooks/hooks";
 import { puzzleTransitions } from "../_constants/puzzle-constants";
-import InventoryItemDialogue from "./sidebar/inventory-item-dialogue";
-import { Dialog } from "@/components/ui/dialog";
+import PedestalPuzzle from "./puzzles/four-pedestals";
 
 const puzzleComponents = {
   [PuzzleEnums.DOOR]: DoorPuzzle,
   [PuzzleEnums.SOUNDSTONES]: MemoryGame,
+  [PuzzleEnums.PEDESTALS]: PedestalPuzzle,
 };
 
 export default function SessionPage({
@@ -36,6 +40,7 @@ export default function SessionPage({
 }: SessionPageProps) {
   const [, setDesc] = useAtom(puzzleDescription);
   const [, setInvItems] = useAtom(inventoryItems);
+  const [pedestalState, setPedestals] = useAtom(pedestals);
   const { sideBar, setSidebar } = useSidebar();
   const { puzzle, setPuzzle } = usePuzzle();
 

@@ -1,5 +1,6 @@
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { PuzzleChatMessage } from "@prisma/client";
+import { PrimitiveAtom } from "jotai";
 import { LucideProps } from "lucide-react";
 import { StaticImageData } from "next/image";
 import {
@@ -21,6 +22,7 @@ export enum SideBarEnums {
 }
 export enum PuzzleEnums {
   DOOR = "DOOR",
+  PEDESTALS = "PEDESTALS",
   SOUNDSTONES = "SOUNDSTONES",
 }
 
@@ -41,10 +43,12 @@ export enum InventoryItemEnums {
   DOORKEY = "DOORKEY",
   SCROLL = "SCROLL",
   MAGICSCROLL = "MAGICSCROLL",
-  DINV3 = "DINV3",
-  DINV4 = "DINV4",
+  FIREGEM = "FIREGEM",
+  EARTHGEM = "EARTHGEM",
+  AIRGEM = "AIRGEM",
+  WATERGEM = "WATERGEM",
 }
-export type ItemNames = "DOORKEY" | "SCROLL" | "DINV3" | "DINV4";
+export type ItemNames = "DOORKEY" | "SCROLL" | "FIREGEM" | "EARTHGEM" | "AIRGEM" | "WATERGEM";
 export type InventoryItemProps = {
   name: InventoryItemEnums;
   image?: StaticImageData;

@@ -8,8 +8,15 @@ export const puzzleTransitions = [
   },
   { name: PuzzleEnums.DOOR, desc: "DOOR DESCRIPTION", label: "The Door" },
   {
-    name: PuzzleEnums.SOUNDSTONES,
-    desc: "HAVENT DONE THIS ONE",
-    label: "Example Area to Solve",
+    name: PuzzleEnums.PEDESTALS,
+    desc: "You see four pedastals waiting for their appropriat item",
+    label: "The Pedestals",
   },
 ];
+
+export const pedastalsIsInseted = {
+  FIREGEM: false,
+  WATERGEM: false,
+  EARTHGEM: false,
+  AIRGEM: false,
+};

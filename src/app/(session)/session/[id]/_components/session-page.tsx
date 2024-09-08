@@ -39,12 +39,12 @@ export default function SessionPage({
   username,
 }: SessionPageProps) {
   const [, setDesc] = useAtom(puzzleDescription);
-  const [, setInvItems] = useAtom(inventoryItems);
-  const [pedestalState, setPedestals] = useAtom(pedestals);
+  const [inventoryItemsState, setInventoryItems] = useAtom(inventoryItems);
+  const [pedestalState, setPedestalState] = useAtom(pedestals);
   const { sideBar, setSidebar } = useSidebar();
   const { puzzle, setPuzzle } = usePuzzle();
 
-  const dend = useDragEnd({ setPuzzle, setInvItems });
+  const onDragEnd = useDragEnd({ setPuzzle,inventoryItemsState, setInventoryItems, pedestalState, setPedestalState });
 
   const handlePuzzleTransition = useCallback(
     (name: PuzzleEnums, description: string) => {
@@ -58,7 +58,7 @@ export default function SessionPage({
 
   return (
     <div className="flex w-full justify-between">
-      <DndContext onDragEnd={dend}>
+      <DndContext onDragEnd={onDragEnd}>
         <div className="flex w-full flex-col items-center">
           <div className="flex space-x-7">
             {puzzleTransitions.map(({ name, desc, label }) => (

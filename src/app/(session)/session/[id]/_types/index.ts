@@ -48,7 +48,13 @@ export enum InventoryItemEnums {
   AIRGEM = "AIRGEM",
   WATERGEM = "WATERGEM",
 }
-export type ItemNames = "DOORKEY" | "SCROLL" | "FIREGEM" | "EARTHGEM" | "AIRGEM" | "WATERGEM";
+export type ItemNames =
+  | "DOORKEY"
+  | "SCROLL"
+  | "FIREGEM"
+  | "EARTHGEM"
+  | "AIRGEM"
+  | "WATERGEM";
 export type InventoryItemProps = {
   name: InventoryItemEnums;
   image?: StaticImageData;
@@ -76,8 +82,21 @@ export interface MessagesProps {
 type SetAtom<Args extends any[], Result> = (...args: Args) => Result;
 export type UseDragEndProps = {
   setPuzzle: Dispatch<SetStateAction<PuzzleEnums>>;
-  setInvItems: SetAtom<
-    [SetStateAction<Record<ItemNames, InventoryItemProps>>],
+  inventoryItemsState: InventoryItemProps[];
+  setInventoryItems: SetAtom<[SetStateAction<InventoryItemProps[]>], void>
+  pedestalState: {
+    id: string;
+    isActivated: boolean;
+  }[];
+  setPedestalState: SetAtom<
+    [
+      SetStateAction<
+        {
+          id: string;
+          isActivated: boolean;
+        }[]
+      >,
+    ],
     void
   >;
 };

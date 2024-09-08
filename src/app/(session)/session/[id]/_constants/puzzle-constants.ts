@@ -14,9 +14,9 @@ export const puzzleTransitions = [
   },
 ];
 
-export const pedastalsIsInseted = {
-  FIREGEM: false,
-  WATERGEM: false,
-  EARTHGEM: false,
-  AIRGEM: false,
-};
+export const pedastals = [
+  { id: "FIREGEM", isActivated: false },
+  { id: "WATERGEM", isActivated:  false },
+  { id: "EARTHGEM", isActivated: false },
+  { id: "AIRGEM", isActivated: false },
+];

@@ -17,7 +17,13 @@ export const usePuzzle = () => {
   return { puzzle, setPuzzle };
 };
 
-export const useDragEnd = ({ setPuzzle, setInvItems }: UseDragEndProps) => {
+export const useDragEnd = ({
+  setPuzzle,
+  inventoryItemsState,
+  setInventoryItems,
+  pedestalState,
+  setPedestalState,
+}: UseDragEndProps) => {
   return useCallback(
     ({ active, over }: DragEndEvent) => {
       if (!over) return;
@@ -34,25 +40,43 @@ export const useDragEnd = ({ setPuzzle, setInvItems }: UseDragEndProps) => {
         [PuzzleEnums.SOUNDSTONES]: () => {
           if (active.id === "SCROLL") {
             console.log("the scroll shines revealing a secret note");
-            setInvItems((prev) => ({
-              ...prev,
-              SCROLL: {
-                name: InventoryItemEnums.MAGICSCROLL,
-                image: prev.SCROLL.image,
-              },
-            }));
+            setInventoryItems(
+              inventoryItemsState.map((item) => {
+                if (item.name === InventoryItemEnums.SCROLL){
+                  return {
+                    name: InventoryItemEnums.MAGICSCROLL,
+                    image: item.image
+                  }
+                } 
+                return item;
+              }),
+            );
           }
           console.log("you make it to the stones");
         },
         [PuzzleEnums.PEDESTALS]: () => {
           const correctItems = ["FIREGEM", "WATERGEM", "EARTHGEM", "AIRGEM"];
-          if(correctItems.find((item) => item === active.id)) {
+          if (correctItems.find((item) => item === active.id)) {
+            setPedestalState(
+              pedestalState.map((pedestal) => {
+                if (pedestal.id === active.id) {
+                  return {
+                    ...pedestal,
+                    isActivated: true,
+                  };
+                }
+                return pedestal;
+              }),
+            );
+            setInventoryItems(
+              inventoryItemsState.filter((item) => item.name !== active.id),
+            );
           }
         },
       };
 
       actions[over.id as PuzzleEnums]();
     },
-    [setPuzzle, setInvItems],
+    [setPuzzle, setInventoryItems, setPedestalState, inventoryItemsState, pedestalState],
   );
 };

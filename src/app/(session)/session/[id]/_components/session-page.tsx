@@ -23,13 +23,13 @@ import { cn } from "@/lib/utils";
 import { usePuzzle, useSidebar, useDragEnd } from "../_hooks/hooks";
 import { puzzleTransitions } from "../_constants/puzzle-constants";
 import PedestalPuzzle from "./puzzles/four-pedestals";
-import FirePuzzle from "./puzzles/fire-trial";
+import FirePuzzle from "./puzzles/fire/fire-trial";
 
 const puzzleComponents = {
   [PuzzleEnums.DOOR]: DoorPuzzle,
   [PuzzleEnums.SOUNDSTONES]: MemoryGame,
   [PuzzleEnums.PEDESTALS]: PedestalPuzzle,
-  [PuzzleEnums.FIRE]: FirePuzzle
+  [PuzzleEnums.FIRE]: FirePuzzle,
 };
 
 export default function SessionPage({

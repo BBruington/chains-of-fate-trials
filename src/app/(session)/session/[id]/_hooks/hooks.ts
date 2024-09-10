@@ -73,6 +73,10 @@ export const useDragEnd = ({
             );
           }
         },
+        [PuzzleEnums.FIRE]: () => {
+          console.log("hehexd")
+          return "hehexd"
+        }
       };
 
       actions[over.id as PuzzleEnums]();

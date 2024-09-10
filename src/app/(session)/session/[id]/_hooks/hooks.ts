@@ -18,11 +18,11 @@ export const usePuzzle = () => {
 };
 
 export const useDragEnd = ({
-  setPuzzle,
-  inventoryItemsState,
-  setInventoryItems,
   pedestalState,
+  inventoryItemsState,
+  setPuzzle,
   setPedestalState,
+  setInventoryItems,
 }: UseDragEndProps) => {
   return useCallback(
     ({ active, over }: DragEndEvent) => {

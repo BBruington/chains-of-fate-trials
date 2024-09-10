@@ -10,6 +10,11 @@ import {
   SetStateAction,
 } from "react";
 
+export type DescriptionOpject = {
+  message: string;
+  isHighlighted: boolean;
+}
+
 export type SessionPageProps = {
   sessionId: string;
   chatMessages: PuzzleChatMessage[];
@@ -24,6 +29,7 @@ export enum PuzzleEnums {
   DOOR = "DOOR",
   PEDESTALS = "PEDESTALS",
   SOUNDSTONES = "SOUNDSTONES",
+  FIRE = "FIRE",
 }
 
 export interface PuzzleSideBarItem {

@@ -9,15 +9,12 @@ import {
   PuzzleEnums,
   PuzzleSideBarItem,
   InventoryItemEnums,
+  DescriptionOpject,
 } from "../_types";
 import SidebarNavItem from "./sidebar/sidebar-nav-item";
 import Description from "./sidebar/description";
 import { useAtom } from "jotai";
-import {
-  puzzleDescription,
-  inventoryItems,
-  pedestals,
-} from "../jotaiAtoms";
+import { puzzleDescription, inventoryItems, pedestals } from "../jotaiAtoms";
 import Messages from "./sidebar/messages";
 import MemoryGame from "./puzzles/memory-game";
 import DoorPuzzle from "./puzzles/door-puzzle";
@@ -26,11 +23,13 @@ import { cn } from "@/lib/utils";
 import { usePuzzle, useSidebar, useDragEnd } from "../_hooks/hooks";
 import { puzzleTransitions } from "../_constants/puzzle-constants";
 import PedestalPuzzle from "./puzzles/four-pedestals";
+import FirePuzzle from "./puzzles/fire-trial";
 
 const puzzleComponents = {
   [PuzzleEnums.DOOR]: DoorPuzzle,
   [PuzzleEnums.SOUNDSTONES]: MemoryGame,
   [PuzzleEnums.PEDESTALS]: PedestalPuzzle,
+  [PuzzleEnums.FIRE]: FirePuzzle
 };
 
 export default function SessionPage({
@@ -44,10 +43,16 @@ export default function SessionPage({
   const { sideBar, setSidebar } = useSidebar();
   const { puzzle, setPuzzle } = usePuzzle();
 
-  const onDragEnd = useDragEnd({ setPuzzle,inventoryItemsState, setInventoryItems, pedestalState, setPedestalState });
+  const onDragEnd = useDragEnd({
+    setPuzzle,
+    inventoryItemsState,
+    setInventoryItems,
+    pedestalState,
+    setPedestalState,
+  });
 
   const handlePuzzleTransition = useCallback(
-    (name: PuzzleEnums, description: string) => {
+    (name: PuzzleEnums, description: DescriptionOpject[]) => {
       setPuzzle(name);
       setDesc(description);
     },
@@ -61,10 +66,10 @@ export default function SessionPage({
       <DndContext onDragEnd={onDragEnd}>
         <div className="flex w-full flex-col items-center">
           <div className="flex space-x-7">
-            {puzzleTransitions.map(({ name, desc, label }) => (
+            {puzzleTransitions.map(({ name, description, label }) => (
               <Button
                 key={label}
-                onClick={() => handlePuzzleTransition(name, desc)}
+                onClick={() => handlePuzzleTransition(name, description)}
               >
                 {label}
               </Button>

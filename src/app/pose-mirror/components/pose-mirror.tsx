@@ -2,11 +2,14 @@ import {
   coloredBoxesAtom,
   colorOrderAtom,
   containersAtom,
+  solutionOrderAtom,
 } from "@/app/atoms/globalState";
 import { DndContext } from "@dnd-kit/core";
+import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { useAtom } from "jotai";
 import { useContext, useEffect, useRef } from "react";
 import MirrorPoseHooks from "../_hooks/pose-list-hooks";
+import { getSolutionOrder, randomizeSolutionOrder } from "../actions";
 import { PageContext } from "../page-context";
 import ColorSelectScreen from "./color-select-screen";
 import MatchingContainer from "./matching-container";
@@ -18,8 +21,9 @@ export default function PoseMirror() {
   const [containers, setContainers] = useAtom(containersAtom);
   const [coloredBoxes, setColoredBoxes] = useAtom(coloredBoxesAtom);
   const [colorOrder, setColorOrder] = useAtom(colorOrderAtom);
+  const [solutionOrder, setSolutionOrder] = useAtom(solutionOrderAtom);
 
-  const { handleDragEnd, gameStart, solutionOrder } = MirrorPoseHooks();
+  const { handleDragEnd, gameStart, handleResetGame } = MirrorPoseHooks();
 
   const isFirstRender = useRef(true);
   const hasStarted = useRef(false);
@@ -54,6 +58,26 @@ export default function PoseMirror() {
     });
   }, [coloredBoxes]);
 
+  const handleGetSolutionOrder = async () => {
+    try {
+      const prismaSolutionOrder = await getSolutionOrder();
+      if (prismaSolutionOrder) {
+        console.log(prismaSolutionOrder.order);
+        setSolutionOrder(prismaSolutionOrder.order[0]); // Update state only if data is fetched
+      }
+    } catch (error) {
+      console.error("Error fetching solution order:", error);
+    }
+  };
+
+  const handleRandomizeSolutionOrder = async () => {
+    try {
+      await randomizeSolutionOrder();
+    } catch (error) {
+      console.error("Error randomizing solution order:", error);
+    }
+  };
+
   return (
     <div
       className={`flex h-[calc(100%-48px)] w-full flex-col items-center justify-around xl:flex-row`}
@@ -63,9 +87,20 @@ export default function PoseMirror() {
       {showColorSelect ? (
         <ColorSelectScreen />
       ) : (
-        <DndContext onDragEnd={handleDragEnd}>
-          <button onClick={() => console.log(solutionOrder)}>
+        <DndContext
+          onDragEnd={handleDragEnd}
+          modifiers={[restrictToWindowEdges]}
+        >
+          {/* <button onClick={() => console.log(solutionOrder)}>
             solutionOrder
+          </button>
+          <button onClick={() => handleResetGame()}>handleResetGame</button> */}
+          <h1>solutionOrder is:{solutionOrder}</h1>
+          <button onClick={() => handleGetSolutionOrder()}>
+            solution Order change
+          </button>
+          <button onClick={() => handleRandomizeSolutionOrder()}>
+            randomize solution order
           </button>
           <MatchingContainer containers={containers} colorOrder={colorOrder} />
           <Stickman />

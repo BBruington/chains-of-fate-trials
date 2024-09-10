@@ -1,4 +1,4 @@
-export { colorChoices, initalContainers, mouseColor };
+export { colorChoices, initalContainers, initalSolutionOrder, mouseColor };
 
 const initalContainers = [
   {
@@ -183,4 +183,19 @@ const mouseColor = [
   "cursor-blueCursorPointer",
   "cursor-greenCursorPointer",
   "cursor-redCursorPointer",
+];
+
+const initalSolutionOrder = [
+  "M",
+  "N",
+  "O",
+  "P",
+  "Q",
+  "R",
+  "S",
+  "T",
+  "U",
+  "V",
+  "W",
+  "X",
 ];

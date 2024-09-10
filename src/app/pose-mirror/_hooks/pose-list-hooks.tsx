@@ -4,11 +4,13 @@ import {
   colorOrderAtom,
   containersAtom,
   playerStatesAtom,
+  solutionOrderAtom,
 } from "@/app/atoms/globalState";
 import { initalContainers } from "@/app/pose-mirror/const";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { useAtom } from "jotai";
 import { useState } from "react";
+import { randomizeSolutionOrder } from "../actions";
 import type { Player } from "../types";
 
 export default function MirrorPoseHooks() {
@@ -18,20 +20,7 @@ export default function MirrorPoseHooks() {
   const [containers, setContainers] = useAtom(containersAtom);
   const [currentPoseContainer, setCurrentPoseContainer] = useState(0);
   const [playerStates, setPlayerStates] = useAtom(playerStatesAtom);
-  const [solutionOrder, setSolutionOrder] = useState([
-    "M",
-    "N",
-    "O",
-    "P",
-    "Q",
-    "R",
-    "S",
-    "T",
-    "U",
-    "V",
-    "W",
-    "X",
-  ]);
+  const [solutionOrder, setSolutionOrder] = useAtom(solutionOrderAtom);
 
   function gameStart() {
     console.log("gameStart running");
@@ -70,29 +59,32 @@ export default function MirrorPoseHooks() {
     shuffleSolutionOrder();
   }
 
-  function shuffleSolutionOrder() {
-    console.log("shuffleSolutionOrder running");
-    setSolutionOrder((prevOrder) => {
-      console.log("setSolutionOrder running");
-      const newSolutionOrder = [...prevOrder];
-      let currentIndex = newSolutionOrder.length;
+  async function shuffleSolutionOrder() {
+    const newOrder = await randomizeSolutionOrder();
+    setSolutionOrder(newOrder?.order);
+    poseMirrorGameStartEvent(newOrder?.order);
+    // console.log("shuffleSolutionOrder running");
+    // setSolutionOrder((prevOrder) => {
+    //   console.log("setSolutionOrder running");
+    //   const newSolutionOrder = [...prevOrder];
+    //   let currentIndex = newSolutionOrder.length;
 
-      while (currentIndex !== 0) {
-        let randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
+    //   while (currentIndex !== 0) {
+    //     let randomIndex = Math.floor(Math.random() * currentIndex);
+    //     currentIndex--;
 
-        [newSolutionOrder[currentIndex], newSolutionOrder[randomIndex]] = [
-          newSolutionOrder[randomIndex],
-          newSolutionOrder[currentIndex],
-        ];
-      }
+    //     [newSolutionOrder[currentIndex], newSolutionOrder[randomIndex]] = [
+    //       newSolutionOrder[randomIndex],
+    //       newSolutionOrder[currentIndex],
+    //     ];
+    //   }
 
-      console.log("newSolutionOrder", newSolutionOrder);
+    //   console.log("newSolutionOrder", newSolutionOrder);
 
-      poseMirrorGameStartEvent(newSolutionOrder);
+    // poseMirrorGameStartEvent(newSolutionOrder);
 
-      return newSolutionOrder;
-    });
+    //   return newSolutionOrder;
+    // });
   }
 
   async function poseMirrorGameStartEvent(shuffledOrder: string[]) {
@@ -133,6 +125,9 @@ export default function MirrorPoseHooks() {
     console.log(coloredBoxes);
 
     if (over) {
+      console.log(solutionOrder);
+      console.log("current Solution", solutionOrder[currentPoseContainer]);
+      console.log("next solution", solutionOrder[currentPoseContainer + 1]);
       if (
         // If user places the wrong pose in the wrong order reset game
         active.id !== solutionOrder[currentPoseContainer] &&
@@ -225,11 +220,12 @@ export default function MirrorPoseHooks() {
   }
 
   function handleMouseLeave(playerId) {
-    // If player does not "hold" pose then the game will
+    // If player does not "hold" pose until it's their turn then the game will reset
     console.log(playerStates);
-    if (playerStates[playerId].state === true) {
+    if (playerStates[playerId].state) {
       console.log("reset game");
       handleResetGame();
+      window.location.reload();
     }
   }
 
@@ -238,5 +234,6 @@ export default function MirrorPoseHooks() {
     handleMouseLeave,
     gameStart,
     solutionOrder,
+    handleResetGame,
   };
 }

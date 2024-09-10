@@ -2,30 +2,18 @@
 import { useAtom } from "jotai";
 import Pusher from "pusher-js";
 import { useEffect, useRef, useState } from "react";
-import { coordinatesAtom } from "../../atoms/globalState";
+import { coordinatesAtom, solutionOrderAtom } from "../../atoms/globalState";
 import { changeHeadCoordiantes } from "../actions";
+import { initalImageArray } from "../const";
 import BodyPartConnectors from "./body-part-connectors";
 import BodyPartDisplay from "./body-parts-display";
 import PoseOrder from "./pose-order";
 
 export default function SilentPose({ user, prismaCoordinates }) {
   const isFirstRender = useRef(true);
-
-  const [imageArray, setImageArray] = useState([
-    { letter: "M", image: "/Pose/Pose1.JPG", active: false, completed: false },
-    { letter: "N", image: "/Pose/Pose2.JPG", active: false, completed: false },
-    { letter: "O", image: "/Pose/Pose3.JPG", active: false, completed: false },
-    { letter: "P", image: "/Pose/Pose4.JPG", active: false, completed: false },
-    { letter: "Q", image: "/Pose/Pose5.JPG", active: false, completed: false },
-    { letter: "R", image: "/Pose/Pose6.JPG", active: false, completed: false },
-    { letter: "S", image: "/Pose/Pose7.JPG", active: false, completed: false },
-    { letter: "T", image: "/Pose/Pose8.JPG", active: false, completed: false },
-    { letter: "U", image: "/Pose/Pose9.JPG", active: false, completed: false },
-    { letter: "V", image: "/Pose/Pose10.JPG", active: false, completed: false },
-    { letter: "W", image: "/Pose/Pose11.JPG", active: false, completed: false },
-    { letter: "X", image: "/Pose/Pose12.JPG", active: false, completed: false },
-  ]);
-
+  const [imageArray, setImageArray] = useState(initalImageArray);
+  const [solutionOrder, setSolutionOrder] = useAtom(solutionOrderAtom);
+  const [solutionMap, setSolutionMap] = useState();
   const [coordinates, setCoordinates] = useAtom(coordinatesAtom);
   const poseContainerRef = useRef(null);
 
@@ -64,22 +52,32 @@ export default function SilentPose({ user, prismaCoordinates }) {
   }, []);
 
   function gameStart(solutionOrder) {
-    const solutionMap = solutionOrder.reduce((acc, letter, index) => {
-      acc[letter] = index;
-      return acc;
-    }, {});
+    console.log("gameStart:", solutionOrder)
+    setSolutionMap(() => {
+      const newSolutionMap = solutionOrder.reduce((acc, letter, index) => {
+        acc[letter] = index;
+        return acc;
+      }, {});
+
+      setImageArray((prevImageArray) => {
+        const sortedImageArray = [...prevImageArray].sort((a, b) => {
+          return newSolutionMap[a.letter] - newSolutionMap[b.letter];
+        });
+
+        return sortedImageArray.map((pose, i) => {
+          return i !== 0
+            ? { ...pose, active: false, completed: false }
+            : { ...pose, active: true, completed: false };
+        });
+      });
+      return newSolutionMap;
+    });
+    // const solutionMap = solutionOrder.reduce((acc, letter, index) => {
+    //   acc[letter] = index;
+    //   return acc;
+    // }, {});
 
     console.log(solutionMap);
-
-    setImageArray((prevImageArray) => {
-      const sortedImageArray = [...prevImageArray].sort((a, b) => {
-        return solutionMap[a.letter] - solutionMap[b.letter];
-      });
-
-      return sortedImageArray.map((pose, i) => {
-        return i !== 0 ? { ...pose, active: false } : { ...pose, active: true };
-      });
-    });
   }
 
   function advanceGame() {
@@ -136,7 +134,9 @@ export default function SilentPose({ user, prismaCoordinates }) {
   return (
     <div className="flex h-[calc(100%-48px)] flex-col items-center justify-evenly lg:flex-row">
       <PoseOrder imageArray={imageArray} />
+      <button onClick={() => console.log(solutionOrder)}>solutionOrder</button>
       <button onClick={() => testChange()}>test</button>
+      <button onClick={() => console.log(solutionMap)}>solutionMap</button>
       <div className="flex h-full w-[48%] items-center justify-center lg:h-[calc(100vh-60px)]">
         <div
           ref={poseContainerRef}

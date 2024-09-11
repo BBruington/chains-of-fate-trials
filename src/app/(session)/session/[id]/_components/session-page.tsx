@@ -24,12 +24,18 @@ import { usePuzzle, useSidebar, useDragEnd } from "../_hooks/hooks";
 import { puzzleTransitions } from "../_constants/puzzle-constants";
 import PedestalPuzzle from "./puzzles/four-pedestals";
 import FirePuzzle from "./puzzles/fire/fire-trial";
+import WaterPuzzle from "./puzzles/water/water-trial";
+import EarthPuzzle from "./puzzles/earth/earth-trial";
+import AirPuzzle from "./puzzles/air/air-trial";
 
 const puzzleComponents = {
   [PuzzleEnums.DOOR]: DoorPuzzle,
   [PuzzleEnums.SOUNDSTONES]: MemoryGame,
   [PuzzleEnums.PEDESTALS]: PedestalPuzzle,
   [PuzzleEnums.FIRE]: FirePuzzle,
+  [PuzzleEnums.WATER]: WaterPuzzle,
+  [PuzzleEnums.EARTH]: EarthPuzzle,
+  [PuzzleEnums.AIR]: AirPuzzle,
 };
 
 export default function SessionPage({

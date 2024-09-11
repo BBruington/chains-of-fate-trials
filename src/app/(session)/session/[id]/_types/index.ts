@@ -30,6 +30,9 @@ export enum PuzzleEnums {
   PEDESTALS = "PEDESTALS",
   SOUNDSTONES = "SOUNDSTONES",
   FIRE = "FIRE",
+  WATER = "WATER",
+  EARTH = "EARTH",
+  AIR = "AIR"
 }
 
 export interface PuzzleSideBarItem {

@@ -2,73 +2,51 @@
 import { useDroppable } from "@dnd-kit/core";
 import { Toggle } from "@/components/ui/toggle";
 import { PuzzleEnums } from "../../../_types/index";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
+import { runes } from "../../../_constants/puzzle-constants";
 
-const runes = [
-  {
-    label: "spark",
-    isActivated: false,
-  },
-  {
-    label: "flicker",
-    isActivated: false,
-  },
-  {
-    label: "flame",
-    isActivated: false,
-  },
-  {
-    label: "blaze",
-    isActivated: false,
-  },
-  {
-    label: "embers",
-    isActivated: false,
-  },
-  {
-    label: "ashes",
-    isActivated: false,
-  },
-];
 const correct = ["spark", "flicker", "flame", "blaze", "embers", "ashes"];
 
 export default function FirePuzzle() {
   const [runeState, setRuneState] = useState(runes);
-  const [solution, setSolution] = useState<string[]>([]);
+  const solutionRef = useRef<string[]>([]);
   const resetRunes = () => {
     setRuneState(
       runeState.map((rune) => {
         return { label: rune.label, isActivated: false };
       }),
     );
-    setSolution([])
-  }
-  const activateRune = (label: string) => {
-    setRuneState(
-      runeState.map((rune) => {
-        if (rune.label === label) {
-          return {
-            label,
-            isActivated: true,
-          };
-        }
-        return rune;
-      }),
-    );
-    solution.push(label)
-    console.log(solution)
-    if (solution.length === 6) {
-      for (let i = 0; i < 6; i++) {
-        if (solution[i] !== correct[i]) {
-          resetRunes()
-          console.log('FAILED')
-          return "YA WRONG KID";
-        }
-        console.log('GOOD JOB CHAMP')
-        return 'yippeeeee'
-      }
-    }
+    solutionRef.current = [];
   };
+  const activateRune = useCallback(
+    (label: string) => {
+      setRuneState(
+        runeState.map((rune) => {
+          if (rune.label === label) {
+            return {
+              label,
+              isActivated: true,
+            };
+          }
+          return rune;
+        }),
+      );
+      solutionRef.current.push(label);
+      console.log(solutionRef);
+      if (solutionRef.current.length === 6) {
+        for (let i = 0; i < 6; i++) {
+          if (solutionRef.current[i] !== correct[i]) {
+            resetRunes();
+            console.log("FAILED");
+            return "YA WRONG KID";
+          }
+        }
+        console.log("GOOD JOB CHAMP");
+        return "yippeeeee";
+      }
+    },
+    [runeState, solutionRef],
+  );
   const { setNodeRef } = useDroppable({
     id: PuzzleEnums.FIRE,
   });

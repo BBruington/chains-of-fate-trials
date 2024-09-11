@@ -55,6 +55,27 @@ export const puzzleTransitions = [
     ],
     label: "The Trial of Fire",
   },
+  {
+    name: PuzzleEnums.WATER,
+    label: "The Trial of Water",
+    description: [
+      { isHighlighted: false, message: "this is the water description" },
+    ],
+  },
+  {
+    name: PuzzleEnums.EARTH,
+    label: "The Trial of Earth",
+    description: [
+      { isHighlighted: false, message: "this is the earth description" },
+    ],
+  },
+  {
+    name: PuzzleEnums.AIR,
+    label: "The Trial of Air",
+    description: [
+      { isHighlighted: false, message: "this is the air description" },
+    ],
+  },
 ];
 
 export const pedastals = [
@@ -62,4 +83,31 @@ export const pedastals = [
   { id: "WATERGEM", isActivated: false },
   { id: "EARTHGEM", isActivated: false },
   { id: "AIRGEM", isActivated: false },
+];
+
+export const runes = [
+  {
+    label: "spark",
+    isActivated: false,
+  },
+  {
+    label: "flicker",
+    isActivated: false,
+  },
+  {
+    label: "flame",
+    isActivated: false,
+  },
+  {
+    label: "blaze",
+    isActivated: false,
+  },
+  {
+    label: "embers",
+    isActivated: false,
+  },
+  {
+    label: "ashes",
+    isActivated: false,
+  },
 ];

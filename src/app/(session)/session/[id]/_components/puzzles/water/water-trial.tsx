@@ -51,50 +51,89 @@ const pipesForState = pipesExample.map((pipe) => allPipes[pipe]);
 export default function WaterPuzzle() {
   const [pipesState, setPipesState] = useState(pipesForState);
 
-  const isInvalidEdge = (pipe: PipeType, direction: string) => {
-    if (pipe.connects[direction as keyof ConnectKeys] === true) return true;
+  const isInvalidEdge = (pipe: PipeType, directions: string[]) => {
+    for (let direction of directions) {
+      if (pipe.connects[direction as keyof ConnectKeys] === true) return true;
+    }
     return false;
   };
   const resetPipes = (pipes: PipeType[]) => {
-    const pipesRef = pipes.map(pipe => {
+    const pipesRef = pipes.map((pipe) => {
       return {
         ...pipe,
-        isValid: null
-      }
-    })
-    setPipesState(pipesRef)
-  }
+        isValid: null,
+      };
+    });
+    setPipesState(pipesRef);
+  };
+
+  type CheckSideprops = {
+    index: number;
+    sides: ConnectKeys[];
+  };
+  const mapLength = 3;
+
+  const isInvalidSides = ({ index, sides }: CheckSideprops): boolean => {
+    const sideChecker = {
+      left: index - 1,
+      right: index + 1,
+      up: index - mapLength,
+      down: index + mapLength,
+    };
+    const oppositeSide = {
+      left: "right",
+      right: "left",
+      up: "down",
+      down: "up",
+    };
+    for (let side of sides) {
+      const comparedIndex = sideChecker[side];
+      const comparedSide = oppositeSide[side];
+      if (pipesState[comparedIndex].connects[comparedSide] !== true)
+        return true;
+    }
+    return false;
+  };
+
+  type FindSidesAndEdgesReturn = {
+    edges: ConnectKeys[];
+    sides: ConnectKeys[];
+  };
+
+  const findSidesAndEdges = (i: number): FindSidesAndEdgesReturn => {
+    const sidesRef: ConnectKeys[] = ["up", "left", "right", "down"];
+    const edges = [];
+    const sides = [];
+    if (i < mapLength) edges.push("up");
+    if (i % mapLength === 0) edges.push("left");
+    if (i % mapLength === mapLength - 1) edges.push("right");
+    if (pipesState.length - i <= mapLength) edges.push("down");
+    for (let side of sidesRef) {
+      if (
+        pipesState[i].connects[side] === true &&
+        !edges.find((item) => item === side)
+      )
+        sides.push(side);
+    }
+    return { edges, sides };
+  };
 
   const findSolution = (pipes: PipeType[]) => {
-    const mapLength = 3;
     let pipesRef = pipes;
     for (let i = 0; i < pipes.length; i++) {
-      if (i < mapLength && i !== 0) {
-        if (isInvalidEdge(pipes[i], "up")) {
-          pipesRef[i].isValid = false;
-          continue;
-        }
+      const { sides, edges } = findSidesAndEdges(i);
+      // console.log(i, sides, edges)
+      // console.log(i, isInvalidEdge(pipes[i], edges), isInvalidSides({index: i, sides}))
+      if (
+        isInvalidEdge(pipes[i], edges) ||
+        isInvalidSides({ index: i, sides })
+      ) {
+        pipesRef[i].isValid = false;
+        continue;
       }
-      if (i % mapLength === 0) {
-        if (isInvalidEdge(pipes[i], "left")) {
-          pipesRef[i].isValid = false;
-          continue;
-        }
-      }
-      if (i % mapLength === mapLength - 1)
-        if (isInvalidEdge(pipes[i], "right")) {
-          pipesRef[i].isValid = false;
-          continue;
-        }
-      if (pipes.length - i <= mapLength)
-        if (isInvalidEdge(pipes[i], "down")) {
-          pipesRef[i].isValid = false;
-          continue;
-        }
-
       pipesRef[i].isValid = true;
     }
-    setPipesState(pipesRef.map(pipe => pipe))
+    setPipesState(pipesRef.map((pipe) => pipe));
   };
 
   const rotatePipe = (pipe: PipeType, index: number): PipeType | undefined => {
@@ -128,11 +167,16 @@ export default function WaterPuzzle() {
     <div>
       <button onClick={() => findSolution(pipesState)}>check</button>
       <button onClick={() => resetPipes(pipesState)}>reset</button>
+      <button onClick={() => findSidesAndEdges(6)}>test</button>
       <div className="grid grid-cols-3 gap-4 p-6">
         {pipesState.map((pipe, index) => (
           <div
             key={index}
-            className={cn("pipe-section realative flex h-20 w-20 cursor-pointer items-center justify-center border-4 border-blue-500 bg-blue-300 transition-transform duration-500", pipe.isValid === false && "bg-red-500", pipe.isValid === true && "bg-green-500")}
+            className={cn(
+              "pipe-section realative flex h-20 w-20 cursor-pointer items-center justify-center border-4 border-blue-500 bg-blue-300 transition-transform duration-500",
+              pipe.isValid === false && "bg-red-500",
+              pipe.isValid === true && "bg-green-500",
+            )}
           >
             <Pipe pipe={pipe} index={index} rotatePipe={rotatePipe} />
           </div>

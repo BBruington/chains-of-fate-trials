@@ -13,7 +13,7 @@ import {
 export type DescriptionOpject = {
   message: string;
   isHighlighted: boolean;
-}
+};
 
 export type SessionPageProps = {
   sessionId: string;
@@ -32,7 +32,7 @@ export enum PuzzleEnums {
   FIRE = "FIRE",
   WATER = "WATER",
   EARTH = "EARTH",
-  AIR = "AIR"
+  AIR = "AIR",
 }
 
 export interface PuzzleSideBarItem {
@@ -92,7 +92,7 @@ type SetAtom<Args extends any[], Result> = (...args: Args) => Result;
 export type UseDragEndProps = {
   setPuzzle: Dispatch<SetStateAction<PuzzleEnums>>;
   inventoryItemsState: InventoryItemProps[];
-  setInventoryItems: SetAtom<[SetStateAction<InventoryItemProps[]>], void>
+  setInventoryItems: SetAtom<[SetStateAction<InventoryItemProps[]>], void>;
   pedestalState: {
     id: string;
     isActivated: boolean;
@@ -108,4 +108,35 @@ export type UseDragEndProps = {
     ],
     void
   >;
+};
+
+export type ConnectKeys = "up" | "right" | "down" | "left";
+
+export type PipeType = {
+  name: string;
+  isValid: boolean | null;
+  connects: { up: boolean; right: boolean; down: boolean; left: boolean };
+};
+
+export type CheckSideprops = {
+  index: number;
+  sides: ConnectKeys[];
+};
+
+export type FindSidesAndEdgesReturn = {
+  edges: ConnectKeys[];
+  sides: ConnectKeys[];
+};
+
+export type PipeProps = {
+  pipe: PipeType;
+  index: number;
+  rotatePipe: (pipe: PipeType, index: number) => PipeType | undefined;
+};
+
+export type OppositeSideType = {
+  left: "right";
+  right: "left";
+  up: "down";
+  down: "up";
 };

@@ -8,14 +8,12 @@ import { cn } from "@/lib/utils";
 const SOLUTION = ["A4", "A4", "C2", "C2", "A4"];
 
 const STONE_POSITIONS = [
-  { className: "top-0 left-1/2 -translate-x-1/2", stone: "A4" },
-  { className: "top-1/4 left-full -translate-x-1/2", stone: "C2" },
-  { className: "top-1/2 left-full -translate-x-1/2" },
-  { className: "top-3/4 left-full -translate-x-1/2" },
-  { className: "bottom-0 left-1/2 -translate-x-1/2" },
-  { className: "top-3/4 right-full translate-x-1/2" },
-  { className: "top-1/2 right-full translate-x-1/2" },
-  { className: "top-1/4 right-full translate-x-1/2" },
+  { className: "top-0 left-1/2 -translate-x-1/2", stone: "a4" },
+  { className: "top-1/4 left-full -translate-x-1/2", stone: "c4" },
+  { className: "top-3/4 left-full -translate-x-1/2", stone: "d4" },
+  { className: "bottom-0 left-1/2 -translate-x-1/2", stone: "e4" },
+  { className: "top-3/4 right-full translate-x-1/2", stone: "f4" },
+  { className: "top-1/4 right-full translate-x-1/2", stone: "g4" },
 ];
 
 export default function MemoryGame() {
@@ -39,11 +37,13 @@ export default function MemoryGame() {
     }
   };
   const touchStone = (stone: string) => {
-    const audio = new Audio(`/audio/GrandPiano-${stone}-mf.wav`);
-    audio.play();
+    const audio = new Audio(`/audio/flute-${stone}.wav`);
+    audio.currentTime+=4
+    audio.volume-=.5
+    audio.play(); 
     setTimeout(() => {
       audio.pause();
-    }, 2000);
+    }, 1500);
     checkSolution(stone);
   };
 

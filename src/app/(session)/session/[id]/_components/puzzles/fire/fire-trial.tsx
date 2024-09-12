@@ -6,14 +6,13 @@ import { useState, useRef, useCallback } from "react";
 import { runes } from "../../../_constants/puzzle-constants";
 
 const correct = ["spark", "flicker", "flame", "blaze", "embers", "ashes"];
-
 export default function FirePuzzle() {
   const [runeState, setRuneState] = useState(runes);
   const solutionRef = useRef<string[]>([]);
   const resetRunes = () => {
     setRuneState(
       runeState.map((rune) => {
-        return { label: rune.label, isActivated: false };
+        return { label: rune.label, symbol: rune.symbol, isActivated: false };
       }),
     );
     solutionRef.current = [];
@@ -25,6 +24,7 @@ export default function FirePuzzle() {
           if (rune.label === label) {
             return {
               label,
+              symbol: rune.symbol,
               isActivated: true,
             };
           }
@@ -51,7 +51,10 @@ export default function FirePuzzle() {
     id: PuzzleEnums.FIRE,
   });
   return (
-    <div ref={setNodeRef} className="ml-5 mt-10 h-full w-full">
+    <div
+      ref={setNodeRef}
+      className={`ml-10 mt-20 grid h-full w-full grid-cols-3`}
+    >
       {runeState.map((rune) => (
         <Rune key={rune.label} activateRune={activateRune} rune={rune} />
       ))}
@@ -61,6 +64,7 @@ export default function FirePuzzle() {
 type Rune = {
   label: string;
   isActivated: boolean;
+  symbol: string;
 };
 type RuneProps = {
   activateRune: (label: string) => void;
@@ -72,9 +76,11 @@ function Rune({ rune, activateRune }: RuneProps) {
       onClick={() => activateRune(rune.label)}
       disabled={rune.isActivated}
       pressed={rune.isActivated}
-      className="mx-10 flex h-24 w-24 cursor-pointer items-center justify-center rounded-full p-6 text-2xl font-semibold text-blue-400 shadow-lg shadow-blue-400 transition-transform duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:text-orange-300 hover:shadow-orange-300 data-[state=on]:bg-red-700 data-[state=on]:text-orange-500 data-[state=on]:shadow-orange-500"
+      className={
+        "mx-10 flex h-48 w-48 cursor-pointer items-center justify-center rounded-full bg-slate-500 p-6 text-2xl font-semibold text-blue-400 shadow-lg shadow-blue-400 transition-transform duration-500 ease-in-out hover:scale-110 hover:animate-pulse hover:text-orange-300 hover:shadow-orange-300 data-[state=on]:bg-red-700 data-[state=on]:text-orange-500 data-[state=on]:shadow-orange-500"
+      }
     >
-      {rune.label}
+      <span style={{ fontSize: 120 }}>{rune.symbol}</span>
     </Toggle>
   );
 }

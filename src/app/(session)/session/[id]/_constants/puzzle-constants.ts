@@ -1,3 +1,4 @@
+import { symbol } from "zod";
 import { PuzzleEnums } from "../_types";
 
 export const puzzleTransitions = [
@@ -87,26 +88,32 @@ export const pedastals = [
 
 export const runes = [
   {
+    symbol: "𑢶",
     label: "spark",
     isActivated: false,
   },
   {
+    symbol: "𑢾",
     label: "flicker",
     isActivated: false,
   },
   {
+    symbol: "𑣓",
     label: "flame",
     isActivated: false,
   },
   {
+    symbol: "𑣜",
     label: "blaze",
     isActivated: false,
   },
   {
+    symbol: "𑣢",
     label: "embers",
     isActivated: false,
   },
   {
+    symbol: "𑣚",
     label: "ashes",
     isActivated: false,
   },

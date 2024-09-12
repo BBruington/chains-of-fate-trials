@@ -43,7 +43,7 @@ export default function DraggableInvItem({
       <div
         className={cn(
           "relative flex h-full w-full justify-center",
-          isDragging && "z-20",
+          isDragging && "z-20", item.hidden && "hidden"
         )}
       >
         <HoverCard openDelay={1200}>

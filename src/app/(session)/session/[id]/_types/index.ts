@@ -56,6 +56,9 @@ export enum InventoryItemEnums {
   EARTHGEM = "EARTHGEM",
   AIRGEM = "AIRGEM",
   WATERGEM = "WATERGEM",
+  ADAMANT = "ADAMANT",
+  COLDIRON = "COLDIRON",
+  MITHRIL = "MITHRIL",
 }
 export type ItemNames =
   | "DOORKEY"
@@ -71,6 +74,7 @@ export type InventoryItemProps = {
 
 type ItemProps = {
   name: InventoryItemEnums;
+  hidden: boolean;
   image?: StaticImageData;
 };
 

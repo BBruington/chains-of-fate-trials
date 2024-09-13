@@ -7,6 +7,23 @@ import {
   UseDragEndProps,
 } from "../_types";
 import { DragEndEvent } from "@dnd-kit/core";
+import { useAtom } from "jotai";
+import { inventoryItems } from "../jotaiAtoms";
+
+export const revealInventoryItem = (itemName: string) => {
+  const [inventory, setInventory] = useAtom(inventoryItems);
+  setInventory(
+    inventory.map((item) => {
+      if (item.name.toUpperCase() === itemName.toUpperCase()) {
+        return {
+          ...item,
+          hidden: false,
+        };
+      }
+      return item;
+    }),
+  );
+};
 
 export const useSidebar = () => {
   const [sideBar, setSidebar] = useState<SideBarEnums>(SideBarEnums.CHAT);
@@ -42,12 +59,12 @@ export const useDragEnd = ({
             console.log("the scroll shines revealing a secret note");
             setInventoryItems(
               inventoryItemsState.map((item) => {
-                if (item.name === InventoryItemEnums.SCROLL){
+                if (item.name === InventoryItemEnums.SCROLL) {
                   return {
                     name: InventoryItemEnums.MAGICSCROLL,
-                    image: item.image
-                  }
-                } 
+                    image: item.image,
+                  };
+                }
                 return item;
               }),
             );
@@ -74,13 +91,22 @@ export const useDragEnd = ({
           }
         },
         [PuzzleEnums.FIRE]: () => {
-          console.log("hehexd")
-          return "hehexd"
-        }
+          console.log("hehexd");
+          return "hehexd";
+        },
+        [PuzzleEnums.AIR]: () => {},
+        [PuzzleEnums.WATER]: () => {},
+        [PuzzleEnums.EARTH]: () => {},
       };
 
       actions[over.id as PuzzleEnums]();
     },
-    [setPuzzle, setInventoryItems, setPedestalState, inventoryItemsState, pedestalState],
+    [
+      setPuzzle,
+      setInventoryItems,
+      setPedestalState,
+      inventoryItemsState,
+      pedestalState,
+    ],
   );
 };

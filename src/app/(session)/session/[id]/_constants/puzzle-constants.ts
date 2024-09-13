@@ -1,12 +1,6 @@
-import { symbol } from "zod";
 import { PuzzleEnums } from "../_types";
 
 export const puzzleTransitions = [
-  {
-    name: PuzzleEnums.SOUNDSTONES,
-    description: [{ message: "STONE DESCRIPTION", isHighlighted: false }],
-    label: "The Stones",
-  },
   {
     name: PuzzleEnums.DOOR,
     description: [{ message: "DOOR DESCRIPTION", isHighlighted: false }],
@@ -30,27 +24,27 @@ export const puzzleTransitions = [
         isHighlighted: false,
       },
       {
-        message: `"From ashes cold, the spark is born, `,
+        message: `From ashes born, the flames arise,`,
         isHighlighted: true,
       },
       {
-        message: "A flicker weak, yet fate is sworn. ",
+        message: "Wings of ember, cut through the skies.",
         isHighlighted: true,
       },
       {
-        message: `The flame then grows, with fierce desire,`,
+        message: `With every fall, a brighter flare,`,
         isHighlighted: true,
       },
       {
-        message: `To blaze anew, a bird of fire.`,
+        message: `In death, rebirth beyond despair.`,
         isHighlighted: true,
       },
       {
-        message: `But all must wane, as embers glow,`,
+        message: `Eternal fire, the endless blaze,`,
         isHighlighted: true,
       },
       {
-        message: `And rise again, from ashes low."`,
+        message: `A life renewed in dawn’s warm rays.`,
         isHighlighted: true,
       },
     ],
@@ -89,32 +83,32 @@ export const pedastals = [
 export const runes = [
   {
     symbol: "𑢶",
-    label: "spark",
+    label: "birth",
     isActivated: false,
   },
   {
     symbol: "𑢾",
-    label: "flicker",
+    label: "flight",
     isActivated: false,
   },
   {
     symbol: "𑣓",
-    label: "flame",
+    label: "hope",
     isActivated: false,
   },
   {
     symbol: "𑣜",
-    label: "blaze",
+    label: "decay",
     isActivated: false,
   },
   {
     symbol: "𑣢",
-    label: "embers",
+    label: "perseverance",
     isActivated: false,
   },
   {
     symbol: "𑣚",
-    label: "ashes",
+    label: "rebirth",
     isActivated: false,
   },
 ];

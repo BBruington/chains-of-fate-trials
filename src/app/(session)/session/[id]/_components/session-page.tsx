@@ -16,7 +16,6 @@ import Description from "./sidebar/description";
 import { useAtom } from "jotai";
 import { puzzleDescription, inventoryItems, pedestals } from "../jotaiAtoms";
 import Messages from "./sidebar/messages";
-import MemoryGame from "./puzzles/memory-game";
 import DoorPuzzle from "./puzzles/door-puzzle";
 import { sidebarNavItems } from "../_constants/sidebar-nav-constants";
 import { cn } from "@/lib/utils";
@@ -30,7 +29,6 @@ import AirPuzzle from "./puzzles/air/air-trial";
 
 const puzzleComponents = {
   [PuzzleEnums.DOOR]: DoorPuzzle,
-  [PuzzleEnums.SOUNDSTONES]: MemoryGame,
   [PuzzleEnums.PEDESTALS]: PedestalPuzzle,
   [PuzzleEnums.FIRE]: FirePuzzle,
   [PuzzleEnums.WATER]: WaterPuzzle,

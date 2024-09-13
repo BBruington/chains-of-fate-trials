@@ -28,7 +28,6 @@ export enum SideBarEnums {
 export enum PuzzleEnums {
   DOOR = "DOOR",
   PEDESTALS = "PEDESTALS",
-  SOUNDSTONES = "SOUNDSTONES",
   FIRE = "FIRE",
   WATER = "WATER",
   EARTH = "EARTH",
@@ -143,4 +142,13 @@ export type OppositeSideType = {
   right: "left";
   up: "down";
   down: "up";
+};
+
+export type MetalType = {
+  name: string;
+  rarity: string;
+  hiddenValue: string | undefined;
+  hardness: number;
+  magicAffinity: number;
+  purity: number;
 };

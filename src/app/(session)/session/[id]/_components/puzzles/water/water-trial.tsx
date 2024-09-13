@@ -1,23 +1,23 @@
 "use client";
-import { useState } from "react";
+import { useEffect } from "react";
 import { cn } from "@/lib/utils";
-import {
-  PipeProps,
-} from "../../../_types";
-import {
-  allPipes,
-  pipesExample,
-} from "../../../_constants/water-constants";
+import { PipeProps } from "../../../_types";
 import useWaterPuzzle from "./useWaterPuzzle";
 import { useAtom } from "jotai";
 import { waterPipes } from "../../../jotaiAtoms";
 
-
-
 export default function WaterPuzzle() {
   const [pipesState, setPipesState] = useAtom(waterPipes);
 
-  const {findSolution, resetPipes, rotatePipe} = useWaterPuzzle({ pipesState, setPipesState });
+  const { findSolution, resetPipes, rotatePipe } = useWaterPuzzle({
+    pipesState,
+    setPipesState,
+  });
+
+  useEffect(() => {
+    //debuggs findSolution button
+    resetPipes(pipesState);
+  }, []);
 
   return (
     <div>
@@ -29,8 +29,8 @@ export default function WaterPuzzle() {
             key={index}
             className={cn(
               "pipe-section realative flex h-20 w-20 cursor-pointer items-center justify-center border-4 border-blue-500 bg-blue-300 transition-transform duration-500",
-              pipe.isValid === false && "bg-red-500",
-              pipe.isValid === true && "bg-green-500",
+              pipe.isValid === false && "bg-blue-400",
+              pipe.isValid === true && "animate-pulse",
             )}
           >
             <Pipe pipe={pipe} index={index} rotatePipe={rotatePipe} />

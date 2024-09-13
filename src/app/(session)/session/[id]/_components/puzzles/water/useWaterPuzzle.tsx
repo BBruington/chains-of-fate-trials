@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, SetStateAction, useCallback } from "react";
+import { Dispatch, SetStateAction, useCallback, useRef } from "react";
 import { mapLength } from "../../../_constants/water-constants";
 import {
   PipeType,
@@ -8,6 +8,8 @@ import {
   FindSidesAndEdgesReturn,
   OppositeSideType,
 } from "../../../_types";
+import { inventoryItems } from "../../../jotaiAtoms";
+import { useAtom } from "jotai";
 
 type UseWaterPuzzleProps = {
   pipesState: PipeType[];
@@ -18,6 +20,8 @@ export default function useWaterPuzzle({
   pipesState,
   setPipesState,
 }: UseWaterPuzzleProps) {
+  const [inventory, setInventory] = useAtom(inventoryItems);
+
   const isInvalidEdge = (pipe: PipeType, directions: ConnectKeys[]) => {
     for (let direction of directions) {
       if (pipe.connects[direction] === true) return true;
@@ -75,21 +79,39 @@ export default function useWaterPuzzle({
     return { edges, sides };
   };
 
-  const findSolution = useCallback((pipes: PipeType[]) => {
-    let pipesRef = pipes;
-    for (let i = 0; i < pipes.length; i++) {
-      const { sides, edges } = findSidesAndEdges(i);
-      if (
-        isInvalidEdge(pipes[i], edges) ||
-        isInvalidSide({ index: i, sides })
-      ) {
-        pipesRef[i].isValid = false;
-        continue;
+  const findSolution = useCallback(
+    (pipes: PipeType[]) => {
+      let isSolved = true;
+      let pipesRef = pipes;
+      for (let i = 0; i < pipes.length; i++) {
+        const { sides, edges } = findSidesAndEdges(i);
+        if (
+          isInvalidEdge(pipes[i], edges) ||
+          isInvalidSide({ index: i, sides })
+        ) {
+          isSolved = false;
+          pipesRef[i].isValid = false;
+          continue;
+        }
+        pipesRef[i].isValid = true;
       }
-      pipesRef[i].isValid = true;
-    }
-    setPipesState(pipesRef.map((pipe) => pipe));
-  }, [pipesState, setPipesState])
+      setPipesState(pipesRef.map((pipe) => pipe));
+      if (isSolved === true) {
+        setInventory(
+          inventory.map((item) => {
+            if (item.name.toUpperCase() === "WATERGEM") {
+              return {
+                ...item,
+                hidden: false,
+              };
+            }
+            return item;
+          }),
+        );
+      }
+    },
+    [pipesState, setPipesState],
+  );
 
   const rotatePipe = (pipe: PipeType, index: number): PipeType | undefined => {
     if (pipe.name === "four") return;

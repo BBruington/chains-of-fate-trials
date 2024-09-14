@@ -48,29 +48,29 @@ export const useDragEnd = ({
       const actions = {
         [PuzzleEnums.DOOR]: () => {
           if (active.id === "DOORKEY") {
-            setPuzzle(PuzzleEnums.SOUNDSTONES);
+            setPuzzle(PuzzleEnums.PEDESTALS);
             console.log("you make it through the door");
           } else {
             console.log("that doesnt do anything");
           }
         },
-        [PuzzleEnums.SOUNDSTONES]: () => {
-          if (active.id === "SCROLL") {
-            console.log("the scroll shines revealing a secret note");
-            setInventoryItems(
-              inventoryItemsState.map((item) => {
-                if (item.name === InventoryItemEnums.SCROLL) {
-                  return {
-                    name: InventoryItemEnums.MAGICSCROLL,
-                    image: item.image,
-                  };
-                }
-                return item;
-              }),
-            );
-          }
-          console.log("you make it to the stones");
-        },
+        // [PuzzleEnums.SOUNDSTONES]: () => {
+        //   if (active.id === "SCROLL") {
+        //     console.log("the scroll shines revealing a secret note");
+        //     setInventoryItems(
+        //       inventoryItemsState.map((item) => {
+        //         if (item.name === InventoryItemEnums.SCROLL) {
+        //           return {
+        //             name: InventoryItemEnums.MAGICSCROLL,
+        //             image: item.image,
+        //           };
+        //         }
+        //         return item;
+        //       }),
+        //     );
+        //   }
+        //   console.log("you make it to the stones");
+        // },
         [PuzzleEnums.PEDESTALS]: () => {
           const correctItems = ["FIREGEM", "WATERGEM", "EARTHGEM", "AIRGEM"];
           if (correctItems.find((item) => item === active.id)) {

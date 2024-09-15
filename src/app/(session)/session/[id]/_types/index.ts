@@ -68,19 +68,18 @@ export type ItemNames =
   | "WATERGEM";
 export type InventoryItemProps = {
   name: InventoryItemEnums;
+  label?: string;
+  description?: string;
+  hidden: boolean
   image?: StaticImageData;
 };
 
-type ItemProps = {
-  name: InventoryItemEnums;
-  hidden: boolean;
-  image?: StaticImageData;
-};
+
 
 export type DraggableProps = {
   id: UniqueIdentifier;
   children?: string | React.JSX.Element;
-  item: ItemProps;
+  item: InventoryItemProps;
   className?: string | undefined;
   disabled?: boolean;
 };
@@ -91,7 +90,7 @@ export interface MessagesProps {
   username: string;
 }
 
-type SetAtom<Args extends any[], Result> = (...args: Args) => Result;
+export type SetAtom<Args extends any[], Result> = (...args: Args) => Result;
 export type UseDragEndProps = {
   setPuzzle: Dispatch<SetStateAction<PuzzleEnums>>;
   inventoryItemsState: InventoryItemProps[];
@@ -151,4 +150,19 @@ export type MetalType = {
   hardness: number;
   magicAffinity: number;
   purity: number;
+};
+
+export type GridPiece = {
+  name: string;
+  validMove: boolean;
+};
+
+type Rune = {
+  label: string;
+  isActivated: boolean;
+  symbol: string;
+};
+export type RuneProps = {
+  activateRune: (label: string) => void;
+  rune: Rune;
 };

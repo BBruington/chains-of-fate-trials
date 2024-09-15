@@ -1,14 +1,12 @@
 "use client";
 import Inventory from "./sidebar/inventory";
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import { useState, useCallback } from "react";
+import { DndContext } from "@dnd-kit/core";
+import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   SessionPageProps,
   SideBarEnums,
   PuzzleEnums,
-  PuzzleSideBarItem,
-  InventoryItemEnums,
   DescriptionOpject,
 } from "../_types";
 import SidebarNavItem from "./sidebar/sidebar-nav-item";
@@ -17,15 +15,14 @@ import { useAtom } from "jotai";
 import { puzzleDescription, inventoryItems, pedestals } from "../jotaiAtoms";
 import Messages from "./sidebar/messages";
 import DoorPuzzle from "./puzzles/door-puzzle";
-import { sidebarNavItems } from "../_constants/sidebar-nav-constants";
 import { cn } from "@/lib/utils";
 import { usePuzzle, useSidebar, useDragEnd } from "../_hooks/hooks";
-import { puzzleTransitions } from "../_constants/puzzle-constants";
 import PedestalPuzzle from "./puzzles/four-pedestals";
 import FirePuzzle from "./puzzles/fire/fire-trial";
 import WaterPuzzle from "./puzzles/water/water-trial";
 import EarthPuzzle from "./puzzles/earth/earth-trial";
 import AirPuzzle from "./puzzles/air/air-trial";
+import { puzzleTransitions, sidebarNavItems } from "../_constants";
 
 const puzzleComponents = {
   [PuzzleEnums.DOOR]: DoorPuzzle,

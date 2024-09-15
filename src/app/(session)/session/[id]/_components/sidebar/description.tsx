@@ -2,10 +2,18 @@
 import { useAtom } from "jotai";
 import { puzzleDescription } from "../../jotaiAtoms";
 import { cn } from "@/lib/utils";
+import {  Cinzel } from "next/font/google";
+
+const fontHeader = Cinzel({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
 export default function Description() {
   const [description, setDesc] = useAtom(puzzleDescription);
+
   return (
-    <div>
+    <div className={cn(fontHeader.className, "h-full overflow-y-auto")}>
       {description.map((message, index) => (
         <div
           className={cn(

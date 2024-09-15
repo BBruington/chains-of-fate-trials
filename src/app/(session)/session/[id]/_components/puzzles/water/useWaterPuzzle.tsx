@@ -1,15 +1,17 @@
 "use client";
 import { Dispatch, SetStateAction, useCallback, useRef } from "react";
-import { mapLength } from "../../../_constants/water-constants";
 import {
   PipeType,
   ConnectKeys,
   CheckSideprops,
   FindSidesAndEdgesReturn,
   OppositeSideType,
+  InventoryItemEnums,
 } from "../../../_types";
 import { inventoryItems } from "../../../jotaiAtoms";
 import { useAtom } from "jotai";
+import { mapLength } from "../../../_constants";
+import { revealInventoryItem } from "../../../_hooks/hooks";
 
 type UseWaterPuzzleProps = {
   pipesState: PipeType[];
@@ -97,17 +99,7 @@ export default function useWaterPuzzle({
       }
       setPipesState(pipesRef.map((pipe) => pipe));
       if (isSolved === true) {
-        setInventory(
-          inventory.map((item) => {
-            if (item.name.toUpperCase() === "WATERGEM") {
-              return {
-                ...item,
-                hidden: false,
-              };
-            }
-            return item;
-          }),
-        );
+        revealInventoryItem(InventoryItemEnums.WATERGEM, inventory, setInventory);
       }
     },
     [pipesState, setPipesState],

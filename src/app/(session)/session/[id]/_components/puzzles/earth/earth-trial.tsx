@@ -2,17 +2,13 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
-import {
-  allMetals,
-  RARE_METALS,
-  EMPTY_METAL_MIXTURE,
-} from "@/app/(session)/session/[id]/_constants/earth-constants";
 import { MetalType, PuzzleEnums } from "@/app/(session)/session/[id]/_types";
 import useEarthPuzzle from "./useEarthPuzzle";
 import MetalListItem from "./metal-list-item";
 import Cheatsheet from "./cheat-sheet";
 import { useAtom } from "jotai";
 import { rareMetals } from "../../../jotaiAtoms";
+import { EMPTY_METAL_MIXTURE, ALL_METALS } from "../../../_constants";
 
 export default function EarthPuzzle() {
   const [rareMetalsState, setRareMetalsState] = useAtom(rareMetals);
@@ -34,7 +30,7 @@ export default function EarthPuzzle() {
         <Cheatsheet />
       </div>
       <div className="grid grid-cols-5">
-        {Object.values(allMetals).map((metal, index) => (
+        {Object.values(ALL_METALS).map((metal, index) => (
           <div
             key={index}
             className={cn("h-32 w-44", metal.rarity === "rare" && "hidden")}
@@ -44,7 +40,7 @@ export default function EarthPuzzle() {
         ))}
       </div>
 
-      <div className="flex justify-center space-x-5 m-5">
+      <div className="m-5 flex justify-center space-x-5">
         {mixture.map((metal, index) => (
           <div
             key={index}
@@ -64,16 +60,12 @@ export default function EarthPuzzle() {
         <div className="space-y-2">
           <h2>Required Metals: </h2>
           {rareMetalsState.map((metal, index) => (
-            <div
-              className={cn(
-                "w-42 flex justify-between",
-              )}
-              key={index}
-            >
+            <div className={cn("w-42 flex justify-between")} key={index}>
               {metal.name}
-              <Button disabled={metal.hidden === true}
+              <Button
+                disabled={metal.hidden === true}
                 className="ml-4 h-6"
-                onClick={() => addMetal(metal.name as keyof typeof allMetals)}
+                onClick={() => addMetal(metal.name as keyof typeof ALL_METALS)}
               >
                 Add
               </Button>

@@ -67,7 +67,7 @@ export default function DraggableInvItem({
             )}
           </HoverCardTrigger>
           <HoverCardContent className="flex h-8 w-fit items-center">
-            {item.name}
+            {item.label ? item.label : item.name}
           </HoverCardContent>
         </HoverCard>
         <DialogTrigger

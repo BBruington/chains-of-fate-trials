@@ -9,7 +9,8 @@ export default function InventoryItemDetails({
   return (
     <div>
       <DialogContent>
-        <DialogTitle>{item.name}</DialogTitle>
+        <DialogTitle>{item.label ? item.label : item.name}</DialogTitle>
+        <p>{item.description ? item.description : ""}</p>
       </DialogContent>
     </div>
   );

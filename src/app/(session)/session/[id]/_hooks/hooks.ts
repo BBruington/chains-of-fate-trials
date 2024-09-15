@@ -1,17 +1,24 @@
 "use client";
-import { useCallback, useState } from "react";
+import { SetStateAction, useCallback, useState } from "react";
 import {
   InventoryItemEnums,
+  InventoryItemProps,
   PuzzleEnums,
+  SetAtom,
   SideBarEnums,
   UseDragEndProps,
 } from "../_types";
 import { DragEndEvent } from "@dnd-kit/core";
-import { useAtom } from "jotai";
-import { inventoryItems } from "../jotaiAtoms";
 
-export const revealInventoryItem = (itemName: string) => {
-  const [inventory, setInventory] = useAtom(inventoryItems);
+export const revealInventoryItem = (
+  itemName: InventoryItemEnums,
+  inventory: InventoryItemProps[],
+  setInventory: SetAtom<[SetStateAction<InventoryItemProps[]>], void>,
+) => {
+  console.log(
+    "check",
+    inventory[0].name.toUpperCase() === itemName.toUpperCase(),
+  );
   setInventory(
     inventory.map((item) => {
       if (item.name.toUpperCase() === itemName.toUpperCase()) {
@@ -26,7 +33,7 @@ export const revealInventoryItem = (itemName: string) => {
 };
 
 export const useSidebar = () => {
-  const [sideBar, setSidebar] = useState<SideBarEnums>(SideBarEnums.CHAT);
+  const [sideBar, setSidebar] = useState<SideBarEnums>(SideBarEnums.DESCRIPTION);
   return { sideBar, setSidebar };
 };
 export const usePuzzle = () => {

@@ -1,12 +1,10 @@
 "use client";
-import {
-  allMetals,
-  EMPTY_METAL_MIXTURE,
-} from "@/app/(session)/session/[id]/_constants/earth-constants";
 import { InventoryItemEnums, MetalType } from "../../../_types";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { useAtom } from "jotai";
 import { inventoryItems, rareMetals } from "../../../jotaiAtoms";
+import { ALL_METALS, EMPTY_METAL_MIXTURE } from "../../../_constants";
+import { revealInventoryItem } from "../../../_hooks/hooks";
 
 type UseEarthPuzzleProps = {
   mixture: MetalType[];
@@ -23,15 +21,14 @@ export default function useEarthPuzzle({
   const [rareMetalsState, setRareMetalsState] = useAtom(rareMetals);
 
   const addMetal = useCallback(
-    (newMetal: keyof typeof allMetals) => {
+    (newMetal: keyof typeof ALL_METALS) => {
       const emptyMixtureIndex = mixture.findIndex(
         (metal) => metal.name === "Empty",
       );
       if (emptyMixtureIndex === -1) return;
       const updatedMixture = mixture.map((otherMetals, index) => {
         if (index === emptyMixtureIndex) {
-          console.log(allMetals[newMetal]);
-          return allMetals[newMetal];
+          return ALL_METALS[newMetal];
         }
         return otherMetals;
       });
@@ -51,7 +48,7 @@ export default function useEarthPuzzle({
         purity: metalSum.purity + currentMetal.purity,
       };
     });
-    const foundMetal = Object.values(allMetals).find(
+    const foundMetal = Object.values(ALL_METALS).find(
       (metal) =>
         metal.hardness === metalAttributes.hardness &&
         metal.magicAffinity === metalAttributes.magicAffinity &&
@@ -63,7 +60,7 @@ export default function useEarthPuzzle({
       InventoryItemEnums.MITHRIL,
     ];
     if (foundMetal) {
-      setLastCrafted(`You Crafted ${foundMetal.name}!`);
+      setLastCrafted(`${foundMetal.name} Crafted!`);
     } else {
       setLastCrafted("Your Craft Failed!");
     }
@@ -84,17 +81,7 @@ export default function useEarthPuzzle({
     }
 
     if (foundMetal?.name === "earthgem") {
-      setInventory(
-        inventory.map((item) => {
-          if (item.name.toUpperCase() === foundMetal.name.toUpperCase()) {
-            return {
-              ...item,
-              hidden: false,
-            };
-          }
-          return item;
-        }),
-      );
+      revealInventoryItem(InventoryItemEnums.EARTHGEM, inventory, setInventory);
     }
     setMixture(EMPTY_METAL_MIXTURE);
   }, [setLastCrafted, mixture, setMixture]);

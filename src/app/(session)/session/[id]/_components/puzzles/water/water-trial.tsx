@@ -5,6 +5,7 @@ import { PipeProps } from "../../../_types";
 import useWaterPuzzle from "./useWaterPuzzle";
 import { useAtom } from "jotai";
 import { waterPipes } from "../../../jotaiAtoms";
+import { Button } from "@/components/ui/button";
 
 export default function WaterPuzzle() {
   const [pipesState, setPipesState] = useAtom(waterPipes);
@@ -20,9 +21,18 @@ export default function WaterPuzzle() {
   }, []);
 
   return (
-    <div>
-      <button onClick={() => findSolution(pipesState)}>check</button>
-      <button onClick={() => resetPipes(pipesState)}>reset</button>
+    <div className="mt-10 flex flex-col items-center">
+      <div className="flex space-x-5">
+        <Button
+          className="w-32 bg-blue-400 hover:bg-blue-600"
+          onClick={() => findSolution(pipesState)}
+        >
+          Confirm Solution
+        </Button>
+        <Button className="w-32 bg-blue-400 hover:bg-blue-600" onClick={() => resetPipes(pipesState)}>
+          Reset
+        </Button>
+      </div>
       <div className="grid grid-cols-7 gap-4 p-6">
         {pipesState.map((pipe, index) => (
           <div

@@ -1,13 +1,13 @@
 import { MetalType } from "@/app/(session)/session/[id]/_types";
 import { Button } from "@/components/ui/button";
-import { allMetals } from "../../../_constants/earth-constants";
+import { ALL_METALS } from "../../../_constants";
 
 export default function MetalListItem({
   metal,
   addMetal,
 }: {
   metal: MetalType;
-  addMetal: (newMetal: keyof typeof allMetals) => void;
+  addMetal: (newMetal: keyof typeof ALL_METALS) => void;
 }) {
   return (
     <>
@@ -19,7 +19,7 @@ export default function MetalListItem({
       </p>
       <p>Purity: {metal.hiddenValue === "purity" ? "?" : metal.purity}</p>
       <Button
-        onClick={() => addMetal(metal.name as keyof typeof allMetals)}
+        onClick={() => addMetal(metal.name as keyof typeof ALL_METALS)}
         className="h-5"
       >
         add

@@ -12,16 +12,11 @@ import {
 } from "./ui/dropdown-menu";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/potioncraft", label: "Potion Craft" },
-];
-
-const PUZZLE_SESSION_LINKS = [
-  { href: "/session/create", label: "Create" },
-  { href: "/session/join", label: "Join" },
+  { href: "/session/play", label: "Puzzle Session" },
 ];
 
 const THEME_OPTIONS = [
@@ -42,7 +37,6 @@ const findBaseUrl = (href: string) => {
 
 export default function Navigation() {
   const { theme, setTheme } = useTheme();
-  const [isDialogeOpen, setIsDialogeOpen] = useState(false);
   const pathName = usePathname();
   const baseUrl = findBaseUrl(pathName);
 
@@ -63,33 +57,6 @@ export default function Navigation() {
             {label}
           </Link>
         ))}
-        <DropdownMenu
-          open={isDialogeOpen}
-          onOpenChange={() => setIsDialogeOpen(!isDialogeOpen)}
-        >
-          <DropdownMenuTrigger className="w-32" asChild>
-            <Button variant="ghost" size="icon">
-              Puzzle Session
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {PUZZLE_SESSION_LINKS.map(({ href, label }) => (
-              <DropdownMenuItem key={href}>
-                <Link
-                  onClick={() => setIsDialogeOpen(false)}
-                  href={href}
-                  className={cn(
-                    "w-full transition-colors hover:text-primary/80",
-                    pathName === href &&
-                      "pointer-events-none font-semibold text-secondary",
-                  )}
-                >
-                  {label}
-                </Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
       <div className="my-1 flex items-center space-x-2">
         <DropdownMenu>

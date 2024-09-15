@@ -10,14 +10,10 @@ import { useAtom } from "jotai";
 import { rareMetals } from "../../../jotaiAtoms";
 import { EMPTY_METAL_MIXTURE, ALL_METALS } from "../../../_constants";
 
-export default function EarthPuzzle() {
-  const [rareMetalsState, setRareMetalsState] = useAtom(rareMetals);
-  const [mixture, setMixture] = useState<MetalType[]>(EMPTY_METAL_MIXTURE);
-  const [lastCrafted, setLastCrafted] = useState<string | undefined>();
-  const { addMetal, craftMetal } = useEarthPuzzle({
-    setMixture,
-    setLastCrafted,
-    mixture,
+export default function EarthPuzzle({sessionId}: {sessionId: string}) {
+  
+  const { addMetal, craftMetal, lastCrafted, mixture, rareMetalsState } = useEarthPuzzle({
+    sessionId
   });
 
   const { setNodeRef } = useDroppable({

@@ -9,7 +9,7 @@ import airgem from "@/../public/icons/airgem.svg";
 import watergem from "@/../public/icons/watergem.svg";
 import Image from "next/image";
 
-export default function PedestalPuzzle() {
+export default function PedestalPuzzle({sessionId}: {sessionId: string}) {
   const { setNodeRef } = useDroppable({
     id: PuzzleEnums.PEDESTALS,
   });

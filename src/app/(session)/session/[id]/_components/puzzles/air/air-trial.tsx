@@ -1,18 +1,16 @@
 "use client";
-
-import { useEffect, useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
-import { GridPiece, PuzzleEnums } from "../../../_types";
+import { PuzzleEnums } from "../../../_types";
 import { Button } from "@/components/ui/button";
 import useAirPuzzle from "./useAirPuzzle";
 import GridRow from "./grid";
 
-export default function AirPuzzle() {
+export default function AirPuzzle({sessionId}: {sessionId: string}) {
   const { setNodeRef } = useDroppable({
     id: PuzzleEnums.AIR,
   });
 
-  const { grid, movePlayer, reset, playerPosition, MAP_TILE } = useAirPuzzle();
+  const { grid, movePlayer, reset, playerPosition, MAP_TILE } = useAirPuzzle({sessionId});
 
   return (
     <div

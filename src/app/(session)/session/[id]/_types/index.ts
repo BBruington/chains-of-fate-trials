@@ -1,5 +1,5 @@
 import { UniqueIdentifier } from "@dnd-kit/core";
-import { PuzzleChatMessage } from "@prisma/client";
+import { PuzzleChatMessage, PuzzleElementalTrials } from "@prisma/client";
 import { PrimitiveAtom } from "jotai";
 import { LucideProps } from "lucide-react";
 import { StaticImageData } from "next/image";
@@ -16,6 +16,7 @@ export type DescriptionOpject = {
 };
 
 export type SessionPageProps = {
+  puzzleSession: PuzzleElementalTrials;
   sessionId: string;
   chatMessages: PuzzleChatMessage[];
   username: string;
@@ -26,7 +27,6 @@ export enum SideBarEnums {
   DESCRIPTION = "DESCRIPTION",
 }
 export enum PuzzleEnums {
-  DOOR = "DOOR",
   PEDESTALS = "PEDESTALS",
   FIRE = "FIRE",
   WATER = "WATER",
@@ -48,16 +48,10 @@ export interface SidebarNavItemProps extends PuzzleSideBarItem {
 }
 
 export enum InventoryItemEnums {
-  DOORKEY = "DOORKEY",
-  SCROLL = "SCROLL",
-  MAGICSCROLL = "MAGICSCROLL",
   FIREGEM = "FIREGEM",
   EARTHGEM = "EARTHGEM",
   AIRGEM = "AIRGEM",
   WATERGEM = "WATERGEM",
-  ADAMANT = "ADAMANT",
-  COLDIRON = "COLDIRON",
-  MITHRIL = "MITHRIL",
 }
 export type ItemNames =
   | "DOORKEY"
@@ -92,7 +86,7 @@ export interface MessagesProps {
 
 export type SetAtom<Args extends any[], Result> = (...args: Args) => Result;
 export type UseDragEndProps = {
-  setPuzzle: Dispatch<SetStateAction<PuzzleEnums>>;
+  setVictoryDialogue: Dispatch<SetStateAction<boolean>>
   inventoryItemsState: InventoryItemProps[];
   setInventoryItems: SetAtom<[SetStateAction<InventoryItemProps[]>], void>;
   pedestalState: {

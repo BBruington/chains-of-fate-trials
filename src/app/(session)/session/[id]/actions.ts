@@ -4,6 +4,14 @@ import { pusherServer } from "@/lib/pusher";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+const RevalidateSessionSchema = z.object({
+  sessionId: z.string(),
+});
+export const revalidateSession = async (props: z.infer<typeof RevalidateSessionSchema>) => {
+  const { sessionId } = RevalidateSessionSchema.parse(props);
+  revalidatePath(`/session${sessionId}`);
+};
+
 const HandleAddNewMessageSchema = z.object({
   message: z.string(),
   id: z.string(),
@@ -14,7 +22,7 @@ export const handleAddNewMessage = async (
 ) => {
   try {
     const { message, id, username } = HandleAddNewMessageSchema.parse(props);
-    
+
     const newMessage = await prisma.puzzleChatMessage.create({
       data: {
         message,
@@ -23,7 +31,7 @@ export const handleAddNewMessage = async (
       },
     });
     pusherServer.trigger(id, "incoming-message", newMessage);
-    revalidatePath(`session/${id}`)
+    revalidatePath(`session/${id}`);
     return newMessage;
   } catch (error) {
     console.error("Error adding new message: ", error);
@@ -31,5 +39,35 @@ export const handleAddNewMessage = async (
       throw new Error("Invalid input for adding new message");
     }
     throw new Error("Failed to add message");
+  }
+};
+
+const HandleSolvePuzzleSchema = z.object({
+  id: z.string(),
+  gem: z.enum(["firegem", "airgem", "watergem", "earthgem"]),
+});
+
+export const handleSolvePuzzle = async (
+  props: z.infer<typeof HandleSolvePuzzleSchema>,
+) => {
+  try {
+    const { id, gem } = HandleSolvePuzzleSchema.parse(props);
+
+    const updatedPuzzle = await prisma.puzzleElementalTrials.update({
+      where: {
+        id,
+      },
+      data: {
+        [gem]: true,
+      },
+    });
+    revalidatePath(`session/${id}`);
+    return gem;
+  } catch (error) {
+    console.error("Error updating puzzle solved: ", error);
+    if (error instanceof z.ZodError) {
+      throw new Error("Invalid input for updating puzzle");
+    }
+    throw new Error("Failed to update puzzle");
   }
 };

@@ -13,7 +13,7 @@ const page = async ({ params }: PageProps) => {
   const user = await currentUser();
   if (!user) return <div>failed to fetch user</div>;
   const { id } = params;
-  const puzzleSession = await prisma.puzzleSession.findUnique({
+  const puzzleSession = await prisma.puzzleElementalTrials.findUnique({
     where: { id },
   });
 
@@ -31,6 +31,7 @@ const page = async ({ params }: PageProps) => {
   return (
     <div className="flex w-screen">
       <SessionPage
+        puzzleSession={puzzleSession}
         sessionId={id}
         username={user.username ? user.username : ""}
         chatMessages={existingMessages}

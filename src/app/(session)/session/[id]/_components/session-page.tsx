@@ -1,7 +1,7 @@
 "use client";
 import Inventory from "./sidebar/inventory";
 import { DndContext } from "@dnd-kit/core";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   SessionPageProps,
@@ -14,7 +14,6 @@ import Description from "./sidebar/description";
 import { useAtom } from "jotai";
 import { puzzleDescription, inventoryItems, pedestals } from "../jotaiAtoms";
 import Messages from "./sidebar/messages";
-import DoorPuzzle from "./puzzles/door-puzzle";
 import { cn } from "@/lib/utils";
 import { usePuzzle, useSidebar, useDragEnd } from "../_hooks/hooks";
 import PedestalPuzzle from "./puzzles/four-pedestals";
@@ -22,10 +21,10 @@ import FirePuzzle from "./puzzles/fire/fire-trial";
 import WaterPuzzle from "./puzzles/water/water-trial";
 import EarthPuzzle from "./puzzles/earth/earth-trial";
 import AirPuzzle from "./puzzles/air/air-trial";
+import VictoryDialogue from "./victoryDialogue";
 import { puzzleTransitions, sidebarNavItems } from "../_constants";
 
 const puzzleComponents = {
-  [PuzzleEnums.DOOR]: DoorPuzzle,
   [PuzzleEnums.PEDESTALS]: PedestalPuzzle,
   [PuzzleEnums.FIRE]: FirePuzzle,
   [PuzzleEnums.WATER]: WaterPuzzle,
@@ -37,19 +36,39 @@ export default function SessionPage({
   sessionId,
   chatMessages,
   username,
+  puzzleSession,
 }: SessionPageProps) {
   const [, setDesc] = useAtom(puzzleDescription);
   const [inventoryItemsState, setInventoryItems] = useAtom(inventoryItems);
   const [pedestalState, setPedestalState] = useAtom(pedestals);
+  const [victoryDialogue, setVictoryDialogue] = useState(false)
   const { sideBar, setSidebar } = useSidebar();
   const { puzzle, setPuzzle } = usePuzzle();
 
+  useEffect(() => {
+    setInventoryItems(
+      inventoryItemsState.map((item) => {
+        const checkGems = ["firegem", "earthgem", "watergem", "airgem"];
+        if (checkGems.includes(item.name.toLowerCase())) {
+          if (
+            puzzleSession[
+              item.name.toLocaleLowerCase() as keyof typeof puzzleSession
+            ]
+          ) {
+            return { ...item, hidden: false };
+          }
+        }
+        return item;
+      }),
+    );
+  }, []);
+
   const onDragEnd = useDragEnd({
-    setPuzzle,
-    inventoryItemsState,
-    setInventoryItems,
     pedestalState,
+    inventoryItemsState,
     setPedestalState,
+    setVictoryDialogue,
+    setInventoryItems,
   });
 
   const handlePuzzleTransition = useCallback(
@@ -63,10 +82,12 @@ export default function SessionPage({
   const PuzzleComponent = puzzleComponents[puzzle];
 
   return (
-    <div className="flex w-full justify-between">
+    <div className="flex w-full justify-between overflow-hidden">
+      <VictoryDialogue victoryDialogue={victoryDialogue} puzzleSession={puzzleSession}/>
       <DndContext onDragEnd={onDragEnd}>
         <div className="flex w-full flex-col items-center">
           <div className="flex space-x-7">
+            <Button onClick={() => setVictoryDialogue(!victoryDialogue)}>test</Button>
             {puzzleTransitions.map(({ name, description, label }) => (
               <Button
                 key={label}
@@ -76,7 +97,7 @@ export default function SessionPage({
               </Button>
             ))}
           </div>
-          {PuzzleComponent && <PuzzleComponent />}
+          {PuzzleComponent && <PuzzleComponent sessionId={sessionId}/>}
         </div>
         <div
           className={cn(

@@ -5,12 +5,10 @@ import {
   PuzzleSideBarItem,
   SideBarEnums,
 } from "../_types";
-import parchment from "@/../public/background/parchment.png";
 import firegem from "@/../public/icons/firegem.svg";
 import earthgem from "@/../public/icons/earthgem.svg";
 import airgem from "@/../public/icons/airgem.svg";
 import watergem from "@/../public/icons/watergem.svg";
-import key from "@/../public/icons/key.svg";
 import {
   MessageSquare,
   Backpack,
@@ -220,11 +218,6 @@ export const EMPTY_METAL_MIXTURE = [EMPTY_METAL, EMPTY_METAL, EMPTY_METAL];
 
 export const puzzleTransitions = [
   {
-    name: PuzzleEnums.DOOR,
-    description: [{ message: "DOOR DESCRIPTION", isHighlighted: false }],
-    label: "The Door",
-  },
-  {
     name: PuzzleEnums.PEDESTALS,
     description: [
       {
@@ -354,18 +347,13 @@ export const pedastals = [
 
 export const runes = [
   {
-    symbol: "𑢶",
-    label: "birth",
-    isActivated: false,
-  },
-  {
-    symbol: "𑢾",
-    label: "flight",
-    isActivated: false,
-  },
-  {
     symbol: "𑣓",
     label: "hope",
+    isActivated: false,
+  },
+  {
+    symbol: "𑣚",
+    label: "rebirth",
     isActivated: false,
   },
   {
@@ -379,8 +367,13 @@ export const runes = [
     isActivated: false,
   },
   {
-    symbol: "𑣚",
-    label: "rebirth",
+    symbol: "𑢾",
+    label: "flight",
+    isActivated: false,
+  },
+  {
+    symbol: "𑢶",
+    label: "birth",
     isActivated: false,
   },
 ];
@@ -458,9 +451,6 @@ export const inventoryItemsRecords = [
     hidden: true,
     image: watergem,
   },
-  { name: InventoryItemEnums.ADAMANT, hidden: true },
-  { name: InventoryItemEnums.COLDIRON, hidden: true },
-  { name: InventoryItemEnums.MITHRIL, hidden: true },
 ];
 
 export const sidebarNavItems: PuzzleSideBarItem[] = [

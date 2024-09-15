@@ -1,5 +1,6 @@
 "use client";
 import { SetStateAction, useCallback, useState } from "react";
+import { handleSolvePuzzle } from "../actions";
 import {
   InventoryItemEnums,
   InventoryItemProps,
@@ -10,15 +11,12 @@ import {
 } from "../_types";
 import { DragEndEvent } from "@dnd-kit/core";
 
-export const revealInventoryItem = (
-  itemName: InventoryItemEnums,
+export const revealInventoryItem = async (
+  sessionId: string,
+  itemName: "firegem" | "earthgem" | "watergem" | "airgem",
   inventory: InventoryItemProps[],
   setInventory: SetAtom<[SetStateAction<InventoryItemProps[]>], void>,
 ) => {
-  console.log(
-    "check",
-    inventory[0].name.toUpperCase() === itemName.toUpperCase(),
-  );
   setInventory(
     inventory.map((item) => {
       if (item.name.toUpperCase() === itemName.toUpperCase()) {
@@ -30,77 +28,56 @@ export const revealInventoryItem = (
       return item;
     }),
   );
+  await handleSolvePuzzle({ id: sessionId, gem: itemName });
 };
 
 export const useSidebar = () => {
-  const [sideBar, setSidebar] = useState<SideBarEnums>(SideBarEnums.DESCRIPTION);
+  const [sideBar, setSidebar] = useState<SideBarEnums>(
+    SideBarEnums.DESCRIPTION,
+  );
   return { sideBar, setSidebar };
 };
 export const usePuzzle = () => {
-  const [puzzle, setPuzzle] = useState<PuzzleEnums>(PuzzleEnums.DOOR);
+  const [puzzle, setPuzzle] = useState<PuzzleEnums>(PuzzleEnums.PEDESTALS);
   return { puzzle, setPuzzle };
 };
 
 export const useDragEnd = ({
   pedestalState,
   inventoryItemsState,
-  setPuzzle,
   setPedestalState,
   setInventoryItems,
+  setVictoryDialogue,
 }: UseDragEndProps) => {
   return useCallback(
     ({ active, over }: DragEndEvent) => {
       if (!over) return;
-      console.log(over.id, active.id);
       const actions = {
-        [PuzzleEnums.DOOR]: () => {
-          if (active.id === "DOORKEY") {
-            setPuzzle(PuzzleEnums.PEDESTALS);
-            console.log("you make it through the door");
-          } else {
-            console.log("that doesnt do anything");
-          }
-        },
-        // [PuzzleEnums.SOUNDSTONES]: () => {
-        //   if (active.id === "SCROLL") {
-        //     console.log("the scroll shines revealing a secret note");
-        //     setInventoryItems(
-        //       inventoryItemsState.map((item) => {
-        //         if (item.name === InventoryItemEnums.SCROLL) {
-        //           return {
-        //             name: InventoryItemEnums.MAGICSCROLL,
-        //             image: item.image,
-        //           };
-        //         }
-        //         return item;
-        //       }),
-        //     );
-        //   }
-        //   console.log("you make it to the stones");
-        // },
         [PuzzleEnums.PEDESTALS]: () => {
           const correctItems = ["FIREGEM", "WATERGEM", "EARTHGEM", "AIRGEM"];
           if (correctItems.find((item) => item === active.id)) {
-            setPedestalState(
-              pedestalState.map((pedestal) => {
-                if (pedestal.id === active.id) {
-                  return {
-                    ...pedestal,
-                    isActivated: true,
-                  };
-                }
-                return pedestal;
-              }),
+            const updatedPedastals = pedestalState.map((pedestal) => {
+              if (pedestal.id === active.id) {
+                return {
+                  ...pedestal,
+                  isActivated: true,
+                };
+              }
+              return pedestal;
+            });
+            const missingPedastals = updatedPedastals.filter(
+              (pedastal) => pedastal.isActivated === false,
             );
+            if (missingPedastals.length === 0) {
+              setVictoryDialogue(true);
+            }
+            setPedestalState(updatedPedastals);
             setInventoryItems(
               inventoryItemsState.filter((item) => item.name !== active.id),
             );
           }
         },
-        [PuzzleEnums.FIRE]: () => {
-          console.log("hehexd");
-          return "hehexd";
-        },
+        [PuzzleEnums.FIRE]: () => {},
         [PuzzleEnums.AIR]: () => {},
         [PuzzleEnums.WATER]: () => {},
         [PuzzleEnums.EARTH]: () => {},
@@ -108,12 +85,6 @@ export const useDragEnd = ({
 
       actions[over.id as PuzzleEnums]();
     },
-    [
-      setPuzzle,
-      setInventoryItems,
-      setPedestalState,
-      inventoryItemsState,
-      pedestalState,
-    ],
+    [setInventoryItems, setPedestalState, inventoryItemsState, pedestalState],
   );
 };

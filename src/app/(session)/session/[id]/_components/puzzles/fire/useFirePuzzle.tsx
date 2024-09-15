@@ -1,11 +1,10 @@
 import { useAtom } from "jotai";
-import React, { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { runes } from "../../../_constants";
 import { inventoryItems } from "../../../jotaiAtoms";
 import { revealInventoryItem } from "../../../_hooks/hooks";
-import { InventoryItemEnums } from "../../../_types";
 
-export default function useFirePuzzle() {
+export default function useFirePuzzle({ sessionId }: { sessionId: string }) {
   const [runeState, setRuneState] = useState(runes);
   const [inventory, setInventory] = useAtom(inventoryItems);
   const correct = [
@@ -45,16 +44,9 @@ export default function useFirePuzzle() {
         for (let i = 0; i < 6; i++) {
           if (solutionRef.current[i] !== correct[i]) {
             resetRunes();
-            console.log("FAILED");
-            return "YA WRONG KID";
           }
         }
-        revealInventoryItem(
-          InventoryItemEnums.FIREGEM,
-          inventory,
-          setInventory,
-        );
-        return "yippeeeee";
+        revealInventoryItem(sessionId, "firegem", inventory, setInventory);
       }
     },
     [runeState, solutionRef],

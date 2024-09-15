@@ -5,8 +5,8 @@ import useFirePuzzle from "./useFirePuzzle";
 import PuzzleVerse from "./puzzle-verse";
 import Rune from "./rune";
 
-export default function FirePuzzle() {
-  const { runeState, activateRune } = useFirePuzzle();
+export default function FirePuzzle({sessionId}: {sessionId: string}) {
+  const { runeState, activateRune } = useFirePuzzle({sessionId});
 
   const { setNodeRef } = useDroppable({
     id: PuzzleEnums.FIRE,

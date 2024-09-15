@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { INITIAL_MAP, MAP_TILE } from "../../../_constants";
 import { useAtom } from "jotai";
 import { inventoryItems } from "../../../jotaiAtoms";
-import {revealInventoryItem} from "@/app/(session)/session/[id]/_hooks/hooks"
+import { revealInventoryItem } from "@/app/(session)/session/[id]/_hooks/hooks";
 import { InventoryItemEnums } from "../../../_types";
 
-export default function useAirPuzzle() {
+export default function useAirPuzzle({ sessionId }: { sessionId: string }) {
   const [playerPosition, setPlayerPosition] = useState({ x: 0, y: 0 });
   const [inventory, setInventory] = useAtom(inventoryItems);
   const [grid, setGrid] = useState(INITIAL_MAP);
@@ -110,7 +110,6 @@ export default function useAirPuzzle() {
       };
       gridRef[newX][newY] = 0;
       if (gridTile === 0 || gridTile === 4) {
-        
         pushObjectInto[gridTile]();
       }
       setGrid(gridRef);
@@ -119,7 +118,12 @@ export default function useAirPuzzle() {
     //3 = goal
     if (tileMovedTo === 3) {
       alert("You reached the goal!");
-      revealInventoryItem(InventoryItemEnums.AIRGEM, inventory, setInventory)
+      revealInventoryItem(
+        sessionId,
+        'airgem',
+        inventory,
+        setInventory,
+      );
     }
   };
 

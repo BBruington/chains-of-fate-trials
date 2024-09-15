@@ -4,7 +4,7 @@ import { inventoryItems } from "../../jotaiAtoms";
 import { cn } from "@/lib/utils";
 
 function Inventory() {
-  const [invItems, setInventoryItem] = useAtom(inventoryItems);
+  const [invItems] = useAtom(inventoryItems);
   return (
     <>
       <h2 className="mb-2 flex justify-center text-2xl">Inventory</h2>

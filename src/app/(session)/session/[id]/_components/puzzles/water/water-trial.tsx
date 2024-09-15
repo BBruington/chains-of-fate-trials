@@ -3,17 +3,11 @@ import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { PipeProps } from "../../../_types";
 import useWaterPuzzle from "./useWaterPuzzle";
-import { useAtom } from "jotai";
-import { waterPipes } from "../../../jotaiAtoms";
 import { Button } from "@/components/ui/button";
 
-export default function WaterPuzzle() {
-  const [pipesState, setPipesState] = useAtom(waterPipes);
-
-  const { findSolution, resetPipes, rotatePipe } = useWaterPuzzle({
-    pipesState,
-    setPipesState,
-  });
+export default function WaterPuzzle({ sessionId }: { sessionId: string }) {
+  const { findSolution, resetPipes, rotatePipe, pipesState } =
+    useWaterPuzzle({sessionId});
 
   useEffect(() => {
     //debuggs findSolution button
@@ -29,7 +23,10 @@ export default function WaterPuzzle() {
         >
           Confirm Solution
         </Button>
-        <Button className="w-32 bg-blue-400 hover:bg-blue-600" onClick={() => resetPipes(pipesState)}>
+        <Button
+          className="w-32 bg-blue-400 hover:bg-blue-600"
+          onClick={() => resetPipes(pipesState)}
+        >
           Reset
         </Button>
       </div>

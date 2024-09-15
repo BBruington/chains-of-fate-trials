@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, SetStateAction, useCallback, useRef } from "react";
+import {  useCallback } from "react";
 import {
   PipeType,
   ConnectKeys,
@@ -8,21 +8,20 @@ import {
   OppositeSideType,
   InventoryItemEnums,
 } from "../../../_types";
-import { inventoryItems } from "../../../jotaiAtoms";
+import { inventoryItems, waterPipes } from "../../../jotaiAtoms";
 import { useAtom } from "jotai";
 import { mapLength } from "../../../_constants";
 import { revealInventoryItem } from "../../../_hooks/hooks";
 
 type UseWaterPuzzleProps = {
-  pipesState: PipeType[];
-  setPipesState: Dispatch<SetStateAction<PipeType[]>>;
+  sessionId: string
 };
 
 export default function useWaterPuzzle({
-  pipesState,
-  setPipesState,
+  sessionId
 }: UseWaterPuzzleProps) {
   const [inventory, setInventory] = useAtom(inventoryItems);
+  const [pipesState, setPipesState] = useAtom(waterPipes);
 
   const isInvalidEdge = (pipe: PipeType, directions: ConnectKeys[]) => {
     for (let direction of directions) {
@@ -99,7 +98,12 @@ export default function useWaterPuzzle({
       }
       setPipesState(pipesRef.map((pipe) => pipe));
       if (isSolved === true) {
-        revealInventoryItem(InventoryItemEnums.WATERGEM, inventory, setInventory);
+        revealInventoryItem(
+          sessionId,
+          'watergem',
+          inventory,
+          setInventory,
+        );
       }
     },
     [pipesState, setPipesState],
@@ -132,5 +136,5 @@ export default function useWaterPuzzle({
     return pipeRef;
   };
 
-  return { resetPipes, rotatePipe, findSolution };
+  return { resetPipes, rotatePipe, findSolution, pipesState };
 }

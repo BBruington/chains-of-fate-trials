@@ -1,24 +1,22 @@
 "use client";
 import { InventoryItemEnums, MetalType } from "../../../_types";
-import { Dispatch, SetStateAction, useCallback } from "react";
+import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { useAtom } from "jotai";
 import { inventoryItems, rareMetals } from "../../../jotaiAtoms";
 import { ALL_METALS, EMPTY_METAL_MIXTURE } from "../../../_constants";
 import { revealInventoryItem } from "../../../_hooks/hooks";
 
 type UseEarthPuzzleProps = {
-  mixture: MetalType[];
-  setMixture: Dispatch<SetStateAction<MetalType[]>>;
-  setLastCrafted?: Dispatch<SetStateAction<string | undefined>>;
+  sessionId: string
 };
 
-export default function useEarthPuzzle({
-  mixture,
-  setMixture,
-  setLastCrafted,
+export default function useEarthPuzzle({sessionId
 }: UseEarthPuzzleProps) {
   const [inventory, setInventory] = useAtom(inventoryItems);
   const [rareMetalsState, setRareMetalsState] = useAtom(rareMetals);
+  const [mixture, setMixture] = useState<MetalType[]>(EMPTY_METAL_MIXTURE);
+  const [lastCrafted, setLastCrafted] = useState<string | undefined>();
+
 
   const addMetal = useCallback(
     (newMetal: keyof typeof ALL_METALS) => {
@@ -55,9 +53,9 @@ export default function useEarthPuzzle({
         metal.purity === metalAttributes.purity,
     );
     const neededMetals = [
-      InventoryItemEnums.ADAMANT,
-      InventoryItemEnums.COLDIRON,
-      InventoryItemEnums.MITHRIL,
+      'ADAMANT',
+      'COLDIRON',
+      'MITHRIL',
     ];
     if (foundMetal) {
       setLastCrafted(`${foundMetal.name} Crafted!`);
@@ -81,10 +79,10 @@ export default function useEarthPuzzle({
     }
 
     if (foundMetal?.name === "earthgem") {
-      revealInventoryItem(InventoryItemEnums.EARTHGEM, inventory, setInventory);
+      revealInventoryItem(sessionId, 'earthgem', inventory, setInventory);
     }
     setMixture(EMPTY_METAL_MIXTURE);
   }, [setLastCrafted, mixture, setMixture]);
 
-  return { craftMetal, addMetal };
+  return { craftMetal, addMetal, lastCrafted, mixture, rareMetalsState  };
 }

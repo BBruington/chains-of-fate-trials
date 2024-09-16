@@ -1,14 +1,20 @@
 import { useState, useEffect } from "react";
-import { INITIAL_MAP, MAP_TILE } from "../../../_constants";
+import {
+  INITIAL_MAP,
+  MAP_TILE,
+  INITIAL_PLAYER_POSITION,
+} from "../../../_constants";
 import { useAtom } from "jotai";
 import { inventoryItems } from "../../../jotaiAtoms";
 import { revealInventoryItem } from "@/app/(session)/session/[id]/_hooks/hooks";
-import { InventoryItemEnums } from "../../../_types";
 
 export default function useAirPuzzle({ sessionId }: { sessionId: string }) {
-  const [playerPosition, setPlayerPosition] = useState({ x: 0, y: 0 });
+  const [playerPosition, setPlayerPosition] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [grid, setGrid] = useState(INITIAL_MAP.map((row) => [...row]));
   const [inventory, setInventory] = useAtom(inventoryItems);
-  const [grid, setGrid] = useState(INITIAL_MAP);
 
   const handleKeyPress = (e: KeyboardEvent) => {
     switch (e.key) {
@@ -38,23 +44,8 @@ export default function useAirPuzzle({ sessionId }: { sessionId: string }) {
   const rows = grid.length;
 
   const reset = () => {
-    setGrid([
-      [0, 1, 1, 1, 0, 2, 0, 0, 1, 1, 1, 1],
-      [0, 1, 0, 0, 0, 2, 0, 2, 0, 2, 4, 1],
-      [0, 1, 0, 1, 1, 0, 2, 0, 0, 1, 0, 1],
-      [0, 2, 0, 0, 0, 1, 2, 0, 1, 0, 0, 1],
-      [1, 1, 0, 1, 0, 0, 0, 1, 4, 2, 2, 1],
-      [3, 0, 4, 1, 2, 0, 1, 4, 2, 4, 2, 4],
-      [1, 1, 1, 0, 4, 0, 1, 0, 2, 2, 2, 2],
-      [0, 0, 0, 0, 4, 1, 1, 4, 4, 2, 4, 4],
-      [0, 2, 1, 1, 4, 0, 0, 1, 4, 4, 4, 1],
-      [0, 4, 0, 0, 0, 2, 0, 0, 1, 4, 1, 1],
-      [0, 0, 1, 1, 2, 1, 1, 0, 0, 4, 1, 1],
-      [4, 2, 4, 2, 4, 0, 4, 2, 0, 1, 1, 1],
-      [1, 2, 0, 0, 1, 4, 2, 0, 0, 1, 1, 1],
-      [1, 0, 0, 0, 0, 2, 4, 2, 0, 1, 1, 1],
-    ]);
-    setPlayerPosition({ x: 5, y: 1 });
+    setGrid(INITIAL_MAP.map((row) => [...row]));
+    setPlayerPosition({ x: 0, y: 0 });
   };
 
   const isInvalidMove = ({
@@ -118,12 +109,7 @@ export default function useAirPuzzle({ sessionId }: { sessionId: string }) {
     //3 = goal
     if (tileMovedTo === 3) {
       alert("You reached the goal!");
-      revealInventoryItem(
-        sessionId,
-        'airgem',
-        inventory,
-        setInventory,
-      );
+      revealInventoryItem(sessionId, "airgem", inventory, setInventory);
     }
   };
 

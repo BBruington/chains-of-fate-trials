@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { DescriptionOpject, InventoryItemProps, PuzzleEnums } from "./_types";
+import { DescriptionOpject, InventoryItemProps } from "./_types";
 import {
   inventoryItemsRecords,
   pedastals,
@@ -8,20 +8,26 @@ import {
   RARE_METALS,
   puzzleTransitions,
 } from "./_constants";
-const defaultDescription = puzzleTransitions.find(
-  (item) => item.name === PuzzleEnums.PEDESTALS,
-);
-const puzzleDescription = atom<DescriptionOpject[]>(
-  defaultDescription?.description
-    ? defaultDescription.description
-    : [{ message: "Select a puzzle", isHighlighted: false }],
-);
 
-const sessioinId = atom<string>("")
+const puzzleDescription = atom<DescriptionOpject[]>(
+  puzzleTransitions[0].description,
+);
+const sessioinId = atom<string>("");
 const inventoryItems = atom<InventoryItemProps[]>(inventoryItemsRecords);
+const selectedCharacter = atom<
+    "dinner" | "artemis" | "aelarion" | "elendiel"
+  >("elendiel");
 const pedestals = atom(pedastals);
 const pipesForState = pipesExample.map((pipe) => allPipes[pipe]);
 const waterPipes = atom(pipesForState);
 const rareMetals = atom(RARE_METALS);
 
-export { puzzleDescription, inventoryItems, pedestals, waterPipes, rareMetals,sessioinId };
+export {
+  puzzleDescription,
+  inventoryItems,
+  pedestals,
+  waterPipes,
+  rareMetals,
+  sessioinId,
+  selectedCharacter,
+};

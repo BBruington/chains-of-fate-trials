@@ -1,7 +1,7 @@
 "use client";
 import Inventory from "./sidebar/inventory";
 import { DndContext } from "@dnd-kit/core";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   SessionPageProps,
@@ -23,6 +23,8 @@ import EarthPuzzle from "./puzzles/earth/earth-trial";
 import AirPuzzle from "./puzzles/air/air-trial";
 import VictoryDialogue from "./victoryDialogue";
 import { puzzleTransitions, sidebarNavItems } from "../_constants";
+import { Toggle } from "@/components/ui/toggle";
+import { Music2Icon } from "lucide-react";
 
 const puzzleComponents = {
   [PuzzleEnums.PEDESTALS]: PedestalPuzzle,
@@ -44,8 +46,20 @@ export default function SessionPage({
   const [victoryDialogue, setVictoryDialogue] = useState(false);
   const { sideBar, setSidebar } = useSidebar();
   const { puzzle, setPuzzle } = usePuzzle();
-
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const toggleAudio = (isPressed: boolean) => {
+    if (audioRef.current) {
+      if (isPressed) {
+        audioRef.current.play();
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  };
   useEffect(() => {
+    audioRef.current = new Audio("/audio/background-music.mp3");
+    audioRef.current.volume = 0.5;
+    audioRef.current.loop = true;
     setInventoryItems(
       inventoryItemsState.map((item) => {
         const checkGems = ["firegem", "earthgem", "watergem", "airgem"];
@@ -67,6 +81,10 @@ export default function SessionPage({
     if (missingGems.length === 0) {
       setVictoryDialogue(true);
     }
+    return () => {
+      audioRef.current?.pause();
+      audioRef.current = null;
+    };
   }, []);
 
   const onDragEnd = useDragEnd({
@@ -106,6 +124,12 @@ export default function SessionPage({
                 {label}
               </Button>
             ))}
+            <Toggle
+              value={audioRef.current === null ? "off" : "on"}
+              onPressedChange={toggleAudio}
+            >
+              <Music2Icon />
+            </Toggle>
           </div>
           {PuzzleComponent && <PuzzleComponent sessionId={sessionId} />}
         </div>

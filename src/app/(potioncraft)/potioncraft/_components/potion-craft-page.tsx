@@ -6,7 +6,6 @@ import { usePotionCraft } from "../_hooks/usePotionCraft";
 import { PotionCraftComponentProps, RarityStyleProps } from "../_types";
 import { cn } from "@/lib/utils";
 import { RARITY_STYLES_TEXT } from "@/constants";
-import { commonPotions } from "./testData";
 import CraftPotionStation from "./craft-potion-station";
 
 export default function PotionCraftComponent({
@@ -17,21 +16,15 @@ export default function PotionCraftComponent({
 }: PotionCraftComponentProps) {
   const {
     mixture,
-    userIngredients,
     filteredUserIngredients,
     activeIngredient,
-    mixtureProperties,
-    findPotion,
-    findMixtureProperties,
     isFormulaSaved,
     addFormula,
     handleResetIngredients,
     handleFilterIngredients,
     addIngredientToMixture,
     handleOrderFilteredIngredients,
-    handleAddIngredients,
     handleCraftPotion,
-    updateServerIngredientQuantity,
     handleIngredientDragStart,
     handleIngredientDragEnd,
   } = usePotionCraft({ ingredients, userId });
@@ -61,12 +54,6 @@ export default function PotionCraftComponent({
             ) : null}
           </DragOverlay>
           <div className="flex h-full w-full flex-col items-center">
-            {/* <Image
-            alt="alchemist's lab background"
-            src={alchemistLab}
-            className="absolute h-full w-full"
-            style={{ zIndex: -1 }}
-          /> */}
             <CraftPotionStation
               addFormula={addFormula}
               isFormulaSaved={isFormulaSaved}

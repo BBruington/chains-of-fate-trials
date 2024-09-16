@@ -1,7 +1,7 @@
 "use client";
 import Inventory from "./sidebar/inventory";
 import { DndContext } from "@dnd-kit/core";
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   SessionPageProps,
@@ -41,7 +41,7 @@ export default function SessionPage({
   const [, setDesc] = useAtom(puzzleDescription);
   const [inventoryItemsState, setInventoryItems] = useAtom(inventoryItems);
   const [pedestalState, setPedestalState] = useAtom(pedestals);
-  const [victoryDialogue, setVictoryDialogue] = useState(false)
+  const [victoryDialogue, setVictoryDialogue] = useState(false);
   const { sideBar, setSidebar } = useSidebar();
   const { puzzle, setPuzzle } = usePuzzle();
 
@@ -61,6 +61,12 @@ export default function SessionPage({
         return item;
       }),
     );
+    const missingGems = inventoryItemsState.map(
+      (item) => item.hidden === false,
+    );
+    if (missingGems.length === 0) {
+      setVictoryDialogue(true);
+    }
   }, []);
 
   const onDragEnd = useDragEnd({
@@ -83,11 +89,15 @@ export default function SessionPage({
 
   return (
     <div className="flex w-full justify-between overflow-hidden">
-      <VictoryDialogue victoryDialogue={victoryDialogue} puzzleSession={puzzleSession}/>
+      <Suspense>
+        <VictoryDialogue
+          victoryDialogue={victoryDialogue}
+          puzzleSession={puzzleSession}
+        />
+      </Suspense>
       <DndContext onDragEnd={onDragEnd}>
         <div className="flex w-full flex-col items-center">
           <div className="flex space-x-7">
-            <Button onClick={() => setVictoryDialogue(!victoryDialogue)}>test</Button>
             {puzzleTransitions.map(({ name, description, label }) => (
               <Button
                 key={label}
@@ -97,7 +107,7 @@ export default function SessionPage({
               </Button>
             ))}
           </div>
-          {PuzzleComponent && <PuzzleComponent sessionId={sessionId}/>}
+          {PuzzleComponent && <PuzzleComponent sessionId={sessionId} />}
         </div>
         <div
           className={cn(
@@ -121,7 +131,7 @@ export default function SessionPage({
             />
           )}
           {sideBar === SideBarEnums.DESCRIPTION && <Description />}
-          {sideBar === SideBarEnums.INVENTORY && <Inventory />}
+          {sideBar === SideBarEnums.INVENTORY && <Inventory id={sessionId} />}
         </div>
       </DndContext>
     </div>

@@ -7,9 +7,31 @@ import { z } from "zod";
 const RevalidateSessionSchema = z.object({
   sessionId: z.string(),
 });
-export const revalidateSession = async (props: z.infer<typeof RevalidateSessionSchema>) => {
+export const revalidateSession = async (
+  props: z.infer<typeof RevalidateSessionSchema>,
+) => {
   const { sessionId } = RevalidateSessionSchema.parse(props);
   revalidatePath(`/session${sessionId}`);
+};
+const EndSessionSchema = z.object({
+  sessionId: z.string(),
+});
+export const endSession = async (props: z.infer<typeof EndSessionSchema>) => {
+  try {
+    const { sessionId } = EndSessionSchema.parse(props);
+    await prisma.puzzleChatMessage.deleteMany({
+      where: {sessionId}
+    })
+    await prisma.puzzleElementalTrials.delete({
+      where: { id: sessionId },
+    });
+  } catch (error) {
+    console.error("Error ending session: ", error);
+    if (error instanceof z.ZodError) {
+      throw new Error("Invalid input for ending session");
+    }
+    throw new Error("Failed to end session");
+  }
 };
 
 const HandleAddNewMessageSchema = z.object({
@@ -53,7 +75,7 @@ export const handleSolvePuzzle = async (
   try {
     const { id, gem } = HandleSolvePuzzleSchema.parse(props);
 
-    const updatedPuzzle = await prisma.puzzleElementalTrials.update({
+    await prisma.puzzleElementalTrials.update({
       where: {
         id,
       },
@@ -61,6 +83,7 @@ export const handleSolvePuzzle = async (
         [gem]: true,
       },
     });
+    pusherServer.trigger(id, "complete-puzzle", gem);
     revalidatePath(`session/${id}`);
     return gem;
   } catch (error) {

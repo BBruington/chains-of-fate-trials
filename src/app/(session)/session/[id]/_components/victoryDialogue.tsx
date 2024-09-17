@@ -30,7 +30,7 @@ export default function VictoryDialogue({
   victoryDialogue,
   puzzleSession,
 }: VictoryDialogueProps) {
-  const router = useRouter()
+  const router = useRouter();
   useEffect(() => {
     const calculateTime = () => {
       revalidateSession({ sessionId: puzzleSession.id });
@@ -49,13 +49,13 @@ export default function VictoryDialogue({
 
   const handleEndSession = async () => {
     await endSession({ sessionId: puzzleSession.id });
-    router.push('/session/play')
+    router.push("/session/play");
   };
 
   return (
     <Dialog open={victoryDialogue}>
       <DialogContent>
-        <DialogTitle>You've completed the Trials!</DialogTitle>
+        <DialogTitle>You&apos;ve completed the Trials!</DialogTitle>
         <div className={`${font.className} flex flex-col space-y-5 text-sm`}>
           <p>
             As the players place the final Tear of the Elements—Terran, Aquan,

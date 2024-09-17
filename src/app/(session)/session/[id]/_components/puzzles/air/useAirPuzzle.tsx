@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import {
   INITIAL_MAP,
   MAP_TILE,
-  INITIAL_PLAYER_POSITION,
 } from "../../../_constants";
 import { useAtom } from "jotai";
 import { inventoryItems } from "../../../jotaiAtoms";

@@ -1,7 +1,7 @@
 import { GridPiece } from "../../../_types";
 import elendiel from "@/../public/playericons/elendiel.png";
 import aelarion from "@/../public/playericons/aelarion.png";
-import dinner from "@/../public/playericons/din'er.png";
+import dinner from "@/../public/playericons/dinner.png";
 import artemis from "@/../public/playericons/artemis.png";
 import Image from "next/image";
 

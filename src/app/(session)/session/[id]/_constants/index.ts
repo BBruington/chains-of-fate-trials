@@ -34,10 +34,6 @@ export const INITIAL_MAP = [
   [1, 0, 0, 0, 0, 2, 4, 2, 0, 1, 1, 1],
 ];
 
-export const INITIAL_PLAYER_POSITION = {
-  x: 0, y: 0
-}
-
 const empty: GridPiece = {
   name: "empty",
   validMove: true,

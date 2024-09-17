@@ -8,6 +8,7 @@ import serum from "@/../public/icons/serum.png";
 import { changePotionQuantity } from "../../../actions";
 import { cn } from "@/lib/utils";
 import { Luxurious_Roman } from "next/font/google";
+import { useOptimistic, startTransition } from "react";
 
 const fontList = Luxurious_Roman({
   subsets: ["latin"],
@@ -19,16 +20,27 @@ interface PotionListItemProps {
   potion: Potion;
 }
 export default function PotionListItem({ potion }: PotionListItemProps) {
+  const updatePotion = (currentPotion: Potion, updatedQuantity: number) => {
+    return {
+      ...currentPotion,
+      quantity: currentPotion.quantity + updatedQuantity,
+    };
+  };
   const [selectedPotion, setSelectedPotion] = useAtom<Potion>(displayPotion);
+  const [optimisticPotion, addOptimistic] = useOptimistic(potion, updatePotion);
 
   const handleSelectPotion = () => {
     setSelectedPotion(potion);
   };
 
   const handleChangePotionQuantity = async (quantity: number) => {
-    await changePotionQuantity({ potion, quantity });
+    startTransition(async () => {
+      addOptimistic(quantity);
+      await changePotionQuantity({ potion, quantity });
+    });
   };
 
+  if (optimisticPotion.quantity < 1) return null;
   return (
     <div
       className={cn(
@@ -42,22 +54,22 @@ export default function PotionListItem({ potion }: PotionListItemProps) {
       >
         <Image width={37} src={serum} alt="potion icon" />
         <h1 className="ml-2 w-full text-xl">
-          {potion.name} <span>({potion.quantity})</span>
+          {optimisticPotion.name} <span>({optimisticPotion.quantity})</span>
         </h1>
       </Button>
       <div className="flex w-full items-center justify-start">
         <div className="flex h-full w-full">
           <Button
-            aria-label={`decrement ${potion.name} button`}
+            aria-label={`decrement ${optimisticPotion.name} button`}
             onClick={() => handleChangePotionQuantity(-1)}
-            className="h-full w-1/2 text-lg rounded-none rounded-bl-lg border-r border-t"
+            className="h-full w-1/2 rounded-none rounded-bl-lg border-r border-t text-lg"
           >
             -
           </Button>
           <Button
-            aria-label={`increment ${potion.name} button`}
+            aria-label={`increment ${optimisticPotion.name} button`}
             onClick={() => handleChangePotionQuantity(1)}
-            className="h-full w-1/2 text-lg rounded-none rounded-br-lg border-t"
+            className="h-full w-1/2 rounded-none rounded-br-lg border-t text-lg"
           >
             +
           </Button>

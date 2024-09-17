@@ -29,9 +29,9 @@ export default function Loading() {
   ];
 
   return (
-    <div className="relative flex h-full w-full justify-between">
+    <div className="relative flex h-[calc(100vh-48px)] w-full justify-between">
       <div />
-      <div className="flex h-screen w-full flex-col items-center">
+      <div className="flex h-full w-full flex-col items-center">
         <h1
           className={`${fontHeader.className} mb-7 mt-10 animate-pulse text-3xl`}
         >
@@ -39,14 +39,9 @@ export default function Loading() {
         </h1>
         <div className="flex content-center justify-around space-x-10">
           {emptyMixture.map((mix, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center"
-            >
+            <div key={index} className="flex flex-col items-center">
               <div className="vial">
-                <div
-                  className={cn(mix.id !== "empty" && "liquid")}
-                ></div>
+                <div className={cn(mix.id !== "empty" && "liquid")}></div>
               </div>
               <h2 className="mt-3 min-h-[32px] min-w-[89px] max-w-[130px] text-center text-xs">
                 {mix.name}
@@ -63,8 +58,8 @@ export default function Loading() {
           </div>
         </div>
       </div>
-      <div className="flex h-screen w-96 justify-end">
-        <div className="flex h-screen w-96 flex-col items-center overflow-y-auto border-l border-primary/40 p-2">
+      <div className="flex h-full w-96 justify-end">
+        <div className="flex h-full w-96 flex-col items-center overflow-y-auto overflow-x-hidden border-l border-primary/40 p-2">
           <h2 className={`${fontHeader.className} py-2 text-2xl`}>
             My Ingredients
           </h2>

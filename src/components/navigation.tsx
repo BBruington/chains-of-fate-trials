@@ -16,11 +16,7 @@ import { cn } from "@/lib/utils";
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/potioncraft", label: "Potion Craft" },
-];
-
-const PUZZLE_SESSION_LINKS = [
-  { href: "/session/create", label: "Create" },
-  { href: "/session/join", label: "Join" },
+  { href: "/session/play", label: "Puzzle Session" },
 ];
 
 const THEME_OPTIONS = [
@@ -45,14 +41,15 @@ export default function Navigation() {
   const baseUrl = findBaseUrl(pathName);
 
   return (
-    <nav className="flex items-center justify-end space-x-3 border-b-2 border-secondary px-2">
+    <nav className="flex h-12 w-full items-center justify-end space-x-3 border-b-2 border-secondary px-2">
+      
       <div className="flex items-center space-x-4">
         {NAV_LINKS.map(({ href, label }) => (
           <Link
             className={cn(
               "transition-colors hover:text-primary/80",
               (href.includes(baseUrl) || label === baseUrl) &&
-                "pointer-events-none text-primary/50 border-b border-primary/50",
+                "pointer-events-none border-b border-primary/50 text-primary/50",
             )}
             href={href}
             key={href}
@@ -60,29 +57,6 @@ export default function Navigation() {
             {label}
           </Link>
         ))}
-        {/* <DropdownMenu>
-          <DropdownMenuTrigger className="w-32" asChild>
-            <Button variant="ghost" size="icon">
-              Puzzle Session
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {PUZZLE_SESSION_LINKS.map(({ href, label }) => (
-              <DropdownMenuItem key={href}>
-                <Link
-                  href={href}
-                  className={cn(
-                    "w-full transition-colors hover:text-primary/80",
-                    pathName === href &&
-                      "pointer-events-none font-semibold text-secondary",
-                  )}
-                >
-                  {label}
-                </Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu> */}
       </div>
       <div className="my-1 flex items-center space-x-2">
         <DropdownMenu>

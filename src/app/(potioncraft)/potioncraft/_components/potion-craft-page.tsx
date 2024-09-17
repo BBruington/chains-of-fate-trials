@@ -6,7 +6,6 @@ import { usePotionCraft } from "../_hooks/usePotionCraft";
 import { PotionCraftComponentProps, RarityStyleProps } from "../_types";
 import { cn } from "@/lib/utils";
 import { RARITY_STYLES_TEXT } from "@/constants";
-import { commonPotions } from "./testData";
 import CraftPotionStation from "./craft-potion-station";
 
 export default function PotionCraftComponent({
@@ -17,28 +16,22 @@ export default function PotionCraftComponent({
 }: PotionCraftComponentProps) {
   const {
     mixture,
-    userIngredients,
     filteredUserIngredients,
     activeIngredient,
-    mixtureProperties,
-    findPotion,
-    findMixtureProperties,
     isFormulaSaved,
     addFormula,
     handleResetIngredients,
     handleFilterIngredients,
     addIngredientToMixture,
     handleOrderFilteredIngredients,
-    handleAddIngredients,
     handleCraftPotion,
-    updateServerIngredientQuantity,
     handleIngredientDragStart,
     handleIngredientDragEnd,
   } = usePotionCraft({ ingredients, userId });
 
   return (
     <>
-      <div className="relative flex h-full w-full justify-between">
+      <div className="relative flex h-[calc(100vh-48px)] w-full justify-between">
         <div />
         <DndContext
           onDragStart={handleIngredientDragStart}
@@ -60,13 +53,7 @@ export default function PotionCraftComponent({
               />
             ) : null}
           </DragOverlay>
-          <div className="flex h-screen w-full flex-col items-center">
-            {/* <Image
-            alt="alchemist's lab background"
-            src={alchemistLab}
-            className="absolute h-full w-full"
-            style={{ zIndex: -1 }}
-          /> */}
+          <div className="flex h-full w-full flex-col items-center">
             <CraftPotionStation
               addFormula={addFormula}
               isFormulaSaved={isFormulaSaved}
@@ -78,7 +65,7 @@ export default function PotionCraftComponent({
               ingredients={ingredients}
             />
           </div>
-          <div className="flex h-screen min-w-96 flex-col items-center overflow-y-auto border-l border-primary/40 p-2">
+          <div className="flex h-full lg:min-w-96 min-w-80 flex-col items-center overflow-y-auto border-l border-primary/40 p-2">
             <IngredientList
               ingredients={filteredUserIngredients}
               activeIngredient={activeIngredient}

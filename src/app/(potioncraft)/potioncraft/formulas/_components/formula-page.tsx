@@ -60,8 +60,6 @@ export default function FormulaPage({ userId, formulas }: FormulaListProps) {
     setFilteredFormulas(input ? filterFormulas(formulas, input) : formulas);
   };
 
-  console.log("filteredFormulasByName: ", filteredFormulasByName)
-
   return (
     <>
       <DisplayFormula

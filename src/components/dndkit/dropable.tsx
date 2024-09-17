@@ -2,10 +2,6 @@ import React from "react";
 import { UniqueIdentifier, useDroppable } from "@dnd-kit/core";
 import { cn } from "@/lib/utils";
 import { Ingredient } from "@prisma/client";
-import { IngredientIconProps } from "@/app/(potioncraft)/potioncraft/_types";
-import skull from "@/../public/icons/skull.svg";
-import wizardHat from "@/../public/icons/wizard-hat.svg";
-import scroll from "@/../public/icons/scroll.svg";
 import "./styles.scss";
 
 type DroppableProps = {
@@ -27,12 +23,12 @@ export default function Droppable({
     data: { accepts },
   });
 
-  const ingredientIcon: IngredientIconProps = {
-    ARCANE: wizardHat,
-    DIVINE: wizardHat,
-    OCCULT: skull,
-    PRIMAL: scroll,
-  };
+  // const ingredientIcon: IngredientIconProps = {
+  //   ARCANE: wizardHat,
+  //   DIVINE: wizardHat,
+  //   OCCULT: skull,
+  //   PRIMAL: scroll,
+  // };
 
   return (
     <div className="flex flex-col items-center" ref={setNodeRef}>

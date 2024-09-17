@@ -82,6 +82,7 @@ export default function DisplayFormula({
           <Image
             className="absolute h-full w-full"
             style={{ zIndex: -2 }}
+            priority={true}
             src={woodBackground}
             alt="wooden background image"
           />
@@ -94,6 +95,7 @@ export default function DisplayFormula({
           <Image
             className="absolute h-full w-full"
             style={{ zIndex: -2 }}
+            priority={true}
             src={woodBackground}
             alt="wooden background image"
           />
@@ -106,6 +108,7 @@ export default function DisplayFormula({
               src={parchment}
               alt="Cover Image"
               className="mx-auto h-full w-full"
+              priority={true}
               style={{
                 zIndex: -1,
                 position: "absolute",

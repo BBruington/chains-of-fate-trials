@@ -14,14 +14,17 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model PuzzleSession {
+model PuzzleElementalTrials {
   id                String     @default(cuid()) @id
   title             String
-  durationSeconds   Int      @default(0)
   createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  firegem           Boolean @default(false)
+  airgem           Boolean@default(false)
+  earthgem           Boolean@default(false)
+  watergem           Boolean@default(false)
   chat              PuzzleChatMessage[]
   players           User[]
-  puzzles           Puzzle[]
 }
 
 model PuzzleChatMessage {
@@ -30,26 +33,9 @@ model PuzzleChatMessage {
   username   String
   message    String
   createdAt  DateTime @default(now())
-  session    PuzzleSession @relation(fields: [sessionId], references: [id])
+  session    PuzzleElementalTrials? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
 
-model Puzzle {
-  id          String @default(cuid()) @id
-  checkpoint  Int @default(1)
-  title       String
-  description String?
-  solved      Boolean
-  data        Json
-  typeId      String
-  type        PuzzleType @relation(fields: [typeId], references: [id])
-  session     PuzzleSession[]
-}
-
-model PuzzleType {
-  name String
-  id   String @default(cuid()) @id
-  puzzles Puzzle[]
-}
 
 model User {
   id                String    @default(cuid()) @id
@@ -59,7 +45,7 @@ model User {
   email             String?   @unique
   createdAt         DateTime  @default(now()) @map(name: "created_at")
   updatedAt         DateTime  @updatedAt @map(name: "updated_at")
-  puzzleSessions    PuzzleSession[]
+  PuzzleElementalTrials    PuzzleElementalTrials[]
   Ingredients       Ingredient[]
   Potions           Potion[]
   Formulas          Formula[]

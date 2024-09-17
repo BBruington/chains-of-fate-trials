@@ -11,7 +11,7 @@ export default function MetalListItem({
 }) {
   return (
     <>
-      <p>{metal.name}</p>
+      <p className="text-lg w-full border-b text-center">{metal.name.toUpperCase()}</p>
       <p>Hardness: {metal.hiddenValue === "hardness" ? "?" : metal.hardness}</p>
       <p>
         Magic:{" "}

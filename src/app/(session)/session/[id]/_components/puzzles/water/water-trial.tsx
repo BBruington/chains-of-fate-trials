@@ -15,7 +15,7 @@ export default function WaterPuzzle({ sessionId }: { sessionId: string }) {
   }, []);
 
   return (
-    <div className="mt-10 flex flex-col items-center">
+    <div className="mt-1 flex flex-col items-center">
       <div className="flex space-x-5">
         <Button
           className="w-32 bg-blue-400 hover:bg-blue-600"
@@ -35,7 +35,7 @@ export default function WaterPuzzle({ sessionId }: { sessionId: string }) {
           <div
             key={index}
             className={cn(
-              "pipe-section realative flex h-20 w-20 cursor-pointer items-center justify-center border-4 border-blue-500 bg-blue-300 transition-transform duration-500",
+              "pipe-section realative flex h-16 w-16 cursor-pointer items-center justify-center border-4 border-blue-500 bg-blue-300 transition-transform duration-500",
               pipe.isValid === false && "bg-blue-400",
               pipe.isValid === true && "animate-pulse",
             )}

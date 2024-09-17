@@ -237,7 +237,7 @@ export const puzzleTransitions = [
         isHighlighted: false,
       },
     ],
-    label: "The Pedestals",
+    label: "Pedestals",
   },
   {
     name: PuzzleEnums.FIRE,
@@ -271,11 +271,11 @@ export const puzzleTransitions = [
         isHighlighted: true,
       },
     ],
-    label: "The Trial of Fire",
+    label: "Trial of Fire",
   },
   {
     name: PuzzleEnums.WATER,
-    label: "The Trial of Water",
+    label: "Trial of Water",
     description: [
       {
         isHighlighted: false,
@@ -296,7 +296,7 @@ export const puzzleTransitions = [
   },
   {
     name: PuzzleEnums.EARTH,
-    label: "The Trial of Earth",
+    label: "Trial of Earth",
     description: [
       {
         isHighlighted: false,
@@ -322,7 +322,7 @@ export const puzzleTransitions = [
   },
   {
     name: PuzzleEnums.AIR,
-    label: "The Trial of Air",
+    label: "Trial of Air",
     description: [
       {
         isHighlighted: false,

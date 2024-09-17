@@ -2,7 +2,7 @@
 import Inventory from "./sidebar/inventory";
 import { DndContext } from "@dnd-kit/core";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
+import "../_styles/shiney.scss";
 import {
   SessionPageProps,
   SideBarEnums,
@@ -25,6 +25,7 @@ import VictoryDialogue from "./victoryDialogue";
 import { puzzleTransitions, sidebarNavItems } from "../_constants";
 import { Toggle } from "@/components/ui/toggle";
 import { Music2Icon } from "lucide-react";
+import TrialButton from "./trial-button";
 
 const puzzleComponents = {
   [PuzzleEnums.PEDESTALS]: PedestalPuzzle,
@@ -115,17 +116,18 @@ export default function SessionPage({
       </Suspense>
       <DndContext onDragEnd={onDragEnd}>
         <div className="flex w-full flex-col items-center">
-          <div className="flex space-x-7 p-2">
+          <div className="grid grid-cols-3 p-2 items-center">
             {puzzleTransitions.map(({ name, description, label }) => (
-              <Button
-                key={label}
-                onClick={() => handlePuzzleTransition(name, description)}
-              >
-                {label}
-              </Button>
+              <TrialButton
+                key={name}
+                label={label}
+                handlePuzzleTransition={handlePuzzleTransition}
+                description={description}
+                name={name}
+              />
             ))}
             <Toggle
-            className="data-[state=on]:bg-red-600 data-[state=on]:border-red-700 border-2 data-[state=on]:text-accent-foreground"
+              className="m-5 border-2 h-14 data-[state=on]:border-red-700 data-[state=on]:bg-red-600 data-[state=on]:text-accent-foreground"
               value={audioRef.current === null ? "off" : "on"}
               onPressedChange={toggleAudio}
             >

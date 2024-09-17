@@ -39,14 +39,14 @@ export default function useFirePuzzle({ sessionId }: { sessionId: string }) {
         }),
       );
       solutionRef.current.push(label);
-      console.log(solutionRef);
       if (solutionRef.current.length === 6) {
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < solutionRef.current.length; i++) {
           if (solutionRef.current[i] !== correct[i]) {
             resetRunes();
           }
         }
-        revealInventoryItem(sessionId, "firegem", inventory, setInventory);
+        if (solutionRef.current.length === 6)
+          revealInventoryItem(sessionId, "firegem", inventory, setInventory);
       }
     },
     [runeState, solutionRef],

@@ -54,7 +54,7 @@ function GridTile({
     elendiel
   }
   return (
-    <div className="flex h-12 w-12 items-center justify-center border border-black bg-slate-400">
+    <div className="flex h-10 w-10 items-center justify-center border border-black bg-slate-400">
       {grid.name === "blocked" && (
         <div className="h-full w-full bg-slate-900" />
       )}

@@ -59,7 +59,6 @@ function GridTile({
         <div className="h-full w-full bg-slate-900" />
       )}
       {rowIndex === playerPosition.x && colIndex === playerPosition.y && (
-        // <div className="h-8 w-8 rounded-full bg-blue-500" />
         <Image src={characters[character]} height={45} width={45} alt="player" />
       )}
       {grid.name === "push" && <div className="z-10 h-8 w-8 bg-green-300" />}

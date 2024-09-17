@@ -418,8 +418,13 @@ export const allPipes: Record<number, PipeType> = {
 };
 
 export const pipesExample = [
-  1, 4, 1, 2, 2, 1, 1, 1, 4, 0, 4, 0, 4, 4, 4, 0, 2, 2, 2, 2, 1, 4, 1, 1, 2, 4,
-  4, 1, 2, 0, 0, 2, 2, 2, 4, 2, 1, 1, 2, 0, 1, 0, 4, 1, 1, 4, 4, 4, 1,
+  1, 4, 1, 2, 2, 1, 1, 
+  1, 4, 0, 4, 0, 4, 4, 
+  4, 0, 2, 2, 2, 2, 1, 
+  4, 1, 1, 2, 4, 4, 1, 
+  2, 0, 0, 2, 2, 2, 4, 
+  2, 4, 4, 2, 0, 1, 0, 
+  1, 1, 4, 4, 4, 4, 1,
 ];
 
 export const inventoryItemsRecords = [
@@ -433,7 +438,7 @@ export const inventoryItemsRecords = [
   {
     name: InventoryItemEnums.AIRGEM,
     label: "Tear of the Auran",
-    descripgion: "A translucent, pale yellow gemstone that seems to weigh nothing, swirling with mist inside its core. It hums with a faint breeze and is cold to the touch, as though it holds the very breath of the sky within.",
+    description: "A translucent, pale yellow gemstone that seems to weigh nothing, swirling with mist inside its core. It hums with a faint breeze and is cold to the touch, as though it holds the very breath of the sky within.",
     hidden: true,
     image: airgem,
   },

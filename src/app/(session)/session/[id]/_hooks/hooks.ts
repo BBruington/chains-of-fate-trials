@@ -2,7 +2,6 @@
 import { SetStateAction, useCallback, useState } from "react";
 import { handleSolvePuzzle } from "../actions";
 import {
-  InventoryItemEnums,
   InventoryItemProps,
   PuzzleEnums,
   SetAtom,

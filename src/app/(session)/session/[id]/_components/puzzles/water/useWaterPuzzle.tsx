@@ -6,7 +6,6 @@ import {
   CheckSideprops,
   FindSidesAndEdgesReturn,
   OppositeSideType,
-  InventoryItemEnums,
 } from "../../../_types";
 import { inventoryItems, waterPipes } from "../../../jotaiAtoms";
 import { useAtom } from "jotai";

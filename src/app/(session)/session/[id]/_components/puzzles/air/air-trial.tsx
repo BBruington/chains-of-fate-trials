@@ -33,7 +33,7 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
       className="relative mx-auto flex flex-col items-center justify-center"
       ref={setNodeRef}
     >
-      <div className="flex mb-5 space-x-3">
+      <div className="mb-5 flex space-x-3">
         <Button onClick={() => movePlayer(-1, 0)}>W</Button>
         <Button onClick={() => movePlayer(1, 0)}>S</Button>
         <Button onClick={() => movePlayer(0, 1)}>D</Button>
@@ -44,7 +44,7 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
             value: "dinner" | "artemis" | "aelarion" | "elendiel",
           ) => setCharacter(value)}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[180px] bg-secondary-foreground text-black">
             <SelectValue placeholder="Select a character" />
             <SelectContent>
               <SelectGroup>

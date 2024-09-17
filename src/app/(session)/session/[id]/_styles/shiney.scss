@@ -13,8 +13,8 @@ $color: #2194E0;
   padding: 0.45em 1.7em;
   text-align: center;
   text-decoration: none;
-  color: $color;
-  border: 2px solid $color;
+  color: var(--dynamic-color, $color);
+  border: 2px solid var(--dynamic-color, $color);;
   font-size: 20px;
   display: inline-block;
   border-radius: 0.3em;
@@ -34,9 +34,8 @@ $color: #2194E0;
     transition: none;
   }
   &:hover {
-    background-color: $color;
+    background-color: var(--dynamic-color, $color);
     color: #fff;
-    border-bottom: 4px solid darken($color, 10%);
     &:before {
       transform: skewX(-45deg) translateX(13.5em);
      transition: all 0.5s ease-in-out;

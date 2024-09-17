@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 const DEFAULT_IMAGE_URL =
   "https://scgovlibrary.librarymarket.com/sites/default/files/2020-12/dndmobile-br-1559158957902.jpg";
 
-export default async function page() {
+export default function Page() {
   const router = useRouter()
   const handleStartTrials = async () => {
     const trialSession = await handlePlayTrials({ sessionId: "TheTrialsoftheElements" });

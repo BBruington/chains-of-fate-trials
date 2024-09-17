@@ -58,7 +58,7 @@ export default function SessionPage({
   };
   useEffect(() => {
     audioRef.current = new Audio("/audio/background-music.mp3");
-    audioRef.current.volume = 0.5;
+    audioRef.current.volume = 0.3;
     audioRef.current.loop = true;
     setInventoryItems(
       inventoryItemsState.map((item) => {
@@ -115,7 +115,7 @@ export default function SessionPage({
       </Suspense>
       <DndContext onDragEnd={onDragEnd}>
         <div className="flex w-full flex-col items-center">
-          <div className="flex space-x-7">
+          <div className="flex space-x-7 p-2">
             {puzzleTransitions.map(({ name, description, label }) => (
               <Button
                 key={label}
@@ -125,6 +125,7 @@ export default function SessionPage({
               </Button>
             ))}
             <Toggle
+            className="data-[state=on]:bg-red-600 data-[state=on]:border-red-700 border-2 data-[state=on]:text-accent-foreground"
               value={audioRef.current === null ? "off" : "on"}
               onPressedChange={toggleAudio}
             >

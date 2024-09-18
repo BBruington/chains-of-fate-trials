@@ -45,7 +45,7 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
           ) => setCharacter(value)}
         >
           <SelectTrigger className="w-[180px] bg-secondary-foreground text-black">
-            <SelectValue placeholder="Select a character" />
+            <SelectValue placeholder={character} />
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Characters</SelectLabel>

@@ -84,6 +84,12 @@ export const useDragEnd = ({
 
       actions[over.id as PuzzleEnums]();
     },
-    [setInventoryItems, setPedestalState, setVictoryDialogue, inventoryItemsState, pedestalState],
+    [
+      setInventoryItems,
+      setPedestalState,
+      setVictoryDialogue,
+      inventoryItemsState,
+      pedestalState,
+    ],
   );
 };

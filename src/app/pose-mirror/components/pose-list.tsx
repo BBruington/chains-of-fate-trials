@@ -1,6 +1,5 @@
 import {
   coloredBoxesAtom,
-  colorOrderAtom,
   containersAtom,
 } from "@/app/atoms/globalState";
 import { DndContext } from "@dnd-kit/core";
@@ -8,7 +7,7 @@ import { useAtom } from "jotai";
 import { useContext, useEffect, useRef } from "react";
 import MirrorPoseHooks from "../_hooks/pose-list-hooks";
 import { PageContext } from "../page-context";
-import ColorSelectScreen from "./colorSelect/color-select-screen";
+import ColorSelectScreen from "./color-select-screen";
 import MatchingContainer from "./matching-container";
 import StartScreen from "./start";
 import Stickman from "./stickman";
@@ -17,7 +16,6 @@ export default function PoseMirror() {
   const { showColorSelect, showStart } = useContext(PageContext);
   const [containers, setContainers] = useAtom(containersAtom);
   const [coloredBoxes, setColoredBoxes] = useAtom(coloredBoxesAtom);
-  const [colorOrder, setColorOrder] = useAtom(colorOrderAtom);
 
   const { handleDragEnd, gameStart } = MirrorPoseHooks();
 
@@ -47,10 +45,6 @@ export default function PoseMirror() {
     });
   }, [coloredBoxes]);
 
-  // useEffect(() => {
-  //   gameStart();
-  // }, []);
-
   return (
     <div
       className={`flex h-[calc(100%-48px)] w-full flex-col items-center justify-around xl:flex-row`}
@@ -61,7 +55,7 @@ export default function PoseMirror() {
         <ColorSelectScreen />
       ) : (
         <DndContext onDragEnd={handleDragEnd}>
-          <MatchingContainer containers={containers} colorOrder={colorOrder} />
+          <MatchingContainer containers={containers} />
           <Stickman />
         </DndContext>
       )}

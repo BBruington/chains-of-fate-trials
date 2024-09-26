@@ -1,6 +1,5 @@
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import type { ReactNode } from "react";
 import type { DraggableProps } from "../types";
 
 export default function Draggable(props: DraggableProps) {
@@ -13,7 +12,7 @@ export default function Draggable(props: DraggableProps) {
 
   return (
     <div
-      className={`${props.disabled ? "cursor-default" : "cursor-pinkCursorPointer"} relative h-full w-full`}
+      className={`${props.disabled ? "cursor-default" : ""} relative h-full w-full`}
       ref={setNodeRef}
       style={style}
       {...listeners}

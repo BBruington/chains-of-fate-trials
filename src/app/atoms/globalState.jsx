@@ -19,17 +19,18 @@ export const coordinatesAtom = atom({
   rightFoot: { x: 0, y: 0 },
 });
 
-export const nameArrayAtom = atom(["Aelarion", "Artemis", "Elendiel", ""]);
+export const nameArrayAtom = atom([]);
 export const buttonAudioAtom = atom(new Audio("/sounds/button.wav"));
 export const button2AudioAtom = atom(new Audio("/sounds/button2.wav"));
+export const playerNameAtom = atom("");
+export const playerIconAtom = atom(null);
+export const numOfPlayersAtom = atom(1);
 export const selectAudioAtom = atom(new Audio("/sounds/select.wav"));
 export const containersAtom = atom(initalContainers);
 export const coloredBoxesAtom = atom([0, 0]);
 export const colorOrderAtom = atom([
-  { number: 1, border: "#f571cb", bg: "bg-[#f571cb]" },
-  { number: 2, border: "#25b3f5", bg: "bg-[#25b3f5]" },
-  { number: 3, border: "#b9f734", bg: "bg-[#b9f734]" },
-  { number: 4, border: "#ff6961", bg: "bg-[#ff6961]" },
+  { number: 0, border: "#25b3f5", bg: "bg-[#25b3f5]" },
+  { number: 1, border: "#ff6961", bg: "bg-[#ff6961]" },
 ]);
 export const playerStatesAtom = atom([]);
 export const solutionOrderAtom = atom([
@@ -46,3 +47,4 @@ export const solutionOrderAtom = atom([
   "W",
   "X",
 ]);
+export const userIdAtom = atom("");

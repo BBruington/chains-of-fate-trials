@@ -35,27 +35,4 @@ export const randomizeSolutionOrder = async () => {
   }
 };
 
-// function shuffleSolutionOrder() {
-//     console.log("shuffleSolutionOrder running");
-//     setSolutionOrder((prevOrder) => {
-//       console.log("setSolutionOrder running");
-//       const newSolutionOrder = [...prevOrder];
-//       let currentIndex = newSolutionOrder.length;
-
-//       while (currentIndex !== 0) {
-//         let randomIndex = Math.floor(Math.random() * currentIndex);
-//         currentIndex--;
-
-//         [newSolutionOrder[currentIndex], newSolutionOrder[randomIndex]] = [
-//           newSolutionOrder[randomIndex],
-//           newSolutionOrder[currentIndex],
-//         ];
-//       }
-
-//       console.log("newSolutionOrder", newSolutionOrder);
-
-//       poseMirrorGameStartEvent(newSolutionOrder);
-
-//       return newSolutionOrder;
-//     });
-//   }
+export const updatePlayerCursorLocation = async () => {};

@@ -12,7 +12,7 @@ export default function Droppable(props: DroppableProps) {
   };
 
   return (
-    <div ref={setNodeRef} style={style}>
+    <div ref={setNodeRef} style={style} className="w-[15%]">
       {props.children}
     </div>
   );

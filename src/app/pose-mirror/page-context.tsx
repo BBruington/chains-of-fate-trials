@@ -1,14 +1,12 @@
-import { useAtom } from "jotai";
+"use client";
 import { createContext, useRef, useState } from "react";
-import { nameArrayAtom } from "../atoms/globalState";
 import type { pageContextType, pageProviderProps } from "./types";
 
 export const PageContext = createContext<pageContextType | null>(null);
 
 export const PageProvider = ({ children }: pageProviderProps) => {
-  const [nameArray, setNameArray] = useAtom(nameArrayAtom);
-  const [showColorSelect, setShowColorSelect] = useState(false);
-  const [showStart, setShowStart] = useState(false);
+  const [showColorSelect, setShowColorSelect] = useState(true);
+  const [showStart, setShowStart] = useState(true);
 
   const buttonAudioRef = useRef(new Audio("/sounds/button.wav"));
   const button2AudioRef = useRef(new Audio("/sounds/button2.wav"));
@@ -20,8 +18,6 @@ export const PageProvider = ({ children }: pageProviderProps) => {
   return (
     <PageContext.Provider
       value={{
-        nameArray,
-        setNameArray,
         buttonAudioRef,
         button2AudioRef,
         colorSelectMusicRef,

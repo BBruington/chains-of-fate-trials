@@ -1,4 +1,5 @@
 "use client";
+import { useUser } from "@clerk/nextjs";
 import { useAtom } from "jotai";
 import Pusher from "pusher-js";
 import { useEffect, useRef, useState } from "react";
@@ -16,7 +17,7 @@ export default function SilentPose({ user, prismaCoordinates }) {
   const [solutionMap, setSolutionMap] = useState();
   const [coordinates, setCoordinates] = useAtom(coordinatesAtom);
   const poseContainerRef = useRef(null);
-
+  const test = useUser();
   const handleChangeHeadCoordinates = async (testCoordinates) => {
     await changeHeadCoordiantes(testCoordinates);
   };
@@ -52,7 +53,7 @@ export default function SilentPose({ user, prismaCoordinates }) {
   }, []);
 
   function gameStart(solutionOrder) {
-    console.log("gameStart:", solutionOrder)
+    console.log("gameStart:", solutionOrder);
     setSolutionMap(() => {
       const newSolutionMap = solutionOrder.reduce((acc, letter, index) => {
         acc[letter] = index;
@@ -72,10 +73,6 @@ export default function SilentPose({ user, prismaCoordinates }) {
       });
       return newSolutionMap;
     });
-    // const solutionMap = solutionOrder.reduce((acc, letter, index) => {
-    //   acc[letter] = index;
-    //   return acc;
-    // }, {});
 
     console.log(solutionMap);
   }
@@ -103,7 +100,6 @@ export default function SilentPose({ user, prismaCoordinates }) {
 
     const channel = pusher.subscribe("pose-mirror");
 
-    // Named handler functions
     const handleCorrectPose = () => {
       console.log("channel bind works");
       advanceGame();
@@ -114,29 +110,19 @@ export default function SilentPose({ user, prismaCoordinates }) {
       gameStart(solutionOrder.solutionOrder);
     };
 
-    // Bind events
     channel.bind("correct-pose", handleCorrectPose);
     channel.bind("game-start", handleGameStart);
 
-    // Cleanup function
     return () => {
       channel.unbind("correct-pose", handleCorrectPose);
       channel.unbind("game-start", handleGameStart);
       pusher.unsubscribe("pose-mirror");
     };
-  }, []); // Empty dependency array ensures this effect runs only once
-
-  function testChange() {
-    console.log("testChange");
-    handleChangeHeadCoordinates({ head: { x: 6969, y: 420 } });
-  }
+  }, []);
 
   return (
-    <div className="flex h-[calc(100%-48px)] flex-col items-center justify-evenly lg:flex-row">
+    <div className="flex h-[95%] flex-col items-center justify-evenly lg:flex-row">
       <PoseOrder imageArray={imageArray} />
-      <button onClick={() => console.log(solutionOrder)}>solutionOrder</button>
-      <button onClick={() => testChange()}>test</button>
-      <button onClick={() => console.log(solutionMap)}>solutionMap</button>
       <div className="flex h-full w-[48%] items-center justify-center lg:h-[calc(100vh-60px)]">
         <div
           ref={poseContainerRef}

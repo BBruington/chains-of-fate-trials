@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <body className={inter.className}>
+        <body className={`${inter.className} flex flex-col`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -30,7 +30,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Navigation />
-            <main>{children}</main>
+            <main className="flex-grow">{children}</main>
           </ThemeProvider>
         </body>
       </html>

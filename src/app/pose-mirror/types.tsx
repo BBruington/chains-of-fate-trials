@@ -12,7 +12,6 @@ export interface MatchingContainerProps {
     isDraggableDisabled: boolean;
     isDroppableDisabled: boolean;
   }[];
-  colorOrder: { border: string; bg: string }[];
 }
 
 export interface MatchingContentProps {
@@ -21,13 +20,11 @@ export interface MatchingContentProps {
   index: number;
   image: string | null;
   isDraggable: boolean;
-  colorOrder: { bg: string; border: string }[];
 }
 
 export interface PulseEffectProps {
   showColor: boolean;
   index: number;
-  colorOrder: { border: string; bg: string }[];
 }
 
 export interface DraggableProps {

@@ -1,33 +1,53 @@
-import { nameArrayAtom } from "@/app/atoms/globalState";
-import { colorChoices, mouseColor } from "@/app/pose-mirror/const";
+import {
+  nameArrayAtom,
+  playerIconAtom,
+  playerNameAtom,
+} from "@/app/atoms/globalState";
+import { colorBorderChoices, mouseColor } from "@/app/pose-mirror/const";
 import type { ColorSelectBoxesProps } from "@/app/pose-mirror/types";
+import { cn } from "@/lib/utils";
 import { useAtom } from "jotai";
+import { Cinzel } from "next/font/google";
 import Image from "next/image";
 import ColorSelectHooks from "../_hooks/color-select-hooks";
 
+const fontHeader = Cinzel({
+  // use cn when implementing it
+  subsets: ["latin"],
+  weight: ["700"],
+  display: "swap",
+});
+
 export default function ColorSelectBoxes({ i }: ColorSelectBoxesProps) {
   const [nameArray, setNameArray] = useAtom(nameArrayAtom);
+  const [playerIcon, setPlayerIcon] = useAtom(playerIconAtom);
+  const [playerName, setPlayerName] = useAtom(playerNameAtom);
   const { handleMouseClick } = ColorSelectHooks();
 
   return (
     <div
       key={i}
-      onClick={() => handleMouseClick(i, "Gannandolf")}
-      className={`${colorChoices[i]} ${mouseColor[i]} h-[45%] w-1/2 flex-col items-center overflow-hidden break-words rounded-lg border-8 p-5 text-center text-3xl md:h-5/6 md:w-5/12`}
+      onClick={() => handleMouseClick(i)}
+      className={`${colorBorderChoices[i]} ${mouseColor[i]} relative flex h-72 w-52 flex-1 flex-col items-center justify-center overflow-hidden break-words break-all rounded-lg border-8 p-6 text-center text-3xl md:w-72 lg:w-96`}
     >
-      <div className="mb-2 flex h-1/3 w-full items-center justify-center">
-        <h1 className="md:text-4xl lg:text-5xl">{nameArray[i]}</h1>
-      </div>
-      {nameArray[i] !== "" ? (
-        <div className="relative flex h-1/2 justify-center">
-          <Image
-            src={`/icons/${nameArray[i]}.png`}
-            layout="fill"
-            objectFit="contain"
-            alt="Player Icon"
-          />
+      {nameArray[i] && (
+        <h1 className={cn(fontHeader.className, "mb-3 max-w-full truncate")}>
+          {nameArray[i].name}
+        </h1>
+      )}
+
+      {nameArray[i] && (
+        <div className="relative flex h-24 w-full justify-center md:h-40">
+          {nameArray[i].icon && (
+            <Image
+              src={nameArray[i].icon}
+              layout="fill"
+              objectFit="contain"
+              alt="Player Icon"
+            />
+          )}
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

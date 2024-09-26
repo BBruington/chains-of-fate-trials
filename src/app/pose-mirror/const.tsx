@@ -1,5 +1,3 @@
-export { colorChoices, initalContainers, initalSolutionOrder, mouseColor };
-
 const initalContainers = [
   {
     name: "A",
@@ -171,19 +169,9 @@ const initalContainers = [
   },
 ];
 
-const colorChoices = [
-  "border-[#f571cb]",
-  "border-[#25b3f5]",
-  "border-[#b9f734]",
-  "border-[#ff6961]",
-];
-
-const mouseColor = [
-  "cursor-pinkCursorPointer",
-  "cursor-blueCursorPointer",
-  "cursor-greenCursorPointer",
-  "cursor-redCursorPointer",
-];
+const colorChoices = ["#25b3f5", "#ff6961"];
+const colorBorderChoices = ["border-[#25b3f5]", "border-[#ff6961]"];
+const mouseColor = ["cursor-blueCursorPointer", "cursor-redCursorPointer"];
 
 const initalSolutionOrder = [
   "M",
@@ -199,3 +187,11 @@ const initalSolutionOrder = [
   "W",
   "X",
 ];
+
+export {
+  colorBorderChoices,
+  colorChoices,
+  initalContainers,
+  initalSolutionOrder,
+  mouseColor,
+};

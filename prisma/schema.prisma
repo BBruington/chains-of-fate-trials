@@ -63,6 +63,8 @@ model User {
   Potions           Potion[]
   Formulas          Formula[]
   cursorImg         String?
+  cursorCoordinates  CursorCoordinates?
+  cursorCoordinatesId String? @unique
   @@map(name: "users")
 }
 
@@ -163,4 +165,11 @@ model Coordinates {
 model SolutionOrder{
   id String  @default(cuid()) @id
   order Json
+}
+
+model CursorCoordinates{
+  id String  @default(cuid()) @id
+  coordinates Json?
+  user  User? @relation(fields: [userId], references: [id])
+  userId String? @unique
 }

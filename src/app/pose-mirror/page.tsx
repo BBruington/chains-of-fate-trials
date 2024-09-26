@@ -1,13 +1,18 @@
-"use client";
-
+"use server";
+import { currentUser } from "@clerk/nextjs/server";
 import PoseMirror from "./components/pose-mirror";
 import { PageProvider } from "./page-context";
 
-export default function Page() {
+export default async function Page() {
+  const user = await currentUser();
+  const userData = {
+    id: user?.id,
+  };
+
   return (
-    <div className="h-full">
+    <div className="h-full w-full">
       <PageProvider>
-        <PoseMirror />
+        <PoseMirror currentUser={userData} userData={userData.id} />
       </PageProvider>
     </div>
   );

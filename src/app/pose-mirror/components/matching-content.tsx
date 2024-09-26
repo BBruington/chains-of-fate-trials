@@ -1,4 +1,7 @@
+import { nameArrayAtom } from "@/app/atoms/globalState";
 import { MatchingContentProps } from "@/app/pose-mirror/types";
+import { useAtom } from "jotai";
+import { useEffect } from "react";
 import MirrorPoseHooks from "../_hooks/pose-list-hooks";
 import Draggable from "./draggable";
 import ImageDisplay from "./image-display";
@@ -10,23 +13,22 @@ export default function MatchingContent({
   index,
   image,
   isDraggable,
-  colorOrder,
 }: MatchingContentProps) {
+  const [nameArray, setNameArray] = useAtom(nameArrayAtom);
   const { handleMouseLeave } = MirrorPoseHooks();
+  useEffect(() => {
+    console.log(index % 2);
+  }, []);
 
   return (
     <div
-      className={`${showColor ? `border-[${colorOrder[index % 4].border}]` : "border-stone-200"} relative h-40 w-28 rounded-lg border-[7px]`}
-      onMouseLeave={() => handleMouseLeave(1)}
+      className={`${showColor ? `${nameArray[index % 2].colorBorder}` : "border-stone-200"} relative h-40 w-28 rounded-lg border-[7px]`}
+      onMouseLeave={() => handleMouseLeave(nameArray[index % 2].userId)}
     >
       <Draggable id={name} disabled={isDraggable}>
         <ImageDisplay image={image} />
       </Draggable>
-      <PulseEffect
-        showColor={showColor}
-        index={index}
-        colorOrder={colorOrder}
-      />
+      <PulseEffect showColor={showColor} index={index} />
     </div>
   );
 }

@@ -9,12 +9,24 @@ const config: Config = {
   theme: {
     extend: {
       keyframes: {
-        posepulse: {
+        inputPulse: {
+          "0%, 10%, 30%, 50%, 70%, 90%": { backgroundColor: "#A61919" }, // Red
+          "20%, 40%, 60%, 80%, 100%": { backgroundColor: "#CB7979" },
+        },
+        posePulse: {
           "0%, 100%": {
             opacity: ".25",
           },
           "50%": {
             opacity: ".75",
+          },
+        },
+        reveal: {
+          "0%": {
+            transform: "translateX(0%)",
+          },
+          "100%": {
+            transform: "translateX(100%)",
           },
         },
         swipe: {
@@ -27,7 +39,9 @@ const config: Config = {
         },
       },
       animation: {
-        posePulse: "posepulse 3s ease-in-out infinite",
+        reveal: "reveal .5s forwards",
+        inputPulse: "inputPulse 4s ease-in-out",
+        posePulse: "posePulse 3s ease-in-out infinite",
         swipe: "swipe .2s 1",
       },
       cursor: {

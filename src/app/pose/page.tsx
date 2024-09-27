@@ -38,15 +38,9 @@ export const getCoordinates = cache(async () => {
 });
 
 export default async function Page() {
-  // const user = await getUser();
-  // const prismaCoordinates = await getCoordinates();
-
   return (
     <PageProvider>
-      <SilentPose
-      // user={user}
-      // prismaCoordinates={prismaCoordinates.coordinates}
-      />
+      <SilentPose />
     </PageProvider>
   );
 }

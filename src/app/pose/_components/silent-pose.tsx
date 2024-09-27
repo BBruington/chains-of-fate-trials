@@ -10,7 +10,7 @@ import BodyPartConnectors from "./body-part-connectors";
 import BodyPartDisplay from "./body-parts-display";
 import PoseOrder from "./pose-order";
 
-export default function SilentPose({ user, prismaCoordinates }) {
+export default function SilentPose() {
   const isFirstRender = useRef(true);
   const [imageArray, setImageArray] = useState(initalImageArray);
   const [solutionOrder, setSolutionOrder] = useAtom(solutionOrderAtom);
@@ -23,8 +23,6 @@ export default function SilentPose({ user, prismaCoordinates }) {
   };
 
   useEffect(() => {
-    console.log(user);
-    console.log(prismaCoordinates);
     if (poseContainerRef.current) {
       const { width, height } =
         poseContainerRef.current.getBoundingClientRect();

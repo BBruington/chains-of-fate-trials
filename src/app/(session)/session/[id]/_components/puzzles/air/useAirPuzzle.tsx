@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  INITIAL_MAP,
-  MAP_TILE,
-} from "../../../_constants";
+import { INITIAL_MAP, MAP_TILE } from "../../../_constants";
 import { useAtom } from "jotai";
 import { inventoryItems } from "../../../jotaiAtoms";
 import { revealInventoryItem } from "@/app/(session)/session/[id]/_hooks/hooks";
@@ -47,7 +44,7 @@ export default function useAirPuzzle({ sessionId }: { sessionId: string }) {
     setPlayerPosition({ x: 0, y: 0 });
   };
 
-  const isInvalidMove = ({
+  const isValidMove = ({
     dx,
     dy,
     isPushedObject,
@@ -57,39 +54,31 @@ export default function useAirPuzzle({ sessionId }: { sessionId: string }) {
     isPushedObject?: boolean;
   }) => {
     if (dx < 0 || dx === rows || dy === columns || dy < 0) {
-      return true;
+      return false;
     }
     const gridSpot = MAP_TILE[grid[dx][dy]];
     if (isPushedObject) {
       const invalidTiles = {
-        push: () => true,
-        hole: () => false,
-        goal: () => true,
-        blocked: () => true,
-        empty: () => false,
+        push: () => false,
+        hole: () => true,
+        goal: () => false,
+        blocked: () => false,
+        empty: () => true,
       };
       return invalidTiles[gridSpot.name as keyof typeof invalidTiles]();
     }
-    if (gridSpot.validMove === false) {
-      return true;
-    }
-    return false;
+    return !gridSpot.validMove;
   };
 
   const movePlayer = (dx: number, dy: number) => {
     const newX = playerPosition.x + dx;
     const newY = playerPosition.y + dy;
-    if (isInvalidMove({ dx: newX, dy: newY })) {
-      return;
-    }
+    if (!isValidMove({ dx: newX, dy: newY })) return;
     const tileMovedTo = grid[newX][newY];
     //2 = pushable object
     if (tileMovedTo === 2) {
-      if (
-        isInvalidMove({ dx: newX + dx, dy: newY + dy, isPushedObject: true })
-      ) {
+      if (!isValidMove({ dx: newX + dx, dy: newY + dy, isPushedObject: true }))
         return;
-      }
       let gridRef = grid;
       const gridTile = grid[newX + dx][newY + dy];
       const pushObjectInto = {

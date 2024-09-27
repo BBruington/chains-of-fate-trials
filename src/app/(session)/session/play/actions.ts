@@ -1,7 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
-import { redirect } from "next/navigation";
 
 const HandlePlayTrialsSchema = z.object({
   sessionId: z.string(),
@@ -16,7 +15,6 @@ export const handlePlayTrials = async (
         id: sessionId,
       },
     });
-    console.log("i found session: ", foundSession)
     if (foundSession) {
       return sessionId;
     } else {

@@ -54,16 +54,16 @@ function Pipe({ pipe, index, rotatePipe }: PipeProps) {
       onClick={() => rotatePipe(pipe, index)}
       className="relative h-full w-full"
     >
-      {pipe.connects.down && (
+      {pipe.isConnectedTo.down && (
         <div className="absolute bottom-0 right-1/2 h-1/2 w-1 bg-blue-700 text-blue-700" />
       )}
-      {pipe.connects.left && (
+      {pipe.isConnectedTo.left && (
         <div className="absolute right-1/2 top-1/2 h-1 w-1/2 bg-blue-700 text-blue-700" />
       )}
-      {pipe.connects.up && (
+      {pipe.isConnectedTo.up && (
         <div className="absolute right-1/2 h-1/2 w-1 bg-blue-700 text-blue-700" />
       )}
-      {pipe.connects.right && (
+      {pipe.isConnectedTo.right && (
         <div className="absolute right-0 top-1/2 h-1 w-1/2 bg-blue-700 text-blue-700" />
       )}
     </div>

@@ -1,6 +1,5 @@
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { PuzzleChatMessage, PuzzleElementalTrials } from "@prisma/client";
-import { PrimitiveAtom } from "jotai";
 import { LucideProps } from "lucide-react";
 import { StaticImageData } from "next/image";
 import {
@@ -111,7 +110,7 @@ export type ConnectKeys = "up" | "right" | "down" | "left";
 export type PipeType = {
   name: string;
   isValid: boolean | null;
-  connects: { up: boolean; right: boolean; down: boolean; left: boolean };
+  isConnectedTo: { up: boolean; right: boolean; down: boolean; left: boolean };
 };
 
 export type CheckSideprops = {
@@ -120,8 +119,8 @@ export type CheckSideprops = {
 };
 
 export type FindSidesAndEdgesReturn = {
-  edges: ConnectKeys[];
-  sides: ConnectKeys[];
+  edgesOfBoard: ConnectKeys[];
+  sidesConnectedTo: ConnectKeys[];
 };
 
 export type PipeProps = {
@@ -148,7 +147,7 @@ export type MetalType = {
 
 export type GridPiece = {
   name: string;
-  validMove: boolean;
+  isValidMove: boolean;
 };
 
 type Rune = {

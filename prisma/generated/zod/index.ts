@@ -438,7 +438,7 @@ export const PuzzleChatMessageWhereInputSchema: z.ZodType<Prisma.PuzzleChatMessa
   username: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   message: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  session: z.union([ z.lazy(() => PuzzleElementalTrialsRelationFilterSchema),z.lazy(() => PuzzleElementalTrialsWhereInputSchema) ]).optional(),
+  session: z.union([ z.lazy(() => PuzzleElementalTrialsNullableRelationFilterSchema),z.lazy(() => PuzzleElementalTrialsWhereInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const PuzzleChatMessageOrderByWithRelationInputSchema: z.ZodType<Prisma.PuzzleChatMessageOrderByWithRelationInput> = z.object({
@@ -462,7 +462,7 @@ export const PuzzleChatMessageWhereUniqueInputSchema: z.ZodType<Prisma.PuzzleCha
   username: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   message: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  session: z.union([ z.lazy(() => PuzzleElementalTrialsRelationFilterSchema),z.lazy(() => PuzzleElementalTrialsWhereInputSchema) ]).optional(),
+  session: z.union([ z.lazy(() => PuzzleElementalTrialsNullableRelationFilterSchema),z.lazy(() => PuzzleElementalTrialsWhereInputSchema) ]).optional().nullable(),
 }).strict());
 
 export const PuzzleChatMessageOrderByWithAggregationInputSchema: z.ZodType<Prisma.PuzzleChatMessageOrderByWithAggregationInput> = z.object({
@@ -981,7 +981,7 @@ export const PuzzleChatMessageCreateInputSchema: z.ZodType<Prisma.PuzzleChatMess
   username: z.string(),
   message: z.string(),
   createdAt: z.coerce.date().optional(),
-  session: z.lazy(() => PuzzleElementalTrialsCreateNestedOneWithoutChatInputSchema)
+  session: z.lazy(() => PuzzleElementalTrialsCreateNestedOneWithoutChatInputSchema).optional()
 }).strict();
 
 export const PuzzleChatMessageUncheckedCreateInputSchema: z.ZodType<Prisma.PuzzleChatMessageUncheckedCreateInput> = z.object({
@@ -997,7 +997,7 @@ export const PuzzleChatMessageUpdateInputSchema: z.ZodType<Prisma.PuzzleChatMess
   username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   message: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  session: z.lazy(() => PuzzleElementalTrialsUpdateOneRequiredWithoutChatNestedInputSchema).optional()
+  session: z.lazy(() => PuzzleElementalTrialsUpdateOneWithoutChatNestedInputSchema).optional()
 }).strict();
 
 export const PuzzleChatMessageUncheckedUpdateInputSchema: z.ZodType<Prisma.PuzzleChatMessageUncheckedUpdateInput> = z.object({
@@ -1567,9 +1567,9 @@ export const BoolWithAggregatesFilterSchema: z.ZodType<Prisma.BoolWithAggregates
   _max: z.lazy(() => NestedBoolFilterSchema).optional()
 }).strict();
 
-export const PuzzleElementalTrialsRelationFilterSchema: z.ZodType<Prisma.PuzzleElementalTrialsRelationFilter> = z.object({
-  is: z.lazy(() => PuzzleElementalTrialsWhereInputSchema).optional(),
-  isNot: z.lazy(() => PuzzleElementalTrialsWhereInputSchema).optional()
+export const PuzzleElementalTrialsNullableRelationFilterSchema: z.ZodType<Prisma.PuzzleElementalTrialsNullableRelationFilter> = z.object({
+  is: z.lazy(() => PuzzleElementalTrialsWhereInputSchema).optional().nullable(),
+  isNot: z.lazy(() => PuzzleElementalTrialsWhereInputSchema).optional().nullable()
 }).strict();
 
 export const PuzzleChatMessageCountOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleChatMessageCountOrderByAggregateInput> = z.object({
@@ -2080,10 +2080,12 @@ export const PuzzleElementalTrialsCreateNestedOneWithoutChatInputSchema: z.ZodTy
   connect: z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema).optional()
 }).strict();
 
-export const PuzzleElementalTrialsUpdateOneRequiredWithoutChatNestedInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateOneRequiredWithoutChatNestedInput> = z.object({
+export const PuzzleElementalTrialsUpdateOneWithoutChatNestedInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateOneWithoutChatNestedInput> = z.object({
   create: z.union([ z.lazy(() => PuzzleElementalTrialsCreateWithoutChatInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutChatInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutChatInputSchema).optional(),
   upsert: z.lazy(() => PuzzleElementalTrialsUpsertWithoutChatInputSchema).optional(),
+  disconnect: z.union([ z.boolean(),z.lazy(() => PuzzleElementalTrialsWhereInputSchema) ]).optional(),
+  delete: z.union([ z.boolean(),z.lazy(() => PuzzleElementalTrialsWhereInputSchema) ]).optional(),
   connect: z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => PuzzleElementalTrialsUpdateToOneWithWhereWithoutChatInputSchema),z.lazy(() => PuzzleElementalTrialsUpdateWithoutChatInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedUpdateWithoutChatInputSchema) ]).optional(),
 }).strict();

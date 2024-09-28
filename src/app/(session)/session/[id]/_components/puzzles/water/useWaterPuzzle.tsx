@@ -22,9 +22,9 @@ export default function useWaterPuzzle({
   const [inventory, setInventory] = useAtom(inventoryItems);
   const [pipesState, setPipesState] = useAtom(waterPipes);
 
-  const isInvalidEdge = (pipe: PipeType, directions: ConnectKeys[]) => {
-    for (let direction of directions) {
-      if (pipe.connects[direction] === true) return true;
+  const isPointingToEdge = (pipe: PipeType, directionsToEdge: ConnectKeys[]) => {
+    for (let direction of directionsToEdge) {
+      if (pipe.isConnectedTo[direction]) return true;
     }
     return false;
   };
@@ -39,7 +39,7 @@ export default function useWaterPuzzle({
   };
 
   const isInvalidSide = ({ index, sides }: CheckSideprops): boolean => {
-    const sideChecker = {
+    const sideIndexToCheck = {
       left: index - 1,
       right: index + 1,
       up: index - mapLength,
@@ -53,9 +53,9 @@ export default function useWaterPuzzle({
       down: "up",
     };
     for (let side of sides) {
-      const comparedIndex = sideChecker[side];
+      const comparedIndex = sideIndexToCheck[side];
       const comparedSide: ConnectKeys = oppositeSide[side];
-      if (pipesState[comparedIndex].connects[comparedSide] !== true)
+      if (!pipesState[comparedIndex].isConnectedTo[comparedSide])
         return true;
     }
     return false;
@@ -63,20 +63,20 @@ export default function useWaterPuzzle({
 
   const findSidesAndEdges = (i: number): FindSidesAndEdgesReturn => {
     const sidesRef: ConnectKeys[] = ["up", "left", "right", "down"];
-    const edges: ConnectKeys[] = [];
-    const sides: ConnectKeys[] = [];
-    if (i < mapLength) edges.push("up");
-    if (i % mapLength === 0) edges.push("left");
-    if (i % mapLength === mapLength - 1) edges.push("right");
-    if (pipesState.length - i <= mapLength) edges.push("down");
+    const edgesOfBoard: ConnectKeys[] = [];
+    const sidesConnectedTo: ConnectKeys[] = [];
+    if (i < mapLength) edgesOfBoard.push("up");
+    if (i % mapLength === 0) edgesOfBoard.push("left");
+    if (i % mapLength === mapLength - 1) edgesOfBoard.push("right");
+    if (pipesState.length - i <= mapLength) edgesOfBoard.push("down");
     for (let side of sidesRef) {
       if (
-        pipesState[i].connects[side] === true &&
-        !edges.find((item) => item === side)
+        pipesState[i].isConnectedTo[side] === true &&
+        !edgesOfBoard.find((item) => item === side)
       )
-        sides.push(side);
+        sidesConnectedTo.push(side);
     }
-    return { edges, sides };
+    return { edgesOfBoard, sidesConnectedTo };
   };
 
   const findSolution = useCallback(
@@ -84,10 +84,10 @@ export default function useWaterPuzzle({
       let isSolved = true;
       let pipesRef = pipes;
       for (let i = 0; i < pipes.length; i++) {
-        const { sides, edges } = findSidesAndEdges(i);
+        const { sidesConnectedTo, edgesOfBoard } = findSidesAndEdges(i);
         if (
-          isInvalidEdge(pipes[i], edges) ||
-          isInvalidSide({ index: i, sides })
+          isPointingToEdge(pipes[i], edgesOfBoard) ||
+          isInvalidSide({ index: i, sides: sidesConnectedTo })
         ) {
           isSolved = false;
           pipesRef[i].isValid = false;
@@ -112,14 +112,14 @@ export default function useWaterPuzzle({
     if (pipe.name === "four") return;
     let pipeRef = pipesState[index];
     const pipeDirections = [
-      pipe.connects.up,
-      pipe.connects.right,
-      pipe.connects.down,
-      pipe.connects.left,
+      pipe.isConnectedTo.up,
+      pipe.isConnectedTo.right,
+      pipe.isConnectedTo.down,
+      pipe.isConnectedTo.left,
     ];
     pipeRef = {
       ...pipeRef,
-      connects: {
+      isConnectedTo: {
         up: pipeDirections[3],
         right: pipeDirections[0],
         down: pipeDirections[1],

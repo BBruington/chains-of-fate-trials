@@ -26,7 +26,7 @@ export default function PotionListItem({ potion }: PotionListItemProps) {
       quantity: currentPotion.quantity + updatedQuantity,
     };
   };
-  const [selectedPotion, setSelectedPotion] = useAtom<Potion>(displayPotion);
+  const [, setSelectedPotion] = useAtom<Potion>(displayPotion);
   const [optimisticPotion, addOptimistic] = useOptimistic(potion, updatePotion);
 
   const handleSelectPotion = () => {

@@ -16,7 +16,7 @@ export default function DisplayPotion() {
           </h1>
         </div>
       ) : (
-        <div className="cursor-normal flex h-60 w-96 flex-col justify-center rounded-lg bg-primary/80 text-center text-secondary">
+        <div className="cursor-normal p-2 flex h-60 w-96 flex-col justify-center rounded-lg bg-primary/80 text-center text-secondary">
           <h1 className="p-2 text-2xl">Potion of {selectedPotion.name}</h1>
           <span>{selectedPotion.description}</span>
           <span>

@@ -23,13 +23,6 @@ export default function Droppable({
     data: { accepts },
   });
 
-  // const ingredientIcon: IngredientIconProps = {
-  //   ARCANE: wizardHat,
-  //   DIVINE: wizardHat,
-  //   OCCULT: skull,
-  //   PRIMAL: scroll,
-  // };
-
   return (
     <div className="flex flex-col items-center" ref={setNodeRef}>
       <div className="vial">

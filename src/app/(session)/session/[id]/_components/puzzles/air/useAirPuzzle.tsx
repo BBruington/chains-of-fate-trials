@@ -84,7 +84,7 @@ export default function useAirPuzzle({ sessionId }: { sessionId: string }) {
     pushedToDx: number;
     pushedToDy: number;
   }) => {
-    if (!isValidMove({ dx: pushedToDx, dy: pushedToDy, isPushedObject: true })) return;
+    if (!isValidMove({ dx: pushedToDx, dy: pushedToDy, isPushedObject: true })) return false;
     let gridRef = grid;
     const gridTile = grid[pushedToDx][pushedToDy];
     const pushObjectInto = {
@@ -98,6 +98,7 @@ export default function useAirPuzzle({ sessionId }: { sessionId: string }) {
       pushObjectInto[gridTile as keyof typeof pushObjectInto]();
     }
     setGrid(gridRef);
+    return true;
   };
 
   const movePlayer = (dx: number, dy: number) => {
@@ -106,12 +107,13 @@ export default function useAirPuzzle({ sessionId }: { sessionId: string }) {
     if (!isValidMove({ dx: newX, dy: newY })) return;
     const tileMovedTo = grid[newX][newY];
     if (tileMovedTo === TILE_TYPES.PUSHABLE) {
-      movePushableObject({
-        pushedFromDx: dx,
-        pushedFromDy: dy,
+      const isValidPush = movePushableObject({
+        pushedFromDx: newX,
+        pushedFromDy: newY,
         pushedToDx: newX + dx,
         pushedToDy: newY + dy,
       });
+      if(!isValidPush) return
     }
     setPlayerPosition({ x: newX, y: newY });
     if (tileMovedTo === TILE_TYPES.GOAL) {

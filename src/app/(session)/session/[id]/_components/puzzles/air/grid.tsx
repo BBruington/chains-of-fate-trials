@@ -16,7 +16,7 @@ export default function GridRow({
   rowIndex: number;
   playerPosition: { x: number; y: number };
   MAP_TILE: Record<number, GridPiece>;
-  character: "dinner" | "artemis" | "aelarion" | "elendiel";
+  character?: "dinner" | "artemis" | "aelarion" | "elendiel" | undefined;
 }) {
   return (
     <div className="flex gap-1">
@@ -45,7 +45,7 @@ function GridTile({
   rowIndex: number;
   colIndex: number;
   playerPosition: { x: number; y: number };
-  character: "dinner" | "artemis" | "aelarion" | "elendiel";
+  character: "dinner" | "artemis" | "aelarion" | "elendiel" | undefined;
 }) {
   const characters = {
     dinner,
@@ -58,8 +58,11 @@ function GridTile({
       {grid.name === "blocked" && (
         <div className="h-full w-full bg-slate-900" />
       )}
-      {rowIndex === playerPosition.x && colIndex === playerPosition.y && (
-        <Image src={characters[character]} height={45} width={45} alt="player" />
+      {rowIndex === playerPosition.x && colIndex === playerPosition.y && character && (
+        <Image src={characters[character] } height={45} width={45} alt="player" />
+      )}
+      {rowIndex === playerPosition.x && colIndex === playerPosition.y && character === undefined && (
+        <div className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-700"/>
       )}
       {grid.name === "push" && <div className="z-10 h-8 w-8 bg-green-300" />}
       {grid.name === "hole" && (

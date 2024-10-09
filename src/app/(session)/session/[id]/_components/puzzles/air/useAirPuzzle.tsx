@@ -1,15 +1,31 @@
-import { useState, useEffect } from "react";
-import { INITIAL_MAP, MAP_TILE, TILE_TYPES } from "../../../_constants";
+import { useState, useEffect, useRef } from "react";
+import {
+  INITIAL_MAP,
+  DEFAULT_MAP,
+  MAP_TILE,
+  TILE_TYPES,
+} from "../../../_constants";
 import { useAtom } from "jotai";
 import { inventoryItems } from "../../../jotaiAtoms";
 import { revealInventoryItem } from "@/app/(session)/session/[id]/_hooks/hooks";
 
-export default function useAirPuzzle({ sessionId }: { sessionId: string }) {
+export default function useAirPuzzle({
+  sessionId,
+  mapLayout,
+}: {
+  sessionId?: string;
+  mapLayout?: number[][];
+}) {
   const [playerPosition, setPlayerPosition] = useState({
     x: 0,
     y: 0,
   });
-  const [grid, setGrid] = useState(INITIAL_MAP.map((row) => [...row]));
+  const mapRef = useRef<number[][] | null>(mapLayout ? mapLayout : null);
+  const [grid, setGrid] = useState(
+    mapRef.current
+      ? mapRef.current.map((row) => [...row])
+      : DEFAULT_MAP.map((row) => [...row]),
+  );
   const [inventory, setInventory] = useAtom(inventoryItems);
 
   const handleKeyPress = (e: KeyboardEvent) => {
@@ -42,6 +58,21 @@ export default function useAirPuzzle({ sessionId }: { sessionId: string }) {
   const reset = () => {
     setGrid(INITIAL_MAP.map((row) => [...row]));
     setPlayerPosition({ x: 0, y: 0 });
+  };
+
+  const updateMap = ({
+    dx,
+    dy,
+    newTile,
+  }: {
+    dx: number;
+    dy: number;
+    newTile: number;
+  }) => {
+    if (mapRef.current) {
+      mapRef.current[dx][dy] = newTile;
+      setGrid(mapRef.current)
+    }
   };
 
   const isValidMove = ({
@@ -84,12 +115,15 @@ export default function useAirPuzzle({ sessionId }: { sessionId: string }) {
     pushedToDx: number;
     pushedToDy: number;
   }) => {
-    if (!isValidMove({ dx: pushedToDx, dy: pushedToDy, isPushedObject: true })) return false;
+    if (!isValidMove({ dx: pushedToDx, dy: pushedToDy, isPushedObject: true }))
+      return false;
     let gridRef = grid;
     const gridTile = grid[pushedToDx][pushedToDy];
     const pushObjectInto = {
-      [TILE_TYPES.EMPTY]: () => (gridRef[pushedToDx][pushedToDy] = TILE_TYPES.PUSHABLE),
-      [TILE_TYPES.HOLE]: () => (gridRef[pushedToDx][pushedToDy] = TILE_TYPES.EMPTY),
+      [TILE_TYPES.EMPTY]: () =>
+        (gridRef[pushedToDx][pushedToDy] = TILE_TYPES.PUSHABLE),
+      [TILE_TYPES.HOLE]: () =>
+        (gridRef[pushedToDx][pushedToDy] = TILE_TYPES.EMPTY),
     };
     //player moving into the tile is represented by coordinates being tracked and is not a tile on the board
     //therefore you can set the tile player is moving into as empty
@@ -113,12 +147,14 @@ export default function useAirPuzzle({ sessionId }: { sessionId: string }) {
         pushedToDx: newX + dx,
         pushedToDy: newY + dy,
       });
-      if(!isValidPush) return
+      if (!isValidPush) return;
     }
     setPlayerPosition({ x: newX, y: newY });
     if (tileMovedTo === TILE_TYPES.GOAL) {
       alert("You reached the goal!");
-      revealInventoryItem(sessionId, "airgem", inventory, setInventory);
+      if (sessionId) {
+        revealInventoryItem(sessionId, "airgem", inventory, setInventory);
+      }
     }
   };
 

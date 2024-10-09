@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { useAtom } from "jotai";
 import { selectedCharacter } from "../../../jotaiAtoms";
+import { INITIAL_MAP } from "../../../_constants";
 
 export default function AirPuzzle({ sessionId }: { sessionId: string }) {
   const [character, setCharacter] = useAtom<
@@ -26,6 +27,7 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
 
   const { grid, movePlayer, reset, playerPosition, MAP_TILE } = useAirPuzzle({
     sessionId,
+    mapLayout: INITIAL_MAP,
   });
 
   return (

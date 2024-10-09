@@ -33,6 +33,22 @@ export const INITIAL_MAP = [
   [1, 2, 0, 0, 1, 4, 2, 0, 0, 1, 1, 1],
   [1, 0, 0, 0, 0, 2, 4, 2, 0, 1, 1, 1],
 ];
+export const DEFAULT_MAP = [
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+];
 
 export enum TILE_TYPES {
   EMPTY = 0,
@@ -234,7 +250,7 @@ export const puzzleTransitions = [
         isHighlighted: false,
       },
       {
-        message: `"To open the gate to the Feywild, the Tears of the Elements must be gathered. Pass through the trials of Water, Fire, Air, and Earth to claim each Tear. Only when all are placed upon their rightful pedestals shall the ritual begin."`,
+        message: `"To open the gate to the Feywild, the Tears of the Elements must be gathered. Pass through the trials of Water, Fire, Air, and Earth to claim each Tear. Only when all are placed upon their rightful pedestal shall the ritual begin."`,
         isHighlighted: true,
       },
       {

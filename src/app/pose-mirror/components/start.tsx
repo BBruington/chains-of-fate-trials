@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useAtom } from "jotai";
 import { Cinzel, Luxurious_Roman } from "next/font/google";
 import Image from "next/image";
+import Pusher from "pusher-js";
 import { useContext, useEffect, useRef, useState } from "react";
 
 const fontHeader = Cinzel({
@@ -68,6 +69,7 @@ export default function StartScreen() {
       setFlashInputIcon(!playerIcon);
     } else {
       setNumOfPlayers((prevNumOfPlayer) => {
+        let newNameArray = [];
         const newNumOfPlayers = prevNumOfPlayer + 1;
         setNameArray(() => {
           let initalNameArray = [];
@@ -81,6 +83,11 @@ export default function StartScreen() {
               state: false,
               userId: "test",
             });
+
+            if (i < newNumOfPlayers) {
+              newNameArray = [...initalNameArray];
+              console.log(newNameArray);
+            }
           }
 
           // color: "#25b3f5",
@@ -92,6 +99,8 @@ export default function StartScreen() {
 
           return initalNameArray;
         });
+        console.log(newNameArray);
+        poseMirrorStart(newNameArray);
         return newNumOfPlayers;
       });
       setShowStart(false);
@@ -99,6 +108,13 @@ export default function StartScreen() {
       colorSelectMusicRef.current.loop = true;
     }
   }
+
+  // useEffect(() => {
+  //   if (nameArray.length > 0) {
+  //     console.log("test");
+  //     poseMirrorStart(nameArray);
+  //   }
+  // }, [nameArray]);
 
   function handleInputNameChange(e) {
     const { value } = e.target;
@@ -126,6 +142,43 @@ export default function StartScreen() {
       setPlayerIcon(imageURL);
     }
   }
+
+  async function poseMirrorStart(newNameArray) {
+    console.log("poseMirrorStart");
+    await fetch("/api/pose-mirror-start", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        channel: "pose-mirror",
+        event: "pose-start",
+        data: { nameArray: newNameArray },
+      }),
+    });
+  }
+
+  useEffect(() => {
+    const pusher = new Pusher("13e9bf6d55ba50bff774", {
+      cluster: "us3",
+    });
+
+    const channel = pusher.subscribe("pose-mirror");
+
+    const handleStartClick = (data) => {
+      console.log("handleStartClick");
+      console.log(data);
+      console.log(data.nameArray);
+      setNameArray(data.nameArray);
+    };
+
+    channel.bind("pose-start", handleStartClick);
+
+    return () => {
+      channel.unbind("pose-start", handleStartClick);
+      pusher.unsubscribe("pose-mirror");
+    };
+  }, []);
 
   return (
     <div className="absolute z-40 flex h-full w-full flex-col items-center justify-center bg-neutral-200">

@@ -24,6 +24,43 @@ export default function ColorSelectBoxes({ i }: ColorSelectBoxesProps) {
   const [playerName, setPlayerName] = useAtom(playerNameAtom);
   const { handleMouseClick } = ColorSelectHooks();
 
+  // useEffect(() => {
+  //   poseMirrorHandleMouseClick(nameArray);
+  // }, [nameArray]);
+
+  // async function poseMirrorHandleMouseClick(newNameArray) {
+  //   await fetch("/api/pose-mirror-color-select", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       channel: "pose-mirror",
+  //       event: "mouse-click",
+  //       data: { nameArray: newNameArray },
+  //     }),
+  //   });
+  // }
+
+  // useEffect(() => {
+  //   const pusher = new Pusher("13e9bf6d55ba50bff774", {
+  //     cluster: "us3",
+  //   });
+
+  //   const channel = pusher.subscribe("pose-mirror");
+
+  //   const handleMouseClick = (data) => {
+  //     setNameArray(data.newNameArray);
+  //   };
+
+  //   channel.bind("mouse-click", handleMouseClick);
+
+  //   return () => {
+  //     channel.unbind("mouse-click", handleMouseClick);
+  //     pusher.unsubscribe("pose-mirror");
+  //   };
+  // }, []);
+
   return (
     <div
       key={i}

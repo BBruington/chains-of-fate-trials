@@ -56,15 +56,11 @@ export type InputJsonValueType = z.infer<typeof InputJsonValueSchema>;
 
 export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCommitted','RepeatableRead','Serializable']);
 
-export const PuzzleSessionScalarFieldEnumSchema = z.enum(['id','title','durationSeconds','createdAt']);
+export const PuzzleElementalTrialsScalarFieldEnumSchema = z.enum(['id','title','createdAt','updatedAt','firegem','airgem','earthgem','watergem']);
 
 export const PuzzleChatMessageScalarFieldEnumSchema = z.enum(['id','sessionId','username','message','createdAt']);
 
-export const PuzzleScalarFieldEnumSchema = z.enum(['id','checkpoint','title','description','solved','data','typeId']);
-
-export const PuzzleTypeScalarFieldEnumSchema = z.enum(['name','id']);
-
-export const UserScalarFieldEnumSchema = z.enum(['id','clerkId','imgUrl','username','email','createdAt','updatedAt','cursorImg','cursorCoordinatesId']);
+export const UserScalarFieldEnumSchema = z.enum(['id','clerkId','imgUrl','username','email','createdAt','updatedAt']);
 
 export const FormulaScalarFieldEnumSchema = z.enum(['id','userId','name','description','rarity','ingredients']);
 
@@ -86,9 +82,9 @@ export const NullableJsonNullValueInputSchema = z.enum(['DbNull','JsonNull',]).t
 
 export const QueryModeSchema = z.enum(['default','insensitive']);
 
-export const JsonNullValueFilterSchema = z.enum(['DbNull','JsonNull','AnyNull',]).transform((value) => value === 'JsonNull' ? Prisma.JsonNull : value === 'DbNull' ? Prisma.JsonNull : value === 'AnyNull' ? Prisma.AnyNull : value);
-
 export const NullsOrderSchema = z.enum(['first','last']);
+
+export const JsonNullValueFilterSchema = z.enum(['DbNull','JsonNull','AnyNull',]).transform((value) => value === 'JsonNull' ? Prisma.JsonNull : value === 'DbNull' ? Prisma.JsonNull : value === 'AnyNull' ? Prisma.AnyNull : value);
 
 export const MagicTypeSchema = z.enum(['EMPTY','ARCANE','PRIMAL','DIVINE','OCCULT']);
 
@@ -107,17 +103,21 @@ export type PrimaryAttributeType = `${z.infer<typeof PrimaryAttributeSchema>}`
 /////////////////////////////////////////
 
 /////////////////////////////////////////
-// PUZZLE SESSION SCHEMA
+// PUZZLE ELEMENTAL TRIALS SCHEMA
 /////////////////////////////////////////
 
-export const PuzzleSessionSchema = z.object({
+export const PuzzleElementalTrialsSchema = z.object({
   id: z.string().cuid(),
   title: z.string(),
-  durationSeconds: z.number().int(),
   createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  firegem: z.boolean(),
+  airgem: z.boolean(),
+  earthgem: z.boolean(),
+  watergem: z.boolean(),
 })
 
-export type PuzzleSession = z.infer<typeof PuzzleSessionSchema>
+export type PuzzleElementalTrials = z.infer<typeof PuzzleElementalTrialsSchema>
 
 /////////////////////////////////////////
 // PUZZLE CHAT MESSAGE SCHEMA
@@ -134,33 +134,6 @@ export const PuzzleChatMessageSchema = z.object({
 export type PuzzleChatMessage = z.infer<typeof PuzzleChatMessageSchema>
 
 /////////////////////////////////////////
-// PUZZLE SCHEMA
-/////////////////////////////////////////
-
-export const PuzzleSchema = z.object({
-  id: z.string().cuid(),
-  checkpoint: z.number().int(),
-  title: z.string(),
-  description: z.string().nullable(),
-  solved: z.boolean(),
-  data: JsonValueSchema,
-  typeId: z.string(),
-})
-
-export type Puzzle = z.infer<typeof PuzzleSchema>
-
-/////////////////////////////////////////
-// PUZZLE TYPE SCHEMA
-/////////////////////////////////////////
-
-export const PuzzleTypeSchema = z.object({
-  name: z.string(),
-  id: z.string().cuid(),
-})
-
-export type PuzzleType = z.infer<typeof PuzzleTypeSchema>
-
-/////////////////////////////////////////
 // USER SCHEMA
 /////////////////////////////////////////
 
@@ -172,8 +145,6 @@ export const UserSchema = z.object({
   email: z.string().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-  cursorImg: z.string().nullable(),
-  cursorCoordinatesId: z.string().nullable(),
 })
 
 export type User = z.infer<typeof UserSchema>
@@ -291,47 +262,48 @@ export type CursorCoordinates = z.infer<typeof CursorCoordinatesSchema>
 // SELECT & INCLUDE
 /////////////////////////////////////////
 
-// PUZZLE SESSION
+// PUZZLE ELEMENTAL TRIALS
 //------------------------------------------------------
 
-export const PuzzleSessionIncludeSchema: z.ZodType<Prisma.PuzzleSessionInclude> = z.object({
+export const PuzzleElementalTrialsIncludeSchema: z.ZodType<Prisma.PuzzleElementalTrialsInclude> = z.object({
   chat: z.union([z.boolean(),z.lazy(() => PuzzleChatMessageFindManyArgsSchema)]).optional(),
   players: z.union([z.boolean(),z.lazy(() => UserFindManyArgsSchema)]).optional(),
-  puzzles: z.union([z.boolean(),z.lazy(() => PuzzleFindManyArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => PuzzleSessionCountOutputTypeArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => PuzzleElementalTrialsCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-export const PuzzleSessionArgsSchema: z.ZodType<Prisma.PuzzleSessionDefaultArgs> = z.object({
-  select: z.lazy(() => PuzzleSessionSelectSchema).optional(),
-  include: z.lazy(() => PuzzleSessionIncludeSchema).optional(),
+export const PuzzleElementalTrialsArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsDefaultArgs> = z.object({
+  select: z.lazy(() => PuzzleElementalTrialsSelectSchema).optional(),
+  include: z.lazy(() => PuzzleElementalTrialsIncludeSchema).optional(),
 }).strict();
 
-export const PuzzleSessionCountOutputTypeArgsSchema: z.ZodType<Prisma.PuzzleSessionCountOutputTypeDefaultArgs> = z.object({
-  select: z.lazy(() => PuzzleSessionCountOutputTypeSelectSchema).nullish(),
+export const PuzzleElementalTrialsCountOutputTypeArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsCountOutputTypeDefaultArgs> = z.object({
+  select: z.lazy(() => PuzzleElementalTrialsCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
-export const PuzzleSessionCountOutputTypeSelectSchema: z.ZodType<Prisma.PuzzleSessionCountOutputTypeSelect> = z.object({
+export const PuzzleElementalTrialsCountOutputTypeSelectSchema: z.ZodType<Prisma.PuzzleElementalTrialsCountOutputTypeSelect> = z.object({
   chat: z.boolean().optional(),
   players: z.boolean().optional(),
-  puzzles: z.boolean().optional(),
 }).strict();
 
-export const PuzzleSessionSelectSchema: z.ZodType<Prisma.PuzzleSessionSelect> = z.object({
+export const PuzzleElementalTrialsSelectSchema: z.ZodType<Prisma.PuzzleElementalTrialsSelect> = z.object({
   id: z.boolean().optional(),
   title: z.boolean().optional(),
-  durationSeconds: z.boolean().optional(),
   createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional(),
+  firegem: z.boolean().optional(),
+  airgem: z.boolean().optional(),
+  earthgem: z.boolean().optional(),
+  watergem: z.boolean().optional(),
   chat: z.union([z.boolean(),z.lazy(() => PuzzleChatMessageFindManyArgsSchema)]).optional(),
   players: z.union([z.boolean(),z.lazy(() => UserFindManyArgsSchema)]).optional(),
-  puzzles: z.union([z.boolean(),z.lazy(() => PuzzleFindManyArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => PuzzleSessionCountOutputTypeArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => PuzzleElementalTrialsCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
 // PUZZLE CHAT MESSAGE
 //------------------------------------------------------
 
 export const PuzzleChatMessageIncludeSchema: z.ZodType<Prisma.PuzzleChatMessageInclude> = z.object({
-  session: z.union([z.boolean(),z.lazy(() => PuzzleSessionArgsSchema)]).optional(),
+  session: z.union([z.boolean(),z.lazy(() => PuzzleElementalTrialsArgsSchema)]).optional(),
 }).strict()
 
 export const PuzzleChatMessageArgsSchema: z.ZodType<Prisma.PuzzleChatMessageDefaultArgs> = z.object({
@@ -345,81 +317,17 @@ export const PuzzleChatMessageSelectSchema: z.ZodType<Prisma.PuzzleChatMessageSe
   username: z.boolean().optional(),
   message: z.boolean().optional(),
   createdAt: z.boolean().optional(),
-  session: z.union([z.boolean(),z.lazy(() => PuzzleSessionArgsSchema)]).optional(),
-}).strict()
-
-// PUZZLE
-//------------------------------------------------------
-
-export const PuzzleIncludeSchema: z.ZodType<Prisma.PuzzleInclude> = z.object({
-  type: z.union([z.boolean(),z.lazy(() => PuzzleTypeArgsSchema)]).optional(),
-  session: z.union([z.boolean(),z.lazy(() => PuzzleSessionFindManyArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => PuzzleCountOutputTypeArgsSchema)]).optional(),
-}).strict()
-
-export const PuzzleArgsSchema: z.ZodType<Prisma.PuzzleDefaultArgs> = z.object({
-  select: z.lazy(() => PuzzleSelectSchema).optional(),
-  include: z.lazy(() => PuzzleIncludeSchema).optional(),
-}).strict();
-
-export const PuzzleCountOutputTypeArgsSchema: z.ZodType<Prisma.PuzzleCountOutputTypeDefaultArgs> = z.object({
-  select: z.lazy(() => PuzzleCountOutputTypeSelectSchema).nullish(),
-}).strict();
-
-export const PuzzleCountOutputTypeSelectSchema: z.ZodType<Prisma.PuzzleCountOutputTypeSelect> = z.object({
-  session: z.boolean().optional(),
-}).strict();
-
-export const PuzzleSelectSchema: z.ZodType<Prisma.PuzzleSelect> = z.object({
-  id: z.boolean().optional(),
-  checkpoint: z.boolean().optional(),
-  title: z.boolean().optional(),
-  description: z.boolean().optional(),
-  solved: z.boolean().optional(),
-  data: z.boolean().optional(),
-  typeId: z.boolean().optional(),
-  type: z.union([z.boolean(),z.lazy(() => PuzzleTypeArgsSchema)]).optional(),
-  session: z.union([z.boolean(),z.lazy(() => PuzzleSessionFindManyArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => PuzzleCountOutputTypeArgsSchema)]).optional(),
-}).strict()
-
-// PUZZLE TYPE
-//------------------------------------------------------
-
-export const PuzzleTypeIncludeSchema: z.ZodType<Prisma.PuzzleTypeInclude> = z.object({
-  puzzles: z.union([z.boolean(),z.lazy(() => PuzzleFindManyArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => PuzzleTypeCountOutputTypeArgsSchema)]).optional(),
-}).strict()
-
-export const PuzzleTypeArgsSchema: z.ZodType<Prisma.PuzzleTypeDefaultArgs> = z.object({
-  select: z.lazy(() => PuzzleTypeSelectSchema).optional(),
-  include: z.lazy(() => PuzzleTypeIncludeSchema).optional(),
-}).strict();
-
-export const PuzzleTypeCountOutputTypeArgsSchema: z.ZodType<Prisma.PuzzleTypeCountOutputTypeDefaultArgs> = z.object({
-  select: z.lazy(() => PuzzleTypeCountOutputTypeSelectSchema).nullish(),
-}).strict();
-
-export const PuzzleTypeCountOutputTypeSelectSchema: z.ZodType<Prisma.PuzzleTypeCountOutputTypeSelect> = z.object({
-  puzzles: z.boolean().optional(),
-}).strict();
-
-export const PuzzleTypeSelectSchema: z.ZodType<Prisma.PuzzleTypeSelect> = z.object({
-  name: z.boolean().optional(),
-  id: z.boolean().optional(),
-  puzzles: z.union([z.boolean(),z.lazy(() => PuzzleFindManyArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => PuzzleTypeCountOutputTypeArgsSchema)]).optional(),
+  session: z.union([z.boolean(),z.lazy(() => PuzzleElementalTrialsArgsSchema)]).optional(),
 }).strict()
 
 // USER
 //------------------------------------------------------
 
 export const UserIncludeSchema: z.ZodType<Prisma.UserInclude> = z.object({
-  puzzleSessions: z.union([z.boolean(),z.lazy(() => PuzzleSessionFindManyArgsSchema)]).optional(),
+  PuzzleElementalTrials: z.union([z.boolean(),z.lazy(() => PuzzleElementalTrialsFindManyArgsSchema)]).optional(),
   Ingredients: z.union([z.boolean(),z.lazy(() => IngredientFindManyArgsSchema)]).optional(),
   Potions: z.union([z.boolean(),z.lazy(() => PotionFindManyArgsSchema)]).optional(),
   Formulas: z.union([z.boolean(),z.lazy(() => FormulaFindManyArgsSchema)]).optional(),
-  cursorCoordinates: z.union([z.boolean(),z.lazy(() => CursorCoordinatesArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => UserCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -433,7 +341,7 @@ export const UserCountOutputTypeArgsSchema: z.ZodType<Prisma.UserCountOutputType
 }).strict();
 
 export const UserCountOutputTypeSelectSchema: z.ZodType<Prisma.UserCountOutputTypeSelect> = z.object({
-  puzzleSessions: z.boolean().optional(),
+  PuzzleElementalTrials: z.boolean().optional(),
   Ingredients: z.boolean().optional(),
   Potions: z.boolean().optional(),
   Formulas: z.boolean().optional(),
@@ -447,13 +355,10 @@ export const UserSelectSchema: z.ZodType<Prisma.UserSelect> = z.object({
   email: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
-  cursorImg: z.boolean().optional(),
-  cursorCoordinatesId: z.boolean().optional(),
-  puzzleSessions: z.union([z.boolean(),z.lazy(() => PuzzleSessionFindManyArgsSchema)]).optional(),
+  PuzzleElementalTrials: z.union([z.boolean(),z.lazy(() => PuzzleElementalTrialsFindManyArgsSchema)]).optional(),
   Ingredients: z.union([z.boolean(),z.lazy(() => IngredientFindManyArgsSchema)]).optional(),
   Potions: z.union([z.boolean(),z.lazy(() => PotionFindManyArgsSchema)]).optional(),
   Formulas: z.union([z.boolean(),z.lazy(() => FormulaFindManyArgsSchema)]).optional(),
-  cursorCoordinates: z.union([z.boolean(),z.lazy(() => CursorCoordinatesArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => UserCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -572,20 +477,10 @@ export const SolutionOrderSelectSchema: z.ZodType<Prisma.SolutionOrderSelect> = 
 // CURSOR COORDINATES
 //------------------------------------------------------
 
-export const CursorCoordinatesIncludeSchema: z.ZodType<Prisma.CursorCoordinatesInclude> = z.object({
-  user: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
-}).strict()
-
-export const CursorCoordinatesArgsSchema: z.ZodType<Prisma.CursorCoordinatesDefaultArgs> = z.object({
-  select: z.lazy(() => CursorCoordinatesSelectSchema).optional(),
-  include: z.lazy(() => CursorCoordinatesIncludeSchema).optional(),
-}).strict();
-
 export const CursorCoordinatesSelectSchema: z.ZodType<Prisma.CursorCoordinatesSelect> = z.object({
   id: z.boolean().optional(),
   coordinates: z.boolean().optional(),
   userId: z.boolean().optional(),
-  user: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
 }).strict()
 
 
@@ -593,65 +488,80 @@ export const CursorCoordinatesSelectSchema: z.ZodType<Prisma.CursorCoordinatesSe
 // INPUT TYPES
 /////////////////////////////////////////
 
-export const PuzzleSessionWhereInputSchema: z.ZodType<Prisma.PuzzleSessionWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => PuzzleSessionWhereInputSchema),z.lazy(() => PuzzleSessionWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => PuzzleSessionWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => PuzzleSessionWhereInputSchema),z.lazy(() => PuzzleSessionWhereInputSchema).array() ]).optional(),
+export const PuzzleElementalTrialsWhereInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => PuzzleElementalTrialsWhereInputSchema),z.lazy(() => PuzzleElementalTrialsWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PuzzleElementalTrialsWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PuzzleElementalTrialsWhereInputSchema),z.lazy(() => PuzzleElementalTrialsWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  durationSeconds: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  firegem: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  airgem: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  earthgem: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  watergem: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   chat: z.lazy(() => PuzzleChatMessageListRelationFilterSchema).optional(),
-  players: z.lazy(() => UserListRelationFilterSchema).optional(),
-  puzzles: z.lazy(() => PuzzleListRelationFilterSchema).optional()
+  players: z.lazy(() => UserListRelationFilterSchema).optional()
 }).strict();
 
-export const PuzzleSessionOrderByWithRelationInputSchema: z.ZodType<Prisma.PuzzleSessionOrderByWithRelationInput> = z.object({
+export const PuzzleElementalTrialsOrderByWithRelationInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   title: z.lazy(() => SortOrderSchema).optional(),
-  durationSeconds: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  firegem: z.lazy(() => SortOrderSchema).optional(),
+  airgem: z.lazy(() => SortOrderSchema).optional(),
+  earthgem: z.lazy(() => SortOrderSchema).optional(),
+  watergem: z.lazy(() => SortOrderSchema).optional(),
   chat: z.lazy(() => PuzzleChatMessageOrderByRelationAggregateInputSchema).optional(),
-  players: z.lazy(() => UserOrderByRelationAggregateInputSchema).optional(),
-  puzzles: z.lazy(() => PuzzleOrderByRelationAggregateInputSchema).optional()
+  players: z.lazy(() => UserOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionWhereUniqueInputSchema: z.ZodType<Prisma.PuzzleSessionWhereUniqueInput> = z.object({
+export const PuzzleElementalTrialsWhereUniqueInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsWhereUniqueInput> = z.object({
   id: z.string().cuid()
 })
 .and(z.object({
   id: z.string().cuid().optional(),
-  AND: z.union([ z.lazy(() => PuzzleSessionWhereInputSchema),z.lazy(() => PuzzleSessionWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => PuzzleSessionWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => PuzzleSessionWhereInputSchema),z.lazy(() => PuzzleSessionWhereInputSchema).array() ]).optional(),
+  AND: z.union([ z.lazy(() => PuzzleElementalTrialsWhereInputSchema),z.lazy(() => PuzzleElementalTrialsWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PuzzleElementalTrialsWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PuzzleElementalTrialsWhereInputSchema),z.lazy(() => PuzzleElementalTrialsWhereInputSchema).array() ]).optional(),
   title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  durationSeconds: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  firegem: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  airgem: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  earthgem: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  watergem: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   chat: z.lazy(() => PuzzleChatMessageListRelationFilterSchema).optional(),
-  players: z.lazy(() => UserListRelationFilterSchema).optional(),
-  puzzles: z.lazy(() => PuzzleListRelationFilterSchema).optional()
+  players: z.lazy(() => UserListRelationFilterSchema).optional()
 }).strict());
 
-export const PuzzleSessionOrderByWithAggregationInputSchema: z.ZodType<Prisma.PuzzleSessionOrderByWithAggregationInput> = z.object({
+export const PuzzleElementalTrialsOrderByWithAggregationInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsOrderByWithAggregationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   title: z.lazy(() => SortOrderSchema).optional(),
-  durationSeconds: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => PuzzleSessionCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => PuzzleSessionAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => PuzzleSessionMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => PuzzleSessionMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => PuzzleSessionSumOrderByAggregateInputSchema).optional()
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  firegem: z.lazy(() => SortOrderSchema).optional(),
+  airgem: z.lazy(() => SortOrderSchema).optional(),
+  earthgem: z.lazy(() => SortOrderSchema).optional(),
+  watergem: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => PuzzleElementalTrialsCountOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => PuzzleElementalTrialsMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => PuzzleElementalTrialsMinOrderByAggregateInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.PuzzleSessionScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => PuzzleSessionScalarWhereWithAggregatesInputSchema),z.lazy(() => PuzzleSessionScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => PuzzleSessionScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => PuzzleSessionScalarWhereWithAggregatesInputSchema),z.lazy(() => PuzzleSessionScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+export const PuzzleElementalTrialsScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => PuzzleElementalTrialsScalarWhereWithAggregatesInputSchema),z.lazy(() => PuzzleElementalTrialsScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PuzzleElementalTrialsScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PuzzleElementalTrialsScalarWhereWithAggregatesInputSchema),z.lazy(() => PuzzleElementalTrialsScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   title: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  durationSeconds: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  firegem: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
+  airgem: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
+  earthgem: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
+  watergem: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
 }).strict();
 
 export const PuzzleChatMessageWhereInputSchema: z.ZodType<Prisma.PuzzleChatMessageWhereInput> = z.object({
@@ -663,7 +573,7 @@ export const PuzzleChatMessageWhereInputSchema: z.ZodType<Prisma.PuzzleChatMessa
   username: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   message: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  session: z.union([ z.lazy(() => PuzzleSessionRelationFilterSchema),z.lazy(() => PuzzleSessionWhereInputSchema) ]).optional(),
+  session: z.union([ z.lazy(() => PuzzleElementalTrialsNullableRelationFilterSchema),z.lazy(() => PuzzleElementalTrialsWhereInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const PuzzleChatMessageOrderByWithRelationInputSchema: z.ZodType<Prisma.PuzzleChatMessageOrderByWithRelationInput> = z.object({
@@ -672,7 +582,7 @@ export const PuzzleChatMessageOrderByWithRelationInputSchema: z.ZodType<Prisma.P
   username: z.lazy(() => SortOrderSchema).optional(),
   message: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
-  session: z.lazy(() => PuzzleSessionOrderByWithRelationInputSchema).optional()
+  session: z.lazy(() => PuzzleElementalTrialsOrderByWithRelationInputSchema).optional()
 }).strict();
 
 export const PuzzleChatMessageWhereUniqueInputSchema: z.ZodType<Prisma.PuzzleChatMessageWhereUniqueInput> = z.object({
@@ -687,7 +597,7 @@ export const PuzzleChatMessageWhereUniqueInputSchema: z.ZodType<Prisma.PuzzleCha
   username: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   message: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  session: z.union([ z.lazy(() => PuzzleSessionRelationFilterSchema),z.lazy(() => PuzzleSessionWhereInputSchema) ]).optional(),
+  session: z.union([ z.lazy(() => PuzzleElementalTrialsNullableRelationFilterSchema),z.lazy(() => PuzzleElementalTrialsWhereInputSchema) ]).optional().nullable(),
 }).strict());
 
 export const PuzzleChatMessageOrderByWithAggregationInputSchema: z.ZodType<Prisma.PuzzleChatMessageOrderByWithAggregationInput> = z.object({
@@ -712,122 +622,6 @@ export const PuzzleChatMessageScalarWhereWithAggregatesInputSchema: z.ZodType<Pr
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
 
-export const PuzzleWhereInputSchema: z.ZodType<Prisma.PuzzleWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => PuzzleWhereInputSchema),z.lazy(() => PuzzleWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => PuzzleWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => PuzzleWhereInputSchema),z.lazy(() => PuzzleWhereInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  checkpoint: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  solved: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  data: z.lazy(() => JsonFilterSchema).optional(),
-  typeId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  type: z.union([ z.lazy(() => PuzzleTypeRelationFilterSchema),z.lazy(() => PuzzleTypeWhereInputSchema) ]).optional(),
-  session: z.lazy(() => PuzzleSessionListRelationFilterSchema).optional()
-}).strict();
-
-export const PuzzleOrderByWithRelationInputSchema: z.ZodType<Prisma.PuzzleOrderByWithRelationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  checkpoint: z.lazy(() => SortOrderSchema).optional(),
-  title: z.lazy(() => SortOrderSchema).optional(),
-  description: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  solved: z.lazy(() => SortOrderSchema).optional(),
-  data: z.lazy(() => SortOrderSchema).optional(),
-  typeId: z.lazy(() => SortOrderSchema).optional(),
-  type: z.lazy(() => PuzzleTypeOrderByWithRelationInputSchema).optional(),
-  session: z.lazy(() => PuzzleSessionOrderByRelationAggregateInputSchema).optional()
-}).strict();
-
-export const PuzzleWhereUniqueInputSchema: z.ZodType<Prisma.PuzzleWhereUniqueInput> = z.object({
-  id: z.string().cuid()
-})
-.and(z.object({
-  id: z.string().cuid().optional(),
-  AND: z.union([ z.lazy(() => PuzzleWhereInputSchema),z.lazy(() => PuzzleWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => PuzzleWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => PuzzleWhereInputSchema),z.lazy(() => PuzzleWhereInputSchema).array() ]).optional(),
-  checkpoint: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  solved: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  data: z.lazy(() => JsonFilterSchema).optional(),
-  typeId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  type: z.union([ z.lazy(() => PuzzleTypeRelationFilterSchema),z.lazy(() => PuzzleTypeWhereInputSchema) ]).optional(),
-  session: z.lazy(() => PuzzleSessionListRelationFilterSchema).optional()
-}).strict());
-
-export const PuzzleOrderByWithAggregationInputSchema: z.ZodType<Prisma.PuzzleOrderByWithAggregationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  checkpoint: z.lazy(() => SortOrderSchema).optional(),
-  title: z.lazy(() => SortOrderSchema).optional(),
-  description: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  solved: z.lazy(() => SortOrderSchema).optional(),
-  data: z.lazy(() => SortOrderSchema).optional(),
-  typeId: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => PuzzleCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => PuzzleAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => PuzzleMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => PuzzleMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => PuzzleSumOrderByAggregateInputSchema).optional()
-}).strict();
-
-export const PuzzleScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.PuzzleScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => PuzzleScalarWhereWithAggregatesInputSchema),z.lazy(() => PuzzleScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => PuzzleScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => PuzzleScalarWhereWithAggregatesInputSchema),z.lazy(() => PuzzleScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  checkpoint: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  title: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  description: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
-  solved: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
-  data: z.lazy(() => JsonWithAggregatesFilterSchema).optional(),
-  typeId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-}).strict();
-
-export const PuzzleTypeWhereInputSchema: z.ZodType<Prisma.PuzzleTypeWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => PuzzleTypeWhereInputSchema),z.lazy(() => PuzzleTypeWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => PuzzleTypeWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => PuzzleTypeWhereInputSchema),z.lazy(() => PuzzleTypeWhereInputSchema).array() ]).optional(),
-  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  puzzles: z.lazy(() => PuzzleListRelationFilterSchema).optional()
-}).strict();
-
-export const PuzzleTypeOrderByWithRelationInputSchema: z.ZodType<Prisma.PuzzleTypeOrderByWithRelationInput> = z.object({
-  name: z.lazy(() => SortOrderSchema).optional(),
-  id: z.lazy(() => SortOrderSchema).optional(),
-  puzzles: z.lazy(() => PuzzleOrderByRelationAggregateInputSchema).optional()
-}).strict();
-
-export const PuzzleTypeWhereUniqueInputSchema: z.ZodType<Prisma.PuzzleTypeWhereUniqueInput> = z.object({
-  id: z.string().cuid()
-})
-.and(z.object({
-  id: z.string().cuid().optional(),
-  AND: z.union([ z.lazy(() => PuzzleTypeWhereInputSchema),z.lazy(() => PuzzleTypeWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => PuzzleTypeWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => PuzzleTypeWhereInputSchema),z.lazy(() => PuzzleTypeWhereInputSchema).array() ]).optional(),
-  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  puzzles: z.lazy(() => PuzzleListRelationFilterSchema).optional()
-}).strict());
-
-export const PuzzleTypeOrderByWithAggregationInputSchema: z.ZodType<Prisma.PuzzleTypeOrderByWithAggregationInput> = z.object({
-  name: z.lazy(() => SortOrderSchema).optional(),
-  id: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => PuzzleTypeCountOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => PuzzleTypeMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => PuzzleTypeMinOrderByAggregateInputSchema).optional()
-}).strict();
-
-export const PuzzleTypeScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.PuzzleTypeScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => PuzzleTypeScalarWhereWithAggregatesInputSchema),z.lazy(() => PuzzleTypeScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => PuzzleTypeScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => PuzzleTypeScalarWhereWithAggregatesInputSchema),z.lazy(() => PuzzleTypeScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-}).strict();
-
 export const UserWhereInputSchema: z.ZodType<Prisma.UserWhereInput> = z.object({
   AND: z.union([ z.lazy(() => UserWhereInputSchema),z.lazy(() => UserWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => UserWhereInputSchema).array().optional(),
@@ -839,13 +633,10 @@ export const UserWhereInputSchema: z.ZodType<Prisma.UserWhereInput> = z.object({
   email: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  cursorImg: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionListRelationFilterSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsListRelationFilterSchema).optional(),
   Ingredients: z.lazy(() => IngredientListRelationFilterSchema).optional(),
   Potions: z.lazy(() => PotionListRelationFilterSchema).optional(),
-  Formulas: z.lazy(() => FormulaListRelationFilterSchema).optional(),
-  cursorCoordinates: z.union([ z.lazy(() => CursorCoordinatesNullableRelationFilterSchema),z.lazy(() => CursorCoordinatesWhereInputSchema) ]).optional().nullable(),
+  Formulas: z.lazy(() => FormulaListRelationFilterSchema).optional()
 }).strict();
 
 export const UserOrderByWithRelationInputSchema: z.ZodType<Prisma.UserOrderByWithRelationInput> = z.object({
@@ -856,31 +647,17 @@ export const UserOrderByWithRelationInputSchema: z.ZodType<Prisma.UserOrderByWit
   email: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  cursorImg: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  cursorCoordinatesId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  puzzleSessions: z.lazy(() => PuzzleSessionOrderByRelationAggregateInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsOrderByRelationAggregateInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientOrderByRelationAggregateInputSchema).optional(),
   Potions: z.lazy(() => PotionOrderByRelationAggregateInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaOrderByRelationAggregateInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesOrderByWithRelationInputSchema).optional()
+  Formulas: z.lazy(() => FormulaOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const UserWhereUniqueInputSchema: z.ZodType<Prisma.UserWhereUniqueInput> = z.union([
   z.object({
     id: z.string().cuid(),
     clerkId: z.string(),
-    email: z.string(),
-    cursorCoordinatesId: z.string()
-  }),
-  z.object({
-    id: z.string().cuid(),
-    clerkId: z.string(),
-    email: z.string(),
-  }),
-  z.object({
-    id: z.string().cuid(),
-    clerkId: z.string(),
-    cursorCoordinatesId: z.string(),
+    email: z.string()
   }),
   z.object({
     id: z.string().cuid(),
@@ -889,15 +666,6 @@ export const UserWhereUniqueInputSchema: z.ZodType<Prisma.UserWhereUniqueInput> 
   z.object({
     id: z.string().cuid(),
     email: z.string(),
-    cursorCoordinatesId: z.string(),
-  }),
-  z.object({
-    id: z.string().cuid(),
-    email: z.string(),
-  }),
-  z.object({
-    id: z.string().cuid(),
-    cursorCoordinatesId: z.string(),
   }),
   z.object({
     id: z.string().cuid(),
@@ -905,35 +673,18 @@ export const UserWhereUniqueInputSchema: z.ZodType<Prisma.UserWhereUniqueInput> 
   z.object({
     clerkId: z.string(),
     email: z.string(),
-    cursorCoordinatesId: z.string(),
-  }),
-  z.object({
-    clerkId: z.string(),
-    email: z.string(),
-  }),
-  z.object({
-    clerkId: z.string(),
-    cursorCoordinatesId: z.string(),
   }),
   z.object({
     clerkId: z.string(),
   }),
   z.object({
     email: z.string(),
-    cursorCoordinatesId: z.string(),
-  }),
-  z.object({
-    email: z.string(),
-  }),
-  z.object({
-    cursorCoordinatesId: z.string(),
   }),
 ])
 .and(z.object({
   id: z.string().cuid().optional(),
   clerkId: z.string().optional(),
   email: z.string().optional(),
-  cursorCoordinatesId: z.string().optional(),
   AND: z.union([ z.lazy(() => UserWhereInputSchema),z.lazy(() => UserWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => UserWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => UserWhereInputSchema),z.lazy(() => UserWhereInputSchema).array() ]).optional(),
@@ -941,12 +692,10 @@ export const UserWhereUniqueInputSchema: z.ZodType<Prisma.UserWhereUniqueInput> 
   username: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  cursorImg: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionListRelationFilterSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsListRelationFilterSchema).optional(),
   Ingredients: z.lazy(() => IngredientListRelationFilterSchema).optional(),
   Potions: z.lazy(() => PotionListRelationFilterSchema).optional(),
-  Formulas: z.lazy(() => FormulaListRelationFilterSchema).optional(),
-  cursorCoordinates: z.union([ z.lazy(() => CursorCoordinatesNullableRelationFilterSchema),z.lazy(() => CursorCoordinatesWhereInputSchema) ]).optional().nullable(),
+  Formulas: z.lazy(() => FormulaListRelationFilterSchema).optional()
 }).strict());
 
 export const UserOrderByWithAggregationInputSchema: z.ZodType<Prisma.UserOrderByWithAggregationInput> = z.object({
@@ -957,8 +706,6 @@ export const UserOrderByWithAggregationInputSchema: z.ZodType<Prisma.UserOrderBy
   email: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  cursorImg: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  cursorCoordinatesId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   _count: z.lazy(() => UserCountOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => UserMaxOrderByAggregateInputSchema).optional(),
   _min: z.lazy(() => UserMinOrderByAggregateInputSchema).optional()
@@ -975,8 +722,6 @@ export const UserScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.UserScal
   email: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
-  cursorImg: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
 }).strict();
 
 export const FormulaWhereInputSchema: z.ZodType<Prisma.FormulaWhereInput> = z.object({
@@ -1418,14 +1163,12 @@ export const CursorCoordinatesWhereInputSchema: z.ZodType<Prisma.CursorCoordinat
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   coordinates: z.lazy(() => JsonNullableFilterSchema).optional(),
   userId: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  user: z.union([ z.lazy(() => UserNullableRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const CursorCoordinatesOrderByWithRelationInputSchema: z.ZodType<Prisma.CursorCoordinatesOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   coordinates: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   userId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  user: z.lazy(() => UserOrderByWithRelationInputSchema).optional()
 }).strict();
 
 export const CursorCoordinatesWhereUniqueInputSchema: z.ZodType<Prisma.CursorCoordinatesWhereUniqueInput> = z.union([
@@ -1446,8 +1189,7 @@ export const CursorCoordinatesWhereUniqueInputSchema: z.ZodType<Prisma.CursorCoo
   AND: z.union([ z.lazy(() => CursorCoordinatesWhereInputSchema),z.lazy(() => CursorCoordinatesWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => CursorCoordinatesWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => CursorCoordinatesWhereInputSchema),z.lazy(() => CursorCoordinatesWhereInputSchema).array() ]).optional(),
-  coordinates: z.lazy(() => JsonNullableFilterSchema).optional(),
-  user: z.union([ z.lazy(() => UserNullableRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional().nullable(),
+  coordinates: z.lazy(() => JsonNullableFilterSchema).optional()
 }).strict());
 
 export const CursorCoordinatesOrderByWithAggregationInputSchema: z.ZodType<Prisma.CursorCoordinatesOrderByWithAggregationInput> = z.object({
@@ -1468,65 +1210,89 @@ export const CursorCoordinatesScalarWhereWithAggregatesInputSchema: z.ZodType<Pr
   userId: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
 }).strict();
 
-export const PuzzleSessionCreateInputSchema: z.ZodType<Prisma.PuzzleSessionCreateInput> = z.object({
+export const PuzzleElementalTrialsCreateInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsCreateInput> = z.object({
   id: z.string().cuid().optional(),
   title: z.string(),
-  durationSeconds: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  firegem: z.boolean().optional(),
+  airgem: z.boolean().optional(),
+  earthgem: z.boolean().optional(),
+  watergem: z.boolean().optional(),
   chat: z.lazy(() => PuzzleChatMessageCreateNestedManyWithoutSessionInputSchema).optional(),
-  players: z.lazy(() => UserCreateNestedManyWithoutPuzzleSessionsInputSchema).optional(),
-  puzzles: z.lazy(() => PuzzleCreateNestedManyWithoutSessionInputSchema).optional()
+  players: z.lazy(() => UserCreateNestedManyWithoutPuzzleElementalTrialsInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionUncheckedCreateInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedCreateInput> = z.object({
+export const PuzzleElementalTrialsUncheckedCreateInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUncheckedCreateInput> = z.object({
   id: z.string().cuid().optional(),
   title: z.string(),
-  durationSeconds: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  firegem: z.boolean().optional(),
+  airgem: z.boolean().optional(),
+  earthgem: z.boolean().optional(),
+  watergem: z.boolean().optional(),
   chat: z.lazy(() => PuzzleChatMessageUncheckedCreateNestedManyWithoutSessionInputSchema).optional(),
-  players: z.lazy(() => UserUncheckedCreateNestedManyWithoutPuzzleSessionsInputSchema).optional(),
-  puzzles: z.lazy(() => PuzzleUncheckedCreateNestedManyWithoutSessionInputSchema).optional()
+  players: z.lazy(() => UserUncheckedCreateNestedManyWithoutPuzzleElementalTrialsInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionUpdateInputSchema: z.ZodType<Prisma.PuzzleSessionUpdateInput> = z.object({
+export const PuzzleElementalTrialsUpdateInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  durationSeconds: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  firegem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  airgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  earthgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  watergem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   chat: z.lazy(() => PuzzleChatMessageUpdateManyWithoutSessionNestedInputSchema).optional(),
-  players: z.lazy(() => UserUpdateManyWithoutPuzzleSessionsNestedInputSchema).optional(),
-  puzzles: z.lazy(() => PuzzleUpdateManyWithoutSessionNestedInputSchema).optional()
+  players: z.lazy(() => UserUpdateManyWithoutPuzzleElementalTrialsNestedInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionUncheckedUpdateInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedUpdateInput> = z.object({
+export const PuzzleElementalTrialsUncheckedUpdateInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUncheckedUpdateInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  durationSeconds: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  firegem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  airgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  earthgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  watergem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   chat: z.lazy(() => PuzzleChatMessageUncheckedUpdateManyWithoutSessionNestedInputSchema).optional(),
-  players: z.lazy(() => UserUncheckedUpdateManyWithoutPuzzleSessionsNestedInputSchema).optional(),
-  puzzles: z.lazy(() => PuzzleUncheckedUpdateManyWithoutSessionNestedInputSchema).optional()
+  players: z.lazy(() => UserUncheckedUpdateManyWithoutPuzzleElementalTrialsNestedInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionCreateManyInputSchema: z.ZodType<Prisma.PuzzleSessionCreateManyInput> = z.object({
+export const PuzzleElementalTrialsCreateManyInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsCreateManyInput> = z.object({
   id: z.string().cuid().optional(),
   title: z.string(),
-  durationSeconds: z.number().int().optional(),
-  createdAt: z.coerce.date().optional()
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  firegem: z.boolean().optional(),
+  airgem: z.boolean().optional(),
+  earthgem: z.boolean().optional(),
+  watergem: z.boolean().optional()
 }).strict();
 
-export const PuzzleSessionUpdateManyMutationInputSchema: z.ZodType<Prisma.PuzzleSessionUpdateManyMutationInput> = z.object({
+export const PuzzleElementalTrialsUpdateManyMutationInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateManyMutationInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  durationSeconds: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  firegem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  airgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  earthgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  watergem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const PuzzleSessionUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedUpdateManyInput> = z.object({
+export const PuzzleElementalTrialsUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUncheckedUpdateManyInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  durationSeconds: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  firegem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  airgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  earthgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  watergem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PuzzleChatMessageCreateInputSchema: z.ZodType<Prisma.PuzzleChatMessageCreateInput> = z.object({
@@ -1534,7 +1300,7 @@ export const PuzzleChatMessageCreateInputSchema: z.ZodType<Prisma.PuzzleChatMess
   username: z.string(),
   message: z.string(),
   createdAt: z.coerce.date().optional(),
-  session: z.lazy(() => PuzzleSessionCreateNestedOneWithoutChatInputSchema)
+  session: z.lazy(() => PuzzleElementalTrialsCreateNestedOneWithoutChatInputSchema).optional()
 }).strict();
 
 export const PuzzleChatMessageUncheckedCreateInputSchema: z.ZodType<Prisma.PuzzleChatMessageUncheckedCreateInput> = z.object({
@@ -1550,7 +1316,7 @@ export const PuzzleChatMessageUpdateInputSchema: z.ZodType<Prisma.PuzzleChatMess
   username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   message: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  session: z.lazy(() => PuzzleSessionUpdateOneRequiredWithoutChatNestedInputSchema).optional()
+  session: z.lazy(() => PuzzleElementalTrialsUpdateOneWithoutChatNestedInputSchema).optional()
 }).strict();
 
 export const PuzzleChatMessageUncheckedUpdateInputSchema: z.ZodType<Prisma.PuzzleChatMessageUncheckedUpdateInput> = z.object({
@@ -1584,118 +1350,6 @@ export const PuzzleChatMessageUncheckedUpdateManyInputSchema: z.ZodType<Prisma.P
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const PuzzleCreateInputSchema: z.ZodType<Prisma.PuzzleCreateInput> = z.object({
-  id: z.string().cuid().optional(),
-  checkpoint: z.number().int().optional(),
-  title: z.string(),
-  description: z.string().optional().nullable(),
-  solved: z.boolean(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  type: z.lazy(() => PuzzleTypeCreateNestedOneWithoutPuzzlesInputSchema),
-  session: z.lazy(() => PuzzleSessionCreateNestedManyWithoutPuzzlesInputSchema).optional()
-}).strict();
-
-export const PuzzleUncheckedCreateInputSchema: z.ZodType<Prisma.PuzzleUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
-  checkpoint: z.number().int().optional(),
-  title: z.string(),
-  description: z.string().optional().nullable(),
-  solved: z.boolean(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  typeId: z.string(),
-  session: z.lazy(() => PuzzleSessionUncheckedCreateNestedManyWithoutPuzzlesInputSchema).optional()
-}).strict();
-
-export const PuzzleUpdateInputSchema: z.ZodType<Prisma.PuzzleUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  checkpoint: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  solved: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  type: z.lazy(() => PuzzleTypeUpdateOneRequiredWithoutPuzzlesNestedInputSchema).optional(),
-  session: z.lazy(() => PuzzleSessionUpdateManyWithoutPuzzlesNestedInputSchema).optional()
-}).strict();
-
-export const PuzzleUncheckedUpdateInputSchema: z.ZodType<Prisma.PuzzleUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  checkpoint: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  solved: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  typeId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  session: z.lazy(() => PuzzleSessionUncheckedUpdateManyWithoutPuzzlesNestedInputSchema).optional()
-}).strict();
-
-export const PuzzleCreateManyInputSchema: z.ZodType<Prisma.PuzzleCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
-  checkpoint: z.number().int().optional(),
-  title: z.string(),
-  description: z.string().optional().nullable(),
-  solved: z.boolean(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  typeId: z.string()
-}).strict();
-
-export const PuzzleUpdateManyMutationInputSchema: z.ZodType<Prisma.PuzzleUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  checkpoint: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  solved: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-}).strict();
-
-export const PuzzleUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PuzzleUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  checkpoint: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  solved: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  typeId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const PuzzleTypeCreateInputSchema: z.ZodType<Prisma.PuzzleTypeCreateInput> = z.object({
-  name: z.string(),
-  id: z.string().cuid().optional(),
-  puzzles: z.lazy(() => PuzzleCreateNestedManyWithoutTypeInputSchema).optional()
-}).strict();
-
-export const PuzzleTypeUncheckedCreateInputSchema: z.ZodType<Prisma.PuzzleTypeUncheckedCreateInput> = z.object({
-  name: z.string(),
-  id: z.string().cuid().optional(),
-  puzzles: z.lazy(() => PuzzleUncheckedCreateNestedManyWithoutTypeInputSchema).optional()
-}).strict();
-
-export const PuzzleTypeUpdateInputSchema: z.ZodType<Prisma.PuzzleTypeUpdateInput> = z.object({
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  puzzles: z.lazy(() => PuzzleUpdateManyWithoutTypeNestedInputSchema).optional()
-}).strict();
-
-export const PuzzleTypeUncheckedUpdateInputSchema: z.ZodType<Prisma.PuzzleTypeUncheckedUpdateInput> = z.object({
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  puzzles: z.lazy(() => PuzzleUncheckedUpdateManyWithoutTypeNestedInputSchema).optional()
-}).strict();
-
-export const PuzzleTypeCreateManyInputSchema: z.ZodType<Prisma.PuzzleTypeCreateManyInput> = z.object({
-  name: z.string(),
-  id: z.string().cuid().optional()
-}).strict();
-
-export const PuzzleTypeUpdateManyMutationInputSchema: z.ZodType<Prisma.PuzzleTypeUpdateManyMutationInput> = z.object({
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const PuzzleTypeUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PuzzleTypeUncheckedUpdateManyInput> = z.object({
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
 export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object({
   id: z.string().cuid().optional(),
   clerkId: z.string(),
@@ -1704,13 +1358,10 @@ export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object
   email: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  cursorImg: z.string().optional().nullable(),
-  cursorCoordinatesId: z.string().optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionCreateNestedManyWithoutPlayersInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsCreateNestedManyWithoutPlayersInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientCreateNestedManyWithoutUserInputSchema).optional(),
   Potions: z.lazy(() => PotionCreateNestedManyWithoutUserInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesCreateNestedOneWithoutUserInputSchema).optional()
+  Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateInputSchema: z.ZodType<Prisma.UserUncheckedCreateInput> = z.object({
@@ -1721,13 +1372,10 @@ export const UserUncheckedCreateInputSchema: z.ZodType<Prisma.UserUncheckedCreat
   email: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  cursorImg: z.string().optional().nullable(),
-  cursorCoordinatesId: z.string().optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUncheckedCreateNestedManyWithoutPlayersInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedCreateNestedManyWithoutPlayersInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUncheckedCreateNestedOneWithoutUserInputSchema).optional()
+  Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUpdateInputSchema: z.ZodType<Prisma.UserUpdateInput> = z.object({
@@ -1738,13 +1386,10 @@ export const UserUpdateInputSchema: z.ZodType<Prisma.UserUpdateInput> = z.object
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUpdateManyWithoutPlayersNestedInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUpdateManyWithoutUserNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUpdateManyWithoutUserNestedInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUpdateOneWithoutUserNestedInputSchema).optional()
+  Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserUncheckedUpdateInputSchema: z.ZodType<Prisma.UserUncheckedUpdateInput> = z.object({
@@ -1755,13 +1400,10 @@ export const UserUncheckedUpdateInputSchema: z.ZodType<Prisma.UserUncheckedUpdat
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUncheckedUpdateManyWithoutPlayersNestedInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUncheckedUpdateOneWithoutUserNestedInputSchema).optional()
+  Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserCreateManyInputSchema: z.ZodType<Prisma.UserCreateManyInput> = z.object({
@@ -1771,9 +1413,7 @@ export const UserCreateManyInputSchema: z.ZodType<Prisma.UserCreateManyInput> = 
   username: z.string().optional().nullable(),
   email: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  cursorImg: z.string().optional().nullable(),
-  cursorCoordinatesId: z.string().optional().nullable()
+  updatedAt: z.coerce.date().optional()
 }).strict();
 
 export const UserUpdateManyMutationInputSchema: z.ZodType<Prisma.UserUpdateManyMutationInput> = z.object({
@@ -1784,8 +1424,6 @@ export const UserUpdateManyMutationInputSchema: z.ZodType<Prisma.UserUpdateManyM
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const UserUncheckedUpdateManyInputSchema: z.ZodType<Prisma.UserUncheckedUpdateManyInput> = z.object({
@@ -1796,8 +1434,6 @@ export const UserUncheckedUpdateManyInputSchema: z.ZodType<Prisma.UserUncheckedU
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const FormulaCreateInputSchema: z.ZodType<Prisma.FormulaCreateInput> = z.object({
@@ -2269,7 +1905,7 @@ export const SolutionOrderUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Solut
 export const CursorCoordinatesCreateInputSchema: z.ZodType<Prisma.CursorCoordinatesCreateInput> = z.object({
   id: z.string().cuid().optional(),
   coordinates: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  user: z.lazy(() => UserCreateNestedOneWithoutCursorCoordinatesInputSchema).optional()
+  userId: z.string().optional().nullable()
 }).strict();
 
 export const CursorCoordinatesUncheckedCreateInputSchema: z.ZodType<Prisma.CursorCoordinatesUncheckedCreateInput> = z.object({
@@ -2281,7 +1917,7 @@ export const CursorCoordinatesUncheckedCreateInputSchema: z.ZodType<Prisma.Curso
 export const CursorCoordinatesUpdateInputSchema: z.ZodType<Prisma.CursorCoordinatesUpdateInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   coordinates: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  user: z.lazy(() => UserUpdateOneWithoutCursorCoordinatesNestedInputSchema).optional()
+  userId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const CursorCoordinatesUncheckedUpdateInputSchema: z.ZodType<Prisma.CursorCoordinatesUncheckedUpdateInput> = z.object({
@@ -2299,6 +1935,7 @@ export const CursorCoordinatesCreateManyInputSchema: z.ZodType<Prisma.CursorCoor
 export const CursorCoordinatesUpdateManyMutationInputSchema: z.ZodType<Prisma.CursorCoordinatesUpdateManyMutationInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   coordinates: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  userId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const CursorCoordinatesUncheckedUpdateManyInputSchema: z.ZodType<Prisma.CursorCoordinatesUncheckedUpdateManyInput> = z.object({
@@ -2322,17 +1959,6 @@ export const StringFilterSchema: z.ZodType<Prisma.StringFilter> = z.object({
   not: z.union([ z.string(),z.lazy(() => NestedStringFilterSchema) ]).optional(),
 }).strict();
 
-export const IntFilterSchema: z.ZodType<Prisma.IntFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedIntFilterSchema) ]).optional(),
-}).strict();
-
 export const DateTimeFilterSchema: z.ZodType<Prisma.DateTimeFilter> = z.object({
   equals: z.coerce.date().optional(),
   in: z.coerce.date().array().optional(),
@@ -2342,6 +1968,11 @@ export const DateTimeFilterSchema: z.ZodType<Prisma.DateTimeFilter> = z.object({
   gt: z.coerce.date().optional(),
   gte: z.coerce.date().optional(),
   not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeFilterSchema) ]).optional(),
+}).strict();
+
+export const BoolFilterSchema: z.ZodType<Prisma.BoolFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
 }).strict();
 
 export const PuzzleChatMessageListRelationFilterSchema: z.ZodType<Prisma.PuzzleChatMessageListRelationFilter> = z.object({
@@ -2356,12 +1987,6 @@ export const UserListRelationFilterSchema: z.ZodType<Prisma.UserListRelationFilt
   none: z.lazy(() => UserWhereInputSchema).optional()
 }).strict();
 
-export const PuzzleListRelationFilterSchema: z.ZodType<Prisma.PuzzleListRelationFilter> = z.object({
-  every: z.lazy(() => PuzzleWhereInputSchema).optional(),
-  some: z.lazy(() => PuzzleWhereInputSchema).optional(),
-  none: z.lazy(() => PuzzleWhereInputSchema).optional()
-}).strict();
-
 export const PuzzleChatMessageOrderByRelationAggregateInputSchema: z.ZodType<Prisma.PuzzleChatMessageOrderByRelationAggregateInput> = z.object({
   _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -2370,37 +1995,37 @@ export const UserOrderByRelationAggregateInputSchema: z.ZodType<Prisma.UserOrder
   _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const PuzzleOrderByRelationAggregateInputSchema: z.ZodType<Prisma.PuzzleOrderByRelationAggregateInput> = z.object({
-  _count: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const PuzzleSessionCountOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleSessionCountOrderByAggregateInput> = z.object({
+export const PuzzleElementalTrialsCountOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   title: z.lazy(() => SortOrderSchema).optional(),
-  durationSeconds: z.lazy(() => SortOrderSchema).optional(),
-  createdAt: z.lazy(() => SortOrderSchema).optional()
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  firegem: z.lazy(() => SortOrderSchema).optional(),
+  airgem: z.lazy(() => SortOrderSchema).optional(),
+  earthgem: z.lazy(() => SortOrderSchema).optional(),
+  watergem: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const PuzzleSessionAvgOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleSessionAvgOrderByAggregateInput> = z.object({
-  durationSeconds: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const PuzzleSessionMaxOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleSessionMaxOrderByAggregateInput> = z.object({
+export const PuzzleElementalTrialsMaxOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsMaxOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   title: z.lazy(() => SortOrderSchema).optional(),
-  durationSeconds: z.lazy(() => SortOrderSchema).optional(),
-  createdAt: z.lazy(() => SortOrderSchema).optional()
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  firegem: z.lazy(() => SortOrderSchema).optional(),
+  airgem: z.lazy(() => SortOrderSchema).optional(),
+  earthgem: z.lazy(() => SortOrderSchema).optional(),
+  watergem: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const PuzzleSessionMinOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleSessionMinOrderByAggregateInput> = z.object({
+export const PuzzleElementalTrialsMinOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsMinOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   title: z.lazy(() => SortOrderSchema).optional(),
-  durationSeconds: z.lazy(() => SortOrderSchema).optional(),
-  createdAt: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const PuzzleSessionSumOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleSessionSumOrderByAggregateInput> = z.object({
-  durationSeconds: z.lazy(() => SortOrderSchema).optional()
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  firegem: z.lazy(() => SortOrderSchema).optional(),
+  airgem: z.lazy(() => SortOrderSchema).optional(),
+  earthgem: z.lazy(() => SortOrderSchema).optional(),
+  watergem: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const StringWithAggregatesFilterSchema: z.ZodType<Prisma.StringWithAggregatesFilter> = z.object({
@@ -2421,22 +2046,6 @@ export const StringWithAggregatesFilterSchema: z.ZodType<Prisma.StringWithAggreg
   _max: z.lazy(() => NestedStringFilterSchema).optional()
 }).strict();
 
-export const IntWithAggregatesFilterSchema: z.ZodType<Prisma.IntWithAggregatesFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedIntWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
-  _sum: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedIntFilterSchema).optional(),
-  _max: z.lazy(() => NestedIntFilterSchema).optional()
-}).strict();
-
 export const DateTimeWithAggregatesFilterSchema: z.ZodType<Prisma.DateTimeWithAggregatesFilter> = z.object({
   equals: z.coerce.date().optional(),
   in: z.coerce.date().array().optional(),
@@ -2451,9 +2060,17 @@ export const DateTimeWithAggregatesFilterSchema: z.ZodType<Prisma.DateTimeWithAg
   _max: z.lazy(() => NestedDateTimeFilterSchema).optional()
 }).strict();
 
-export const PuzzleSessionRelationFilterSchema: z.ZodType<Prisma.PuzzleSessionRelationFilter> = z.object({
-  is: z.lazy(() => PuzzleSessionWhereInputSchema).optional(),
-  isNot: z.lazy(() => PuzzleSessionWhereInputSchema).optional()
+export const BoolWithAggregatesFilterSchema: z.ZodType<Prisma.BoolWithAggregatesFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedBoolFilterSchema).optional(),
+  _max: z.lazy(() => NestedBoolFilterSchema).optional()
+}).strict();
+
+export const PuzzleElementalTrialsNullableRelationFilterSchema: z.ZodType<Prisma.PuzzleElementalTrialsNullableRelationFilter> = z.object({
+  is: z.lazy(() => PuzzleElementalTrialsWhereInputSchema).optional().nullable(),
+  isNot: z.lazy(() => PuzzleElementalTrialsWhereInputSchema).optional().nullable()
 }).strict();
 
 export const PuzzleChatMessageCountOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleChatMessageCountOrderByAggregateInput> = z.object({
@@ -2495,141 +2112,10 @@ export const StringNullableFilterSchema: z.ZodType<Prisma.StringNullableFilter> 
   not: z.union([ z.string(),z.lazy(() => NestedStringNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
-export const BoolFilterSchema: z.ZodType<Prisma.BoolFilter> = z.object({
-  equals: z.boolean().optional(),
-  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
-}).strict();
-
-export const JsonFilterSchema: z.ZodType<Prisma.JsonFilter> = z.object({
-  equals: InputJsonValueSchema.optional(),
-  path: z.string().array().optional(),
-  string_contains: z.string().optional(),
-  string_starts_with: z.string().optional(),
-  string_ends_with: z.string().optional(),
-  array_contains: InputJsonValueSchema.optional().nullable(),
-  array_starts_with: InputJsonValueSchema.optional().nullable(),
-  array_ends_with: InputJsonValueSchema.optional().nullable(),
-  lt: InputJsonValueSchema.optional(),
-  lte: InputJsonValueSchema.optional(),
-  gt: InputJsonValueSchema.optional(),
-  gte: InputJsonValueSchema.optional(),
-  not: InputJsonValueSchema.optional()
-}).strict();
-
-export const PuzzleTypeRelationFilterSchema: z.ZodType<Prisma.PuzzleTypeRelationFilter> = z.object({
-  is: z.lazy(() => PuzzleTypeWhereInputSchema).optional(),
-  isNot: z.lazy(() => PuzzleTypeWhereInputSchema).optional()
-}).strict();
-
-export const PuzzleSessionListRelationFilterSchema: z.ZodType<Prisma.PuzzleSessionListRelationFilter> = z.object({
-  every: z.lazy(() => PuzzleSessionWhereInputSchema).optional(),
-  some: z.lazy(() => PuzzleSessionWhereInputSchema).optional(),
-  none: z.lazy(() => PuzzleSessionWhereInputSchema).optional()
-}).strict();
-
-export const SortOrderInputSchema: z.ZodType<Prisma.SortOrderInput> = z.object({
-  sort: z.lazy(() => SortOrderSchema),
-  nulls: z.lazy(() => NullsOrderSchema).optional()
-}).strict();
-
-export const PuzzleSessionOrderByRelationAggregateInputSchema: z.ZodType<Prisma.PuzzleSessionOrderByRelationAggregateInput> = z.object({
-  _count: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const PuzzleCountOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleCountOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  checkpoint: z.lazy(() => SortOrderSchema).optional(),
-  title: z.lazy(() => SortOrderSchema).optional(),
-  description: z.lazy(() => SortOrderSchema).optional(),
-  solved: z.lazy(() => SortOrderSchema).optional(),
-  data: z.lazy(() => SortOrderSchema).optional(),
-  typeId: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const PuzzleAvgOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleAvgOrderByAggregateInput> = z.object({
-  checkpoint: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const PuzzleMaxOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleMaxOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  checkpoint: z.lazy(() => SortOrderSchema).optional(),
-  title: z.lazy(() => SortOrderSchema).optional(),
-  description: z.lazy(() => SortOrderSchema).optional(),
-  solved: z.lazy(() => SortOrderSchema).optional(),
-  typeId: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const PuzzleMinOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleMinOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  checkpoint: z.lazy(() => SortOrderSchema).optional(),
-  title: z.lazy(() => SortOrderSchema).optional(),
-  description: z.lazy(() => SortOrderSchema).optional(),
-  solved: z.lazy(() => SortOrderSchema).optional(),
-  typeId: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const PuzzleSumOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleSumOrderByAggregateInput> = z.object({
-  checkpoint: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const StringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.StringNullableWithAggregatesFilter> = z.object({
-  equals: z.string().optional().nullable(),
-  in: z.string().array().optional().nullable(),
-  notIn: z.string().array().optional().nullable(),
-  lt: z.string().optional(),
-  lte: z.string().optional(),
-  gt: z.string().optional(),
-  gte: z.string().optional(),
-  contains: z.string().optional(),
-  startsWith: z.string().optional(),
-  endsWith: z.string().optional(),
-  mode: z.lazy(() => QueryModeSchema).optional(),
-  not: z.union([ z.string(),z.lazy(() => NestedStringNullableWithAggregatesFilterSchema) ]).optional().nullable(),
-  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
-  _min: z.lazy(() => NestedStringNullableFilterSchema).optional(),
-  _max: z.lazy(() => NestedStringNullableFilterSchema).optional()
-}).strict();
-
-export const BoolWithAggregatesFilterSchema: z.ZodType<Prisma.BoolWithAggregatesFilter> = z.object({
-  equals: z.boolean().optional(),
-  not: z.union([ z.boolean(),z.lazy(() => NestedBoolWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedBoolFilterSchema).optional(),
-  _max: z.lazy(() => NestedBoolFilterSchema).optional()
-}).strict();
-
-export const JsonWithAggregatesFilterSchema: z.ZodType<Prisma.JsonWithAggregatesFilter> = z.object({
-  equals: InputJsonValueSchema.optional(),
-  path: z.string().array().optional(),
-  string_contains: z.string().optional(),
-  string_starts_with: z.string().optional(),
-  string_ends_with: z.string().optional(),
-  array_contains: InputJsonValueSchema.optional().nullable(),
-  array_starts_with: InputJsonValueSchema.optional().nullable(),
-  array_ends_with: InputJsonValueSchema.optional().nullable(),
-  lt: InputJsonValueSchema.optional(),
-  lte: InputJsonValueSchema.optional(),
-  gt: InputJsonValueSchema.optional(),
-  gte: InputJsonValueSchema.optional(),
-  not: InputJsonValueSchema.optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedJsonFilterSchema).optional(),
-  _max: z.lazy(() => NestedJsonFilterSchema).optional()
-}).strict();
-
-export const PuzzleTypeCountOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleTypeCountOrderByAggregateInput> = z.object({
-  name: z.lazy(() => SortOrderSchema).optional(),
-  id: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const PuzzleTypeMaxOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleTypeMaxOrderByAggregateInput> = z.object({
-  name: z.lazy(() => SortOrderSchema).optional(),
-  id: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const PuzzleTypeMinOrderByAggregateInputSchema: z.ZodType<Prisma.PuzzleTypeMinOrderByAggregateInput> = z.object({
-  name: z.lazy(() => SortOrderSchema).optional(),
-  id: z.lazy(() => SortOrderSchema).optional()
+export const PuzzleElementalTrialsListRelationFilterSchema: z.ZodType<Prisma.PuzzleElementalTrialsListRelationFilter> = z.object({
+  every: z.lazy(() => PuzzleElementalTrialsWhereInputSchema).optional(),
+  some: z.lazy(() => PuzzleElementalTrialsWhereInputSchema).optional(),
+  none: z.lazy(() => PuzzleElementalTrialsWhereInputSchema).optional()
 }).strict();
 
 export const IngredientListRelationFilterSchema: z.ZodType<Prisma.IngredientListRelationFilter> = z.object({
@@ -2650,9 +2136,13 @@ export const FormulaListRelationFilterSchema: z.ZodType<Prisma.FormulaListRelati
   none: z.lazy(() => FormulaWhereInputSchema).optional()
 }).strict();
 
-export const CursorCoordinatesNullableRelationFilterSchema: z.ZodType<Prisma.CursorCoordinatesNullableRelationFilter> = z.object({
-  is: z.lazy(() => CursorCoordinatesWhereInputSchema).optional().nullable(),
-  isNot: z.lazy(() => CursorCoordinatesWhereInputSchema).optional().nullable()
+export const SortOrderInputSchema: z.ZodType<Prisma.SortOrderInput> = z.object({
+  sort: z.lazy(() => SortOrderSchema),
+  nulls: z.lazy(() => NullsOrderSchema).optional()
+}).strict();
+
+export const PuzzleElementalTrialsOrderByRelationAggregateInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const IngredientOrderByRelationAggregateInputSchema: z.ZodType<Prisma.IngredientOrderByRelationAggregateInput> = z.object({
@@ -2674,9 +2164,7 @@ export const UserCountOrderByAggregateInputSchema: z.ZodType<Prisma.UserCountOrd
   username: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
-  updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  cursorImg: z.lazy(() => SortOrderSchema).optional(),
-  cursorCoordinatesId: z.lazy(() => SortOrderSchema).optional()
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const UserMaxOrderByAggregateInputSchema: z.ZodType<Prisma.UserMaxOrderByAggregateInput> = z.object({
@@ -2686,9 +2174,7 @@ export const UserMaxOrderByAggregateInputSchema: z.ZodType<Prisma.UserMaxOrderBy
   username: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
-  updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  cursorImg: z.lazy(() => SortOrderSchema).optional(),
-  cursorCoordinatesId: z.lazy(() => SortOrderSchema).optional()
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const UserMinOrderByAggregateInputSchema: z.ZodType<Prisma.UserMinOrderByAggregateInput> = z.object({
@@ -2698,9 +2184,25 @@ export const UserMinOrderByAggregateInputSchema: z.ZodType<Prisma.UserMinOrderBy
   username: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
-  updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  cursorImg: z.lazy(() => SortOrderSchema).optional(),
-  cursorCoordinatesId: z.lazy(() => SortOrderSchema).optional()
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const StringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.StringNullableWithAggregatesFilter> = z.object({
+  equals: z.string().optional().nullable(),
+  in: z.string().array().optional().nullable(),
+  notIn: z.string().array().optional().nullable(),
+  lt: z.string().optional(),
+  lte: z.string().optional(),
+  gt: z.string().optional(),
+  gte: z.string().optional(),
+  contains: z.string().optional(),
+  startsWith: z.string().optional(),
+  endsWith: z.string().optional(),
+  mode: z.lazy(() => QueryModeSchema).optional(),
+  not: z.union([ z.string(),z.lazy(() => NestedStringNullableWithAggregatesFilterSchema) ]).optional().nullable(),
+  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+  _min: z.lazy(() => NestedStringNullableFilterSchema).optional(),
+  _max: z.lazy(() => NestedStringNullableFilterSchema).optional()
 }).strict();
 
 export const EnumRarityFilterSchema: z.ZodType<Prisma.EnumRarityFilter> = z.object({
@@ -2770,6 +2272,17 @@ export const EnumPrimaryAttributeFilterSchema: z.ZodType<Prisma.EnumPrimaryAttri
   in: z.lazy(() => PrimaryAttributeSchema).array().optional(),
   notIn: z.lazy(() => PrimaryAttributeSchema).array().optional(),
   not: z.union([ z.lazy(() => PrimaryAttributeSchema),z.lazy(() => NestedEnumPrimaryAttributeFilterSchema) ]).optional(),
+}).strict();
+
+export const IntFilterSchema: z.ZodType<Prisma.IntFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntFilterSchema) ]).optional(),
 }).strict();
 
 export const IngredientCountOrderByAggregateInputSchema: z.ZodType<Prisma.IngredientCountOrderByAggregateInput> = z.object({
@@ -2873,6 +2386,22 @@ export const EnumPrimaryAttributeWithAggregatesFilterSchema: z.ZodType<Prisma.En
   _max: z.lazy(() => NestedEnumPrimaryAttributeFilterSchema).optional()
 }).strict();
 
+export const IntWithAggregatesFilterSchema: z.ZodType<Prisma.IntWithAggregatesFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _sum: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedIntFilterSchema).optional(),
+  _max: z.lazy(() => NestedIntFilterSchema).optional()
+}).strict();
+
 export const PotionCountOrderByAggregateInputSchema: z.ZodType<Prisma.PotionCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   rarity: z.lazy(() => SortOrderSchema).optional(),
@@ -2954,6 +2483,22 @@ export const PotionSumOrderByAggregateInputSchema: z.ZodType<Prisma.PotionSumOrd
   transmutation: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
+export const JsonFilterSchema: z.ZodType<Prisma.JsonFilter> = z.object({
+  equals: InputJsonValueSchema.optional(),
+  path: z.string().array().optional(),
+  string_contains: z.string().optional(),
+  string_starts_with: z.string().optional(),
+  string_ends_with: z.string().optional(),
+  array_contains: InputJsonValueSchema.optional().nullable(),
+  array_starts_with: InputJsonValueSchema.optional().nullable(),
+  array_ends_with: InputJsonValueSchema.optional().nullable(),
+  lt: InputJsonValueSchema.optional(),
+  lte: InputJsonValueSchema.optional(),
+  gt: InputJsonValueSchema.optional(),
+  gte: InputJsonValueSchema.optional(),
+  not: InputJsonValueSchema.optional()
+}).strict();
+
 export const CoordinatesCountOrderByAggregateInputSchema: z.ZodType<Prisma.CoordinatesCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   head: z.lazy(() => SortOrderSchema).optional(),
@@ -2975,6 +2520,25 @@ export const CoordinatesMaxOrderByAggregateInputSchema: z.ZodType<Prisma.Coordin
 
 export const CoordinatesMinOrderByAggregateInputSchema: z.ZodType<Prisma.CoordinatesMinOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const JsonWithAggregatesFilterSchema: z.ZodType<Prisma.JsonWithAggregatesFilter> = z.object({
+  equals: InputJsonValueSchema.optional(),
+  path: z.string().array().optional(),
+  string_contains: z.string().optional(),
+  string_starts_with: z.string().optional(),
+  string_ends_with: z.string().optional(),
+  array_contains: InputJsonValueSchema.optional().nullable(),
+  array_starts_with: InputJsonValueSchema.optional().nullable(),
+  array_ends_with: InputJsonValueSchema.optional().nullable(),
+  lt: InputJsonValueSchema.optional(),
+  lte: InputJsonValueSchema.optional(),
+  gt: InputJsonValueSchema.optional(),
+  gte: InputJsonValueSchema.optional(),
+  not: InputJsonValueSchema.optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedJsonFilterSchema).optional(),
+  _max: z.lazy(() => NestedJsonFilterSchema).optional()
 }).strict();
 
 export const SolutionOrderCountOrderByAggregateInputSchema: z.ZodType<Prisma.SolutionOrderCountOrderByAggregateInput> = z.object({
@@ -3004,11 +2568,6 @@ export const JsonNullableFilterSchema: z.ZodType<Prisma.JsonNullableFilter> = z.
   gt: InputJsonValueSchema.optional(),
   gte: InputJsonValueSchema.optional(),
   not: InputJsonValueSchema.optional()
-}).strict();
-
-export const UserNullableRelationFilterSchema: z.ZodType<Prisma.UserNullableRelationFilter> = z.object({
-  is: z.lazy(() => UserWhereInputSchema).optional().nullable(),
-  isNot: z.lazy(() => UserWhereInputSchema).optional().nullable()
 }).strict();
 
 export const CursorCoordinatesCountOrderByAggregateInputSchema: z.ZodType<Prisma.CursorCoordinatesCountOrderByAggregateInput> = z.object({
@@ -3053,16 +2612,10 @@ export const PuzzleChatMessageCreateNestedManyWithoutSessionInputSchema: z.ZodTy
   connect: z.union([ z.lazy(() => PuzzleChatMessageWhereUniqueInputSchema),z.lazy(() => PuzzleChatMessageWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const UserCreateNestedManyWithoutPuzzleSessionsInputSchema: z.ZodType<Prisma.UserCreateNestedManyWithoutPuzzleSessionsInput> = z.object({
-  create: z.union([ z.lazy(() => UserCreateWithoutPuzzleSessionsInputSchema),z.lazy(() => UserCreateWithoutPuzzleSessionsInputSchema).array(),z.lazy(() => UserUncheckedCreateWithoutPuzzleSessionsInputSchema),z.lazy(() => UserUncheckedCreateWithoutPuzzleSessionsInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => UserCreateOrConnectWithoutPuzzleSessionsInputSchema),z.lazy(() => UserCreateOrConnectWithoutPuzzleSessionsInputSchema).array() ]).optional(),
+export const UserCreateNestedManyWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserCreateNestedManyWithoutPuzzleElementalTrialsInput> = z.object({
+  create: z.union([ z.lazy(() => UserCreateWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserCreateWithoutPuzzleElementalTrialsInputSchema).array(),z.lazy(() => UserUncheckedCreateWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserUncheckedCreateWithoutPuzzleElementalTrialsInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => UserCreateOrConnectWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserCreateOrConnectWithoutPuzzleElementalTrialsInputSchema).array() ]).optional(),
   connect: z.union([ z.lazy(() => UserWhereUniqueInputSchema),z.lazy(() => UserWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
-export const PuzzleCreateNestedManyWithoutSessionInputSchema: z.ZodType<Prisma.PuzzleCreateNestedManyWithoutSessionInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleCreateWithoutSessionInputSchema),z.lazy(() => PuzzleCreateWithoutSessionInputSchema).array(),z.lazy(() => PuzzleUncheckedCreateWithoutSessionInputSchema),z.lazy(() => PuzzleUncheckedCreateWithoutSessionInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleCreateOrConnectWithoutSessionInputSchema),z.lazy(() => PuzzleCreateOrConnectWithoutSessionInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const PuzzleChatMessageUncheckedCreateNestedManyWithoutSessionInputSchema: z.ZodType<Prisma.PuzzleChatMessageUncheckedCreateNestedManyWithoutSessionInput> = z.object({
@@ -3072,32 +2625,22 @@ export const PuzzleChatMessageUncheckedCreateNestedManyWithoutSessionInputSchema
   connect: z.union([ z.lazy(() => PuzzleChatMessageWhereUniqueInputSchema),z.lazy(() => PuzzleChatMessageWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const UserUncheckedCreateNestedManyWithoutPuzzleSessionsInputSchema: z.ZodType<Prisma.UserUncheckedCreateNestedManyWithoutPuzzleSessionsInput> = z.object({
-  create: z.union([ z.lazy(() => UserCreateWithoutPuzzleSessionsInputSchema),z.lazy(() => UserCreateWithoutPuzzleSessionsInputSchema).array(),z.lazy(() => UserUncheckedCreateWithoutPuzzleSessionsInputSchema),z.lazy(() => UserUncheckedCreateWithoutPuzzleSessionsInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => UserCreateOrConnectWithoutPuzzleSessionsInputSchema),z.lazy(() => UserCreateOrConnectWithoutPuzzleSessionsInputSchema).array() ]).optional(),
+export const UserUncheckedCreateNestedManyWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserUncheckedCreateNestedManyWithoutPuzzleElementalTrialsInput> = z.object({
+  create: z.union([ z.lazy(() => UserCreateWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserCreateWithoutPuzzleElementalTrialsInputSchema).array(),z.lazy(() => UserUncheckedCreateWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserUncheckedCreateWithoutPuzzleElementalTrialsInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => UserCreateOrConnectWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserCreateOrConnectWithoutPuzzleElementalTrialsInputSchema).array() ]).optional(),
   connect: z.union([ z.lazy(() => UserWhereUniqueInputSchema),z.lazy(() => UserWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
-export const PuzzleUncheckedCreateNestedManyWithoutSessionInputSchema: z.ZodType<Prisma.PuzzleUncheckedCreateNestedManyWithoutSessionInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleCreateWithoutSessionInputSchema),z.lazy(() => PuzzleCreateWithoutSessionInputSchema).array(),z.lazy(() => PuzzleUncheckedCreateWithoutSessionInputSchema),z.lazy(() => PuzzleUncheckedCreateWithoutSessionInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleCreateOrConnectWithoutSessionInputSchema),z.lazy(() => PuzzleCreateOrConnectWithoutSessionInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const StringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.StringFieldUpdateOperationsInput> = z.object({
   set: z.string().optional()
 }).strict();
 
-export const IntFieldUpdateOperationsInputSchema: z.ZodType<Prisma.IntFieldUpdateOperationsInput> = z.object({
-  set: z.number().optional(),
-  increment: z.number().optional(),
-  decrement: z.number().optional(),
-  multiply: z.number().optional(),
-  divide: z.number().optional()
-}).strict();
-
 export const DateTimeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.DateTimeFieldUpdateOperationsInput> = z.object({
   set: z.coerce.date().optional()
+}).strict();
+
+export const BoolFieldUpdateOperationsInputSchema: z.ZodType<Prisma.BoolFieldUpdateOperationsInput> = z.object({
+  set: z.boolean().optional()
 }).strict();
 
 export const PuzzleChatMessageUpdateManyWithoutSessionNestedInputSchema: z.ZodType<Prisma.PuzzleChatMessageUpdateManyWithoutSessionNestedInput> = z.object({
@@ -3114,30 +2657,17 @@ export const PuzzleChatMessageUpdateManyWithoutSessionNestedInputSchema: z.ZodTy
   deleteMany: z.union([ z.lazy(() => PuzzleChatMessageScalarWhereInputSchema),z.lazy(() => PuzzleChatMessageScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const UserUpdateManyWithoutPuzzleSessionsNestedInputSchema: z.ZodType<Prisma.UserUpdateManyWithoutPuzzleSessionsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => UserCreateWithoutPuzzleSessionsInputSchema),z.lazy(() => UserCreateWithoutPuzzleSessionsInputSchema).array(),z.lazy(() => UserUncheckedCreateWithoutPuzzleSessionsInputSchema),z.lazy(() => UserUncheckedCreateWithoutPuzzleSessionsInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => UserCreateOrConnectWithoutPuzzleSessionsInputSchema),z.lazy(() => UserCreateOrConnectWithoutPuzzleSessionsInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => UserUpsertWithWhereUniqueWithoutPuzzleSessionsInputSchema),z.lazy(() => UserUpsertWithWhereUniqueWithoutPuzzleSessionsInputSchema).array() ]).optional(),
+export const UserUpdateManyWithoutPuzzleElementalTrialsNestedInputSchema: z.ZodType<Prisma.UserUpdateManyWithoutPuzzleElementalTrialsNestedInput> = z.object({
+  create: z.union([ z.lazy(() => UserCreateWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserCreateWithoutPuzzleElementalTrialsInputSchema).array(),z.lazy(() => UserUncheckedCreateWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserUncheckedCreateWithoutPuzzleElementalTrialsInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => UserCreateOrConnectWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserCreateOrConnectWithoutPuzzleElementalTrialsInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => UserUpsertWithWhereUniqueWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserUpsertWithWhereUniqueWithoutPuzzleElementalTrialsInputSchema).array() ]).optional(),
   set: z.union([ z.lazy(() => UserWhereUniqueInputSchema),z.lazy(() => UserWhereUniqueInputSchema).array() ]).optional(),
   disconnect: z.union([ z.lazy(() => UserWhereUniqueInputSchema),z.lazy(() => UserWhereUniqueInputSchema).array() ]).optional(),
   delete: z.union([ z.lazy(() => UserWhereUniqueInputSchema),z.lazy(() => UserWhereUniqueInputSchema).array() ]).optional(),
   connect: z.union([ z.lazy(() => UserWhereUniqueInputSchema),z.lazy(() => UserWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => UserUpdateWithWhereUniqueWithoutPuzzleSessionsInputSchema),z.lazy(() => UserUpdateWithWhereUniqueWithoutPuzzleSessionsInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => UserUpdateManyWithWhereWithoutPuzzleSessionsInputSchema),z.lazy(() => UserUpdateManyWithWhereWithoutPuzzleSessionsInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => UserUpdateWithWhereUniqueWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserUpdateWithWhereUniqueWithoutPuzzleElementalTrialsInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => UserUpdateManyWithWhereWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserUpdateManyWithWhereWithoutPuzzleElementalTrialsInputSchema).array() ]).optional(),
   deleteMany: z.union([ z.lazy(() => UserScalarWhereInputSchema),z.lazy(() => UserScalarWhereInputSchema).array() ]).optional(),
-}).strict();
-
-export const PuzzleUpdateManyWithoutSessionNestedInputSchema: z.ZodType<Prisma.PuzzleUpdateManyWithoutSessionNestedInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleCreateWithoutSessionInputSchema),z.lazy(() => PuzzleCreateWithoutSessionInputSchema).array(),z.lazy(() => PuzzleUncheckedCreateWithoutSessionInputSchema),z.lazy(() => PuzzleUncheckedCreateWithoutSessionInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleCreateOrConnectWithoutSessionInputSchema),z.lazy(() => PuzzleCreateOrConnectWithoutSessionInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => PuzzleUpsertWithWhereUniqueWithoutSessionInputSchema),z.lazy(() => PuzzleUpsertWithWhereUniqueWithoutSessionInputSchema).array() ]).optional(),
-  set: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => PuzzleUpdateWithWhereUniqueWithoutSessionInputSchema),z.lazy(() => PuzzleUpdateWithWhereUniqueWithoutSessionInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => PuzzleUpdateManyWithWhereWithoutSessionInputSchema),z.lazy(() => PuzzleUpdateManyWithWhereWithoutSessionInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => PuzzleScalarWhereInputSchema),z.lazy(() => PuzzleScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const PuzzleChatMessageUncheckedUpdateManyWithoutSessionNestedInputSchema: z.ZodType<Prisma.PuzzleChatMessageUncheckedUpdateManyWithoutSessionNestedInput> = z.object({
@@ -3154,152 +2684,39 @@ export const PuzzleChatMessageUncheckedUpdateManyWithoutSessionNestedInputSchema
   deleteMany: z.union([ z.lazy(() => PuzzleChatMessageScalarWhereInputSchema),z.lazy(() => PuzzleChatMessageScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const UserUncheckedUpdateManyWithoutPuzzleSessionsNestedInputSchema: z.ZodType<Prisma.UserUncheckedUpdateManyWithoutPuzzleSessionsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => UserCreateWithoutPuzzleSessionsInputSchema),z.lazy(() => UserCreateWithoutPuzzleSessionsInputSchema).array(),z.lazy(() => UserUncheckedCreateWithoutPuzzleSessionsInputSchema),z.lazy(() => UserUncheckedCreateWithoutPuzzleSessionsInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => UserCreateOrConnectWithoutPuzzleSessionsInputSchema),z.lazy(() => UserCreateOrConnectWithoutPuzzleSessionsInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => UserUpsertWithWhereUniqueWithoutPuzzleSessionsInputSchema),z.lazy(() => UserUpsertWithWhereUniqueWithoutPuzzleSessionsInputSchema).array() ]).optional(),
+export const UserUncheckedUpdateManyWithoutPuzzleElementalTrialsNestedInputSchema: z.ZodType<Prisma.UserUncheckedUpdateManyWithoutPuzzleElementalTrialsNestedInput> = z.object({
+  create: z.union([ z.lazy(() => UserCreateWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserCreateWithoutPuzzleElementalTrialsInputSchema).array(),z.lazy(() => UserUncheckedCreateWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserUncheckedCreateWithoutPuzzleElementalTrialsInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => UserCreateOrConnectWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserCreateOrConnectWithoutPuzzleElementalTrialsInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => UserUpsertWithWhereUniqueWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserUpsertWithWhereUniqueWithoutPuzzleElementalTrialsInputSchema).array() ]).optional(),
   set: z.union([ z.lazy(() => UserWhereUniqueInputSchema),z.lazy(() => UserWhereUniqueInputSchema).array() ]).optional(),
   disconnect: z.union([ z.lazy(() => UserWhereUniqueInputSchema),z.lazy(() => UserWhereUniqueInputSchema).array() ]).optional(),
   delete: z.union([ z.lazy(() => UserWhereUniqueInputSchema),z.lazy(() => UserWhereUniqueInputSchema).array() ]).optional(),
   connect: z.union([ z.lazy(() => UserWhereUniqueInputSchema),z.lazy(() => UserWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => UserUpdateWithWhereUniqueWithoutPuzzleSessionsInputSchema),z.lazy(() => UserUpdateWithWhereUniqueWithoutPuzzleSessionsInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => UserUpdateManyWithWhereWithoutPuzzleSessionsInputSchema),z.lazy(() => UserUpdateManyWithWhereWithoutPuzzleSessionsInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => UserUpdateWithWhereUniqueWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserUpdateWithWhereUniqueWithoutPuzzleElementalTrialsInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => UserUpdateManyWithWhereWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserUpdateManyWithWhereWithoutPuzzleElementalTrialsInputSchema).array() ]).optional(),
   deleteMany: z.union([ z.lazy(() => UserScalarWhereInputSchema),z.lazy(() => UserScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const PuzzleUncheckedUpdateManyWithoutSessionNestedInputSchema: z.ZodType<Prisma.PuzzleUncheckedUpdateManyWithoutSessionNestedInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleCreateWithoutSessionInputSchema),z.lazy(() => PuzzleCreateWithoutSessionInputSchema).array(),z.lazy(() => PuzzleUncheckedCreateWithoutSessionInputSchema),z.lazy(() => PuzzleUncheckedCreateWithoutSessionInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleCreateOrConnectWithoutSessionInputSchema),z.lazy(() => PuzzleCreateOrConnectWithoutSessionInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => PuzzleUpsertWithWhereUniqueWithoutSessionInputSchema),z.lazy(() => PuzzleUpsertWithWhereUniqueWithoutSessionInputSchema).array() ]).optional(),
-  set: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => PuzzleUpdateWithWhereUniqueWithoutSessionInputSchema),z.lazy(() => PuzzleUpdateWithWhereUniqueWithoutSessionInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => PuzzleUpdateManyWithWhereWithoutSessionInputSchema),z.lazy(() => PuzzleUpdateManyWithWhereWithoutSessionInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => PuzzleScalarWhereInputSchema),z.lazy(() => PuzzleScalarWhereInputSchema).array() ]).optional(),
+export const PuzzleElementalTrialsCreateNestedOneWithoutChatInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsCreateNestedOneWithoutChatInput> = z.object({
+  create: z.union([ z.lazy(() => PuzzleElementalTrialsCreateWithoutChatInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutChatInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutChatInputSchema).optional(),
+  connect: z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionCreateNestedOneWithoutChatInputSchema: z.ZodType<Prisma.PuzzleSessionCreateNestedOneWithoutChatInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutChatInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutChatInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => PuzzleSessionCreateOrConnectWithoutChatInputSchema).optional(),
-  connect: z.lazy(() => PuzzleSessionWhereUniqueInputSchema).optional()
+export const PuzzleElementalTrialsUpdateOneWithoutChatNestedInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateOneWithoutChatNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PuzzleElementalTrialsCreateWithoutChatInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutChatInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutChatInputSchema).optional(),
+  upsert: z.lazy(() => PuzzleElementalTrialsUpsertWithoutChatInputSchema).optional(),
+  disconnect: z.union([ z.boolean(),z.lazy(() => PuzzleElementalTrialsWhereInputSchema) ]).optional(),
+  delete: z.union([ z.boolean(),z.lazy(() => PuzzleElementalTrialsWhereInputSchema) ]).optional(),
+  connect: z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => PuzzleElementalTrialsUpdateToOneWithWhereWithoutChatInputSchema),z.lazy(() => PuzzleElementalTrialsUpdateWithoutChatInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedUpdateWithoutChatInputSchema) ]).optional(),
 }).strict();
 
-export const PuzzleSessionUpdateOneRequiredWithoutChatNestedInputSchema: z.ZodType<Prisma.PuzzleSessionUpdateOneRequiredWithoutChatNestedInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutChatInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutChatInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => PuzzleSessionCreateOrConnectWithoutChatInputSchema).optional(),
-  upsert: z.lazy(() => PuzzleSessionUpsertWithoutChatInputSchema).optional(),
-  connect: z.lazy(() => PuzzleSessionWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => PuzzleSessionUpdateToOneWithWhereWithoutChatInputSchema),z.lazy(() => PuzzleSessionUpdateWithoutChatInputSchema),z.lazy(() => PuzzleSessionUncheckedUpdateWithoutChatInputSchema) ]).optional(),
-}).strict();
-
-export const PuzzleTypeCreateNestedOneWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleTypeCreateNestedOneWithoutPuzzlesInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleTypeCreateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleTypeUncheckedCreateWithoutPuzzlesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => PuzzleTypeCreateOrConnectWithoutPuzzlesInputSchema).optional(),
-  connect: z.lazy(() => PuzzleTypeWhereUniqueInputSchema).optional()
-}).strict();
-
-export const PuzzleSessionCreateNestedManyWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleSessionCreateNestedManyWithoutPuzzlesInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionCreateWithoutPuzzlesInputSchema).array(),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPuzzlesInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleSessionCreateOrConnectWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionCreateOrConnectWithoutPuzzlesInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
-export const PuzzleSessionUncheckedCreateNestedManyWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedCreateNestedManyWithoutPuzzlesInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionCreateWithoutPuzzlesInputSchema).array(),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPuzzlesInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleSessionCreateOrConnectWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionCreateOrConnectWithoutPuzzlesInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
-export const NullableStringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableStringFieldUpdateOperationsInput> = z.object({
-  set: z.string().optional().nullable()
-}).strict();
-
-export const BoolFieldUpdateOperationsInputSchema: z.ZodType<Prisma.BoolFieldUpdateOperationsInput> = z.object({
-  set: z.boolean().optional()
-}).strict();
-
-export const PuzzleTypeUpdateOneRequiredWithoutPuzzlesNestedInputSchema: z.ZodType<Prisma.PuzzleTypeUpdateOneRequiredWithoutPuzzlesNestedInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleTypeCreateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleTypeUncheckedCreateWithoutPuzzlesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => PuzzleTypeCreateOrConnectWithoutPuzzlesInputSchema).optional(),
-  upsert: z.lazy(() => PuzzleTypeUpsertWithoutPuzzlesInputSchema).optional(),
-  connect: z.lazy(() => PuzzleTypeWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => PuzzleTypeUpdateToOneWithWhereWithoutPuzzlesInputSchema),z.lazy(() => PuzzleTypeUpdateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleTypeUncheckedUpdateWithoutPuzzlesInputSchema) ]).optional(),
-}).strict();
-
-export const PuzzleSessionUpdateManyWithoutPuzzlesNestedInputSchema: z.ZodType<Prisma.PuzzleSessionUpdateManyWithoutPuzzlesNestedInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionCreateWithoutPuzzlesInputSchema).array(),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPuzzlesInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleSessionCreateOrConnectWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionCreateOrConnectWithoutPuzzlesInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => PuzzleSessionUpsertWithWhereUniqueWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionUpsertWithWhereUniqueWithoutPuzzlesInputSchema).array() ]).optional(),
-  set: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => PuzzleSessionUpdateWithWhereUniqueWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionUpdateWithWhereUniqueWithoutPuzzlesInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => PuzzleSessionUpdateManyWithWhereWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionUpdateManyWithWhereWithoutPuzzlesInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => PuzzleSessionScalarWhereInputSchema),z.lazy(() => PuzzleSessionScalarWhereInputSchema).array() ]).optional(),
-}).strict();
-
-export const PuzzleSessionUncheckedUpdateManyWithoutPuzzlesNestedInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedUpdateManyWithoutPuzzlesNestedInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionCreateWithoutPuzzlesInputSchema).array(),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPuzzlesInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleSessionCreateOrConnectWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionCreateOrConnectWithoutPuzzlesInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => PuzzleSessionUpsertWithWhereUniqueWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionUpsertWithWhereUniqueWithoutPuzzlesInputSchema).array() ]).optional(),
-  set: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => PuzzleSessionUpdateWithWhereUniqueWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionUpdateWithWhereUniqueWithoutPuzzlesInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => PuzzleSessionUpdateManyWithWhereWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionUpdateManyWithWhereWithoutPuzzlesInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => PuzzleSessionScalarWhereInputSchema),z.lazy(() => PuzzleSessionScalarWhereInputSchema).array() ]).optional(),
-}).strict();
-
-export const PuzzleCreateNestedManyWithoutTypeInputSchema: z.ZodType<Prisma.PuzzleCreateNestedManyWithoutTypeInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleCreateWithoutTypeInputSchema),z.lazy(() => PuzzleCreateWithoutTypeInputSchema).array(),z.lazy(() => PuzzleUncheckedCreateWithoutTypeInputSchema),z.lazy(() => PuzzleUncheckedCreateWithoutTypeInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleCreateOrConnectWithoutTypeInputSchema),z.lazy(() => PuzzleCreateOrConnectWithoutTypeInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => PuzzleCreateManyTypeInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
-export const PuzzleUncheckedCreateNestedManyWithoutTypeInputSchema: z.ZodType<Prisma.PuzzleUncheckedCreateNestedManyWithoutTypeInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleCreateWithoutTypeInputSchema),z.lazy(() => PuzzleCreateWithoutTypeInputSchema).array(),z.lazy(() => PuzzleUncheckedCreateWithoutTypeInputSchema),z.lazy(() => PuzzleUncheckedCreateWithoutTypeInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleCreateOrConnectWithoutTypeInputSchema),z.lazy(() => PuzzleCreateOrConnectWithoutTypeInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => PuzzleCreateManyTypeInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
-export const PuzzleUpdateManyWithoutTypeNestedInputSchema: z.ZodType<Prisma.PuzzleUpdateManyWithoutTypeNestedInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleCreateWithoutTypeInputSchema),z.lazy(() => PuzzleCreateWithoutTypeInputSchema).array(),z.lazy(() => PuzzleUncheckedCreateWithoutTypeInputSchema),z.lazy(() => PuzzleUncheckedCreateWithoutTypeInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleCreateOrConnectWithoutTypeInputSchema),z.lazy(() => PuzzleCreateOrConnectWithoutTypeInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => PuzzleUpsertWithWhereUniqueWithoutTypeInputSchema),z.lazy(() => PuzzleUpsertWithWhereUniqueWithoutTypeInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => PuzzleCreateManyTypeInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => PuzzleUpdateWithWhereUniqueWithoutTypeInputSchema),z.lazy(() => PuzzleUpdateWithWhereUniqueWithoutTypeInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => PuzzleUpdateManyWithWhereWithoutTypeInputSchema),z.lazy(() => PuzzleUpdateManyWithWhereWithoutTypeInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => PuzzleScalarWhereInputSchema),z.lazy(() => PuzzleScalarWhereInputSchema).array() ]).optional(),
-}).strict();
-
-export const PuzzleUncheckedUpdateManyWithoutTypeNestedInputSchema: z.ZodType<Prisma.PuzzleUncheckedUpdateManyWithoutTypeNestedInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleCreateWithoutTypeInputSchema),z.lazy(() => PuzzleCreateWithoutTypeInputSchema).array(),z.lazy(() => PuzzleUncheckedCreateWithoutTypeInputSchema),z.lazy(() => PuzzleUncheckedCreateWithoutTypeInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleCreateOrConnectWithoutTypeInputSchema),z.lazy(() => PuzzleCreateOrConnectWithoutTypeInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => PuzzleUpsertWithWhereUniqueWithoutTypeInputSchema),z.lazy(() => PuzzleUpsertWithWhereUniqueWithoutTypeInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => PuzzleCreateManyTypeInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => PuzzleWhereUniqueInputSchema),z.lazy(() => PuzzleWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => PuzzleUpdateWithWhereUniqueWithoutTypeInputSchema),z.lazy(() => PuzzleUpdateWithWhereUniqueWithoutTypeInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => PuzzleUpdateManyWithWhereWithoutTypeInputSchema),z.lazy(() => PuzzleUpdateManyWithWhereWithoutTypeInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => PuzzleScalarWhereInputSchema),z.lazy(() => PuzzleScalarWhereInputSchema).array() ]).optional(),
-}).strict();
-
-export const PuzzleSessionCreateNestedManyWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleSessionCreateNestedManyWithoutPlayersInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionCreateWithoutPlayersInputSchema).array(),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPlayersInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleSessionCreateOrConnectWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionCreateOrConnectWithoutPlayersInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
+export const PuzzleElementalTrialsCreateNestedManyWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsCreateNestedManyWithoutPlayersInput> = z.object({
+  create: z.union([ z.lazy(() => PuzzleElementalTrialsCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsCreateWithoutPlayersInputSchema).array(),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutPlayersInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema),z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const IngredientCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.IngredientCreateNestedManyWithoutUserInput> = z.object({
@@ -3323,16 +2740,10 @@ export const FormulaCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.For
   connect: z.union([ z.lazy(() => FormulaWhereUniqueInputSchema),z.lazy(() => FormulaWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const CursorCoordinatesCreateNestedOneWithoutUserInputSchema: z.ZodType<Prisma.CursorCoordinatesCreateNestedOneWithoutUserInput> = z.object({
-  create: z.union([ z.lazy(() => CursorCoordinatesCreateWithoutUserInputSchema),z.lazy(() => CursorCoordinatesUncheckedCreateWithoutUserInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => CursorCoordinatesCreateOrConnectWithoutUserInputSchema).optional(),
-  connect: z.lazy(() => CursorCoordinatesWhereUniqueInputSchema).optional()
-}).strict();
-
-export const PuzzleSessionUncheckedCreateNestedManyWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedCreateNestedManyWithoutPlayersInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionCreateWithoutPlayersInputSchema).array(),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPlayersInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleSessionCreateOrConnectWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionCreateOrConnectWithoutPlayersInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
+export const PuzzleElementalTrialsUncheckedCreateNestedManyWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUncheckedCreateNestedManyWithoutPlayersInput> = z.object({
+  create: z.union([ z.lazy(() => PuzzleElementalTrialsCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsCreateWithoutPlayersInputSchema).array(),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutPlayersInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema),z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const IngredientUncheckedCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.IngredientUncheckedCreateNestedManyWithoutUserInput> = z.object({
@@ -3356,23 +2767,21 @@ export const FormulaUncheckedCreateNestedManyWithoutUserInputSchema: z.ZodType<P
   connect: z.union([ z.lazy(() => FormulaWhereUniqueInputSchema),z.lazy(() => FormulaWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const CursorCoordinatesUncheckedCreateNestedOneWithoutUserInputSchema: z.ZodType<Prisma.CursorCoordinatesUncheckedCreateNestedOneWithoutUserInput> = z.object({
-  create: z.union([ z.lazy(() => CursorCoordinatesCreateWithoutUserInputSchema),z.lazy(() => CursorCoordinatesUncheckedCreateWithoutUserInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => CursorCoordinatesCreateOrConnectWithoutUserInputSchema).optional(),
-  connect: z.lazy(() => CursorCoordinatesWhereUniqueInputSchema).optional()
+export const NullableStringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableStringFieldUpdateOperationsInput> = z.object({
+  set: z.string().optional().nullable()
 }).strict();
 
-export const PuzzleSessionUpdateManyWithoutPlayersNestedInputSchema: z.ZodType<Prisma.PuzzleSessionUpdateManyWithoutPlayersNestedInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionCreateWithoutPlayersInputSchema).array(),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPlayersInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleSessionCreateOrConnectWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionCreateOrConnectWithoutPlayersInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => PuzzleSessionUpsertWithWhereUniqueWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionUpsertWithWhereUniqueWithoutPlayersInputSchema).array() ]).optional(),
-  set: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => PuzzleSessionUpdateWithWhereUniqueWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionUpdateWithWhereUniqueWithoutPlayersInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => PuzzleSessionUpdateManyWithWhereWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionUpdateManyWithWhereWithoutPlayersInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => PuzzleSessionScalarWhereInputSchema),z.lazy(() => PuzzleSessionScalarWhereInputSchema).array() ]).optional(),
+export const PuzzleElementalTrialsUpdateManyWithoutPlayersNestedInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateManyWithoutPlayersNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PuzzleElementalTrialsCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsCreateWithoutPlayersInputSchema).array(),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutPlayersInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => PuzzleElementalTrialsUpsertWithWhereUniqueWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUpsertWithWhereUniqueWithoutPlayersInputSchema).array() ]).optional(),
+  set: z.union([ z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema),z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema),z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema),z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema),z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => PuzzleElementalTrialsUpdateWithWhereUniqueWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUpdateWithWhereUniqueWithoutPlayersInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => PuzzleElementalTrialsUpdateManyWithWhereWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUpdateManyWithWhereWithoutPlayersInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => PuzzleElementalTrialsScalarWhereInputSchema),z.lazy(() => PuzzleElementalTrialsScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const IngredientUpdateManyWithoutUserNestedInputSchema: z.ZodType<Prisma.IngredientUpdateManyWithoutUserNestedInput> = z.object({
@@ -3417,27 +2826,17 @@ export const FormulaUpdateManyWithoutUserNestedInputSchema: z.ZodType<Prisma.For
   deleteMany: z.union([ z.lazy(() => FormulaScalarWhereInputSchema),z.lazy(() => FormulaScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const CursorCoordinatesUpdateOneWithoutUserNestedInputSchema: z.ZodType<Prisma.CursorCoordinatesUpdateOneWithoutUserNestedInput> = z.object({
-  create: z.union([ z.lazy(() => CursorCoordinatesCreateWithoutUserInputSchema),z.lazy(() => CursorCoordinatesUncheckedCreateWithoutUserInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => CursorCoordinatesCreateOrConnectWithoutUserInputSchema).optional(),
-  upsert: z.lazy(() => CursorCoordinatesUpsertWithoutUserInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => CursorCoordinatesWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => CursorCoordinatesWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => CursorCoordinatesWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => CursorCoordinatesUpdateToOneWithWhereWithoutUserInputSchema),z.lazy(() => CursorCoordinatesUpdateWithoutUserInputSchema),z.lazy(() => CursorCoordinatesUncheckedUpdateWithoutUserInputSchema) ]).optional(),
-}).strict();
-
-export const PuzzleSessionUncheckedUpdateManyWithoutPlayersNestedInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedUpdateManyWithoutPlayersNestedInput> = z.object({
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionCreateWithoutPlayersInputSchema).array(),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPlayersInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => PuzzleSessionCreateOrConnectWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionCreateOrConnectWithoutPlayersInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => PuzzleSessionUpsertWithWhereUniqueWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionUpsertWithWhereUniqueWithoutPlayersInputSchema).array() ]).optional(),
-  set: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => PuzzleSessionWhereUniqueInputSchema),z.lazy(() => PuzzleSessionWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => PuzzleSessionUpdateWithWhereUniqueWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionUpdateWithWhereUniqueWithoutPlayersInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => PuzzleSessionUpdateManyWithWhereWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionUpdateManyWithWhereWithoutPlayersInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => PuzzleSessionScalarWhereInputSchema),z.lazy(() => PuzzleSessionScalarWhereInputSchema).array() ]).optional(),
+export const PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersNestedInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PuzzleElementalTrialsCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsCreateWithoutPlayersInputSchema).array(),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutPlayersInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => PuzzleElementalTrialsUpsertWithWhereUniqueWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUpsertWithWhereUniqueWithoutPlayersInputSchema).array() ]).optional(),
+  set: z.union([ z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema),z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema),z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema),z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema),z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => PuzzleElementalTrialsUpdateWithWhereUniqueWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUpdateWithWhereUniqueWithoutPlayersInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => PuzzleElementalTrialsUpdateManyWithWhereWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUpdateManyWithWhereWithoutPlayersInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => PuzzleElementalTrialsScalarWhereInputSchema),z.lazy(() => PuzzleElementalTrialsScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const IngredientUncheckedUpdateManyWithoutUserNestedInputSchema: z.ZodType<Prisma.IngredientUncheckedUpdateManyWithoutUserNestedInput> = z.object({
@@ -3482,16 +2881,6 @@ export const FormulaUncheckedUpdateManyWithoutUserNestedInputSchema: z.ZodType<P
   deleteMany: z.union([ z.lazy(() => FormulaScalarWhereInputSchema),z.lazy(() => FormulaScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const CursorCoordinatesUncheckedUpdateOneWithoutUserNestedInputSchema: z.ZodType<Prisma.CursorCoordinatesUncheckedUpdateOneWithoutUserNestedInput> = z.object({
-  create: z.union([ z.lazy(() => CursorCoordinatesCreateWithoutUserInputSchema),z.lazy(() => CursorCoordinatesUncheckedCreateWithoutUserInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => CursorCoordinatesCreateOrConnectWithoutUserInputSchema).optional(),
-  upsert: z.lazy(() => CursorCoordinatesUpsertWithoutUserInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => CursorCoordinatesWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => CursorCoordinatesWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => CursorCoordinatesWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => CursorCoordinatesUpdateToOneWithWhereWithoutUserInputSchema),z.lazy(() => CursorCoordinatesUpdateWithoutUserInputSchema),z.lazy(() => CursorCoordinatesUncheckedUpdateWithoutUserInputSchema) ]).optional(),
-}).strict();
-
 export const FormulaCreateingredientsInputSchema: z.ZodType<Prisma.FormulaCreateingredientsInput> = z.object({
   set: z.string().array()
 }).strict();
@@ -3533,6 +2922,14 @@ export const EnumPrimaryAttributeFieldUpdateOperationsInputSchema: z.ZodType<Pri
   set: z.lazy(() => PrimaryAttributeSchema).optional()
 }).strict();
 
+export const IntFieldUpdateOperationsInputSchema: z.ZodType<Prisma.IntFieldUpdateOperationsInput> = z.object({
+  set: z.number().optional(),
+  increment: z.number().optional(),
+  decrement: z.number().optional(),
+  multiply: z.number().optional(),
+  divide: z.number().optional()
+}).strict();
+
 export const UserUpdateOneRequiredWithoutIngredientsNestedInputSchema: z.ZodType<Prisma.UserUpdateOneRequiredWithoutIngredientsNestedInput> = z.object({
   create: z.union([ z.lazy(() => UserCreateWithoutIngredientsInputSchema),z.lazy(() => UserUncheckedCreateWithoutIngredientsInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => UserCreateOrConnectWithoutIngredientsInputSchema).optional(),
@@ -3555,22 +2952,6 @@ export const UserUpdateOneRequiredWithoutPotionsNestedInputSchema: z.ZodType<Pri
   update: z.union([ z.lazy(() => UserUpdateToOneWithWhereWithoutPotionsInputSchema),z.lazy(() => UserUpdateWithoutPotionsInputSchema),z.lazy(() => UserUncheckedUpdateWithoutPotionsInputSchema) ]).optional(),
 }).strict();
 
-export const UserCreateNestedOneWithoutCursorCoordinatesInputSchema: z.ZodType<Prisma.UserCreateNestedOneWithoutCursorCoordinatesInput> = z.object({
-  create: z.union([ z.lazy(() => UserCreateWithoutCursorCoordinatesInputSchema),z.lazy(() => UserUncheckedCreateWithoutCursorCoordinatesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => UserCreateOrConnectWithoutCursorCoordinatesInputSchema).optional(),
-  connect: z.lazy(() => UserWhereUniqueInputSchema).optional()
-}).strict();
-
-export const UserUpdateOneWithoutCursorCoordinatesNestedInputSchema: z.ZodType<Prisma.UserUpdateOneWithoutCursorCoordinatesNestedInput> = z.object({
-  create: z.union([ z.lazy(() => UserCreateWithoutCursorCoordinatesInputSchema),z.lazy(() => UserUncheckedCreateWithoutCursorCoordinatesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => UserCreateOrConnectWithoutCursorCoordinatesInputSchema).optional(),
-  upsert: z.lazy(() => UserUpsertWithoutCursorCoordinatesInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => UserWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => UserWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => UserWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => UserUpdateToOneWithWhereWithoutCursorCoordinatesInputSchema),z.lazy(() => UserUpdateWithoutCursorCoordinatesInputSchema),z.lazy(() => UserUncheckedUpdateWithoutCursorCoordinatesInputSchema) ]).optional(),
-}).strict();
-
 export const NestedStringFilterSchema: z.ZodType<Prisma.NestedStringFilter> = z.object({
   equals: z.string().optional(),
   in: z.string().array().optional(),
@@ -3585,17 +2966,6 @@ export const NestedStringFilterSchema: z.ZodType<Prisma.NestedStringFilter> = z.
   not: z.union([ z.string(),z.lazy(() => NestedStringFilterSchema) ]).optional(),
 }).strict();
 
-export const NestedIntFilterSchema: z.ZodType<Prisma.NestedIntFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedIntFilterSchema) ]).optional(),
-}).strict();
-
 export const NestedDateTimeFilterSchema: z.ZodType<Prisma.NestedDateTimeFilter> = z.object({
   equals: z.coerce.date().optional(),
   in: z.coerce.date().array().optional(),
@@ -3605,6 +2975,11 @@ export const NestedDateTimeFilterSchema: z.ZodType<Prisma.NestedDateTimeFilter> 
   gt: z.coerce.date().optional(),
   gte: z.coerce.date().optional(),
   not: z.union([ z.coerce.date(),z.lazy(() => NestedDateTimeFilterSchema) ]).optional(),
+}).strict();
+
+export const NestedBoolFilterSchema: z.ZodType<Prisma.NestedBoolFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
 }).strict();
 
 export const NestedStringWithAggregatesFilterSchema: z.ZodType<Prisma.NestedStringWithAggregatesFilter> = z.object({
@@ -3624,7 +2999,7 @@ export const NestedStringWithAggregatesFilterSchema: z.ZodType<Prisma.NestedStri
   _max: z.lazy(() => NestedStringFilterSchema).optional()
 }).strict();
 
-export const NestedIntWithAggregatesFilterSchema: z.ZodType<Prisma.NestedIntWithAggregatesFilter> = z.object({
+export const NestedIntFilterSchema: z.ZodType<Prisma.NestedIntFilter> = z.object({
   equals: z.number().optional(),
   in: z.number().array().optional(),
   notIn: z.number().array().optional(),
@@ -3632,23 +3007,7 @@ export const NestedIntWithAggregatesFilterSchema: z.ZodType<Prisma.NestedIntWith
   lte: z.number().optional(),
   gt: z.number().optional(),
   gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedIntWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
-  _sum: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedIntFilterSchema).optional(),
-  _max: z.lazy(() => NestedIntFilterSchema).optional()
-}).strict();
-
-export const NestedFloatFilterSchema: z.ZodType<Prisma.NestedFloatFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedFloatFilterSchema) ]).optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntFilterSchema) ]).optional(),
 }).strict();
 
 export const NestedDateTimeWithAggregatesFilterSchema: z.ZodType<Prisma.NestedDateTimeWithAggregatesFilter> = z.object({
@@ -3665,6 +3024,14 @@ export const NestedDateTimeWithAggregatesFilterSchema: z.ZodType<Prisma.NestedDa
   _max: z.lazy(() => NestedDateTimeFilterSchema).optional()
 }).strict();
 
+export const NestedBoolWithAggregatesFilterSchema: z.ZodType<Prisma.NestedBoolWithAggregatesFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedBoolFilterSchema).optional(),
+  _max: z.lazy(() => NestedBoolFilterSchema).optional()
+}).strict();
+
 export const NestedStringNullableFilterSchema: z.ZodType<Prisma.NestedStringNullableFilter> = z.object({
   equals: z.string().optional().nullable(),
   in: z.string().array().optional().nullable(),
@@ -3677,11 +3044,6 @@ export const NestedStringNullableFilterSchema: z.ZodType<Prisma.NestedStringNull
   startsWith: z.string().optional(),
   endsWith: z.string().optional(),
   not: z.union([ z.string(),z.lazy(() => NestedStringNullableFilterSchema) ]).optional().nullable(),
-}).strict();
-
-export const NestedBoolFilterSchema: z.ZodType<Prisma.NestedBoolFilter> = z.object({
-  equals: z.boolean().optional(),
-  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
 }).strict();
 
 export const NestedStringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedStringNullableWithAggregatesFilter> = z.object({
@@ -3710,30 +3072,6 @@ export const NestedIntNullableFilterSchema: z.ZodType<Prisma.NestedIntNullableFi
   gt: z.number().optional(),
   gte: z.number().optional(),
   not: z.union([ z.number(),z.lazy(() => NestedIntNullableFilterSchema) ]).optional().nullable(),
-}).strict();
-
-export const NestedBoolWithAggregatesFilterSchema: z.ZodType<Prisma.NestedBoolWithAggregatesFilter> = z.object({
-  equals: z.boolean().optional(),
-  not: z.union([ z.boolean(),z.lazy(() => NestedBoolWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedBoolFilterSchema).optional(),
-  _max: z.lazy(() => NestedBoolFilterSchema).optional()
-}).strict();
-
-export const NestedJsonFilterSchema: z.ZodType<Prisma.NestedJsonFilter> = z.object({
-  equals: InputJsonValueSchema.optional(),
-  path: z.string().array().optional(),
-  string_contains: z.string().optional(),
-  string_starts_with: z.string().optional(),
-  string_ends_with: z.string().optional(),
-  array_contains: InputJsonValueSchema.optional().nullable(),
-  array_starts_with: InputJsonValueSchema.optional().nullable(),
-  array_ends_with: InputJsonValueSchema.optional().nullable(),
-  lt: InputJsonValueSchema.optional(),
-  lte: InputJsonValueSchema.optional(),
-  gt: InputJsonValueSchema.optional(),
-  gte: InputJsonValueSchema.optional(),
-  not: InputJsonValueSchema.optional()
 }).strict();
 
 export const NestedEnumRarityFilterSchema: z.ZodType<Prisma.NestedEnumRarityFilter> = z.object({
@@ -3787,6 +3125,49 @@ export const NestedEnumPrimaryAttributeWithAggregatesFilterSchema: z.ZodType<Pri
   _max: z.lazy(() => NestedEnumPrimaryAttributeFilterSchema).optional()
 }).strict();
 
+export const NestedIntWithAggregatesFilterSchema: z.ZodType<Prisma.NestedIntWithAggregatesFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _sum: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedIntFilterSchema).optional(),
+  _max: z.lazy(() => NestedIntFilterSchema).optional()
+}).strict();
+
+export const NestedFloatFilterSchema: z.ZodType<Prisma.NestedFloatFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedFloatFilterSchema) ]).optional(),
+}).strict();
+
+export const NestedJsonFilterSchema: z.ZodType<Prisma.NestedJsonFilter> = z.object({
+  equals: InputJsonValueSchema.optional(),
+  path: z.string().array().optional(),
+  string_contains: z.string().optional(),
+  string_starts_with: z.string().optional(),
+  string_ends_with: z.string().optional(),
+  array_contains: InputJsonValueSchema.optional().nullable(),
+  array_starts_with: InputJsonValueSchema.optional().nullable(),
+  array_ends_with: InputJsonValueSchema.optional().nullable(),
+  lt: InputJsonValueSchema.optional(),
+  lte: InputJsonValueSchema.optional(),
+  gt: InputJsonValueSchema.optional(),
+  gte: InputJsonValueSchema.optional(),
+  not: InputJsonValueSchema.optional()
+}).strict();
+
 export const NestedJsonNullableFilterSchema: z.ZodType<Prisma.NestedJsonNullableFilter> = z.object({
   equals: InputJsonValueSchema.optional(),
   path: z.string().array().optional(),
@@ -3827,7 +3208,7 @@ export const PuzzleChatMessageCreateManySessionInputEnvelopeSchema: z.ZodType<Pr
   skipDuplicates: z.boolean().optional()
 }).strict();
 
-export const UserCreateWithoutPuzzleSessionsInputSchema: z.ZodType<Prisma.UserCreateWithoutPuzzleSessionsInput> = z.object({
+export const UserCreateWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserCreateWithoutPuzzleElementalTrialsInput> = z.object({
   id: z.string().cuid().optional(),
   clerkId: z.string(),
   imgUrl: z.string().optional().nullable(),
@@ -3835,15 +3216,12 @@ export const UserCreateWithoutPuzzleSessionsInputSchema: z.ZodType<Prisma.UserCr
   email: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  cursorImg: z.string().optional().nullable(),
-  cursorCoordinatesId: z.string().optional().nullable(),
   Ingredients: z.lazy(() => IngredientCreateNestedManyWithoutUserInputSchema).optional(),
   Potions: z.lazy(() => PotionCreateNestedManyWithoutUserInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesCreateNestedOneWithoutUserInputSchema).optional()
+  Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
-export const UserUncheckedCreateWithoutPuzzleSessionsInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutPuzzleSessionsInput> = z.object({
+export const UserUncheckedCreateWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutPuzzleElementalTrialsInput> = z.object({
   id: z.string().cuid().optional(),
   clerkId: z.string(),
   imgUrl: z.string().optional().nullable(),
@@ -3851,42 +3229,14 @@ export const UserUncheckedCreateWithoutPuzzleSessionsInputSchema: z.ZodType<Pris
   email: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  cursorImg: z.string().optional().nullable(),
-  cursorCoordinatesId: z.string().optional().nullable(),
   Ingredients: z.lazy(() => IngredientUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUncheckedCreateNestedOneWithoutUserInputSchema).optional()
+  Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
-export const UserCreateOrConnectWithoutPuzzleSessionsInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutPuzzleSessionsInput> = z.object({
+export const UserCreateOrConnectWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutPuzzleElementalTrialsInput> = z.object({
   where: z.lazy(() => UserWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => UserCreateWithoutPuzzleSessionsInputSchema),z.lazy(() => UserUncheckedCreateWithoutPuzzleSessionsInputSchema) ]),
-}).strict();
-
-export const PuzzleCreateWithoutSessionInputSchema: z.ZodType<Prisma.PuzzleCreateWithoutSessionInput> = z.object({
-  id: z.string().cuid().optional(),
-  checkpoint: z.number().int().optional(),
-  title: z.string(),
-  description: z.string().optional().nullable(),
-  solved: z.boolean(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  type: z.lazy(() => PuzzleTypeCreateNestedOneWithoutPuzzlesInputSchema)
-}).strict();
-
-export const PuzzleUncheckedCreateWithoutSessionInputSchema: z.ZodType<Prisma.PuzzleUncheckedCreateWithoutSessionInput> = z.object({
-  id: z.string().cuid().optional(),
-  checkpoint: z.number().int().optional(),
-  title: z.string(),
-  description: z.string().optional().nullable(),
-  solved: z.boolean(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  typeId: z.string()
-}).strict();
-
-export const PuzzleCreateOrConnectWithoutSessionInputSchema: z.ZodType<Prisma.PuzzleCreateOrConnectWithoutSessionInput> = z.object({
-  where: z.lazy(() => PuzzleWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => PuzzleCreateWithoutSessionInputSchema),z.lazy(() => PuzzleUncheckedCreateWithoutSessionInputSchema) ]),
+  create: z.union([ z.lazy(() => UserCreateWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserUncheckedCreateWithoutPuzzleElementalTrialsInputSchema) ]),
 }).strict();
 
 export const PuzzleChatMessageUpsertWithWhereUniqueWithoutSessionInputSchema: z.ZodType<Prisma.PuzzleChatMessageUpsertWithWhereUniqueWithoutSessionInput> = z.object({
@@ -3916,20 +3266,20 @@ export const PuzzleChatMessageScalarWhereInputSchema: z.ZodType<Prisma.PuzzleCha
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
 
-export const UserUpsertWithWhereUniqueWithoutPuzzleSessionsInputSchema: z.ZodType<Prisma.UserUpsertWithWhereUniqueWithoutPuzzleSessionsInput> = z.object({
+export const UserUpsertWithWhereUniqueWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserUpsertWithWhereUniqueWithoutPuzzleElementalTrialsInput> = z.object({
   where: z.lazy(() => UserWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => UserUpdateWithoutPuzzleSessionsInputSchema),z.lazy(() => UserUncheckedUpdateWithoutPuzzleSessionsInputSchema) ]),
-  create: z.union([ z.lazy(() => UserCreateWithoutPuzzleSessionsInputSchema),z.lazy(() => UserUncheckedCreateWithoutPuzzleSessionsInputSchema) ]),
+  update: z.union([ z.lazy(() => UserUpdateWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserUncheckedUpdateWithoutPuzzleElementalTrialsInputSchema) ]),
+  create: z.union([ z.lazy(() => UserCreateWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserUncheckedCreateWithoutPuzzleElementalTrialsInputSchema) ]),
 }).strict();
 
-export const UserUpdateWithWhereUniqueWithoutPuzzleSessionsInputSchema: z.ZodType<Prisma.UserUpdateWithWhereUniqueWithoutPuzzleSessionsInput> = z.object({
+export const UserUpdateWithWhereUniqueWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserUpdateWithWhereUniqueWithoutPuzzleElementalTrialsInput> = z.object({
   where: z.lazy(() => UserWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => UserUpdateWithoutPuzzleSessionsInputSchema),z.lazy(() => UserUncheckedUpdateWithoutPuzzleSessionsInputSchema) ]),
+  data: z.union([ z.lazy(() => UserUpdateWithoutPuzzleElementalTrialsInputSchema),z.lazy(() => UserUncheckedUpdateWithoutPuzzleElementalTrialsInputSchema) ]),
 }).strict();
 
-export const UserUpdateManyWithWhereWithoutPuzzleSessionsInputSchema: z.ZodType<Prisma.UserUpdateManyWithWhereWithoutPuzzleSessionsInput> = z.object({
+export const UserUpdateManyWithWhereWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserUpdateManyWithWhereWithoutPuzzleElementalTrialsInput> = z.object({
   where: z.lazy(() => UserScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => UserUpdateManyMutationInputSchema),z.lazy(() => UserUncheckedUpdateManyWithoutPuzzleSessionsInputSchema) ]),
+  data: z.union([ z.lazy(() => UserUpdateManyMutationInputSchema),z.lazy(() => UserUncheckedUpdateManyWithoutPuzzleElementalTrialsInputSchema) ]),
 }).strict();
 
 export const UserScalarWhereInputSchema: z.ZodType<Prisma.UserScalarWhereInput> = z.object({
@@ -3943,243 +3293,99 @@ export const UserScalarWhereInputSchema: z.ZodType<Prisma.UserScalarWhereInput> 
   email: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  cursorImg: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
 }).strict();
 
-export const PuzzleUpsertWithWhereUniqueWithoutSessionInputSchema: z.ZodType<Prisma.PuzzleUpsertWithWhereUniqueWithoutSessionInput> = z.object({
-  where: z.lazy(() => PuzzleWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => PuzzleUpdateWithoutSessionInputSchema),z.lazy(() => PuzzleUncheckedUpdateWithoutSessionInputSchema) ]),
-  create: z.union([ z.lazy(() => PuzzleCreateWithoutSessionInputSchema),z.lazy(() => PuzzleUncheckedCreateWithoutSessionInputSchema) ]),
-}).strict();
-
-export const PuzzleUpdateWithWhereUniqueWithoutSessionInputSchema: z.ZodType<Prisma.PuzzleUpdateWithWhereUniqueWithoutSessionInput> = z.object({
-  where: z.lazy(() => PuzzleWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => PuzzleUpdateWithoutSessionInputSchema),z.lazy(() => PuzzleUncheckedUpdateWithoutSessionInputSchema) ]),
-}).strict();
-
-export const PuzzleUpdateManyWithWhereWithoutSessionInputSchema: z.ZodType<Prisma.PuzzleUpdateManyWithWhereWithoutSessionInput> = z.object({
-  where: z.lazy(() => PuzzleScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => PuzzleUpdateManyMutationInputSchema),z.lazy(() => PuzzleUncheckedUpdateManyWithoutSessionInputSchema) ]),
-}).strict();
-
-export const PuzzleScalarWhereInputSchema: z.ZodType<Prisma.PuzzleScalarWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => PuzzleScalarWhereInputSchema),z.lazy(() => PuzzleScalarWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => PuzzleScalarWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => PuzzleScalarWhereInputSchema),z.lazy(() => PuzzleScalarWhereInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  checkpoint: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  solved: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  data: z.lazy(() => JsonFilterSchema).optional(),
-  typeId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-}).strict();
-
-export const PuzzleSessionCreateWithoutChatInputSchema: z.ZodType<Prisma.PuzzleSessionCreateWithoutChatInput> = z.object({
+export const PuzzleElementalTrialsCreateWithoutChatInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsCreateWithoutChatInput> = z.object({
   id: z.string().cuid().optional(),
   title: z.string(),
-  durationSeconds: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
-  players: z.lazy(() => UserCreateNestedManyWithoutPuzzleSessionsInputSchema).optional(),
-  puzzles: z.lazy(() => PuzzleCreateNestedManyWithoutSessionInputSchema).optional()
+  updatedAt: z.coerce.date().optional(),
+  firegem: z.boolean().optional(),
+  airgem: z.boolean().optional(),
+  earthgem: z.boolean().optional(),
+  watergem: z.boolean().optional(),
+  players: z.lazy(() => UserCreateNestedManyWithoutPuzzleElementalTrialsInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionUncheckedCreateWithoutChatInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedCreateWithoutChatInput> = z.object({
+export const PuzzleElementalTrialsUncheckedCreateWithoutChatInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUncheckedCreateWithoutChatInput> = z.object({
   id: z.string().cuid().optional(),
   title: z.string(),
-  durationSeconds: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
-  players: z.lazy(() => UserUncheckedCreateNestedManyWithoutPuzzleSessionsInputSchema).optional(),
-  puzzles: z.lazy(() => PuzzleUncheckedCreateNestedManyWithoutSessionInputSchema).optional()
+  updatedAt: z.coerce.date().optional(),
+  firegem: z.boolean().optional(),
+  airgem: z.boolean().optional(),
+  earthgem: z.boolean().optional(),
+  watergem: z.boolean().optional(),
+  players: z.lazy(() => UserUncheckedCreateNestedManyWithoutPuzzleElementalTrialsInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionCreateOrConnectWithoutChatInputSchema: z.ZodType<Prisma.PuzzleSessionCreateOrConnectWithoutChatInput> = z.object({
-  where: z.lazy(() => PuzzleSessionWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutChatInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutChatInputSchema) ]),
+export const PuzzleElementalTrialsCreateOrConnectWithoutChatInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsCreateOrConnectWithoutChatInput> = z.object({
+  where: z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => PuzzleElementalTrialsCreateWithoutChatInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutChatInputSchema) ]),
 }).strict();
 
-export const PuzzleSessionUpsertWithoutChatInputSchema: z.ZodType<Prisma.PuzzleSessionUpsertWithoutChatInput> = z.object({
-  update: z.union([ z.lazy(() => PuzzleSessionUpdateWithoutChatInputSchema),z.lazy(() => PuzzleSessionUncheckedUpdateWithoutChatInputSchema) ]),
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutChatInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutChatInputSchema) ]),
-  where: z.lazy(() => PuzzleSessionWhereInputSchema).optional()
+export const PuzzleElementalTrialsUpsertWithoutChatInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpsertWithoutChatInput> = z.object({
+  update: z.union([ z.lazy(() => PuzzleElementalTrialsUpdateWithoutChatInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedUpdateWithoutChatInputSchema) ]),
+  create: z.union([ z.lazy(() => PuzzleElementalTrialsCreateWithoutChatInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutChatInputSchema) ]),
+  where: z.lazy(() => PuzzleElementalTrialsWhereInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionUpdateToOneWithWhereWithoutChatInputSchema: z.ZodType<Prisma.PuzzleSessionUpdateToOneWithWhereWithoutChatInput> = z.object({
-  where: z.lazy(() => PuzzleSessionWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => PuzzleSessionUpdateWithoutChatInputSchema),z.lazy(() => PuzzleSessionUncheckedUpdateWithoutChatInputSchema) ]),
+export const PuzzleElementalTrialsUpdateToOneWithWhereWithoutChatInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateToOneWithWhereWithoutChatInput> = z.object({
+  where: z.lazy(() => PuzzleElementalTrialsWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => PuzzleElementalTrialsUpdateWithoutChatInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedUpdateWithoutChatInputSchema) ]),
 }).strict();
 
-export const PuzzleSessionUpdateWithoutChatInputSchema: z.ZodType<Prisma.PuzzleSessionUpdateWithoutChatInput> = z.object({
+export const PuzzleElementalTrialsUpdateWithoutChatInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateWithoutChatInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  durationSeconds: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  players: z.lazy(() => UserUpdateManyWithoutPuzzleSessionsNestedInputSchema).optional(),
-  puzzles: z.lazy(() => PuzzleUpdateManyWithoutSessionNestedInputSchema).optional()
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  firegem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  airgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  earthgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  watergem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  players: z.lazy(() => UserUpdateManyWithoutPuzzleElementalTrialsNestedInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionUncheckedUpdateWithoutChatInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedUpdateWithoutChatInput> = z.object({
+export const PuzzleElementalTrialsUncheckedUpdateWithoutChatInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUncheckedUpdateWithoutChatInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  durationSeconds: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  players: z.lazy(() => UserUncheckedUpdateManyWithoutPuzzleSessionsNestedInputSchema).optional(),
-  puzzles: z.lazy(() => PuzzleUncheckedUpdateManyWithoutSessionNestedInputSchema).optional()
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  firegem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  airgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  earthgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  watergem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  players: z.lazy(() => UserUncheckedUpdateManyWithoutPuzzleElementalTrialsNestedInputSchema).optional()
 }).strict();
 
-export const PuzzleTypeCreateWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleTypeCreateWithoutPuzzlesInput> = z.object({
-  name: z.string(),
-  id: z.string().cuid().optional()
-}).strict();
-
-export const PuzzleTypeUncheckedCreateWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleTypeUncheckedCreateWithoutPuzzlesInput> = z.object({
-  name: z.string(),
-  id: z.string().cuid().optional()
-}).strict();
-
-export const PuzzleTypeCreateOrConnectWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleTypeCreateOrConnectWithoutPuzzlesInput> = z.object({
-  where: z.lazy(() => PuzzleTypeWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => PuzzleTypeCreateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleTypeUncheckedCreateWithoutPuzzlesInputSchema) ]),
-}).strict();
-
-export const PuzzleSessionCreateWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleSessionCreateWithoutPuzzlesInput> = z.object({
+export const PuzzleElementalTrialsCreateWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsCreateWithoutPlayersInput> = z.object({
   id: z.string().cuid().optional(),
   title: z.string(),
-  durationSeconds: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
-  chat: z.lazy(() => PuzzleChatMessageCreateNestedManyWithoutSessionInputSchema).optional(),
-  players: z.lazy(() => UserCreateNestedManyWithoutPuzzleSessionsInputSchema).optional()
+  updatedAt: z.coerce.date().optional(),
+  firegem: z.boolean().optional(),
+  airgem: z.boolean().optional(),
+  earthgem: z.boolean().optional(),
+  watergem: z.boolean().optional(),
+  chat: z.lazy(() => PuzzleChatMessageCreateNestedManyWithoutSessionInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionUncheckedCreateWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedCreateWithoutPuzzlesInput> = z.object({
+export const PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUncheckedCreateWithoutPlayersInput> = z.object({
   id: z.string().cuid().optional(),
   title: z.string(),
-  durationSeconds: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
-  chat: z.lazy(() => PuzzleChatMessageUncheckedCreateNestedManyWithoutSessionInputSchema).optional(),
-  players: z.lazy(() => UserUncheckedCreateNestedManyWithoutPuzzleSessionsInputSchema).optional()
+  updatedAt: z.coerce.date().optional(),
+  firegem: z.boolean().optional(),
+  airgem: z.boolean().optional(),
+  earthgem: z.boolean().optional(),
+  watergem: z.boolean().optional(),
+  chat: z.lazy(() => PuzzleChatMessageUncheckedCreateNestedManyWithoutSessionInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionCreateOrConnectWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleSessionCreateOrConnectWithoutPuzzlesInput> = z.object({
-  where: z.lazy(() => PuzzleSessionWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPuzzlesInputSchema) ]),
-}).strict();
-
-export const PuzzleTypeUpsertWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleTypeUpsertWithoutPuzzlesInput> = z.object({
-  update: z.union([ z.lazy(() => PuzzleTypeUpdateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleTypeUncheckedUpdateWithoutPuzzlesInputSchema) ]),
-  create: z.union([ z.lazy(() => PuzzleTypeCreateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleTypeUncheckedCreateWithoutPuzzlesInputSchema) ]),
-  where: z.lazy(() => PuzzleTypeWhereInputSchema).optional()
-}).strict();
-
-export const PuzzleTypeUpdateToOneWithWhereWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleTypeUpdateToOneWithWhereWithoutPuzzlesInput> = z.object({
-  where: z.lazy(() => PuzzleTypeWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => PuzzleTypeUpdateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleTypeUncheckedUpdateWithoutPuzzlesInputSchema) ]),
-}).strict();
-
-export const PuzzleTypeUpdateWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleTypeUpdateWithoutPuzzlesInput> = z.object({
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const PuzzleTypeUncheckedUpdateWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleTypeUncheckedUpdateWithoutPuzzlesInput> = z.object({
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const PuzzleSessionUpsertWithWhereUniqueWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleSessionUpsertWithWhereUniqueWithoutPuzzlesInput> = z.object({
-  where: z.lazy(() => PuzzleSessionWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => PuzzleSessionUpdateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionUncheckedUpdateWithoutPuzzlesInputSchema) ]),
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPuzzlesInputSchema) ]),
-}).strict();
-
-export const PuzzleSessionUpdateWithWhereUniqueWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleSessionUpdateWithWhereUniqueWithoutPuzzlesInput> = z.object({
-  where: z.lazy(() => PuzzleSessionWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => PuzzleSessionUpdateWithoutPuzzlesInputSchema),z.lazy(() => PuzzleSessionUncheckedUpdateWithoutPuzzlesInputSchema) ]),
-}).strict();
-
-export const PuzzleSessionUpdateManyWithWhereWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleSessionUpdateManyWithWhereWithoutPuzzlesInput> = z.object({
-  where: z.lazy(() => PuzzleSessionScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => PuzzleSessionUpdateManyMutationInputSchema),z.lazy(() => PuzzleSessionUncheckedUpdateManyWithoutPuzzlesInputSchema) ]),
-}).strict();
-
-export const PuzzleSessionScalarWhereInputSchema: z.ZodType<Prisma.PuzzleSessionScalarWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => PuzzleSessionScalarWhereInputSchema),z.lazy(() => PuzzleSessionScalarWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => PuzzleSessionScalarWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => PuzzleSessionScalarWhereInputSchema),z.lazy(() => PuzzleSessionScalarWhereInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  durationSeconds: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-}).strict();
-
-export const PuzzleCreateWithoutTypeInputSchema: z.ZodType<Prisma.PuzzleCreateWithoutTypeInput> = z.object({
-  id: z.string().cuid().optional(),
-  checkpoint: z.number().int().optional(),
-  title: z.string(),
-  description: z.string().optional().nullable(),
-  solved: z.boolean(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  session: z.lazy(() => PuzzleSessionCreateNestedManyWithoutPuzzlesInputSchema).optional()
-}).strict();
-
-export const PuzzleUncheckedCreateWithoutTypeInputSchema: z.ZodType<Prisma.PuzzleUncheckedCreateWithoutTypeInput> = z.object({
-  id: z.string().cuid().optional(),
-  checkpoint: z.number().int().optional(),
-  title: z.string(),
-  description: z.string().optional().nullable(),
-  solved: z.boolean(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  session: z.lazy(() => PuzzleSessionUncheckedCreateNestedManyWithoutPuzzlesInputSchema).optional()
-}).strict();
-
-export const PuzzleCreateOrConnectWithoutTypeInputSchema: z.ZodType<Prisma.PuzzleCreateOrConnectWithoutTypeInput> = z.object({
-  where: z.lazy(() => PuzzleWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => PuzzleCreateWithoutTypeInputSchema),z.lazy(() => PuzzleUncheckedCreateWithoutTypeInputSchema) ]),
-}).strict();
-
-export const PuzzleCreateManyTypeInputEnvelopeSchema: z.ZodType<Prisma.PuzzleCreateManyTypeInputEnvelope> = z.object({
-  data: z.union([ z.lazy(() => PuzzleCreateManyTypeInputSchema),z.lazy(() => PuzzleCreateManyTypeInputSchema).array() ]),
-  skipDuplicates: z.boolean().optional()
-}).strict();
-
-export const PuzzleUpsertWithWhereUniqueWithoutTypeInputSchema: z.ZodType<Prisma.PuzzleUpsertWithWhereUniqueWithoutTypeInput> = z.object({
-  where: z.lazy(() => PuzzleWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => PuzzleUpdateWithoutTypeInputSchema),z.lazy(() => PuzzleUncheckedUpdateWithoutTypeInputSchema) ]),
-  create: z.union([ z.lazy(() => PuzzleCreateWithoutTypeInputSchema),z.lazy(() => PuzzleUncheckedCreateWithoutTypeInputSchema) ]),
-}).strict();
-
-export const PuzzleUpdateWithWhereUniqueWithoutTypeInputSchema: z.ZodType<Prisma.PuzzleUpdateWithWhereUniqueWithoutTypeInput> = z.object({
-  where: z.lazy(() => PuzzleWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => PuzzleUpdateWithoutTypeInputSchema),z.lazy(() => PuzzleUncheckedUpdateWithoutTypeInputSchema) ]),
-}).strict();
-
-export const PuzzleUpdateManyWithWhereWithoutTypeInputSchema: z.ZodType<Prisma.PuzzleUpdateManyWithWhereWithoutTypeInput> = z.object({
-  where: z.lazy(() => PuzzleScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => PuzzleUpdateManyMutationInputSchema),z.lazy(() => PuzzleUncheckedUpdateManyWithoutTypeInputSchema) ]),
-}).strict();
-
-export const PuzzleSessionCreateWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleSessionCreateWithoutPlayersInput> = z.object({
-  id: z.string().cuid().optional(),
-  title: z.string(),
-  durationSeconds: z.number().int().optional(),
-  createdAt: z.coerce.date().optional(),
-  chat: z.lazy(() => PuzzleChatMessageCreateNestedManyWithoutSessionInputSchema).optional(),
-  puzzles: z.lazy(() => PuzzleCreateNestedManyWithoutSessionInputSchema).optional()
-}).strict();
-
-export const PuzzleSessionUncheckedCreateWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedCreateWithoutPlayersInput> = z.object({
-  id: z.string().cuid().optional(),
-  title: z.string(),
-  durationSeconds: z.number().int().optional(),
-  createdAt: z.coerce.date().optional(),
-  chat: z.lazy(() => PuzzleChatMessageUncheckedCreateNestedManyWithoutSessionInputSchema).optional(),
-  puzzles: z.lazy(() => PuzzleUncheckedCreateNestedManyWithoutSessionInputSchema).optional()
-}).strict();
-
-export const PuzzleSessionCreateOrConnectWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleSessionCreateOrConnectWithoutPlayersInput> = z.object({
-  where: z.lazy(() => PuzzleSessionWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPlayersInputSchema) ]),
+export const PuzzleElementalTrialsCreateOrConnectWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsCreateOrConnectWithoutPlayersInput> = z.object({
+  where: z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => PuzzleElementalTrialsCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema) ]),
 }).strict();
 
 export const IngredientCreateWithoutUserInputSchema: z.ZodType<Prisma.IngredientCreateWithoutUserInput> = z.object({
@@ -4300,35 +3506,34 @@ export const FormulaCreateManyUserInputEnvelopeSchema: z.ZodType<Prisma.FormulaC
   skipDuplicates: z.boolean().optional()
 }).strict();
 
-export const CursorCoordinatesCreateWithoutUserInputSchema: z.ZodType<Prisma.CursorCoordinatesCreateWithoutUserInput> = z.object({
-  id: z.string().cuid().optional(),
-  coordinates: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+export const PuzzleElementalTrialsUpsertWithWhereUniqueWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpsertWithWhereUniqueWithoutPlayersInput> = z.object({
+  where: z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => PuzzleElementalTrialsUpdateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedUpdateWithoutPlayersInputSchema) ]),
+  create: z.union([ z.lazy(() => PuzzleElementalTrialsCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema) ]),
 }).strict();
 
-export const CursorCoordinatesUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.CursorCoordinatesUncheckedCreateWithoutUserInput> = z.object({
-  id: z.string().cuid().optional(),
-  coordinates: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+export const PuzzleElementalTrialsUpdateWithWhereUniqueWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateWithWhereUniqueWithoutPlayersInput> = z.object({
+  where: z.lazy(() => PuzzleElementalTrialsWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => PuzzleElementalTrialsUpdateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedUpdateWithoutPlayersInputSchema) ]),
 }).strict();
 
-export const CursorCoordinatesCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.CursorCoordinatesCreateOrConnectWithoutUserInput> = z.object({
-  where: z.lazy(() => CursorCoordinatesWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => CursorCoordinatesCreateWithoutUserInputSchema),z.lazy(() => CursorCoordinatesUncheckedCreateWithoutUserInputSchema) ]),
+export const PuzzleElementalTrialsUpdateManyWithWhereWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateManyWithWhereWithoutPlayersInput> = z.object({
+  where: z.lazy(() => PuzzleElementalTrialsScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => PuzzleElementalTrialsUpdateManyMutationInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersInputSchema) ]),
 }).strict();
 
-export const PuzzleSessionUpsertWithWhereUniqueWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleSessionUpsertWithWhereUniqueWithoutPlayersInput> = z.object({
-  where: z.lazy(() => PuzzleSessionWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => PuzzleSessionUpdateWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionUncheckedUpdateWithoutPlayersInputSchema) ]),
-  create: z.union([ z.lazy(() => PuzzleSessionCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionUncheckedCreateWithoutPlayersInputSchema) ]),
-}).strict();
-
-export const PuzzleSessionUpdateWithWhereUniqueWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleSessionUpdateWithWhereUniqueWithoutPlayersInput> = z.object({
-  where: z.lazy(() => PuzzleSessionWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => PuzzleSessionUpdateWithoutPlayersInputSchema),z.lazy(() => PuzzleSessionUncheckedUpdateWithoutPlayersInputSchema) ]),
-}).strict();
-
-export const PuzzleSessionUpdateManyWithWhereWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleSessionUpdateManyWithWhereWithoutPlayersInput> = z.object({
-  where: z.lazy(() => PuzzleSessionScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => PuzzleSessionUpdateManyMutationInputSchema),z.lazy(() => PuzzleSessionUncheckedUpdateManyWithoutPlayersInputSchema) ]),
+export const PuzzleElementalTrialsScalarWhereInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => PuzzleElementalTrialsScalarWhereInputSchema),z.lazy(() => PuzzleElementalTrialsScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PuzzleElementalTrialsScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PuzzleElementalTrialsScalarWhereInputSchema),z.lazy(() => PuzzleElementalTrialsScalarWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  firegem: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  airgem: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  earthgem: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  watergem: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
 }).strict();
 
 export const IngredientUpsertWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.IngredientUpsertWithWhereUniqueWithoutUserInput> = z.object({
@@ -4435,27 +3640,6 @@ export const FormulaScalarWhereInputSchema: z.ZodType<Prisma.FormulaScalarWhereI
   ingredients: z.lazy(() => StringNullableListFilterSchema).optional()
 }).strict();
 
-export const CursorCoordinatesUpsertWithoutUserInputSchema: z.ZodType<Prisma.CursorCoordinatesUpsertWithoutUserInput> = z.object({
-  update: z.union([ z.lazy(() => CursorCoordinatesUpdateWithoutUserInputSchema),z.lazy(() => CursorCoordinatesUncheckedUpdateWithoutUserInputSchema) ]),
-  create: z.union([ z.lazy(() => CursorCoordinatesCreateWithoutUserInputSchema),z.lazy(() => CursorCoordinatesUncheckedCreateWithoutUserInputSchema) ]),
-  where: z.lazy(() => CursorCoordinatesWhereInputSchema).optional()
-}).strict();
-
-export const CursorCoordinatesUpdateToOneWithWhereWithoutUserInputSchema: z.ZodType<Prisma.CursorCoordinatesUpdateToOneWithWhereWithoutUserInput> = z.object({
-  where: z.lazy(() => CursorCoordinatesWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => CursorCoordinatesUpdateWithoutUserInputSchema),z.lazy(() => CursorCoordinatesUncheckedUpdateWithoutUserInputSchema) ]),
-}).strict();
-
-export const CursorCoordinatesUpdateWithoutUserInputSchema: z.ZodType<Prisma.CursorCoordinatesUpdateWithoutUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  coordinates: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-}).strict();
-
-export const CursorCoordinatesUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.CursorCoordinatesUncheckedUpdateWithoutUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  coordinates: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-}).strict();
-
 export const UserCreateWithoutFormulasInputSchema: z.ZodType<Prisma.UserCreateWithoutFormulasInput> = z.object({
   id: z.string().cuid().optional(),
   clerkId: z.string(),
@@ -4464,12 +3648,9 @@ export const UserCreateWithoutFormulasInputSchema: z.ZodType<Prisma.UserCreateWi
   email: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  cursorImg: z.string().optional().nullable(),
-  cursorCoordinatesId: z.string().optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionCreateNestedManyWithoutPlayersInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsCreateNestedManyWithoutPlayersInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientCreateNestedManyWithoutUserInputSchema).optional(),
-  Potions: z.lazy(() => PotionCreateNestedManyWithoutUserInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesCreateNestedOneWithoutUserInputSchema).optional()
+  Potions: z.lazy(() => PotionCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateWithoutFormulasInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutFormulasInput> = z.object({
@@ -4480,12 +3661,9 @@ export const UserUncheckedCreateWithoutFormulasInputSchema: z.ZodType<Prisma.Use
   email: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  cursorImg: z.string().optional().nullable(),
-  cursorCoordinatesId: z.string().optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUncheckedCreateNestedManyWithoutPlayersInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedCreateNestedManyWithoutPlayersInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  Potions: z.lazy(() => PotionUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUncheckedCreateNestedOneWithoutUserInputSchema).optional()
+  Potions: z.lazy(() => PotionUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserCreateOrConnectWithoutFormulasInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutFormulasInput> = z.object({
@@ -4512,12 +3690,9 @@ export const UserUpdateWithoutFormulasInputSchema: z.ZodType<Prisma.UserUpdateWi
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUpdateManyWithoutPlayersNestedInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUpdateManyWithoutUserNestedInputSchema).optional(),
-  Potions: z.lazy(() => PotionUpdateManyWithoutUserNestedInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUpdateOneWithoutUserNestedInputSchema).optional()
+  Potions: z.lazy(() => PotionUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserUncheckedUpdateWithoutFormulasInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutFormulasInput> = z.object({
@@ -4528,12 +3703,9 @@ export const UserUncheckedUpdateWithoutFormulasInputSchema: z.ZodType<Prisma.Use
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUncheckedUpdateManyWithoutPlayersNestedInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  Potions: z.lazy(() => PotionUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUncheckedUpdateOneWithoutUserNestedInputSchema).optional()
+  Potions: z.lazy(() => PotionUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserCreateWithoutIngredientsInputSchema: z.ZodType<Prisma.UserCreateWithoutIngredientsInput> = z.object({
@@ -4544,12 +3716,9 @@ export const UserCreateWithoutIngredientsInputSchema: z.ZodType<Prisma.UserCreat
   email: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  cursorImg: z.string().optional().nullable(),
-  cursorCoordinatesId: z.string().optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionCreateNestedManyWithoutPlayersInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsCreateNestedManyWithoutPlayersInputSchema).optional(),
   Potions: z.lazy(() => PotionCreateNestedManyWithoutUserInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesCreateNestedOneWithoutUserInputSchema).optional()
+  Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateWithoutIngredientsInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutIngredientsInput> = z.object({
@@ -4560,12 +3729,9 @@ export const UserUncheckedCreateWithoutIngredientsInputSchema: z.ZodType<Prisma.
   email: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  cursorImg: z.string().optional().nullable(),
-  cursorCoordinatesId: z.string().optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUncheckedCreateNestedManyWithoutPlayersInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedCreateNestedManyWithoutPlayersInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUncheckedCreateNestedOneWithoutUserInputSchema).optional()
+  Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserCreateOrConnectWithoutIngredientsInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutIngredientsInput> = z.object({
@@ -4592,12 +3758,9 @@ export const UserUpdateWithoutIngredientsInputSchema: z.ZodType<Prisma.UserUpdat
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUpdateManyWithoutPlayersNestedInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUpdateManyWithoutUserNestedInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUpdateOneWithoutUserNestedInputSchema).optional()
+  Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserUncheckedUpdateWithoutIngredientsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutIngredientsInput> = z.object({
@@ -4608,12 +3771,9 @@ export const UserUncheckedUpdateWithoutIngredientsInputSchema: z.ZodType<Prisma.
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUncheckedUpdateManyWithoutPlayersNestedInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUncheckedUpdateOneWithoutUserNestedInputSchema).optional()
+  Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserCreateWithoutPotionsInputSchema: z.ZodType<Prisma.UserCreateWithoutPotionsInput> = z.object({
@@ -4624,12 +3784,9 @@ export const UserCreateWithoutPotionsInputSchema: z.ZodType<Prisma.UserCreateWit
   email: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  cursorImg: z.string().optional().nullable(),
-  cursorCoordinatesId: z.string().optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionCreateNestedManyWithoutPlayersInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsCreateNestedManyWithoutPlayersInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientCreateNestedManyWithoutUserInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesCreateNestedOneWithoutUserInputSchema).optional()
+  Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateWithoutPotionsInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutPotionsInput> = z.object({
@@ -4640,12 +3797,9 @@ export const UserUncheckedCreateWithoutPotionsInputSchema: z.ZodType<Prisma.User
   email: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  cursorImg: z.string().optional().nullable(),
-  cursorCoordinatesId: z.string().optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUncheckedCreateNestedManyWithoutPlayersInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedCreateNestedManyWithoutPlayersInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUncheckedCreateNestedOneWithoutUserInputSchema).optional()
+  Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserCreateOrConnectWithoutPotionsInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutPotionsInput> = z.object({
@@ -4672,12 +3826,9 @@ export const UserUpdateWithoutPotionsInputSchema: z.ZodType<Prisma.UserUpdateWit
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUpdateManyWithoutPlayersNestedInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUpdateManyWithoutUserNestedInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUpdateOneWithoutUserNestedInputSchema).optional()
+  Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserUncheckedUpdateWithoutPotionsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutPotionsInput> = z.object({
@@ -4688,91 +3839,8 @@ export const UserUncheckedUpdateWithoutPotionsInputSchema: z.ZodType<Prisma.User
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUncheckedUpdateManyWithoutPlayersNestedInputSchema).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUncheckedUpdateOneWithoutUserNestedInputSchema).optional()
-}).strict();
-
-export const UserCreateWithoutCursorCoordinatesInputSchema: z.ZodType<Prisma.UserCreateWithoutCursorCoordinatesInput> = z.object({
-  id: z.string().cuid().optional(),
-  clerkId: z.string(),
-  imgUrl: z.string().optional().nullable(),
-  username: z.string().optional().nullable(),
-  email: z.string().optional().nullable(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  cursorImg: z.string().optional().nullable(),
-  cursorCoordinatesId: z.string().optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionCreateNestedManyWithoutPlayersInputSchema).optional(),
-  Ingredients: z.lazy(() => IngredientCreateNestedManyWithoutUserInputSchema).optional(),
-  Potions: z.lazy(() => PotionCreateNestedManyWithoutUserInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional()
-}).strict();
-
-export const UserUncheckedCreateWithoutCursorCoordinatesInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutCursorCoordinatesInput> = z.object({
-  id: z.string().cuid().optional(),
-  clerkId: z.string(),
-  imgUrl: z.string().optional().nullable(),
-  username: z.string().optional().nullable(),
-  email: z.string().optional().nullable(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  cursorImg: z.string().optional().nullable(),
-  cursorCoordinatesId: z.string().optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUncheckedCreateNestedManyWithoutPlayersInputSchema).optional(),
-  Ingredients: z.lazy(() => IngredientUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  Potions: z.lazy(() => PotionUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional()
-}).strict();
-
-export const UserCreateOrConnectWithoutCursorCoordinatesInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutCursorCoordinatesInput> = z.object({
-  where: z.lazy(() => UserWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => UserCreateWithoutCursorCoordinatesInputSchema),z.lazy(() => UserUncheckedCreateWithoutCursorCoordinatesInputSchema) ]),
-}).strict();
-
-export const UserUpsertWithoutCursorCoordinatesInputSchema: z.ZodType<Prisma.UserUpsertWithoutCursorCoordinatesInput> = z.object({
-  update: z.union([ z.lazy(() => UserUpdateWithoutCursorCoordinatesInputSchema),z.lazy(() => UserUncheckedUpdateWithoutCursorCoordinatesInputSchema) ]),
-  create: z.union([ z.lazy(() => UserCreateWithoutCursorCoordinatesInputSchema),z.lazy(() => UserUncheckedCreateWithoutCursorCoordinatesInputSchema) ]),
-  where: z.lazy(() => UserWhereInputSchema).optional()
-}).strict();
-
-export const UserUpdateToOneWithWhereWithoutCursorCoordinatesInputSchema: z.ZodType<Prisma.UserUpdateToOneWithWhereWithoutCursorCoordinatesInput> = z.object({
-  where: z.lazy(() => UserWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => UserUpdateWithoutCursorCoordinatesInputSchema),z.lazy(() => UserUncheckedUpdateWithoutCursorCoordinatesInputSchema) ]),
-}).strict();
-
-export const UserUpdateWithoutCursorCoordinatesInputSchema: z.ZodType<Prisma.UserUpdateWithoutCursorCoordinatesInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  clerkId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  imgUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  username: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUpdateManyWithoutPlayersNestedInputSchema).optional(),
-  Ingredients: z.lazy(() => IngredientUpdateManyWithoutUserNestedInputSchema).optional(),
-  Potions: z.lazy(() => PotionUpdateManyWithoutUserNestedInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional()
-}).strict();
-
-export const UserUncheckedUpdateWithoutCursorCoordinatesInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutCursorCoordinatesInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  clerkId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  imgUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  username: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  puzzleSessions: z.lazy(() => PuzzleSessionUncheckedUpdateManyWithoutPlayersNestedInputSchema).optional(),
-  Ingredients: z.lazy(() => IngredientUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  Potions: z.lazy(() => PotionUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
   Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
@@ -4804,7 +3872,7 @@ export const PuzzleChatMessageUncheckedUpdateManyWithoutSessionInputSchema: z.Zo
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const UserUpdateWithoutPuzzleSessionsInputSchema: z.ZodType<Prisma.UserUpdateWithoutPuzzleSessionsInput> = z.object({
+export const UserUpdateWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserUpdateWithoutPuzzleElementalTrialsInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   clerkId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   imgUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4812,15 +3880,12 @@ export const UserUpdateWithoutPuzzleSessionsInputSchema: z.ZodType<Prisma.UserUp
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Ingredients: z.lazy(() => IngredientUpdateManyWithoutUserNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUpdateManyWithoutUserNestedInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUpdateOneWithoutUserNestedInputSchema).optional()
+  Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
-export const UserUncheckedUpdateWithoutPuzzleSessionsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutPuzzleSessionsInput> = z.object({
+export const UserUncheckedUpdateWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutPuzzleElementalTrialsInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   clerkId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   imgUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4828,15 +3893,12 @@ export const UserUncheckedUpdateWithoutPuzzleSessionsInputSchema: z.ZodType<Pris
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   Ingredients: z.lazy(() => IngredientUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  cursorCoordinates: z.lazy(() => CursorCoordinatesUncheckedUpdateOneWithoutUserNestedInputSchema).optional()
+  Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
-export const UserUncheckedUpdateManyWithoutPuzzleSessionsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateManyWithoutPuzzleSessionsInput> = z.object({
+export const UserUncheckedUpdateManyWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateManyWithoutPuzzleElementalTrialsInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   clerkId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   imgUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4844,101 +3906,6 @@ export const UserUncheckedUpdateManyWithoutPuzzleSessionsInputSchema: z.ZodType<
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  cursorImg: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cursorCoordinatesId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-}).strict();
-
-export const PuzzleUpdateWithoutSessionInputSchema: z.ZodType<Prisma.PuzzleUpdateWithoutSessionInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  checkpoint: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  solved: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  type: z.lazy(() => PuzzleTypeUpdateOneRequiredWithoutPuzzlesNestedInputSchema).optional()
-}).strict();
-
-export const PuzzleUncheckedUpdateWithoutSessionInputSchema: z.ZodType<Prisma.PuzzleUncheckedUpdateWithoutSessionInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  checkpoint: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  solved: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  typeId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const PuzzleUncheckedUpdateManyWithoutSessionInputSchema: z.ZodType<Prisma.PuzzleUncheckedUpdateManyWithoutSessionInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  checkpoint: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  solved: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  typeId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const PuzzleSessionUpdateWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleSessionUpdateWithoutPuzzlesInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  durationSeconds: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  chat: z.lazy(() => PuzzleChatMessageUpdateManyWithoutSessionNestedInputSchema).optional(),
-  players: z.lazy(() => UserUpdateManyWithoutPuzzleSessionsNestedInputSchema).optional()
-}).strict();
-
-export const PuzzleSessionUncheckedUpdateWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedUpdateWithoutPuzzlesInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  durationSeconds: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  chat: z.lazy(() => PuzzleChatMessageUncheckedUpdateManyWithoutSessionNestedInputSchema).optional(),
-  players: z.lazy(() => UserUncheckedUpdateManyWithoutPuzzleSessionsNestedInputSchema).optional()
-}).strict();
-
-export const PuzzleSessionUncheckedUpdateManyWithoutPuzzlesInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedUpdateManyWithoutPuzzlesInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  durationSeconds: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const PuzzleCreateManyTypeInputSchema: z.ZodType<Prisma.PuzzleCreateManyTypeInput> = z.object({
-  id: z.string().cuid().optional(),
-  checkpoint: z.number().int().optional(),
-  title: z.string(),
-  description: z.string().optional().nullable(),
-  solved: z.boolean(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-}).strict();
-
-export const PuzzleUpdateWithoutTypeInputSchema: z.ZodType<Prisma.PuzzleUpdateWithoutTypeInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  checkpoint: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  solved: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  session: z.lazy(() => PuzzleSessionUpdateManyWithoutPuzzlesNestedInputSchema).optional()
-}).strict();
-
-export const PuzzleUncheckedUpdateWithoutTypeInputSchema: z.ZodType<Prisma.PuzzleUncheckedUpdateWithoutTypeInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  checkpoint: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  solved: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  session: z.lazy(() => PuzzleSessionUncheckedUpdateManyWithoutPuzzlesNestedInputSchema).optional()
-}).strict();
-
-export const PuzzleUncheckedUpdateManyWithoutTypeInputSchema: z.ZodType<Prisma.PuzzleUncheckedUpdateManyWithoutTypeInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  checkpoint: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  solved: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
 }).strict();
 
 export const IngredientCreateManyUserInputSchema: z.ZodType<Prisma.IngredientCreateManyUserInput> = z.object({
@@ -4985,29 +3952,39 @@ export const FormulaCreateManyUserInputSchema: z.ZodType<Prisma.FormulaCreateMan
   ingredients: z.union([ z.lazy(() => FormulaCreateingredientsInputSchema),z.string().array() ]).optional(),
 }).strict();
 
-export const PuzzleSessionUpdateWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleSessionUpdateWithoutPlayersInput> = z.object({
+export const PuzzleElementalTrialsUpdateWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateWithoutPlayersInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  durationSeconds: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  chat: z.lazy(() => PuzzleChatMessageUpdateManyWithoutSessionNestedInputSchema).optional(),
-  puzzles: z.lazy(() => PuzzleUpdateManyWithoutSessionNestedInputSchema).optional()
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  firegem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  airgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  earthgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  watergem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  chat: z.lazy(() => PuzzleChatMessageUpdateManyWithoutSessionNestedInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionUncheckedUpdateWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedUpdateWithoutPlayersInput> = z.object({
+export const PuzzleElementalTrialsUncheckedUpdateWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUncheckedUpdateWithoutPlayersInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  durationSeconds: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  chat: z.lazy(() => PuzzleChatMessageUncheckedUpdateManyWithoutSessionNestedInputSchema).optional(),
-  puzzles: z.lazy(() => PuzzleUncheckedUpdateManyWithoutSessionNestedInputSchema).optional()
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  firegem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  airgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  earthgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  watergem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  chat: z.lazy(() => PuzzleChatMessageUncheckedUpdateManyWithoutSessionNestedInputSchema).optional()
 }).strict();
 
-export const PuzzleSessionUncheckedUpdateManyWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleSessionUncheckedUpdateManyWithoutPlayersInput> = z.object({
+export const PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  durationSeconds: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  firegem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  airgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  earthgem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  watergem: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const IngredientUpdateWithoutUserInputSchema: z.ZodType<Prisma.IngredientUpdateWithoutUserInput> = z.object({
@@ -5146,66 +4123,66 @@ export const FormulaUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.
 // ARGS
 /////////////////////////////////////////
 
-export const PuzzleSessionFindFirstArgsSchema: z.ZodType<Prisma.PuzzleSessionFindFirstArgs> = z.object({
-  select: PuzzleSessionSelectSchema.optional(),
-  include: PuzzleSessionIncludeSchema.optional(),
-  where: PuzzleSessionWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleSessionOrderByWithRelationInputSchema.array(),PuzzleSessionOrderByWithRelationInputSchema ]).optional(),
-  cursor: PuzzleSessionWhereUniqueInputSchema.optional(),
+export const PuzzleElementalTrialsFindFirstArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsFindFirstArgs> = z.object({
+  select: PuzzleElementalTrialsSelectSchema.optional(),
+  include: PuzzleElementalTrialsIncludeSchema.optional(),
+  where: PuzzleElementalTrialsWhereInputSchema.optional(),
+  orderBy: z.union([ PuzzleElementalTrialsOrderByWithRelationInputSchema.array(),PuzzleElementalTrialsOrderByWithRelationInputSchema ]).optional(),
+  cursor: PuzzleElementalTrialsWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: z.union([ PuzzleSessionScalarFieldEnumSchema,PuzzleSessionScalarFieldEnumSchema.array() ]).optional(),
+  distinct: z.union([ PuzzleElementalTrialsScalarFieldEnumSchema,PuzzleElementalTrialsScalarFieldEnumSchema.array() ]).optional(),
 }).strict() ;
 
-export const PuzzleSessionFindFirstOrThrowArgsSchema: z.ZodType<Prisma.PuzzleSessionFindFirstOrThrowArgs> = z.object({
-  select: PuzzleSessionSelectSchema.optional(),
-  include: PuzzleSessionIncludeSchema.optional(),
-  where: PuzzleSessionWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleSessionOrderByWithRelationInputSchema.array(),PuzzleSessionOrderByWithRelationInputSchema ]).optional(),
-  cursor: PuzzleSessionWhereUniqueInputSchema.optional(),
+export const PuzzleElementalTrialsFindFirstOrThrowArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsFindFirstOrThrowArgs> = z.object({
+  select: PuzzleElementalTrialsSelectSchema.optional(),
+  include: PuzzleElementalTrialsIncludeSchema.optional(),
+  where: PuzzleElementalTrialsWhereInputSchema.optional(),
+  orderBy: z.union([ PuzzleElementalTrialsOrderByWithRelationInputSchema.array(),PuzzleElementalTrialsOrderByWithRelationInputSchema ]).optional(),
+  cursor: PuzzleElementalTrialsWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: z.union([ PuzzleSessionScalarFieldEnumSchema,PuzzleSessionScalarFieldEnumSchema.array() ]).optional(),
+  distinct: z.union([ PuzzleElementalTrialsScalarFieldEnumSchema,PuzzleElementalTrialsScalarFieldEnumSchema.array() ]).optional(),
 }).strict() ;
 
-export const PuzzleSessionFindManyArgsSchema: z.ZodType<Prisma.PuzzleSessionFindManyArgs> = z.object({
-  select: PuzzleSessionSelectSchema.optional(),
-  include: PuzzleSessionIncludeSchema.optional(),
-  where: PuzzleSessionWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleSessionOrderByWithRelationInputSchema.array(),PuzzleSessionOrderByWithRelationInputSchema ]).optional(),
-  cursor: PuzzleSessionWhereUniqueInputSchema.optional(),
+export const PuzzleElementalTrialsFindManyArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsFindManyArgs> = z.object({
+  select: PuzzleElementalTrialsSelectSchema.optional(),
+  include: PuzzleElementalTrialsIncludeSchema.optional(),
+  where: PuzzleElementalTrialsWhereInputSchema.optional(),
+  orderBy: z.union([ PuzzleElementalTrialsOrderByWithRelationInputSchema.array(),PuzzleElementalTrialsOrderByWithRelationInputSchema ]).optional(),
+  cursor: PuzzleElementalTrialsWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: z.union([ PuzzleSessionScalarFieldEnumSchema,PuzzleSessionScalarFieldEnumSchema.array() ]).optional(),
+  distinct: z.union([ PuzzleElementalTrialsScalarFieldEnumSchema,PuzzleElementalTrialsScalarFieldEnumSchema.array() ]).optional(),
 }).strict() ;
 
-export const PuzzleSessionAggregateArgsSchema: z.ZodType<Prisma.PuzzleSessionAggregateArgs> = z.object({
-  where: PuzzleSessionWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleSessionOrderByWithRelationInputSchema.array(),PuzzleSessionOrderByWithRelationInputSchema ]).optional(),
-  cursor: PuzzleSessionWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const PuzzleSessionGroupByArgsSchema: z.ZodType<Prisma.PuzzleSessionGroupByArgs> = z.object({
-  where: PuzzleSessionWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleSessionOrderByWithAggregationInputSchema.array(),PuzzleSessionOrderByWithAggregationInputSchema ]).optional(),
-  by: PuzzleSessionScalarFieldEnumSchema.array(),
-  having: PuzzleSessionScalarWhereWithAggregatesInputSchema.optional(),
+export const PuzzleElementalTrialsAggregateArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsAggregateArgs> = z.object({
+  where: PuzzleElementalTrialsWhereInputSchema.optional(),
+  orderBy: z.union([ PuzzleElementalTrialsOrderByWithRelationInputSchema.array(),PuzzleElementalTrialsOrderByWithRelationInputSchema ]).optional(),
+  cursor: PuzzleElementalTrialsWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
 }).strict() ;
 
-export const PuzzleSessionFindUniqueArgsSchema: z.ZodType<Prisma.PuzzleSessionFindUniqueArgs> = z.object({
-  select: PuzzleSessionSelectSchema.optional(),
-  include: PuzzleSessionIncludeSchema.optional(),
-  where: PuzzleSessionWhereUniqueInputSchema,
+export const PuzzleElementalTrialsGroupByArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsGroupByArgs> = z.object({
+  where: PuzzleElementalTrialsWhereInputSchema.optional(),
+  orderBy: z.union([ PuzzleElementalTrialsOrderByWithAggregationInputSchema.array(),PuzzleElementalTrialsOrderByWithAggregationInputSchema ]).optional(),
+  by: PuzzleElementalTrialsScalarFieldEnumSchema.array(),
+  having: PuzzleElementalTrialsScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
 }).strict() ;
 
-export const PuzzleSessionFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.PuzzleSessionFindUniqueOrThrowArgs> = z.object({
-  select: PuzzleSessionSelectSchema.optional(),
-  include: PuzzleSessionIncludeSchema.optional(),
-  where: PuzzleSessionWhereUniqueInputSchema,
+export const PuzzleElementalTrialsFindUniqueArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsFindUniqueArgs> = z.object({
+  select: PuzzleElementalTrialsSelectSchema.optional(),
+  include: PuzzleElementalTrialsIncludeSchema.optional(),
+  where: PuzzleElementalTrialsWhereUniqueInputSchema,
+}).strict() ;
+
+export const PuzzleElementalTrialsFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsFindUniqueOrThrowArgs> = z.object({
+  select: PuzzleElementalTrialsSelectSchema.optional(),
+  include: PuzzleElementalTrialsIncludeSchema.optional(),
+  where: PuzzleElementalTrialsWhereUniqueInputSchema,
 }).strict() ;
 
 export const PuzzleChatMessageFindFirstArgsSchema: z.ZodType<Prisma.PuzzleChatMessageFindFirstArgs> = z.object({
@@ -5268,130 +4245,6 @@ export const PuzzleChatMessageFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.Puzz
   select: PuzzleChatMessageSelectSchema.optional(),
   include: PuzzleChatMessageIncludeSchema.optional(),
   where: PuzzleChatMessageWhereUniqueInputSchema,
-}).strict() ;
-
-export const PuzzleFindFirstArgsSchema: z.ZodType<Prisma.PuzzleFindFirstArgs> = z.object({
-  select: PuzzleSelectSchema.optional(),
-  include: PuzzleIncludeSchema.optional(),
-  where: PuzzleWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleOrderByWithRelationInputSchema.array(),PuzzleOrderByWithRelationInputSchema ]).optional(),
-  cursor: PuzzleWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ PuzzleScalarFieldEnumSchema,PuzzleScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const PuzzleFindFirstOrThrowArgsSchema: z.ZodType<Prisma.PuzzleFindFirstOrThrowArgs> = z.object({
-  select: PuzzleSelectSchema.optional(),
-  include: PuzzleIncludeSchema.optional(),
-  where: PuzzleWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleOrderByWithRelationInputSchema.array(),PuzzleOrderByWithRelationInputSchema ]).optional(),
-  cursor: PuzzleWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ PuzzleScalarFieldEnumSchema,PuzzleScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const PuzzleFindManyArgsSchema: z.ZodType<Prisma.PuzzleFindManyArgs> = z.object({
-  select: PuzzleSelectSchema.optional(),
-  include: PuzzleIncludeSchema.optional(),
-  where: PuzzleWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleOrderByWithRelationInputSchema.array(),PuzzleOrderByWithRelationInputSchema ]).optional(),
-  cursor: PuzzleWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ PuzzleScalarFieldEnumSchema,PuzzleScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const PuzzleAggregateArgsSchema: z.ZodType<Prisma.PuzzleAggregateArgs> = z.object({
-  where: PuzzleWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleOrderByWithRelationInputSchema.array(),PuzzleOrderByWithRelationInputSchema ]).optional(),
-  cursor: PuzzleWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const PuzzleGroupByArgsSchema: z.ZodType<Prisma.PuzzleGroupByArgs> = z.object({
-  where: PuzzleWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleOrderByWithAggregationInputSchema.array(),PuzzleOrderByWithAggregationInputSchema ]).optional(),
-  by: PuzzleScalarFieldEnumSchema.array(),
-  having: PuzzleScalarWhereWithAggregatesInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const PuzzleFindUniqueArgsSchema: z.ZodType<Prisma.PuzzleFindUniqueArgs> = z.object({
-  select: PuzzleSelectSchema.optional(),
-  include: PuzzleIncludeSchema.optional(),
-  where: PuzzleWhereUniqueInputSchema,
-}).strict() ;
-
-export const PuzzleFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.PuzzleFindUniqueOrThrowArgs> = z.object({
-  select: PuzzleSelectSchema.optional(),
-  include: PuzzleIncludeSchema.optional(),
-  where: PuzzleWhereUniqueInputSchema,
-}).strict() ;
-
-export const PuzzleTypeFindFirstArgsSchema: z.ZodType<Prisma.PuzzleTypeFindFirstArgs> = z.object({
-  select: PuzzleTypeSelectSchema.optional(),
-  include: PuzzleTypeIncludeSchema.optional(),
-  where: PuzzleTypeWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleTypeOrderByWithRelationInputSchema.array(),PuzzleTypeOrderByWithRelationInputSchema ]).optional(),
-  cursor: PuzzleTypeWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ PuzzleTypeScalarFieldEnumSchema,PuzzleTypeScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const PuzzleTypeFindFirstOrThrowArgsSchema: z.ZodType<Prisma.PuzzleTypeFindFirstOrThrowArgs> = z.object({
-  select: PuzzleTypeSelectSchema.optional(),
-  include: PuzzleTypeIncludeSchema.optional(),
-  where: PuzzleTypeWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleTypeOrderByWithRelationInputSchema.array(),PuzzleTypeOrderByWithRelationInputSchema ]).optional(),
-  cursor: PuzzleTypeWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ PuzzleTypeScalarFieldEnumSchema,PuzzleTypeScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const PuzzleTypeFindManyArgsSchema: z.ZodType<Prisma.PuzzleTypeFindManyArgs> = z.object({
-  select: PuzzleTypeSelectSchema.optional(),
-  include: PuzzleTypeIncludeSchema.optional(),
-  where: PuzzleTypeWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleTypeOrderByWithRelationInputSchema.array(),PuzzleTypeOrderByWithRelationInputSchema ]).optional(),
-  cursor: PuzzleTypeWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ PuzzleTypeScalarFieldEnumSchema,PuzzleTypeScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const PuzzleTypeAggregateArgsSchema: z.ZodType<Prisma.PuzzleTypeAggregateArgs> = z.object({
-  where: PuzzleTypeWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleTypeOrderByWithRelationInputSchema.array(),PuzzleTypeOrderByWithRelationInputSchema ]).optional(),
-  cursor: PuzzleTypeWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const PuzzleTypeGroupByArgsSchema: z.ZodType<Prisma.PuzzleTypeGroupByArgs> = z.object({
-  where: PuzzleTypeWhereInputSchema.optional(),
-  orderBy: z.union([ PuzzleTypeOrderByWithAggregationInputSchema.array(),PuzzleTypeOrderByWithAggregationInputSchema ]).optional(),
-  by: PuzzleTypeScalarFieldEnumSchema.array(),
-  having: PuzzleTypeScalarWhereWithAggregatesInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const PuzzleTypeFindUniqueArgsSchema: z.ZodType<Prisma.PuzzleTypeFindUniqueArgs> = z.object({
-  select: PuzzleTypeSelectSchema.optional(),
-  include: PuzzleTypeIncludeSchema.optional(),
-  where: PuzzleTypeWhereUniqueInputSchema,
-}).strict() ;
-
-export const PuzzleTypeFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.PuzzleTypeFindUniqueOrThrowArgs> = z.object({
-  select: PuzzleTypeSelectSchema.optional(),
-  include: PuzzleTypeIncludeSchema.optional(),
-  where: PuzzleTypeWhereUniqueInputSchema,
 }).strict() ;
 
 export const UserFindFirstArgsSchema: z.ZodType<Prisma.UserFindFirstArgs> = z.object({
@@ -5758,7 +4611,6 @@ export const SolutionOrderFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.Solution
 
 export const CursorCoordinatesFindFirstArgsSchema: z.ZodType<Prisma.CursorCoordinatesFindFirstArgs> = z.object({
   select: CursorCoordinatesSelectSchema.optional(),
-  include: CursorCoordinatesIncludeSchema.optional(),
   where: CursorCoordinatesWhereInputSchema.optional(),
   orderBy: z.union([ CursorCoordinatesOrderByWithRelationInputSchema.array(),CursorCoordinatesOrderByWithRelationInputSchema ]).optional(),
   cursor: CursorCoordinatesWhereUniqueInputSchema.optional(),
@@ -5769,7 +4621,6 @@ export const CursorCoordinatesFindFirstArgsSchema: z.ZodType<Prisma.CursorCoordi
 
 export const CursorCoordinatesFindFirstOrThrowArgsSchema: z.ZodType<Prisma.CursorCoordinatesFindFirstOrThrowArgs> = z.object({
   select: CursorCoordinatesSelectSchema.optional(),
-  include: CursorCoordinatesIncludeSchema.optional(),
   where: CursorCoordinatesWhereInputSchema.optional(),
   orderBy: z.union([ CursorCoordinatesOrderByWithRelationInputSchema.array(),CursorCoordinatesOrderByWithRelationInputSchema ]).optional(),
   cursor: CursorCoordinatesWhereUniqueInputSchema.optional(),
@@ -5780,7 +4631,6 @@ export const CursorCoordinatesFindFirstOrThrowArgsSchema: z.ZodType<Prisma.Curso
 
 export const CursorCoordinatesFindManyArgsSchema: z.ZodType<Prisma.CursorCoordinatesFindManyArgs> = z.object({
   select: CursorCoordinatesSelectSchema.optional(),
-  include: CursorCoordinatesIncludeSchema.optional(),
   where: CursorCoordinatesWhereInputSchema.optional(),
   orderBy: z.union([ CursorCoordinatesOrderByWithRelationInputSchema.array(),CursorCoordinatesOrderByWithRelationInputSchema ]).optional(),
   cursor: CursorCoordinatesWhereUniqueInputSchema.optional(),
@@ -5808,60 +4658,58 @@ export const CursorCoordinatesGroupByArgsSchema: z.ZodType<Prisma.CursorCoordina
 
 export const CursorCoordinatesFindUniqueArgsSchema: z.ZodType<Prisma.CursorCoordinatesFindUniqueArgs> = z.object({
   select: CursorCoordinatesSelectSchema.optional(),
-  include: CursorCoordinatesIncludeSchema.optional(),
   where: CursorCoordinatesWhereUniqueInputSchema,
 }).strict() ;
 
 export const CursorCoordinatesFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.CursorCoordinatesFindUniqueOrThrowArgs> = z.object({
   select: CursorCoordinatesSelectSchema.optional(),
-  include: CursorCoordinatesIncludeSchema.optional(),
   where: CursorCoordinatesWhereUniqueInputSchema,
 }).strict() ;
 
-export const PuzzleSessionCreateArgsSchema: z.ZodType<Prisma.PuzzleSessionCreateArgs> = z.object({
-  select: PuzzleSessionSelectSchema.optional(),
-  include: PuzzleSessionIncludeSchema.optional(),
-  data: z.union([ PuzzleSessionCreateInputSchema,PuzzleSessionUncheckedCreateInputSchema ]),
+export const PuzzleElementalTrialsCreateArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsCreateArgs> = z.object({
+  select: PuzzleElementalTrialsSelectSchema.optional(),
+  include: PuzzleElementalTrialsIncludeSchema.optional(),
+  data: z.union([ PuzzleElementalTrialsCreateInputSchema,PuzzleElementalTrialsUncheckedCreateInputSchema ]),
 }).strict() ;
 
-export const PuzzleSessionUpsertArgsSchema: z.ZodType<Prisma.PuzzleSessionUpsertArgs> = z.object({
-  select: PuzzleSessionSelectSchema.optional(),
-  include: PuzzleSessionIncludeSchema.optional(),
-  where: PuzzleSessionWhereUniqueInputSchema,
-  create: z.union([ PuzzleSessionCreateInputSchema,PuzzleSessionUncheckedCreateInputSchema ]),
-  update: z.union([ PuzzleSessionUpdateInputSchema,PuzzleSessionUncheckedUpdateInputSchema ]),
+export const PuzzleElementalTrialsUpsertArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpsertArgs> = z.object({
+  select: PuzzleElementalTrialsSelectSchema.optional(),
+  include: PuzzleElementalTrialsIncludeSchema.optional(),
+  where: PuzzleElementalTrialsWhereUniqueInputSchema,
+  create: z.union([ PuzzleElementalTrialsCreateInputSchema,PuzzleElementalTrialsUncheckedCreateInputSchema ]),
+  update: z.union([ PuzzleElementalTrialsUpdateInputSchema,PuzzleElementalTrialsUncheckedUpdateInputSchema ]),
 }).strict() ;
 
-export const PuzzleSessionCreateManyArgsSchema: z.ZodType<Prisma.PuzzleSessionCreateManyArgs> = z.object({
-  data: z.union([ PuzzleSessionCreateManyInputSchema,PuzzleSessionCreateManyInputSchema.array() ]),
+export const PuzzleElementalTrialsCreateManyArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsCreateManyArgs> = z.object({
+  data: z.union([ PuzzleElementalTrialsCreateManyInputSchema,PuzzleElementalTrialsCreateManyInputSchema.array() ]),
   skipDuplicates: z.boolean().optional(),
 }).strict() ;
 
-export const PuzzleSessionCreateManyAndReturnArgsSchema: z.ZodType<Prisma.PuzzleSessionCreateManyAndReturnArgs> = z.object({
-  data: z.union([ PuzzleSessionCreateManyInputSchema,PuzzleSessionCreateManyInputSchema.array() ]),
+export const PuzzleElementalTrialsCreateManyAndReturnArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsCreateManyAndReturnArgs> = z.object({
+  data: z.union([ PuzzleElementalTrialsCreateManyInputSchema,PuzzleElementalTrialsCreateManyInputSchema.array() ]),
   skipDuplicates: z.boolean().optional(),
 }).strict() ;
 
-export const PuzzleSessionDeleteArgsSchema: z.ZodType<Prisma.PuzzleSessionDeleteArgs> = z.object({
-  select: PuzzleSessionSelectSchema.optional(),
-  include: PuzzleSessionIncludeSchema.optional(),
-  where: PuzzleSessionWhereUniqueInputSchema,
+export const PuzzleElementalTrialsDeleteArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsDeleteArgs> = z.object({
+  select: PuzzleElementalTrialsSelectSchema.optional(),
+  include: PuzzleElementalTrialsIncludeSchema.optional(),
+  where: PuzzleElementalTrialsWhereUniqueInputSchema,
 }).strict() ;
 
-export const PuzzleSessionUpdateArgsSchema: z.ZodType<Prisma.PuzzleSessionUpdateArgs> = z.object({
-  select: PuzzleSessionSelectSchema.optional(),
-  include: PuzzleSessionIncludeSchema.optional(),
-  data: z.union([ PuzzleSessionUpdateInputSchema,PuzzleSessionUncheckedUpdateInputSchema ]),
-  where: PuzzleSessionWhereUniqueInputSchema,
+export const PuzzleElementalTrialsUpdateArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateArgs> = z.object({
+  select: PuzzleElementalTrialsSelectSchema.optional(),
+  include: PuzzleElementalTrialsIncludeSchema.optional(),
+  data: z.union([ PuzzleElementalTrialsUpdateInputSchema,PuzzleElementalTrialsUncheckedUpdateInputSchema ]),
+  where: PuzzleElementalTrialsWhereUniqueInputSchema,
 }).strict() ;
 
-export const PuzzleSessionUpdateManyArgsSchema: z.ZodType<Prisma.PuzzleSessionUpdateManyArgs> = z.object({
-  data: z.union([ PuzzleSessionUpdateManyMutationInputSchema,PuzzleSessionUncheckedUpdateManyInputSchema ]),
-  where: PuzzleSessionWhereInputSchema.optional(),
+export const PuzzleElementalTrialsUpdateManyArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateManyArgs> = z.object({
+  data: z.union([ PuzzleElementalTrialsUpdateManyMutationInputSchema,PuzzleElementalTrialsUncheckedUpdateManyInputSchema ]),
+  where: PuzzleElementalTrialsWhereInputSchema.optional(),
 }).strict() ;
 
-export const PuzzleSessionDeleteManyArgsSchema: z.ZodType<Prisma.PuzzleSessionDeleteManyArgs> = z.object({
-  where: PuzzleSessionWhereInputSchema.optional(),
+export const PuzzleElementalTrialsDeleteManyArgsSchema: z.ZodType<Prisma.PuzzleElementalTrialsDeleteManyArgs> = z.object({
+  where: PuzzleElementalTrialsWhereInputSchema.optional(),
 }).strict() ;
 
 export const PuzzleChatMessageCreateArgsSchema: z.ZodType<Prisma.PuzzleChatMessageCreateArgs> = z.object({
@@ -5908,98 +4756,6 @@ export const PuzzleChatMessageUpdateManyArgsSchema: z.ZodType<Prisma.PuzzleChatM
 
 export const PuzzleChatMessageDeleteManyArgsSchema: z.ZodType<Prisma.PuzzleChatMessageDeleteManyArgs> = z.object({
   where: PuzzleChatMessageWhereInputSchema.optional(),
-}).strict() ;
-
-export const PuzzleCreateArgsSchema: z.ZodType<Prisma.PuzzleCreateArgs> = z.object({
-  select: PuzzleSelectSchema.optional(),
-  include: PuzzleIncludeSchema.optional(),
-  data: z.union([ PuzzleCreateInputSchema,PuzzleUncheckedCreateInputSchema ]),
-}).strict() ;
-
-export const PuzzleUpsertArgsSchema: z.ZodType<Prisma.PuzzleUpsertArgs> = z.object({
-  select: PuzzleSelectSchema.optional(),
-  include: PuzzleIncludeSchema.optional(),
-  where: PuzzleWhereUniqueInputSchema,
-  create: z.union([ PuzzleCreateInputSchema,PuzzleUncheckedCreateInputSchema ]),
-  update: z.union([ PuzzleUpdateInputSchema,PuzzleUncheckedUpdateInputSchema ]),
-}).strict() ;
-
-export const PuzzleCreateManyArgsSchema: z.ZodType<Prisma.PuzzleCreateManyArgs> = z.object({
-  data: z.union([ PuzzleCreateManyInputSchema,PuzzleCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const PuzzleCreateManyAndReturnArgsSchema: z.ZodType<Prisma.PuzzleCreateManyAndReturnArgs> = z.object({
-  data: z.union([ PuzzleCreateManyInputSchema,PuzzleCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const PuzzleDeleteArgsSchema: z.ZodType<Prisma.PuzzleDeleteArgs> = z.object({
-  select: PuzzleSelectSchema.optional(),
-  include: PuzzleIncludeSchema.optional(),
-  where: PuzzleWhereUniqueInputSchema,
-}).strict() ;
-
-export const PuzzleUpdateArgsSchema: z.ZodType<Prisma.PuzzleUpdateArgs> = z.object({
-  select: PuzzleSelectSchema.optional(),
-  include: PuzzleIncludeSchema.optional(),
-  data: z.union([ PuzzleUpdateInputSchema,PuzzleUncheckedUpdateInputSchema ]),
-  where: PuzzleWhereUniqueInputSchema,
-}).strict() ;
-
-export const PuzzleUpdateManyArgsSchema: z.ZodType<Prisma.PuzzleUpdateManyArgs> = z.object({
-  data: z.union([ PuzzleUpdateManyMutationInputSchema,PuzzleUncheckedUpdateManyInputSchema ]),
-  where: PuzzleWhereInputSchema.optional(),
-}).strict() ;
-
-export const PuzzleDeleteManyArgsSchema: z.ZodType<Prisma.PuzzleDeleteManyArgs> = z.object({
-  where: PuzzleWhereInputSchema.optional(),
-}).strict() ;
-
-export const PuzzleTypeCreateArgsSchema: z.ZodType<Prisma.PuzzleTypeCreateArgs> = z.object({
-  select: PuzzleTypeSelectSchema.optional(),
-  include: PuzzleTypeIncludeSchema.optional(),
-  data: z.union([ PuzzleTypeCreateInputSchema,PuzzleTypeUncheckedCreateInputSchema ]),
-}).strict() ;
-
-export const PuzzleTypeUpsertArgsSchema: z.ZodType<Prisma.PuzzleTypeUpsertArgs> = z.object({
-  select: PuzzleTypeSelectSchema.optional(),
-  include: PuzzleTypeIncludeSchema.optional(),
-  where: PuzzleTypeWhereUniqueInputSchema,
-  create: z.union([ PuzzleTypeCreateInputSchema,PuzzleTypeUncheckedCreateInputSchema ]),
-  update: z.union([ PuzzleTypeUpdateInputSchema,PuzzleTypeUncheckedUpdateInputSchema ]),
-}).strict() ;
-
-export const PuzzleTypeCreateManyArgsSchema: z.ZodType<Prisma.PuzzleTypeCreateManyArgs> = z.object({
-  data: z.union([ PuzzleTypeCreateManyInputSchema,PuzzleTypeCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const PuzzleTypeCreateManyAndReturnArgsSchema: z.ZodType<Prisma.PuzzleTypeCreateManyAndReturnArgs> = z.object({
-  data: z.union([ PuzzleTypeCreateManyInputSchema,PuzzleTypeCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const PuzzleTypeDeleteArgsSchema: z.ZodType<Prisma.PuzzleTypeDeleteArgs> = z.object({
-  select: PuzzleTypeSelectSchema.optional(),
-  include: PuzzleTypeIncludeSchema.optional(),
-  where: PuzzleTypeWhereUniqueInputSchema,
-}).strict() ;
-
-export const PuzzleTypeUpdateArgsSchema: z.ZodType<Prisma.PuzzleTypeUpdateArgs> = z.object({
-  select: PuzzleTypeSelectSchema.optional(),
-  include: PuzzleTypeIncludeSchema.optional(),
-  data: z.union([ PuzzleTypeUpdateInputSchema,PuzzleTypeUncheckedUpdateInputSchema ]),
-  where: PuzzleTypeWhereUniqueInputSchema,
-}).strict() ;
-
-export const PuzzleTypeUpdateManyArgsSchema: z.ZodType<Prisma.PuzzleTypeUpdateManyArgs> = z.object({
-  data: z.union([ PuzzleTypeUpdateManyMutationInputSchema,PuzzleTypeUncheckedUpdateManyInputSchema ]),
-  where: PuzzleTypeWhereInputSchema.optional(),
-}).strict() ;
-
-export const PuzzleTypeDeleteManyArgsSchema: z.ZodType<Prisma.PuzzleTypeDeleteManyArgs> = z.object({
-  where: PuzzleTypeWhereInputSchema.optional(),
 }).strict() ;
 
 export const UserCreateArgsSchema: z.ZodType<Prisma.UserCreateArgs> = z.object({
@@ -6272,13 +5028,11 @@ export const SolutionOrderDeleteManyArgsSchema: z.ZodType<Prisma.SolutionOrderDe
 
 export const CursorCoordinatesCreateArgsSchema: z.ZodType<Prisma.CursorCoordinatesCreateArgs> = z.object({
   select: CursorCoordinatesSelectSchema.optional(),
-  include: CursorCoordinatesIncludeSchema.optional(),
   data: z.union([ CursorCoordinatesCreateInputSchema,CursorCoordinatesUncheckedCreateInputSchema ]).optional(),
 }).strict() ;
 
 export const CursorCoordinatesUpsertArgsSchema: z.ZodType<Prisma.CursorCoordinatesUpsertArgs> = z.object({
   select: CursorCoordinatesSelectSchema.optional(),
-  include: CursorCoordinatesIncludeSchema.optional(),
   where: CursorCoordinatesWhereUniqueInputSchema,
   create: z.union([ CursorCoordinatesCreateInputSchema,CursorCoordinatesUncheckedCreateInputSchema ]),
   update: z.union([ CursorCoordinatesUpdateInputSchema,CursorCoordinatesUncheckedUpdateInputSchema ]),
@@ -6296,13 +5050,11 @@ export const CursorCoordinatesCreateManyAndReturnArgsSchema: z.ZodType<Prisma.Cu
 
 export const CursorCoordinatesDeleteArgsSchema: z.ZodType<Prisma.CursorCoordinatesDeleteArgs> = z.object({
   select: CursorCoordinatesSelectSchema.optional(),
-  include: CursorCoordinatesIncludeSchema.optional(),
   where: CursorCoordinatesWhereUniqueInputSchema,
 }).strict() ;
 
 export const CursorCoordinatesUpdateArgsSchema: z.ZodType<Prisma.CursorCoordinatesUpdateArgs> = z.object({
   select: CursorCoordinatesSelectSchema.optional(),
-  include: CursorCoordinatesIncludeSchema.optional(),
   data: z.union([ CursorCoordinatesUpdateInputSchema,CursorCoordinatesUncheckedUpdateInputSchema ]),
   where: CursorCoordinatesWhereUniqueInputSchema,
 }).strict() ;

@@ -3,7 +3,6 @@ import { cn } from "@/lib/utils";
 import { useAtom } from "jotai";
 import { Cinzel, Luxurious_Roman } from "next/font/google";
 import ColorSelectBoxes from "./color-select-boxes";
-import ContinueModal from "./continue-modal";
 
 const fontHeader = Cinzel({
   // use cn when implementing it
@@ -42,13 +41,13 @@ export default function ColorSelectScreen() {
         </div>
       </div>
 
-      {nameArray.findIndex((user) => user.userId === "") === -1 ? (
+      {/* {nameArray.findIndex((user) => user.userId === "") === -1 ? (
         <ContinueModal />
       ) : null}
 
       {nameArray.findIndex((user) => user.userId === "") ? ( // Dark transparent background
         <div className="absolute h-full w-full bg-black opacity-60"></div>
-      ) : null}
+      ) : null} */}
     </div>
   );
 }

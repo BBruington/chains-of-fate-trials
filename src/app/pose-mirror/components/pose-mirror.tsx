@@ -185,7 +185,9 @@ export default function PoseMirror({ currentUser, userData }) {
     <div
       className={`relative m-auto flex h-full w-full flex-col items-center justify-around xl:flex-row xl:justify-center`}
     >
-      {showStart ? <StartScreen /> : null}
+      <div className={`${showStart ? "" : "hidden"} h-full w-full`}>
+        <StartScreen />
+      </div>
 
       {showColorSelect ? (
         <ColorSelectScreen />

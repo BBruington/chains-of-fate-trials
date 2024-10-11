@@ -169,6 +169,7 @@ const initalContainers = [
   },
 ];
 
+const colorNames = ["blue", "red"];
 const colorChoices = ["#25b3f5", "#ff6961"];
 const colorBorderChoices = ["border-[#25b3f5]", "border-[#ff6961]"];
 const mouseColor = ["cursor-blueCursorPointer", "cursor-redCursorPointer"];
@@ -191,6 +192,7 @@ const initalSolutionOrder = [
 export {
   colorBorderChoices,
   colorChoices,
+  colorNames,
   initalContainers,
   initalSolutionOrder,
   mouseColor,

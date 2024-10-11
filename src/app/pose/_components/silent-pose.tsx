@@ -1,7 +1,7 @@
 "use client";
+import { pusherClient } from "@/lib/pusher";
 import { useUser } from "@clerk/nextjs";
 import { useAtom } from "jotai";
-import Pusher from "pusher-js";
 import { useEffect, useRef, useState } from "react";
 import { coordinatesAtom, solutionOrderAtom } from "../../atoms/globalState";
 import { changeHeadCoordiantes } from "../actions";
@@ -92,11 +92,7 @@ export default function SilentPose() {
   }
 
   useEffect(() => {
-    const pusher = new Pusher("13e9bf6d55ba50bff774", {
-      cluster: "us3",
-    });
-
-    const channel = pusher.subscribe("pose-mirror");
+    pusherClient.subscribe("pose-mirror");
 
     const handleCorrectPose = () => {
       console.log("channel bind works");
@@ -108,13 +104,13 @@ export default function SilentPose() {
       gameStart(solutionOrder.solutionOrder);
     };
 
-    channel.bind("correct-pose", handleCorrectPose);
-    channel.bind("game-start", handleGameStart);
+    pusherClient.bind("correct-pose", handleCorrectPose);
+    pusherClient.bind("game-start", handleGameStart);
 
     return () => {
-      channel.unbind("correct-pose", handleCorrectPose);
-      channel.unbind("game-start", handleGameStart);
-      pusher.unsubscribe("pose-mirror");
+      pusherClient.unbind("correct-pose", handleCorrectPose);
+      pusherClient.unbind("game-start", handleGameStart);
+      pusherClient.unsubscribe("pose-mirror");
     };
   }, []);
 

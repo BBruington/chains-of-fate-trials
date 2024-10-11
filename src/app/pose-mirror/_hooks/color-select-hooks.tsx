@@ -6,7 +6,7 @@ import {
   selectAudioAtom,
   userIdAtom,
 } from "@/app/atoms/globalState";
-import { colorBorderChoices, colorChoices } from "@/app/pose-mirror/const";
+import { colorBorderChoices, colorChoices, colorNames } from "@/app/pose-mirror/const";
 import { useAtom } from "jotai";
 
 export default function ColorSelectHooks() {
@@ -17,8 +17,8 @@ export default function ColorSelectHooks() {
   const [playerName, setPlayerName] = useAtom(playerNameAtom);
   const [userId, setUserId] = useAtom(userIdAtom);
 
-  function handleMouseClick(i: number) {
-    setNameArray((prevArray: string[]) => {
+  function handleColorChoice(i: number) {
+    setNameArray((prevArray) => {
       let newArray = [...prevArray];
       console.log(newArray);
 
@@ -27,6 +27,7 @@ export default function ColorSelectHooks() {
       );
 
       const targetElement = {
+        colorName: colorNames[i],
         color: colorChoices[i],
         colorBorder: colorBorderChoices[i],
         icon: playerIcon,
@@ -36,6 +37,8 @@ export default function ColorSelectHooks() {
         userId: userId,
       };
 
+      console.log(targetElement.name);
+
       if (playerNameExistingIndex !== -1) {
         // When a player wants to swap color whether its an empty spot or with another player
         let oldIndex = playerNameExistingIndex;
@@ -44,6 +47,7 @@ export default function ColorSelectHooks() {
         newArray[oldIndex] = oldInfo;
       } else {
         // When a player chooses an empty spot
+        console.log("empty spot");
         newArray[i] = { ...targetElement };
       }
 
@@ -53,10 +57,9 @@ export default function ColorSelectHooks() {
         selectAudio.play();
       }
       console.log(newArray);
-
       return newArray;
     });
   }
 
-  return { handleMouseClick };
+  return { handleColorChoice };
 }

@@ -13,13 +13,11 @@ import StartScreen from "./start";
 import Stickman from "./stickman";
 
 export default function PoseMirror() {
-  const { showColorSelect, showStart } = useContext(PageContext);
-  const [containers, setContainers] = useAtom(containersAtom);
   const [coloredBoxes, setColoredBoxes] = useAtom(coloredBoxesAtom);
-
+  const [containers, setContainers] = useAtom(containersAtom);
   const { handleDragEnd, gameStart } = MirrorPoseHooks();
-
   const isFirstRender = useRef(true);
+  const { showColorSelect, showStart } = useContext(PageContext);
 
   useEffect(() => {
     if (isFirstRender.current) {

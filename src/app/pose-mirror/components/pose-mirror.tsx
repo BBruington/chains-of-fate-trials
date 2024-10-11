@@ -3,6 +3,7 @@
 import {
   coloredBoxesAtom,
   containersAtom,
+  nameArrayAtom,
   solutionOrderAtom,
   userIdAtom,
 } from "@/app/atoms/globalState";
@@ -21,26 +22,35 @@ import StartScreen from "./start";
 import Stickman from "./stickman";
 
 export default function PoseMirror({ currentUser, userData }) {
+  // UI States
   const { showColorSelect, showStart } = useContext(PageContext);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  // Game Logic States
   const [containers, setContainers] = useAtom(containersAtom);
   const [coloredBoxes, setColoredBoxes] = useAtom(coloredBoxesAtom);
   const [solutionOrder, setSolutionOrder] = useAtom(solutionOrderAtom);
+  const [nameArray, setNameArray] = useAtom(nameArrayAtom);
+
+  // Player States
   const [mousePosition, setMousePosition] = useState({
     x: 0,
     y: 0,
     xPercent: 0,
     yPercent: 0,
   });
-  const { handleDragEnd, gameStart, handleResetGame } = MirrorPoseHooks();
   const [otherPlayersMouses, setOtherPlayersMouses] = useState({});
   const [userId, setUserId] = useAtom(userIdAtom);
-  const [windowSize, setWindowSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
 
+  // Refs
   const isFirstRender = useRef(true);
   const hasStarted = useRef(false);
+
+  // Hooks
+  const { handleDragEnd, gameStart, handleResetGame } = MirrorPoseHooks();
 
   useEffect(() => {
     setUserId(userData);
@@ -131,7 +141,7 @@ export default function PoseMirror({ currentUser, userData }) {
 
     setOtherPlayersMouses((prevMouses) => {
       let newMouses = { ...prevMouses };
-      newMouses[currentUser] = { x, y };
+      newMouses[currentUser] = { x, y, userId: currentUser };
 
       return newMouses;
     });
@@ -151,11 +161,10 @@ export default function PoseMirror({ currentUser, userData }) {
     });
   }
 
-  useEffect(() => {
+  useEffect(() => { // Listens to when user moves mouse and/or changes window size
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("resize", handleWindowResize);
 
-    // Cleanup on component unmount
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleWindowResize);
@@ -197,52 +206,25 @@ export default function PoseMirror({ currentUser, userData }) {
           modifiers={[restrictToWindowEdges]}
         >
           {Object.keys(otherPlayersMouses).map((playerData) => {
-            const currentMapUserId = playerData;
+            const mouseColorIndex = nameArray.findIndex((player) => {
+              return player.userId === playerData;
+            });
 
             return (
               <Image
                 style={{
                   position: "absolute",
-                  left: `${otherPlayersMouses[playerData].x - 57}px`,
-                  top: `${otherPlayersMouses[playerData].y - 50}px`,
+                  left: `${otherPlayersMouses[playerData].x}px`,
+                  top: `${otherPlayersMouses[playerData].y}px`,
                   zIndex: "20",
                 }}
-                src="/cursors/blue-cursor-pointer.png"
+                src={`/cursors/${nameArray[mouseColorIndex].colorName}-cursor-pointer.png`}
                 width={25}
                 height={25}
                 alt="Other player cursor"
               />
             );
-            // return currentMapUserId === currentUser.id ? (
-            //   <Image
-            //     style={{
-            //       position: "absolute",
-            //       left: `${mousePosition.x}px`,
-            //       top: `${mousePosition.y}px`,
-            //       zIndex: "20",
-            //     }}
-            //     src="/cursors/blue-cursor-pointer.png"
-            //     width={25}
-            //     height={25}
-            //     alt="Other player cursor"
-            //   />
-            // ) : null;
           })}
-
-          {/* <button onClick={() => console.log(currentUser)}>
-            currentUserId
-          </button>
-          <h1>clientX is {mousePosition.x}</h1>
-          <h1>clientY is {mousePosition.y}</h1>
-          <h1>OtherMouseX is {otherPlayerMouse.x}</h1>
-          <h1>OtherMouseY is {otherPlayerMouse.y}</h1>
-          <h1>solutionOrder is:{solutionOrder}</h1>
-          <button onClick={() => handleGetSolutionOrder()}>
-            solution Order change
-          </button>
-          <button onClick={() => handleRandomizeSolutionOrder()}>
-            randomize solution order
-          </button> */}
           <MatchingContainer containers={containers} />
           <Stickman />
         </DndContext>

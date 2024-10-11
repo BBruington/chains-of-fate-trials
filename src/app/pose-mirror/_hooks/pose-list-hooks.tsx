@@ -15,29 +15,29 @@ import { useState } from "react";
 import { randomizeSolutionOrder } from "../actions";
 
 export default function MirrorPoseHooks() {
+  // Audio States
   const [button2Audio] = useAtom(button2AudioAtom);
+
+  // Color States
   const [coloredBoxes, setColoredBoxes] = useAtom(coloredBoxesAtom);
   const [colorOrder, setColorOrder] = useAtom(colorOrderAtom);
+
+  // Container States
   const [containers, setContainers] = useAtom(containersAtom);
   const [currentPoseContainer, setCurrentPoseContainer] = useState(0);
+
+  // Player State States
   const [playerStates, setPlayerStates] = useAtom(playerStatesAtom);
+
+  // Name and Solution States
   const [nameArray, setNameArray] = useAtom(nameArrayAtom);
   const [solutionOrder, setSolutionOrder] = useAtom(solutionOrderAtom);
+
+  // User ID States
   const [userId, setUserId] = useAtom(userIdAtom);
 
   function gameStart() {
     console.log("gameStart running");
-    // Randomize and initalize the order of colors (players) ✔
-    // Randomize and determine correct order of poses ✔
-    // Indicate to players the next pose must be by "x" color (player) ✔
-    // If pose is selected check if pose is dropped in the top or bottom half
-    // If pose is dropped in top half check if pose has been dropped in correct order
-    // Once player correctly places correct pose check if their mouse moves outside of the pose box (figure out after reflect)
-
-    // Conditions of reset:
-    // if player does not hold their pose until prompted,
-    // if player chooses wrong pose,
-    // if player chooses pose, when it's not their turn
     console.log(nameArray);
     setNameArray((order) => {
       const newOrder = [...order].sort(() => Math.random() - 0.5);
@@ -46,26 +46,6 @@ export default function MirrorPoseHooks() {
         return { ...playerData, state: false };
       });
     });
-
-    // setColorOrder((order) => {
-    //   const newOrder = [...order].sort(() => Math.random() - 0.5);
-    //   console.log("newOrder", newOrder);
-
-    //   setPlayerStates(() => {
-    //     let tempOrder = [...newOrder];
-
-    //     let newPlayerStates: Player[] = tempOrder.map((player) => ({
-    //       number: player.number,
-    //       state: false,
-    //     }));
-
-    //     console.log("newPlayerStates", newPlayerStates);
-
-    //     return newPlayerStates;
-    //   });
-
-    //   return newOrder;
-    // });
 
     shuffleSolutionOrder();
   }
@@ -76,28 +56,6 @@ export default function MirrorPoseHooks() {
     console.log(newOrder);
     setSolutionOrder(newOrder?.order);
     poseMirrorGameStartEvent(newOrder?.order);
-    // console.log("shuffleSolutionOrder running");
-    // setSolutionOrder((prevOrder) => {
-    //   console.log("setSolutionOrder running");
-    //   const newSolutionOrder = [...prevOrder];
-    //   let currentIndex = newSolutionOrder.length;
-
-    //   while (currentIndex !== 0) {
-    //     let randomIndex = Math.floor(Math.random() * currentIndex);
-    //     currentIndex--;
-
-    //     [newSolutionOrder[currentIndex], newSolutionOrder[randomIndex]] = [
-    //       newSolutionOrder[randomIndex],
-    //       newSolutionOrder[currentIndex],
-    //     ];
-    //   }
-
-    //   console.log("newSolutionOrder", newSolutionOrder);
-
-    // poseMirrorGameStartEvent(newSolutionOrder);
-
-    //   return newSolutionOrder;
-    // });
   }
 
   async function poseMirrorGameStartEvent(shuffledOrder: string[]) {

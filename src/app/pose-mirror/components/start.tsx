@@ -5,11 +5,11 @@ import {
   playerNameAtom,
 } from "@/app/atoms/globalState";
 import { PageContext } from "@/app/pose-mirror/page-context";
+import { pusherClient } from "@/lib/pusher";
 import { cn } from "@/lib/utils";
 import { useAtom } from "jotai";
 import { Cinzel, Luxurious_Roman } from "next/font/google";
 import Image from "next/image";
-import Pusher from "pusher-js";
 import { useContext, useEffect, useRef, useState } from "react";
 
 const fontHeader = Cinzel({
@@ -27,14 +27,24 @@ const fontList = Luxurious_Roman({
 });
 
 export default function StartScreen() {
+  // Context
   const { colorSelectMusicRef, setShowStart } = useContext(PageContext);
+
+  // Player States
   const [playerName, setPlayerName] = useAtom(playerNameAtom);
   const [playerIcon, setPlayerIcon] = useAtom(playerIconAtom);
-  const [flashInputName, setFlashInputName] = useState(false);
-  const [flashInputIcon, setFlashInputIcon] = useState(false);
   const [nameArray, setNameArray] = useAtom(nameArrayAtom);
   const [numOfPlayers, setNumOfPlayers] = useAtom(numOfPlayersAtom);
+
+  // State for Flash Inputs
+  const [flashInputName, setFlashInputName] = useState(false);
+  const [flashInputIcon, setFlashInputIcon] = useState(false);
+
+  // State for Reveal Elements
   const [removeRevealElement, setRemoveRevealElement] = useState(false);
+  const [isSetNameArrayFinished, setIsSetNameArrayFinished] = useState(false);
+
+  // Unique Titles State
   const [uniqueTitles, setUniqueTitles] = useState({
     Aelarion: { title: "Veil of the Demon Within" },
     Artemis: { title: "The Hidden Circuit" },
@@ -42,8 +52,9 @@ export default function StartScreen() {
     Gannandolf: { title: "Norebo's Pet" },
   });
 
-  const inputNameFlashRef = useRef(null);
-  const inputIconFlashRef = useRef(null);
+  // Refs
+  const inputNameFlashRef = useRef<HTMLInputElement | null>(null);
+  const inputIconFlashRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const inputNameElement = inputNameFlashRef.current;
@@ -68,53 +79,13 @@ export default function StartScreen() {
       setFlashInputName(!playerName);
       setFlashInputIcon(!playerIcon);
     } else {
-      setNumOfPlayers((prevNumOfPlayer) => {
-        let newNameArray = [];
-        const newNumOfPlayers = prevNumOfPlayer + 1;
-        setNameArray(() => {
-          let initalNameArray = [];
+      poseMirrorStart();
 
-          for (let i = 0; i < newNumOfPlayers; i++) {
-            initalNameArray.push({
-              color: "",
-              colorBorder: "",
-              icon: "",
-              name: "",
-              state: false,
-              userId: "test",
-            });
-
-            if (i < newNumOfPlayers) {
-              newNameArray = [...initalNameArray];
-              console.log(newNameArray);
-            }
-          }
-
-          // color: "#25b3f5",
-          // colorBorder: "border-[#25b3f5]",
-          // icon: "/icons/Aelarion.png",
-          // name: "Test",
-          // state: false,
-          // userId: "testuserId",
-
-          return initalNameArray;
-        });
-        console.log(newNameArray);
-        poseMirrorStart(newNameArray);
-        return newNumOfPlayers;
-      });
       setShowStart(false);
       colorSelectMusicRef.current.play();
       colorSelectMusicRef.current.loop = true;
     }
   }
-
-  // useEffect(() => {
-  //   if (nameArray.length > 0) {
-  //     console.log("test");
-  //     poseMirrorStart(nameArray);
-  //   }
-  // }, [nameArray]);
 
   function handleInputNameChange(e) {
     const { value } = e.target;
@@ -143,7 +114,7 @@ export default function StartScreen() {
     }
   }
 
-  async function poseMirrorStart(newNameArray) {
+  async function poseMirrorStart() {
     console.log("poseMirrorStart");
     await fetch("/api/pose-mirror-start", {
       method: "POST",
@@ -153,30 +124,49 @@ export default function StartScreen() {
       body: JSON.stringify({
         channel: "pose-mirror",
         event: "pose-start",
-        data: { nameArray: newNameArray },
+        data: {},
       }),
     });
   }
 
   useEffect(() => {
-    const pusher = new Pusher("13e9bf6d55ba50bff774", {
-      cluster: "us3",
-    });
-
-    const channel = pusher.subscribe("pose-mirror");
+    pusherClient.subscribe("pose-mirror");
 
     const handleStartClick = (data) => {
       console.log("handleStartClick");
-      console.log(data);
-      console.log(data.nameArray);
-      setNameArray(data.nameArray);
+      setNumOfPlayers((prevNumOfPlayers) => {
+        const newNumOfPlayers = prevNumOfPlayers + 1;
+        let newNameArray = [];
+        console.log(newNumOfPlayers);
+
+        setNameArray(() => {
+          let initalNameArray = [];
+
+          for (let i = 0; i < newNumOfPlayers; i++) {
+            initalNameArray.push({
+              color: "",
+              colorBorder: "",
+              icon: "",
+              name: "",
+              state: false,
+              number: null,
+              userId: "",
+            });
+          }
+          newNameArray = initalNameArray;
+
+          return initalNameArray;
+        });
+        console.log(newNameArray);
+        return newNameArray.length;
+      });
     };
 
-    channel.bind("pose-start", handleStartClick);
+    pusherClient.bind("pose-start", handleStartClick);
 
     return () => {
-      channel.unbind("pose-start", handleStartClick);
-      pusher.unsubscribe("pose-mirror");
+      pusherClient.unsubscribe("pose-mirror");
+      pusherClient.unbind("pose-start", handleStartClick);
     };
   }, []);
 
@@ -261,7 +251,10 @@ export default function StartScreen() {
       </div>
 
       <button
-        onClick={() => handleStartButton()}
+        onClick={() => {
+          handleStartButton();
+          setIsSetNameArrayFinished(true);
+        }}
         className="h-1/3 max-h-64 w-3/4 max-w-[600px] rounded-3xl bg-neutral-800 text-6xl text-neutral-200 duration-150 ease-in-out hover:scale-110 focus:scale-110 active:scale-95"
       >
         START

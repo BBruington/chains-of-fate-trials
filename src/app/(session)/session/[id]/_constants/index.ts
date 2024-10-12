@@ -60,22 +60,27 @@ export enum TILE_TYPES {
 
 export const MAP_TILE: Record<number, GridPiece> = {
   [TILE_TYPES.EMPTY]: {
+    id: 0,
     name: "empty",
     isValidMove: true,
   },
   [TILE_TYPES.BLOCKED]: {
+    id: 1,
     name: "blocked",
     isValidMove: false,
   },
   [TILE_TYPES.PUSHABLE]: {
+    id: 2,
     name: "push",
     isValidMove: true,
   },
   [TILE_TYPES.GOAL]: {
+    id: 3,
     name: "goal",
     isValidMove: true,
   },
   [TILE_TYPES.HOLE]: {
+    id: 4,
     name: "hole",
     isValidMove: false,
   },

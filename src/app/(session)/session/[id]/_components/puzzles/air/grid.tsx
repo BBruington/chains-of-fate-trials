@@ -4,6 +4,7 @@ import aelarion from "@/../public/playericons/aelarion.png";
 import dinner from "@/../public/playericons/dinner.png";
 import artemis from "@/../public/playericons/artemis.png";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 export default function GridRow({
   row,
@@ -11,10 +12,23 @@ export default function GridRow({
   playerPosition,
   MAP_TILE,
   character,
+  editMapProperties,
 }: {
   row: number[];
   rowIndex: number;
   playerPosition: { x: number; y: number };
+  editMapProperties?: {
+    updateTile: number;
+    updateMapTile: ({
+      dx,
+      dy,
+      newTile,
+    }: {
+      dx: number;
+      dy: number;
+      newTile: number;
+    }) => void;
+  };
   MAP_TILE: Record<number, GridPiece>;
   character?: "dinner" | "artemis" | "aelarion" | "elendiel" | undefined;
 }) {
@@ -27,6 +41,7 @@ export default function GridRow({
           rowIndex={rowIndex}
           colIndex={colIndex}
           playerPosition={playerPosition}
+          editMapProperties={editMapProperties}
           character={character}
         />
       ))}
@@ -39,31 +54,63 @@ function GridTile({
   rowIndex,
   colIndex,
   playerPosition,
-  character
+  editMapProperties,
+  character,
 }: {
   grid: GridPiece;
   rowIndex: number;
   colIndex: number;
   playerPosition: { x: number; y: number };
+  editMapProperties?: {
+    updateTile: number;
+    updateMapTile: ({
+      dx,
+      dy,
+      newTile,
+    }: {
+      dx: number;
+      dy: number;
+      newTile: number;
+    }) => void;
+  };
   character: "dinner" | "artemis" | "aelarion" | "elendiel" | undefined;
 }) {
   const characters = {
     dinner,
     artemis,
     aelarion,
-    elendiel
-  }
+    elendiel,
+  };
+  const modifyTile = () => {
+    if (editMapProperties === undefined) return;
+    editMapProperties.updateMapTile({dx: rowIndex, dy: colIndex, newTile: editMapProperties.updateTile})
+  };
   return (
-    <div className="flex h-10 w-10 items-center justify-center border border-black bg-slate-400">
+    <div
+      onClick={modifyTile}
+      className={cn(
+        "flex h-10 w-10 items-center justify-center border border-black bg-slate-400",
+        editMapProperties?.updateTile !== undefined && "cursor-pointer",
+      )}
+    >
       {grid.name === "blocked" && (
         <div className="h-full w-full bg-slate-900" />
       )}
-      {rowIndex === playerPosition.x && colIndex === playerPosition.y && character && (
-        <Image src={characters[character] } height={45} width={45} alt="player" />
-      )}
-      {rowIndex === playerPosition.x && colIndex === playerPosition.y && character === undefined && (
-        <div className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-700"/>
-      )}
+      {rowIndex === playerPosition.x &&
+        colIndex === playerPosition.y &&
+        character && (
+          <Image
+            src={characters[character]}
+            height={45}
+            width={45}
+            alt="player"
+          />
+        )}
+      {rowIndex === playerPosition.x &&
+        colIndex === playerPosition.y &&
+        character === undefined && (
+          <div className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-700" />
+        )}
       {grid.name === "push" && <div className="z-10 h-8 w-8 bg-green-300" />}
       {grid.name === "hole" && (
         <div className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black" />

@@ -130,3 +130,29 @@ enum PrimaryAttribute {
   NECROMANCY
   TRANSMUTATION
 }
+
+model Coordinates {
+  id String @default(cuid()) @id
+  head Json
+  torso Json
+  waist Json
+  leftForearm Json
+  leftHand Json
+  rightForearm Json
+  rightHand Json
+  leftKnee Json
+  leftFoot Json
+  rightKnee Json
+  rightFoot Json
+}
+
+model SolutionOrder {
+  id String  @default(cuid()) @id
+  order Json
+}
+
+model CursorCoordinates {
+  id String  @default(cuid()) @id
+  coordinates Json?
+  userId String? @unique
+}

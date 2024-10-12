@@ -56,11 +56,38 @@ export default function useAirPuzzle({
   const rows = grid.length;
 
   const reset = () => {
-    setGrid(INITIAL_MAP.map((row) => [...row]));
+    setGrid(
+      mapRef.current
+        ? mapRef.current.map((row) => [...row])
+        : DEFAULT_MAP.map((row) => [...row]),
+    );
     setPlayerPosition({ x: 0, y: 0 });
   };
 
-  const updateMap = ({
+  const updateAxis = ({ dx, dy }: { dx: number; dy: number }) => {
+    mapRef.current = grid;
+    let i = 0;
+    while (dx !== mapRef.current[0].length || i === 5) {
+      if (dx > mapRef.current[0].length)
+        mapRef.current.forEach((row) => row.push(0));
+      if (dx < mapRef.current[0].length)
+        mapRef.current.forEach((row) => row.pop());
+
+      i++;
+    }
+    while (dy !== mapRef.current.length) {
+      if (dy > mapRef.current.length) {
+        const createdRow = new Array(mapRef.current[0].length).fill(0);
+        mapRef.current.push(createdRow);
+      }
+
+      if (dy < mapRef.current.length) mapRef.current.pop();
+      i++;
+    }
+    setGrid(mapRef.current.map((row) => [...row]));
+  };
+
+  const updateMapTile = ({
     dx,
     dy,
     newTile,
@@ -71,7 +98,7 @@ export default function useAirPuzzle({
   }) => {
     if (mapRef.current) {
       mapRef.current[dx][dy] = newTile;
-      setGrid(mapRef.current)
+      setGrid(mapRef.current.map((row) => [...row]));
     }
   };
 
@@ -158,5 +185,13 @@ export default function useAirPuzzle({
     }
   };
 
-  return { grid, movePlayer, reset, playerPosition, MAP_TILE };
+  return {
+    grid,
+    movePlayer,
+    updateMapTile,
+    reset,
+    updateAxis,
+    playerPosition,
+    MAP_TILE,
+  };
 }

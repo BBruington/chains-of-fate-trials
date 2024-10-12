@@ -146,6 +146,7 @@ export type MetalType = {
 };
 
 export type GridPiece = {
+  id: number;
   name: string;
   isValidMove: boolean;
 };

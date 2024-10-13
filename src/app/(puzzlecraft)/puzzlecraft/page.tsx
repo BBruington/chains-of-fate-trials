@@ -4,6 +4,7 @@ import useAirPuzzle from "@/app/(session)/session/[id]/_components/puzzles/air/u
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 export default function Page() {
   const {
@@ -16,24 +17,20 @@ export default function Page() {
     MAP_TILE,
   } = useAirPuzzle({
     mapLayout: [
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ],
+    playerStartingPosition: {x:0, y: 3}
   });
   const [updateTile, setUpdateTile] = useState(0);
-  const [mapAxis, setMapAxis] = useState({ dx: 12, dy: 14 });
   const editMapProperties = { updateTile, updateMapTile };
   return (
     <div className="flex justify-between">
@@ -71,7 +68,9 @@ export default function Page() {
               </Button>
             </div>
           </div>
-          <div className="flex flex-col items-center"> <h2>Rows</h2>
+          <div className="flex flex-col items-center">
+            {" "}
+            <h2>Rows</h2>
             <div className="flex">
               <Button
                 onClick={() =>
@@ -103,6 +102,11 @@ export default function Page() {
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
+        <div className="flex">
+          <h2>set player position</h2>
+          <Input placeholder="X" type="number"  className="w-20"/>
+          <Input placeholder="Y" type="number" className="w-20"/>
+        </div>
       </div>
     </div>
   );

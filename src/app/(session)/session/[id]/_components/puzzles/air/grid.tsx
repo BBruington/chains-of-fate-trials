@@ -32,94 +32,62 @@ export default function GridRow({
   MAP_TILE: Record<number, GridPiece>;
   character?: "dinner" | "artemis" | "aelarion" | "elendiel" | undefined;
 }) {
-  return (
-    <div className="flex gap-1">
-      {row.map((grid, colIndex) => (
-        <GridTile
-          key={colIndex}
-          grid={MAP_TILE[grid]}
-          rowIndex={rowIndex}
-          colIndex={colIndex}
-          playerPosition={playerPosition}
-          editMapProperties={editMapProperties}
-          character={character}
-        />
-      ))}
-    </div>
-  );
-}
-
-function GridTile({
-  grid,
-  rowIndex,
-  colIndex,
-  playerPosition,
-  editMapProperties,
-  character,
-}: {
-  grid: GridPiece;
-  rowIndex: number;
-  colIndex: number;
-  playerPosition: { x: number; y: number };
-  editMapProperties?: {
-    updateTile: number;
-    updateMapTile: ({
-      dx,
-      dy,
-      newTile,
-    }: {
-      dx: number;
-      dy: number;
-      newTile: number;
-    }) => void;
-  };
-  character: "dinner" | "artemis" | "aelarion" | "elendiel" | undefined;
-}) {
   const characters = {
     dinner,
     artemis,
     aelarion,
     elendiel,
   };
-  const modifyTile = () => {
+  const modifyTile = (colIndex: number) => {
     if (editMapProperties === undefined) return;
-    editMapProperties.updateMapTile({dx: rowIndex, dy: colIndex, newTile: editMapProperties.updateTile})
+    editMapProperties.updateMapTile({
+      dx: rowIndex,
+      dy: colIndex,
+      newTile: editMapProperties.updateTile,
+    });
   };
   return (
-    <div
-      onClick={modifyTile}
-      className={cn(
-        "flex h-10 w-10 items-center justify-center border border-black bg-slate-400",
-        editMapProperties?.updateTile !== undefined && "cursor-pointer",
-      )}
-    >
-      {grid.name === "blocked" && (
-        <div className="h-full w-full bg-slate-900" />
-      )}
-      {rowIndex === playerPosition.x &&
-        colIndex === playerPosition.y &&
-        character && (
-          <Image
-            src={characters[character]}
-            height={45}
-            width={45}
-            alt="player"
-          />
-        )}
-      {rowIndex === playerPosition.x &&
-        colIndex === playerPosition.y &&
-        character === undefined && (
-          <div className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-700" />
-        )}
-      {grid.name === "push" && <div className="z-10 h-8 w-8 bg-green-300" />}
-      {grid.name === "hole" && (
-        <div className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black" />
-      )}
-      {grid.name === "goal" && (
-        <div className="h-8 w-8 rounded-full text-center text-2xl text-black">
-          G
+    <div className="flex gap-1">
+      {row.map((grid, colIndex) => (
+        <div
+          key={colIndex}
+          onClick={() => modifyTile(colIndex)}
+          className={cn(
+            "flex h-10 w-10 items-center justify-center border border-black bg-slate-400",
+            editMapProperties?.updateTile !== undefined && "cursor-pointer",
+          )}
+        >
+          {MAP_TILE[grid].name === "blocked" && (
+            <div className="h-full w-full bg-slate-900" />
+          )}
+          {rowIndex === playerPosition.x &&
+            colIndex === playerPosition.y &&
+            character && (
+              <Image
+                src={characters[character]}
+                height={45}
+                width={45}
+                alt="player"
+              />
+            )}
+          {rowIndex === playerPosition.x &&
+            colIndex === playerPosition.y &&
+            character === undefined && (
+              <div className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-700" />
+            )}
+          {MAP_TILE[grid].name === "push" && (
+            <div className="z-10 h-8 w-8 bg-green-300" />
+          )}
+          {MAP_TILE[grid].name === "hole" && (
+            <div className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black" />
+          )}
+          {MAP_TILE[grid].name === "goal" && (
+            <div className="h-8 w-8 rounded-full text-center text-2xl text-black">
+              G
+            </div>
+          )}
         </div>
-      )}
+      ))}
     </div>
   );
 }

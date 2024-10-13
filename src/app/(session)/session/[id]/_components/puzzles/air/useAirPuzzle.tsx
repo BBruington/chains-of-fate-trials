@@ -12,11 +12,13 @@ import { revealInventoryItem } from "@/app/(session)/session/[id]/_hooks/hooks";
 export default function useAirPuzzle({
   sessionId,
   mapLayout,
+  playerStartingPosition,
 }: {
   sessionId?: string;
   mapLayout?: number[][];
+  playerStartingPosition?: {x: number, y: number}
 }) {
-  const [playerPosition, setPlayerPosition] = useState({
+  const [playerPosition, setPlayerPosition] = useState( playerStartingPosition ? playerStartingPosition : {
     x: 0,
     y: 0,
   });
@@ -96,6 +98,7 @@ export default function useAirPuzzle({
     dy: number;
     newTile: number;
   }) => {
+    if(playerPosition.x === dx && playerPosition.y === dy) return;
     if (mapRef.current) {
       mapRef.current[dx][dy] = newTile;
       setGrid(mapRef.current.map((row) => [...row]));

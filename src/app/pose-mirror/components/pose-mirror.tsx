@@ -13,7 +13,7 @@ import { useAtom } from "jotai";
 import Image from "next/image";
 import Pusher from "pusher-js";
 import { useContext, useEffect, useRef, useState } from "react";
-import MirrorPoseHooks from "../_hooks/pose-list-hooks";
+import MirrorPoseHooks from "../_hooks/mirror-pose-hooks";
 import { getSolutionOrder, randomizeSolutionOrder } from "../actions";
 import { PageContext } from "../page-context";
 import ColorSelectScreen from "./color-select-screen";
@@ -161,7 +161,8 @@ export default function PoseMirror({ currentUser, userData }) {
     });
   }
 
-  useEffect(() => { // Listens to when user moves mouse and/or changes window size
+  useEffect(() => {
+    // Listens to when user moves mouse and/or changes window size
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("resize", handleWindowResize);
 
@@ -202,7 +203,7 @@ export default function PoseMirror({ currentUser, userData }) {
         <ColorSelectScreen />
       ) : (
         <DndContext
-          onDragEnd={handleDragEnd}
+          onDragEnd={() => handleDragEnd(event, currentUser)}
           modifiers={[restrictToWindowEdges]}
         >
           {Object.keys(otherPlayersMouses).map((playerData) => {

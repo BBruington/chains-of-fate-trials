@@ -9,9 +9,10 @@ import {
   userIdAtom,
 } from "@/app/atoms/globalState";
 import { initalContainers } from "@/app/pose-mirror/const";
+import { pusherClient } from "@/lib/pusher";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { useAtom } from "jotai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { randomizeSolutionOrder } from "../actions";
 
 export default function MirrorPoseHooks() {
@@ -40,15 +41,50 @@ export default function MirrorPoseHooks() {
     console.log("gameStart running");
     console.log(nameArray);
     setNameArray((order) => {
-      const newOrder = [...order].sort(() => Math.random() - 0.5);
+      const newOrder = [...order]
+        .sort(() => Math.random() - 0.5)
+        .map((playerData) => {
+          return { ...playerData, state: false };
+        });
       console.log("newOrder", newOrder);
-      return newOrder.map((playerData) => {
-        return { ...playerData, state: false };
-      });
-    });
 
+      poseMirrorShuffleNameArray(newOrder);
+
+      return newOrder;
+    });
     shuffleSolutionOrder();
   }
+
+  async function poseMirrorShuffleNameArray(nameArrayShuffled) {
+    console.log("shuffleNameArray running");
+
+    await fetch("/api/pose-mirror-game-start", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        channel: "pose-mirror",
+        event: "shuffle-name-array",
+        data: { newNameArray: nameArrayShuffled },
+      }),
+    });
+  }
+
+  useEffect(() => {
+    pusherClient.subscribe("pose-mirror");
+
+    const handleShuffleNameArray = (data) => {
+      setNameArray(data.newNameArray);
+    };
+
+    pusherClient.bind("shuffle-name-array", handleShuffleNameArray);
+
+    return () => {
+      pusherClient.unbind("shuffle-name-array", handleShuffleNameArray);
+      pusherClient.unsubscribe("pose-mirror");
+    };
+  }, []);
 
   async function shuffleSolutionOrder() {
     console.log("shuffleSolutionOrder running");
@@ -90,7 +126,7 @@ export default function MirrorPoseHooks() {
     });
   }
 
-  function handleDragEnd(event: DragEndEvent) {
+  function handleDragEnd(event: DragEndEvent, userId) {
     const { active, over } = event;
     console.log(event);
     console.log(coloredBoxes);
@@ -143,6 +179,10 @@ export default function MirrorPoseHooks() {
               ...newContainers[disableDroppableContainerIndex],
               isDroppableDisabled: true,
             };
+
+            // find index of userId in nameArray
+            // Set that nameArray into state true
+            // Check if all playerStates is true then make the next user state false
 
             setPlayerStates((prevStates) => {
               // if all states are true then make the first one false

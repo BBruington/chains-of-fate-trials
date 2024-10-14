@@ -1,5 +1,6 @@
 import { PageContext } from "@/app/pose-mirror/page-context";
 import { useContext } from "react";
+import MirrorPoseHooks from "../_hooks/mirror-pose-hooks";
 
 export default function ContinueModal() {
   const {
@@ -10,12 +11,15 @@ export default function ContinueModal() {
     setShowColorSelect,
   } = useContext(PageContext);
 
+  const { gameStart } = MirrorPoseHooks();
+
   function handleMouseleave() {
     buttonAudioRef.current.pause();
     buttonAudioRef.current.currentTime = 0;
   }
 
   function handleContinueButton() {
+    gameStart();
     setShowColorSelect(false);
     button2AudioRef.current.play();
 

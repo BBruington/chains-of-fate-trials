@@ -1,8 +1,7 @@
 import { nameArrayAtom } from "@/app/atoms/globalState";
 import { MatchingContentProps } from "@/app/pose-mirror/types";
 import { useAtom } from "jotai";
-import { useEffect } from "react";
-import MirrorPoseHooks from "../_hooks/pose-list-hooks";
+import MirrorPoseHooks from "../_hooks/mirror-pose-hooks";
 import Draggable from "./draggable";
 import ImageDisplay from "./image-display";
 import PulseEffect from "./PulseEffect";

@@ -1,11 +1,8 @@
-import {
-  coloredBoxesAtom,
-  containersAtom,
-} from "@/app/atoms/globalState";
+import { coloredBoxesAtom, containersAtom } from "@/app/atoms/globalState";
 import { DndContext } from "@dnd-kit/core";
 import { useAtom } from "jotai";
 import { useContext, useEffect, useRef } from "react";
-import MirrorPoseHooks from "../_hooks/pose-list-hooks";
+import MirrorPoseHooks from "../_hooks/mirror-pose-hooks";
 import { PageContext } from "../page-context";
 import ColorSelectScreen from "./color-select-screen";
 import MatchingContainer from "./matching-container";

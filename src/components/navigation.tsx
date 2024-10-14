@@ -3,19 +3,62 @@ import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
+import { usePathname } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+
+const NAV_LINKS = [
+  { href: "/", label: "Home" },
+  { href: "/potioncraft", label: "Potion Craft" },
+  { href: "/session/play", label: "Puzzle Session" },
+];
+
+const THEME_OPTIONS = [
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+  { value: "system", label: "System" },
+];
+
+const findBaseUrl = (href: string) => {
+  let baseUrl = "";
+  for (let character of href) {
+    if (character === "/" && baseUrl.length > 1) break;
+    baseUrl = baseUrl += character;
+  }
+  if (baseUrl === "/") baseUrl = "Home";
+  return baseUrl;
+};
 
 export default function Navigation() {
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const pathName = usePathname();
+  const baseUrl = findBaseUrl(pathName);
 
   return (
-    <div className="flex h-12 w-full items-center justify-end space-x-3 border-b-2 border-secondary px-2">
-      <div className="my-1 flex items-center">
+    <nav className="flex h-12 w-full items-center justify-end space-x-3 border-b-2 border-secondary px-2">
+      
+      <div className="flex items-center space-x-4">
+        {NAV_LINKS.map(({ href, label }) => (
+          <Link
+            className={cn(
+              "transition-colors hover:text-primary/80",
+              (href.includes(baseUrl) || label === baseUrl) &&
+                "pointer-events-none border-b border-primary/50 text-primary/50",
+            )}
+            href={href}
+            key={href}
+          >
+            {label}
+          </Link>
+        ))}
+      </div>
+      <div className="my-1 flex items-center space-x-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon">
@@ -25,12 +68,12 @@ export default function Navigation() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTheme("light")}>
-              Light
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("dark")}>
-              Dark
-            </DropdownMenuItem>
+            {THEME_OPTIONS.map(({ value, label }) => (
+              <DropdownMenuItem key={value} onClick={() => setTheme(value)}>
+                {label}
+                {theme === value && <span className="ml-2">✓</span>}
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -42,6 +85,6 @@ export default function Navigation() {
           <UserButton />
         </SignedIn>
       </div>
-    </div>
+    </nav>
   );
 }

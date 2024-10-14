@@ -34,6 +34,10 @@ model PuzzleChatMessage {
   createdAt  DateTime @default(now())
   session    PuzzleElementalTrials? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> db88402deb905129aba1ff77c82a6fc8bf1d027c
 
 model User {
   id                String    @default(cuid()) @id
@@ -153,4 +157,5 @@ model CursorCoordinates{
   id String  @default(cuid()) @id
   coordinates Json?
   userId String? @unique
+}
 }

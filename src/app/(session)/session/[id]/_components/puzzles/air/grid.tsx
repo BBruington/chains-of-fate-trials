@@ -27,7 +27,9 @@ export default function GridRow({
       dx: number;
       dy: number;
       newTile: number;
+      isSettingPlayer: boolean;
     }) => void;
+    isSettingPlayer: boolean;
   };
   MAP_TILE: Record<number, GridPiece>;
   character?: "dinner" | "artemis" | "aelarion" | "elendiel" | undefined;
@@ -44,6 +46,7 @@ export default function GridRow({
       dx: rowIndex,
       dy: colIndex,
       newTile: editMapProperties.updateTile,
+      isSettingPlayer: editMapProperties.isSettingPlayer
     });
   };
   return (

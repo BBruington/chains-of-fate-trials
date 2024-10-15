@@ -1,105 +1,116 @@
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
 generator zod {
-  provider       = "zod-prisma-types"
+  provider = "zod-prisma-types"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model PuzzleElementalTrials {
-  id                String     @default(cuid()) @id
-  title             String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  firegem           Boolean @default(false)
-  airgem           Boolean@default(false)
-  earthgem           Boolean@default(false)
-  watergem           Boolean@default(false)
-  chat              PuzzleChatMessage[]
-  players           User[]
+  id        String              @id @default(cuid())
+  title     String
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  firegem   Boolean             @default(false)
+  airgem    Boolean             @default(false)
+  earthgem  Boolean             @default(false)
+  watergem  Boolean             @default(false)
+  chat      PuzzleChatMessage[]
+  players   User[]
 }
 
 model PuzzleChatMessage {
-  id         String   @id @default(cuid())
-  sessionId  String
-  username   String
-  message    String
-  createdAt  DateTime @default(now())
-  session    PuzzleElementalTrials? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  id        String                 @id @default(cuid())
+  sessionId String
+  username  String
+  message   String
+  createdAt DateTime               @default(now())
+  session   PuzzleElementalTrials? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
 
-
 model User {
-  id                String    @default(cuid()) @id
-  clerkId           String    @unique
-  imgUrl            String?
-  username          String?   
-  email             String?   @unique
-  createdAt         DateTime  @default(now()) @map(name: "created_at")
-  updatedAt         DateTime  @updatedAt @map(name: "updated_at")
-  PuzzleElementalTrials    PuzzleElementalTrials[]
-  Ingredients       Ingredient[]
-  Potions           Potion[]
-  Formulas          Formula[]
+  id                    String                  @id @default(cuid())
+  clerkId               String                  @unique
+  imgUrl                String?
+  username              String?
+  email                 String?                 @unique
+  createdAt             DateTime                @default(now()) @map(name: "created_at")
+  updatedAt             DateTime                @updatedAt @map(name: "updated_at")
+  PuzzleElementalTrials PuzzleElementalTrials[]
+  Ingredients           Ingredient[]
+  Potions               Potion[]
+  Formulas              Formula[]
+  MazePuzzle            MazePuzzle[]
+
   @@map(name: "users")
 }
 
 model Formula {
-  id String @default(cuid()) @id
-  userId String
-  name String
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
   description String
-  rarity Rarity @default(COMMON)
+  rarity      Rarity   @default(COMMON)
   ingredients String[]
-  user User @relation(fields: [userId], references: [clerkId])
+  user        User     @relation(fields: [userId], references: [clerkId])
 }
 
 model Ingredient {
-  id                String    @default(cuid()) @id  
-  rarity  Rarity @default(COMMON)
-  type    MagicType @default(PRIMAL)
-  primaryAttribute   PrimaryAttribute @default(ABJURATION)
-  name String @unique
-  description String
-  quantity   Int @default(1) 
-  abjuration Int @default(0)
-  conjuration Int @default(0)
-  divination Int @default(0)
-  enchantment Int @default(0)
-  evocation Int @default(0)
-  illusion Int @default(0)
-  necromancy Int @default(0)
-  transmutation Int @default(0)
-  userId   String
-  User   User @relation(fields: [userId], references: [clerkId])
+  id               String           @id @default(cuid())
+  rarity           Rarity           @default(COMMON)
+  type             MagicType        @default(PRIMAL)
+  primaryAttribute PrimaryAttribute @default(ABJURATION)
+  name             String           @unique
+  description      String
+  quantity         Int              @default(1)
+  abjuration       Int              @default(0)
+  conjuration      Int              @default(0)
+  divination       Int              @default(0)
+  enchantment      Int              @default(0)
+  evocation        Int              @default(0)
+  illusion         Int              @default(0)
+  necromancy       Int              @default(0)
+  transmutation    Int              @default(0)
+  userId           String
+  User             User             @relation(fields: [userId], references: [clerkId])
 }
 
 model Potion {
-  id                String    @default(cuid()) @id  
-  rarity  Rarity @default(COMMON)
-  type    MagicType @default(ARCANE)
-  primaryAttribute   PrimaryAttribute
-  name String
-  description String
-  quantity   Int @default(1)
-  abjuration Int @default(0)
-  conjuration Int @default(0)
-  divination Int @default(0)
-  enchantment Int @default(0)
-  evocation Int @default(0)
-  illusion Int @default(0)
-  necromancy Int @default(0)
-  transmutation Int @default(0)
-  userId   String
-  User   User @relation(fields: [userId], references: [clerkId])
+  id               String           @id @default(cuid())
+  rarity           Rarity           @default(COMMON)
+  type             MagicType        @default(ARCANE)
+  primaryAttribute PrimaryAttribute
+  name             String
+  description      String
+  quantity         Int              @default(1)
+  abjuration       Int              @default(0)
+  conjuration      Int              @default(0)
+  divination       Int              @default(0)
+  enchantment      Int              @default(0)
+  evocation        Int              @default(0)
+  illusion         Int              @default(0)
+  necromancy       Int              @default(0)
+  transmutation    Int              @default(0)
+  userId           String
+  User             User             @relation(fields: [userId], references: [clerkId])
+}
+
+model MazePuzzle {
+  id      String @id @default(cuid())
+  playerX Int
+  playerY Int
+  rows    Int
+  columns Int
+  grid    Int[]
+  userId  String
+  User    User   @relation(fields: [userId], references: [clerkId])
 }
 
 enum MagicType {
@@ -132,27 +143,27 @@ enum PrimaryAttribute {
 }
 
 model Coordinates {
-  id String @default(cuid()) @id
-  head Json
-  torso Json
-  waist Json
-  leftForearm Json
-  leftHand Json
+  id           String @id @default(cuid())
+  head         Json
+  torso        Json
+  waist        Json
+  leftForearm  Json
+  leftHand     Json
   rightForearm Json
-  rightHand Json
-  leftKnee Json
-  leftFoot Json
-  rightKnee Json
-  rightFoot Json
+  rightHand    Json
+  leftKnee     Json
+  leftFoot     Json
+  rightKnee    Json
+  rightFoot    Json
 }
 
 model SolutionOrder {
-  id String  @default(cuid()) @id
+  id    String @id @default(cuid())
   order Json
 }
 
 model CursorCoordinates {
-  id String  @default(cuid()) @id
+  id          String  @id @default(cuid())
   coordinates Json?
-  userId String? @unique
+  userId      String? @unique
 }

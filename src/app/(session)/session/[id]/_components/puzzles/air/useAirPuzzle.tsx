@@ -16,12 +16,16 @@ export default function useAirPuzzle({
 }: {
   sessionId?: string;
   mapLayout?: number[][];
-  playerStartingPosition?: {x: number, y: number}
+  playerStartingPosition?: { x: number; y: number };
 }) {
-  const [playerPosition, setPlayerPosition] = useState( playerStartingPosition ? playerStartingPosition : {
-    x: 0,
-    y: 0,
-  });
+  const [playerPosition, setPlayerPosition] = useState(
+    playerStartingPosition
+      ? playerStartingPosition
+      : {
+          x: 0,
+          y: 0,
+        },
+  );
   const mapRef = useRef<number[][] | null>(mapLayout ? mapLayout : null);
   const [grid, setGrid] = useState(
     mapRef.current
@@ -93,12 +97,15 @@ export default function useAirPuzzle({
     dx,
     dy,
     newTile,
+    isSettingPlayer,
   }: {
     dx: number;
     dy: number;
     newTile: number;
+    isSettingPlayer: boolean;
   }) => {
-    if(playerPosition.x === dx && playerPosition.y === dy) return;
+    if (playerPosition.x === dx && playerPosition.y === dy) return;
+    if (isSettingPlayer) setPlayerPosition({ x: dx, y: dy });
     if (mapRef.current) {
       mapRef.current[dx][dy] = newTile;
       setGrid(mapRef.current.map((row) => [...row]));

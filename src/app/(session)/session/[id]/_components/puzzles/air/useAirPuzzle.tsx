@@ -99,7 +99,6 @@ export default function useAirPuzzle({
     newTile: number;
     isSettingPlayer: boolean;
   }) => {
-    console.log("got here: ", "playerPosition: ", dx, dy)
     if (playerPosition.x === dx && playerPosition.y === dy) return;
     if (isSettingPlayer) setPlayerPosition({ x: dx, y: dy });
     if (mapRef.current) {

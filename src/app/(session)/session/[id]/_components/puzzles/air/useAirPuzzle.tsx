@@ -99,6 +99,7 @@ export default function useAirPuzzle({
     newTile: number;
     isSettingPlayer: boolean;
   }) => {
+    mapRef.current = grid;
     if (playerPosition.x === dx && playerPosition.y === dy) return;
     if (isSettingPlayer) setPlayerPosition({ x: dx, y: dy });
     if (mapRef.current) {
@@ -192,7 +193,6 @@ export default function useAirPuzzle({
 
   return {
     grid,
-    mapRef,
     setGrid,
     setPlayerPosition,
     movePlayer,

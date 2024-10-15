@@ -55,7 +55,6 @@ export default function CraftMaze({ userPuzzles }: CraftMazeProperties) {
   const {
     grid,
     setGrid,
-    mapRef,
     setPlayerPosition,
     updateAxis,
     reset,
@@ -87,7 +86,6 @@ export default function CraftMaze({ userPuzzles }: CraftMazeProperties) {
     if (formatted.matrix) {
       setSelectedPuzzle(maze.id);
       setGrid(formatted.matrix);
-      mapRef.current = formatted.matrix;
       setPlayerPosition({
         x: formatted.playerStartingPosition.x,
         y: formatted.playerStartingPosition.y,

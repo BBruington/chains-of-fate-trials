@@ -103,15 +103,15 @@ model Potion {
 }
 
 model MazePuzzle {
-  id        String   @id @default(cuid())
-  playerX   Int
-  playerY   Int
-  rows      Int
-  columns   Int
-  grid      Int[]
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  userId    String
-  User      User     @relation(fields: [userId], references: [clerkId])
+  id      String @id @default(cuid())
+  playerX Int
+  playerY Int
+  rows    Int
+  columns Int
+  grid    Int[]
+  createdAt DateTime  @default(now()) @map(name: "created_at")
+  userId  String
+  User    User   @relation(fields: [userId], references: [clerkId])
 }
 
 enum MagicType {

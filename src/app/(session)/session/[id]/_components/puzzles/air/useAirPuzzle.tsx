@@ -1,10 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  INITIAL_MAP,
-  DEFAULT_MAP,
-  MAP_TILE,
-  TILE_TYPES,
-} from "../../../_constants";
+import { DEFAULT_MAP, MAP_TILE, TILE_TYPES } from "../../../_constants";
 import { useAtom } from "jotai";
 import { inventoryItems } from "../../../jotaiAtoms";
 import { revealInventoryItem } from "@/app/(session)/session/[id]/_hooks/hooks";
@@ -104,6 +99,7 @@ export default function useAirPuzzle({
     newTile: number;
     isSettingPlayer: boolean;
   }) => {
+    console.log("got here: ", "playerPosition: ", dx, dy)
     if (playerPosition.x === dx && playerPosition.y === dy) return;
     if (isSettingPlayer) setPlayerPosition({ x: dx, y: dy });
     if (mapRef.current) {
@@ -197,6 +193,9 @@ export default function useAirPuzzle({
 
   return {
     grid,
+    mapRef,
+    setGrid,
+    setPlayerPosition,
     movePlayer,
     updateMapTile,
     reset,

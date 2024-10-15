@@ -10,6 +10,7 @@ export default async function Page() {
       clerkId: user.id,
     },
     select: {
+      clerkId: true,
       MazePuzzle: true
     }
   });

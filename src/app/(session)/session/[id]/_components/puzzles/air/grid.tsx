@@ -42,11 +42,11 @@ export default function GridRow({
   };
   const modifyTile = (colIndex: number) => {
     if (editMapProperties === undefined) return;
-    editMapProperties.updateMapTile({
+    const updatedPuzzle = editMapProperties.updateMapTile({
       dx: rowIndex,
       dy: colIndex,
       newTile: editMapProperties.updateTile,
-      isSettingPlayer: editMapProperties.isSettingPlayer
+      isSettingPlayer: editMapProperties.isSettingPlayer,
     });
   };
   return (

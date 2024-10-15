@@ -11,9 +11,9 @@ export default async function Page() {
     },
     select: {
       clerkId: true,
-      MazePuzzle: true
-    }
+      MazePuzzle: { orderBy: { createdAt: "asc" } },
+    },
   });
-  if(!userPuzzles) return <div>failed to get puzzle</div>
-  return <CraftMaze  userPuzzles={userPuzzles}/>;
+  if (!userPuzzles) return <div>failed to get puzzle</div>;
+  return <CraftMaze userPuzzles={userPuzzles} />;
 }

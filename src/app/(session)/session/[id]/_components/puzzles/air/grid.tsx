@@ -18,7 +18,7 @@ export default function GridRow({
   rowIndex: number;
   playerPosition: { x: number; y: number };
   editMapProperties?: {
-    updateTile: number;
+    updatedTile: number;
     updateMapTile: ({
       dx,
       dy,
@@ -45,7 +45,7 @@ export default function GridRow({
     const updatedPuzzle = editMapProperties.updateMapTile({
       dx: rowIndex,
       dy: colIndex,
-      newTile: editMapProperties.updateTile,
+      newTile: editMapProperties.updatedTile,
       isSettingPlayer: editMapProperties.isSettingPlayer,
     });
   };
@@ -57,7 +57,7 @@ export default function GridRow({
           onClick={() => modifyTile(colIndex)}
           className={cn(
             "flex h-10 w-10 items-center justify-center border border-black bg-slate-400",
-            editMapProperties?.updateTile !== undefined && "cursor-pointer",
+            editMapProperties?.updatedTile !== undefined && "cursor-pointer",
           )}
         >
           {MAP_TILE[grid].name === "blocked" && (

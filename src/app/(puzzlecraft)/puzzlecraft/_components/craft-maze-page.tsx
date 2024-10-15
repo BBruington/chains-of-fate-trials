@@ -4,8 +4,8 @@ import useAirPuzzle from "@/app/(session)/session/[id]/_components/puzzles/air/u
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Toggle } from "@/components/ui/toggle";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { saveMazePuzzle } from "../actions";
+import { useRef, useState } from "react";
+import { saveMazePuzzle, deleteMazePuzzle } from "../actions";
 import { DEFAULT_MAP } from "@/app/(session)/session/[id]/_constants";
 import { SelectedMazeType } from "../types";
 
@@ -25,7 +25,7 @@ const formatPuzzle = (mazePuzzle?: {
   userId: string;
 }) => {
   if (!mazePuzzle) {
-    return { playerStartingPosition: { x: 0, y: 0 }, DEFAULT_MAP };
+    return { playerStartingPosition: { x: 0, y: 0 }, matrix: DEFAULT_MAP };
   }
   const playerPosition = { x: mazePuzzle.playerX, y: mazePuzzle.playerY };
   const matrix = [];
@@ -65,13 +65,13 @@ export default function CraftMaze({ userPuzzles }: CraftMazeProperties) {
     mapLayout: formattedPuzzle.matrix,
     playerStartingPosition: formattedPuzzle.playerStartingPosition,
   });
-  const [updateTile, setUpdateTile] = useState(0);
-  const [selectedPuzzle, setSelectedPuzzle] = useState(
+  const [updatedTile, setUpdateTile] = useState(0);
+  const selectedPuzzle = useRef(
     userPuzzles.MazePuzzle[0] ? userPuzzles.MazePuzzle[0].id : "created",
   );
   const [isSettingPlayer, setIsSettingPlayer] = useState(false);
   const editMapProperties = {
-    updateTile,
+    updatedTile,
     updateMapTile,
     isSettingPlayer,
   };
@@ -84,7 +84,7 @@ export default function CraftMaze({ userPuzzles }: CraftMazeProperties) {
   const handleSelectMaze = (maze: SelectedMazeType) => {
     const formatted = formatPuzzle(maze);
     if (formatted.matrix) {
-      setSelectedPuzzle(maze.id);
+      selectedPuzzle.current = maze.id;
       setGrid(formatted.matrix);
       setPlayerPosition({
         x: formatted.playerStartingPosition.x,
@@ -93,18 +93,33 @@ export default function CraftMaze({ userPuzzles }: CraftMazeProperties) {
     }
   };
 
+  const handleDeletePuzzle = async () => {
+    await deleteMazePuzzle({ id: selectedPuzzle.current });
+    handleSelectMaze(
+      userPuzzles?.MazePuzzle[0]
+        ? userPuzzles?.MazePuzzle[0]
+        : defaultCreatedMaze,
+    );
+  };
+
   const handleSaveChanges = async () => {
+    const mazeProperties =
+      selectedPuzzle.current === "created"
+        ? { ...defaultCreatedMaze }
+        : {
+            grid: grid.flat(),
+            columns: grid[0].length,
+            rows: grid.length,
+            playerX: playerPosition.x,
+            playerY: playerPosition.y,
+            userId: userPuzzles.clerkId,
+            id: selectedPuzzle.current,
+          };
     await saveMazePuzzle({
       maze: {
-        grid: grid.flat(),
-        columns: grid[0].length,
-        rows: grid.length,
-        playerX: playerPosition.x,
-        playerY: playerPosition.y,
-        userId: userPuzzles.clerkId,
-        id: selectedPuzzle,
+        ...mazeProperties,
       },
-      isCreated: selectedPuzzle === "created",
+      isCreated: selectedPuzzle.current === "created",
     });
   };
 
@@ -116,6 +131,14 @@ export default function CraftMaze({ userPuzzles }: CraftMazeProperties) {
             {index + 1}
           </Button>
         ))}
+        <Button
+          onClick={() => {
+            handleSelectMaze(defaultCreatedMaze);
+            handleSaveChanges();
+          }}
+        >
+          +
+        </Button>
       </div>
       <div className="flex justify-between">
         <div className="flex flex-col">
@@ -133,6 +156,7 @@ export default function CraftMaze({ userPuzzles }: CraftMazeProperties) {
         <div className="flex flex-col">
           <Button onClick={reset}>Reset</Button>
           <Button onClick={handleSaveChanges}>Save Changes</Button>
+          <Button onClick={handleDeletePuzzle}>Delete Puzzle</Button>
           <div className="flex justify-between">
             <div className="flex flex-col items-center">
               <h2>Columns</h2>
@@ -176,7 +200,7 @@ export default function CraftMaze({ userPuzzles }: CraftMazeProperties) {
           </div>
           <ToggleGroup
             type="single"
-            value={updateTile.toString()}
+            value={updatedTile.toString()}
             onValueChange={(value) => {
               if (value) setUpdateTile(Number(value));
             }}

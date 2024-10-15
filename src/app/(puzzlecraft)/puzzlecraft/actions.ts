@@ -1,9 +1,22 @@
 "use server";
 import { prisma } from "@/lib/db";
-import { MazePuzzle } from "../../../../prisma/generated/zod";
 import { revalidatePath } from "next/cache";
 
-export const saveMazePuzzle = async ({maze, isCreated}: {maze: MazePuzzle, isCreated?: boolean}) => {
+export const saveMazePuzzle = async ({
+  maze,
+  isCreated,
+}: {
+  maze: {
+    id: string;
+    playerX: number;
+    playerY: number;
+    rows: number;
+    columns: number;
+    grid: number[];
+    userId: string;
+  };
+  isCreated?: boolean;
+}) => {
   if (!isCreated) {
     const updatedMaze = await prisma.mazePuzzle.upsert({
       where: { id: maze.id },
@@ -14,7 +27,7 @@ export const saveMazePuzzle = async ({maze, isCreated}: {maze: MazePuzzle, isCre
         ...maze,
       },
     });
-    revalidatePath(`${process.env.BASE_URL}/puzzlecraft`)
+    revalidatePath(`${process.env.BASE_URL}/puzzlecraft`);
     return updatedMaze;
   } else {
     const { playerX, playerY, rows, columns, grid, userId } = maze;
@@ -28,8 +41,17 @@ export const saveMazePuzzle = async ({maze, isCreated}: {maze: MazePuzzle, isCre
         userId,
       },
     });
-    revalidatePath(`${process.env.BASE_URL}/puzzlecraft`)
+    revalidatePath(`${process.env.BASE_URL}/puzzlecraft`);
     return createdMaze;
   }
-  
+};
+
+export const deleteMazePuzzle = async ({ id }: { id: string }) => {
+  const deletedPuzzle = await prisma.mazePuzzle.delete({
+    where: {
+      id,
+    },
+  });
+  revalidatePath(`${process.env.BASE_URL}/puzzlecraft`);
+  return deletedPuzzle;
 };

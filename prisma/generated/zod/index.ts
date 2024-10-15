@@ -68,7 +68,7 @@ export const IngredientScalarFieldEnumSchema = z.enum(['id','rarity','type','pri
 
 export const PotionScalarFieldEnumSchema = z.enum(['id','rarity','type','primaryAttribute','name','description','quantity','abjuration','conjuration','divination','enchantment','evocation','illusion','necromancy','transmutation','userId']);
 
-export const MazePuzzleScalarFieldEnumSchema = z.enum(['id','playerX','playerY','rows','columns','grid','userId']);
+export const MazePuzzleScalarFieldEnumSchema = z.enum(['id','playerX','playerY','rows','columns','grid','createdAt','userId']);
 
 export const CoordinatesScalarFieldEnumSchema = z.enum(['id','head','torso','waist','leftForearm','leftHand','rightForearm','rightHand','leftKnee','leftFoot','rightKnee','rightFoot']);
 
@@ -227,6 +227,7 @@ export const MazePuzzleSchema = z.object({
   rows: z.number().int(),
   columns: z.number().int(),
   grid: z.number().int().array(),
+  createdAt: z.coerce.date(),
   userId: z.string(),
 })
 
@@ -488,6 +489,7 @@ export const MazePuzzleSelectSchema: z.ZodType<Prisma.MazePuzzleSelect> = z.obje
   rows: z.boolean().optional(),
   columns: z.boolean().optional(),
   grid: z.boolean().optional(),
+  createdAt: z.boolean().optional(),
   userId: z.boolean().optional(),
   User: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
 }).strict()
@@ -1083,6 +1085,7 @@ export const MazePuzzleWhereInputSchema: z.ZodType<Prisma.MazePuzzleWhereInput> 
   rows: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   columns: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   grid: z.lazy(() => IntNullableListFilterSchema).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   User: z.union([ z.lazy(() => UserRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
 }).strict();
@@ -1094,6 +1097,7 @@ export const MazePuzzleOrderByWithRelationInputSchema: z.ZodType<Prisma.MazePuzz
   rows: z.lazy(() => SortOrderSchema).optional(),
   columns: z.lazy(() => SortOrderSchema).optional(),
   grid: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   User: z.lazy(() => UserOrderByWithRelationInputSchema).optional()
 }).strict();
@@ -1111,6 +1115,7 @@ export const MazePuzzleWhereUniqueInputSchema: z.ZodType<Prisma.MazePuzzleWhereU
   rows: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   columns: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   grid: z.lazy(() => IntNullableListFilterSchema).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   User: z.union([ z.lazy(() => UserRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
 }).strict());
@@ -1122,6 +1127,7 @@ export const MazePuzzleOrderByWithAggregationInputSchema: z.ZodType<Prisma.MazeP
   rows: z.lazy(() => SortOrderSchema).optional(),
   columns: z.lazy(() => SortOrderSchema).optional(),
   grid: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => MazePuzzleCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => MazePuzzleAvgOrderByAggregateInputSchema).optional(),
@@ -1140,6 +1146,7 @@ export const MazePuzzleScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Ma
   rows: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   columns: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   grid: z.lazy(() => IntNullableListFilterSchema).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   userId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
@@ -1890,6 +1897,7 @@ export const MazePuzzleCreateInputSchema: z.ZodType<Prisma.MazePuzzleCreateInput
   rows: z.number().int(),
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.coerce.date().optional(),
   User: z.lazy(() => UserCreateNestedOneWithoutMazePuzzleInputSchema)
 }).strict();
 
@@ -1900,6 +1908,7 @@ export const MazePuzzleUncheckedCreateInputSchema: z.ZodType<Prisma.MazePuzzleUn
   rows: z.number().int(),
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.coerce.date().optional(),
   userId: z.string()
 }).strict();
 
@@ -1910,6 +1919,7 @@ export const MazePuzzleUpdateInputSchema: z.ZodType<Prisma.MazePuzzleUpdateInput
   rows: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   User: z.lazy(() => UserUpdateOneRequiredWithoutMazePuzzleNestedInputSchema).optional()
 }).strict();
 
@@ -1920,6 +1930,7 @@ export const MazePuzzleUncheckedUpdateInputSchema: z.ZodType<Prisma.MazePuzzleUn
   rows: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -1930,6 +1941,7 @@ export const MazePuzzleCreateManyInputSchema: z.ZodType<Prisma.MazePuzzleCreateM
   rows: z.number().int(),
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.coerce.date().optional(),
   userId: z.string()
 }).strict();
 
@@ -1940,6 +1952,7 @@ export const MazePuzzleUpdateManyMutationInputSchema: z.ZodType<Prisma.MazePuzzl
   rows: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const MazePuzzleUncheckedUpdateManyInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedUpdateManyInput> = z.object({
@@ -1949,6 +1962,7 @@ export const MazePuzzleUncheckedUpdateManyInputSchema: z.ZodType<Prisma.MazePuzz
   rows: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -2698,6 +2712,7 @@ export const MazePuzzleCountOrderByAggregateInputSchema: z.ZodType<Prisma.MazePu
   rows: z.lazy(() => SortOrderSchema).optional(),
   columns: z.lazy(() => SortOrderSchema).optional(),
   grid: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -2715,6 +2730,7 @@ export const MazePuzzleMaxOrderByAggregateInputSchema: z.ZodType<Prisma.MazePuzz
   playerY: z.lazy(() => SortOrderSchema).optional(),
   rows: z.lazy(() => SortOrderSchema).optional(),
   columns: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -2724,6 +2740,7 @@ export const MazePuzzleMinOrderByAggregateInputSchema: z.ZodType<Prisma.MazePuzz
   playerY: z.lazy(() => SortOrderSchema).optional(),
   rows: z.lazy(() => SortOrderSchema).optional(),
   columns: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -3832,6 +3849,7 @@ export const MazePuzzleCreateWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzle
   rows: z.number().int(),
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.coerce.date().optional()
 }).strict();
 
 export const MazePuzzleUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedCreateWithoutUserInput> = z.object({
@@ -3841,6 +3859,7 @@ export const MazePuzzleUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.M
   rows: z.number().int(),
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.coerce.date().optional()
 }).strict();
 
 export const MazePuzzleCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzleCreateOrConnectWithoutUserInput> = z.object({
@@ -4013,6 +4032,7 @@ export const MazePuzzleScalarWhereInputSchema: z.ZodType<Prisma.MazePuzzleScalar
   rows: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   columns: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   grid: z.lazy(() => IntNullableListFilterSchema).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
 }).strict();
 
@@ -4421,6 +4441,7 @@ export const MazePuzzleCreateManyUserInputSchema: z.ZodType<Prisma.MazePuzzleCre
   rows: z.number().int(),
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.coerce.date().optional()
 }).strict();
 
 export const PuzzleElementalTrialsUpdateWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateWithoutPlayersInput> = z.object({
@@ -4597,6 +4618,7 @@ export const MazePuzzleUpdateWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzle
   rows: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const MazePuzzleUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedUpdateWithoutUserInput> = z.object({
@@ -4606,6 +4628,7 @@ export const MazePuzzleUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.M
   rows: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const MazePuzzleUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedUpdateManyWithoutUserInput> = z.object({
@@ -4615,6 +4638,7 @@ export const MazePuzzleUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Pris
   rows: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 /////////////////////////////////////////

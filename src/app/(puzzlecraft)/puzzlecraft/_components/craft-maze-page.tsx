@@ -15,7 +15,8 @@ type CraftMazeProperties = {
     MazePuzzle: SelectedMazeType[];
   };
 };
-const formatPuzzle = (mazePuzzle?: {
+
+type Maze = {
   id: string;
   playerX: number;
   playerY: number;
@@ -23,7 +24,8 @@ const formatPuzzle = (mazePuzzle?: {
   columns: number;
   grid: number[];
   userId: string;
-}) => {
+};
+const formatPuzzle = (mazePuzzle?: Maze) => {
   if (!mazePuzzle) {
     return { playerStartingPosition: { x: 0, y: 0 }, matrix: DEFAULT_MAP };
   }

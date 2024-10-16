@@ -14,11 +14,11 @@ const puzzleDescription = atom<DescriptionOpject[]>(
 );
 const sessioinId = atom<string>("");
 const inventoryItems = atom<InventoryItemProps[]>(inventoryItemsRecords);
-const selectedCharacter = atom<
-    "dinner" | "artemis" | "aelarion" | "elendiel"
-  >("elendiel");
+const selectedCharacter = atom<"dinner" | "artemis" | "aelarion" | "elendiel">(
+  "elendiel",
+);
 const pedestals = atom(pedastals);
-const pipesForState = pipesExample.map((pipe) => allPipes[pipe]);
+const pipesForState = pipesExample.map((pipe) => pipe.map((p) => allPipes[p]));
 const waterPipes = atom(pipesForState);
 const rareMetals = atom(RARE_METALS);
 

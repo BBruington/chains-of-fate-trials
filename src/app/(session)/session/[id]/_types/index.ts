@@ -114,7 +114,8 @@ export type PipeType = {
 };
 
 export type CheckSideprops = {
-  index: number;
+  x: number;
+  y: number;
   sides: ConnectKeys[];
 };
 
@@ -125,8 +126,9 @@ export type FindSidesAndEdgesReturn = {
 
 export type PipeProps = {
   pipe: PipeType;
-  index: number;
-  rotatePipe: (pipe: PipeType, index: number) => PipeType | undefined;
+  rowIndex: number;
+  colIndex: number;
+  rotatePipe: (pipe: PipeType, index: number, colIndex: number) => PipeType | undefined;
 };
 
 export type OppositeSideType = {

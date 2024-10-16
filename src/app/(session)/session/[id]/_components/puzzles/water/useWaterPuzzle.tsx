@@ -41,7 +41,7 @@ export default function useWaterPuzzle({ sessionId }: UseWaterPuzzleProps) {
   };
 
   const isInvalidSide = ({ x, y, sides }: CheckSideprops): boolean => {
-    console.log("checking: ", x, y);
+ 
     const sideIndexToCheck = {
       left: { x, y: y - 1 },
       right: { x, y: y + 1 },
@@ -56,12 +56,8 @@ export default function useWaterPuzzle({ sessionId }: UseWaterPuzzleProps) {
       down: "up",
     };
     for (let side of sides) {
-      console.log("looking at side: ", side);
       const comparedIndex = sideIndexToCheck[side];
-      console.log("modifying: ", comparedIndex);
       const comparedSide: ConnectKeys = oppositeSide[side];
-      console.log("relevent side: ", comparedSide);
-      console.log(pipesState[comparedIndex.x][comparedIndex.y]);
       if (
         !pipesState[comparedIndex.x][comparedIndex.y].isConnectedTo[
           comparedSide

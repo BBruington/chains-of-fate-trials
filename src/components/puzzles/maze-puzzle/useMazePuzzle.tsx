@@ -1,10 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { DEFAULT_MAP, MAP_TILE, TILE_TYPES } from "../../../_constants";
+import {
+  DEFAULT_MAP,
+  MAP_TILE,
+  TILE_TYPES,
+} from "../../../app/(session)/session/[id]/_constants";
 import { useAtom } from "jotai";
-import { inventoryItems } from "../../../jotaiAtoms";
+import { inventoryItems } from "../../../app/(session)/session/[id]/jotaiAtoms";
 import { revealInventoryItem } from "@/app/(session)/session/[id]/_hooks/hooks";
 
-export default function useAirPuzzle({
+export default function useMazePuzzle({
   sessionId,
   mapLayout,
   playerStartingPosition,

@@ -2,7 +2,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import { PuzzleEnums } from "../../../_types";
 import { Button } from "@/components/ui/button";
-import useAirPuzzle from "./useAirPuzzle";
+import useMazePuzzle from "../../../../../../../components/puzzles/maze-puzzle/useMazePuzzle";
 import GridRow from "./grid";
 import {
   Select,
@@ -25,7 +25,7 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
     id: PuzzleEnums.AIR,
   });
 
-  const { grid, movePlayer, reset, playerPosition, MAP_TILE } = useAirPuzzle({
+  const { grid, movePlayer, reset, playerPosition, MAP_TILE } = useMazePuzzle({
     sessionId,
     mapLayout: INITIAL_MAP,
   });

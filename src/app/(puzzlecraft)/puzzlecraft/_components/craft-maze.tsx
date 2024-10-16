@@ -1,19 +1,17 @@
 "use client";
 import GridRow from "@/app/(session)/session/[id]/_components/puzzles/air/grid";
-import useAirPuzzle from "@/app/(session)/session/[id]/_components/puzzles/air/useAirPuzzle";
+import useMazePuzzle from "@/components/puzzles/maze-puzzle/useMazePuzzle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Toggle } from "@/components/ui/toggle";
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
 import { saveMazePuzzle, deleteMazePuzzle } from "../actions";
 import { DEFAULT_MAP } from "@/app/(session)/session/[id]/_constants";
-import { SelectedMazeType } from "../types";
+import { MazePuzzle } from "../../../../../prisma/generated/zod";
 
 type CraftMazeProperties = {
-  userPuzzles: {
-    clerkId: string;
-    MazePuzzle: SelectedMazeType[];
-  };
+  clerkId: string;
+  MazePuzzle: MazePuzzle[];
 };
 
 type Maze = {
@@ -25,6 +23,7 @@ type Maze = {
   grid: number[];
   userId: string;
 };
+
 const formatPuzzle = (mazePuzzle?: Maze) => {
   if (!mazePuzzle) {
     return { playerStartingPosition: { x: 0, y: 0 }, matrix: DEFAULT_MAP };
@@ -39,7 +38,7 @@ const formatPuzzle = (mazePuzzle?: Maze) => {
   return { playerStartingPosition: playerPosition, matrix };
 };
 
-export default function CraftMaze({ userPuzzles }: CraftMazeProperties) {
+export default function CraftMaze({ MazePuzzle, clerkId }: CraftMazeProperties) {
   const defaultCreatedMaze = {
     id: "created",
     playerX: 0,
@@ -47,29 +46,30 @@ export default function CraftMaze({ userPuzzles }: CraftMazeProperties) {
     rows: 10,
     columns: 10,
     grid: DEFAULT_MAP.flat(),
-    userId: userPuzzles.clerkId,
+    userId: clerkId,
   };
+  
   const formattedPuzzle = formatPuzzle(
-    userPuzzles?.MazePuzzle[0]
-      ? userPuzzles?.MazePuzzle[0]
+    MazePuzzle[0]
+      ? MazePuzzle[0]
       : defaultCreatedMaze,
   );
   const {
     grid,
+    MAP_TILE,
+    playerPosition,
     setGrid,
     setPlayerPosition,
     updateAxis,
     reset,
     updateMapTile,
-    playerPosition,
-    MAP_TILE,
-  } = useAirPuzzle({
+  } = useMazePuzzle({
     mapLayout: formattedPuzzle.matrix,
     playerStartingPosition: formattedPuzzle.playerStartingPosition,
   });
   const [updatedTile, setUpdateTile] = useState(0);
   const selectedPuzzle = useRef(
-    userPuzzles.MazePuzzle[0] ? userPuzzles.MazePuzzle[0].id : "created",
+    MazePuzzle[0] ? MazePuzzle[0].id : "created",
   );
   const [isSettingPlayer, setIsSettingPlayer] = useState(false);
   const editMapProperties = {
@@ -83,23 +83,22 @@ export default function CraftMaze({ userPuzzles }: CraftMazeProperties) {
     setIsSettingPlayer(event);
   };
 
-  const handleSelectMaze = (maze: SelectedMazeType) => {
+  const handleSelectMaze = (maze: Maze) => {
     const formatted = formatPuzzle(maze);
-    if (formatted.matrix) {
-      selectedPuzzle.current = maze.id;
-      setGrid(formatted.matrix);
-      setPlayerPosition({
-        x: formatted.playerStartingPosition.x,
-        y: formatted.playerStartingPosition.y,
-      });
-    }
+    const { matrix, playerStartingPosition } = formatted;
+    selectedPuzzle.current = maze.id;
+    setGrid(matrix);
+    setPlayerPosition({
+      x: playerStartingPosition.x,
+      y: playerStartingPosition.y,
+    });
   };
 
   const handleDeletePuzzle = async () => {
     await deleteMazePuzzle({ id: selectedPuzzle.current });
     handleSelectMaze(
-      userPuzzles?.MazePuzzle[0]
-        ? userPuzzles?.MazePuzzle[0]
+      MazePuzzle[0]
+        ? MazePuzzle[0]
         : defaultCreatedMaze,
     );
   };
@@ -114,7 +113,7 @@ export default function CraftMaze({ userPuzzles }: CraftMazeProperties) {
             rows: grid.length,
             playerX: playerPosition.x,
             playerY: playerPosition.y,
-            userId: userPuzzles.clerkId,
+            userId: clerkId,
             id: selectedPuzzle.current,
           };
     await saveMazePuzzle({
@@ -128,7 +127,7 @@ export default function CraftMaze({ userPuzzles }: CraftMazeProperties) {
   return (
     <div className="flex flex-col">
       <div className="flex justify-center space-x-3">
-        {userPuzzles.MazePuzzle.map((puzzle, index) => (
+        {MazePuzzle.map((puzzle, index) => (
           <Button onClick={() => handleSelectMaze(puzzle)} key={puzzle.id}>
             {index + 1}
           </Button>

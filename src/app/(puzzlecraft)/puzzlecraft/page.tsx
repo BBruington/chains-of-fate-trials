@@ -1,6 +1,6 @@
-import CraftMaze from "./_components/craft-maze-page";
 import { currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import PuzzleCraft from "./_components/puzzle-craft";
 
 export default async function Page() {
   const user = await currentUser();
@@ -15,5 +15,5 @@ export default async function Page() {
     },
   });
   if (!userPuzzles) return <div>failed to get puzzle</div>;
-  return <CraftMaze userPuzzles={userPuzzles} />;
+  return <PuzzleCraft userPuzzles={userPuzzles} />;
 }

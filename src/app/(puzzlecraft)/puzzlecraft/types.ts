@@ -7,3 +7,8 @@ export type SelectedMazeType = {
   grid: number[];
   userId: string;
 };
+
+export enum PuzzleCraftEnums {
+  EMPTY = "EMPTY",
+  MAZE = "MAZE"
+}

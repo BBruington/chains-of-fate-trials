@@ -4,7 +4,7 @@ import { useUser } from "@clerk/nextjs";
 import { useAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { coordinatesAtom, solutionOrderAtom } from "../../atoms/globalState";
-import { changeHeadCoordiantes } from "../actions";
+// import { changeHeadCoordiantes } from "../actions";
 import { initalImageArray } from "../const";
 import BodyPartConnectors from "./body-part-connectors";
 import BodyPartDisplay from "./body-parts-display";
@@ -18,9 +18,9 @@ export default function SilentPose() {
   const [coordinates, setCoordinates] = useAtom(coordinatesAtom);
   const poseContainerRef = useRef(null);
   const test = useUser();
-  const handleChangeHeadCoordinates = async (testCoordinates) => {
-    await changeHeadCoordiantes(testCoordinates);
-  };
+  // const handleChangeHeadCoordinates = async (testCoordinates) => {
+  //   await changeHeadCoordiantes(testCoordinates);
+  // };
 
   useEffect(() => {
     if (poseContainerRef.current) {
@@ -95,7 +95,7 @@ export default function SilentPose() {
     pusherClient.subscribe("pose-mirror");
 
     const handleCorrectPose = () => {
-      console.log("channel bind works");
+      console.log("handleCorrectPose RUNNING");
       advanceGame();
     };
 
@@ -117,6 +117,7 @@ export default function SilentPose() {
   return (
     <div className="flex h-[95%] flex-col items-center justify-evenly lg:flex-row">
       <PoseOrder imageArray={imageArray} />
+      <button onClick={() => console.log(imageArray)}>imageArray</button>
       <div className="flex h-full w-[48%] items-center justify-center lg:h-[calc(100vh-60px)]">
         <div
           ref={poseContainerRef}

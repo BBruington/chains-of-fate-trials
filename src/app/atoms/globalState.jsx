@@ -22,6 +22,7 @@ export const coordinatesAtom = atom({
 export const nameArrayAtom = atom([]);
 export const buttonAudioAtom = atom(new Audio("/sounds/button.wav"));
 export const button2AudioAtom = atom(new Audio("/sounds/button2.wav"));
+export const currentPoseContainerAtom = atom(0);
 export const playerNameAtom = atom("");
 export const playerIconAtom = atom(null);
 export const numOfPlayersAtom = atom(0);
@@ -47,4 +48,5 @@ export const solutionOrderAtom = atom([
   "W",
   "X",
 ]);
+export const showConfettiAtom = atom(false);
 export const userIdAtom = atom("");

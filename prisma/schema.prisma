@@ -34,10 +34,6 @@ model PuzzleChatMessage {
   createdAt  DateTime @default(now())
   session    PuzzleElementalTrials? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> db88402deb905129aba1ff77c82a6fc8bf1d027c
 
 model User {
   id                String    @default(cuid()) @id
@@ -51,6 +47,7 @@ model User {
   Ingredients       Ingredient[]
   Potions           Potion[]
   Formulas          Formula[]
+  MazePuzzle        MazePuzzle[]
   @@map(name: "users")
 }
 
@@ -133,6 +130,17 @@ enum PrimaryAttribute {
   TRANSMUTATION
 }
 
+model MazePuzzle {
+  id      String @id @default(cuid())
+  playerX Int
+  playerY Int
+  rows    Int
+  columns Int
+  grid    Int[]
+  userId  String
+  User    User   @relation(fields: [userId], references: [clerkId])
+}
+
 model Coordinates {
   id String @default(cuid()) @id
   head Json
@@ -158,4 +166,4 @@ model CursorCoordinates{
   coordinates Json?
   userId String? @unique
 }
-}
+

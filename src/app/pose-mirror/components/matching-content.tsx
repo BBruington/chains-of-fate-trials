@@ -20,10 +20,10 @@ export default function MatchingContent({
     <div
       className={`${showColor ? `${nameArray[index % 2].colorBorder}` : "border-stone-200"} relative h-40 w-28 rounded-lg border-[7px]`}
       onMouseLeave={() => {
-        console.log(nameArray);
-        console.log(index);
-        console.log(index % 2);
-        console.log(nameArray[index % 2].userId);
+        // console.log(nameArray);
+        // console.log(index);
+        // console.log(index % 2);
+        // console.log(nameArray[index % 2].userId);
         handleMouseLeave(nameArray[index % 2].userId);
       }}
     >

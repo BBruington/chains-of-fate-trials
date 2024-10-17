@@ -21,6 +21,7 @@ export default function ContinueModal() {
   function handleContinueButton() {
     gameStart();
     setShowColorSelect(false);
+    
     button2AudioRef.current.play();
 
     colorSelectMusicRef.current.pause();

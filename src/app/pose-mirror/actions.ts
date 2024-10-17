@@ -1,5 +1,5 @@
 "use server";
-import { prisma } from "../utils/context";
+import { prisma } from "@/lib/db";
 
 export const getSolutionOrder = async () => {
   try {

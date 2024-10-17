@@ -3,16 +3,21 @@
 import {
   coloredBoxesAtom,
   containersAtom,
+  currentPoseContainerAtom,
   nameArrayAtom,
+  playerStatesAtom,
+  showConfettiAtom,
   solutionOrderAtom,
   userIdAtom,
 } from "@/app/atoms/globalState";
+import { pusherClient } from "@/lib/pusher";
 import { DndContext } from "@dnd-kit/core";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { useAtom } from "jotai";
 import Image from "next/image";
 import Pusher from "pusher-js";
 import { useContext, useEffect, useRef, useState } from "react";
+import Confetti from "react-confetti";
 import MirrorPoseHooks from "../_hooks/mirror-pose-hooks";
 import { getSolutionOrder, randomizeSolutionOrder } from "../actions";
 import { PageContext } from "../page-context";
@@ -32,8 +37,13 @@ export default function PoseMirror({ currentUser, userData }) {
   // Game Logic States
   const [containers, setContainers] = useAtom(containersAtom);
   const [coloredBoxes, setColoredBoxes] = useAtom(coloredBoxesAtom);
+  const [currentPoseContainer, setCurrentPoseContainer] = useAtom(
+    currentPoseContainerAtom,
+  );
   const [solutionOrder, setSolutionOrder] = useAtom(solutionOrderAtom);
   const [nameArray, setNameArray] = useAtom(nameArrayAtom);
+  const [showConfetti, setShowConfetti] = useAtom(showConfettiAtom);
+  const [playerStates, setPlayerStates] = useAtom(playerStatesAtom);
 
   // Player States
   const [mousePosition, setMousePosition] = useState({
@@ -50,7 +60,12 @@ export default function PoseMirror({ currentUser, userData }) {
   const hasStarted = useRef(false);
 
   // Hooks
-  const { handleDragEnd, gameStart, handleResetGame } = MirrorPoseHooks();
+  const {
+    handleDragEnd,
+    gameStart,
+    handleResetGame,
+    poseMirrorCorrectPoseSyncEvent,
+  } = MirrorPoseHooks();
 
   useEffect(() => {
     setUserId(userData);
@@ -62,27 +77,45 @@ export default function PoseMirror({ currentUser, userData }) {
   }, []);
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
+    pusherClient.subscribe("pose-mirror");
 
-    setContainers((prevContainers) => {
-      return prevContainers.map((container, index) => {
-        let newContainer = { ...container };
-        if (index === coloredBoxes[1]) {
-          newContainer = { ...newContainer, isDroppableDisabled: false };
-        }
+    const handleSyncContainers = (data) => {
+      console.log(data);
+      setContainers(data.containers);
+      setPlayerStates(data.playerStates);
+      setCurrentPoseContainer(data.currentPoseContainer);
+      setColoredBoxes(data.coloredBoxes);
+    };
 
-        if (index >= coloredBoxes[0] && index <= coloredBoxes[1]) {
-          newContainer = { ...newContainer, showColor: true };
-        } else {
-          newContainer = { ...newContainer, showColor: false };
-        }
-        return newContainer;
-      });
-    });
-  }, [coloredBoxes]);
+    pusherClient.bind("correct-pose-sync", handleSyncContainers);
+
+    return () => {
+      pusherClient.unbind("correct-pose-sync", handleSyncContainers);
+      pusherClient.unsubscribe("pose-mirror");
+    };
+  }, []);
+
+  // useEffect(() => {
+  //   if (isFirstRender.current) {
+  //     isFirstRender.current = false;
+  //     return;
+  //   }
+
+  // }, [coloredBoxes]);
+
+  useEffect(() => {
+    pusherClient.subscribe("pose-mirror");
+
+    const handleSyncSolutionOrder = (data) => {
+      setSolutionOrder(data.solutionOrder);
+    };
+
+    pusherClient.bind("game-start", handleSyncSolutionOrder);
+    return () => {
+      pusherClient.unbind("game-start", handleSyncSolutionOrder);
+      pusherClient.unsubscribe("pose-mirror");
+    };
+  }, []);
 
   const handleGetSolutionOrder = async () => {
     try {
@@ -195,6 +228,9 @@ export default function PoseMirror({ currentUser, userData }) {
     <div
       className={`relative m-auto flex h-full w-full flex-col items-center justify-around xl:flex-row xl:justify-center`}
     >
+      {showConfetti ? (
+        <Confetti width={windowSize.width} height={windowSize.height} />
+      ) : null}
       <div className={`${showStart ? "" : "hidden"} h-full w-full`}>
         <StartScreen />
       </div>
@@ -203,13 +239,26 @@ export default function PoseMirror({ currentUser, userData }) {
         <ColorSelectScreen />
       ) : (
         <DndContext
-          onDragEnd={() => handleDragEnd(event, currentUser)}
+          onDragEnd={(event) => {
+            handleDragEnd(event, currentUser.id);
+          }}
           modifiers={[restrictToWindowEdges]}
         >
+          <button onClick={() => console.log(coloredBoxes)}>coloredBox</button>
+          <button onClick={() => console.log(playerStates)}>
+            playerStates
+          </button>
+          <button onClick={() => console.log(solutionOrder)}>
+            solutionOrder
+          </button>
+          <button onClick={() => console.log(nameArray)}>nameArray</button>
           {Object.keys(otherPlayersMouses).map((playerData) => {
             const mouseColorIndex = nameArray.findIndex((player) => {
               return player.userId === playerData;
             });
+            // console.log(nameArray);
+            // console.log(nameArray[mouseColorIndex]);
+            // console.log(nameArray[mouseColorIndex].colorName);
 
             return (
               <Image

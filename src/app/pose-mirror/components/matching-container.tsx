@@ -1,11 +1,14 @@
+import { useEffect } from "react";
 import Droppable from "./droppable";
 import MatchingContent from "./matching-content";
 
 import { MatchingContainerProps } from "@/app/pose-mirror/types";
+import { pusherClient } from "@/lib/pusher";
 
 export default function MatchingContainer({
   containers,
 }: MatchingContainerProps) {
+
   return (
     <div className="flex h-[95%] w-1/2 flex-wrap items-center justify-evenly gap-4 rounded-lg bg-neutral-800 p-4">
       {containers.map((id, index) => {

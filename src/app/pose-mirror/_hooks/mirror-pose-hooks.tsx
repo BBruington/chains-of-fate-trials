@@ -188,7 +188,7 @@ export default function MirrorPoseHooks() {
         console.log("REASON 2:", userId !== playerStates[0].userId);
         console.log("userId:", userId);
         console.log("playerStates[0].userId:", playerStates[0].userId);
-        handleResetGame();
+        handlePoseMirrorResetSync();
       } else {
         // If user places correct pose in correct order then swap the empty container to the given pose
         button2Audio.play();
@@ -293,8 +293,7 @@ export default function MirrorPoseHooks() {
         } else if (prevBoxes[0] === 12 - numOfPlayers && prevBoxes[1] === 11) {
           // At the end prevents bottom row from being colored and show Confetti
           console.log("test colored boxes moved 3");
-
-          setShowConfetti(true);
+          handlePoseMirrorConfettiSync();
           newBoxes = [...prevBoxes];
         } else {
           // Move the set of boxes one to the right
@@ -357,6 +356,38 @@ export default function MirrorPoseHooks() {
     setColoredBoxes([0, 0]);
     setCurrentPoseContainer(0);
     gameStart();
+  }
+
+  async function handlePoseMirrorResetSync() {
+    console.log("handlePoseMirrorResetSync running");
+
+    await fetch("/api/pose-mirror-reset-sync", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        channel: "pose-mirror",
+        event: "reset-sync",
+        data: {},
+      }),
+    });
+  }
+
+  async function handlePoseMirrorConfettiSync() {
+    console.log("handlePoseMirrorConfettiSync running");
+
+    await fetch("/api/pose-mirror-confetti-sync", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        channel: "pose-mirror",
+        event: "confetti-sync",
+        data: {},
+      }),
+    });
   }
 
   function handleMouseLeave(playerId) {

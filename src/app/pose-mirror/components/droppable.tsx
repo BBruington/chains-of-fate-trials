@@ -12,7 +12,7 @@ export default function Droppable(props: DroppableProps) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="w-[15%]">
+    <div ref={setNodeRef} style={style} className="flex w-[15%] justify-center">
       {props.children}
     </div>
   );

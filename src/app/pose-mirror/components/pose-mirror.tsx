@@ -110,9 +110,23 @@ export default function PoseMirror({ currentUser, userData }) {
       setSolutionOrder(data.solutionOrder);
     };
 
+    const handleResetSync = () => {
+      handleResetGame();
+    };
+
+    const handleShowConfetti = () => {
+      setShowConfetti(true);
+    };
+
     pusherClient.bind("game-start", handleSyncSolutionOrder);
+    pusherClient.bind("reset-sync", handleResetSync);
+    pusherClient.bind("confetti-sync", handleShowConfetti);
+
     return () => {
       pusherClient.unbind("game-start", handleSyncSolutionOrder);
+      pusherClient.unbind("reset-sync", handleResetSync);
+      pusherClient.bind("confetti-sync", handleShowConfetti);
+
       pusherClient.unsubscribe("pose-mirror");
     };
   }, []);
@@ -238,46 +252,37 @@ export default function PoseMirror({ currentUser, userData }) {
       {showColorSelect ? (
         <ColorSelectScreen />
       ) : (
-        <DndContext
-          onDragEnd={(event) => {
-            handleDragEnd(event, currentUser.id);
-          }}
-          modifiers={[restrictToWindowEdges]}
-        >
-          <button onClick={() => console.log(coloredBoxes)}>coloredBox</button>
-          <button onClick={() => console.log(playerStates)}>
-            playerStates
-          </button>
-          <button onClick={() => console.log(solutionOrder)}>
-            solutionOrder
-          </button>
-          <button onClick={() => console.log(nameArray)}>nameArray</button>
-          {Object.keys(otherPlayersMouses).map((playerData) => {
-            const mouseColorIndex = nameArray.findIndex((player) => {
-              return player.userId === playerData;
-            });
-            // console.log(nameArray);
-            // console.log(nameArray[mouseColorIndex]);
-            // console.log(nameArray[mouseColorIndex].colorName);
+        <div className="flex h-full w-full items-center justify-center">
+          <DndContext
+            onDragEnd={(event) => {
+              handleDragEnd(event, currentUser.id);
+            }}
+            modifiers={[restrictToWindowEdges]}
+          >
+            {Object.keys(otherPlayersMouses).map((playerData) => {
+              const mouseColorIndex = nameArray.findIndex((player) => {
+                return player.userId === playerData;
+              });
 
-            return (
-              <Image
-                style={{
-                  position: "absolute",
-                  left: `${otherPlayersMouses[playerData].x}px`,
-                  top: `${otherPlayersMouses[playerData].y}px`,
-                  zIndex: "20",
-                }}
-                src={`/cursors/${nameArray[mouseColorIndex].colorName}-cursor-pointer.png`}
-                width={25}
-                height={25}
-                alt="Other player cursor"
-              />
-            );
-          })}
-          <MatchingContainer containers={containers} />
-          <Stickman />
-        </DndContext>
+              return (
+                <Image
+                  style={{
+                    position: "absolute",
+                    left: `${otherPlayersMouses[playerData].x}px`,
+                    top: `${otherPlayersMouses[playerData].y}px`,
+                    zIndex: "20",
+                  }}
+                  src={`/cursors/${nameArray[mouseColorIndex].colorName}-cursor-pointer.png`}
+                  width={25}
+                  height={25}
+                  alt="Other player cursor"
+                />
+              );
+            })}
+            <MatchingContainer containers={containers} />
+            <Stickman />
+          </DndContext>
+        </div>
       )}
     </div>
   );

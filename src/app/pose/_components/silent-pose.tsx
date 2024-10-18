@@ -117,7 +117,6 @@ export default function SilentPose() {
   return (
     <div className="flex h-[95%] flex-col items-center justify-evenly lg:flex-row">
       <PoseOrder imageArray={imageArray} />
-      <button onClick={() => console.log(imageArray)}>imageArray</button>
       <div className="flex h-full w-[48%] items-center justify-center lg:h-[calc(100vh-60px)]">
         <div
           ref={poseContainerRef}

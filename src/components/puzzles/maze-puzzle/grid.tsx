@@ -9,28 +9,31 @@ import deployedBomb from "@/../public/icons/deployedBomb.svg";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import "./styles.css";
-import { GridPiece } from "./types";
+import { Enemy, GridPiece } from "./types";
+import { MutableRefObject } from "react";
 
 export default function GridRow({
   row,
   rowIndex,
   playerPosition,
   GRID_TILE,
+  allEnemies,
   character,
   editMapProperties,
 }: {
   row: GridPiece[];
   rowIndex: number;
+  allEnemies?: MutableRefObject<Enemy[]>;
   playerPosition: { x: number; y: number };
   editMapProperties?: {
     updatedTile: number;
     updateMapTile: ({
-      dx,
-      dy,
+      x,
+      y,
       newTile,
     }: {
-      dx: number;
-      dy: number;
+      x: number;
+      y: number;
       newTile: number;
       isSettingPlayer: boolean;
     }) => void;
@@ -48,8 +51,8 @@ export default function GridRow({
   const modifyTile = (colIndex: number) => {
     if (editMapProperties === undefined) return;
     const updatedPuzzle = editMapProperties.updateMapTile({
-      dx: rowIndex,
-      dy: colIndex,
+      x: rowIndex,
+      y: colIndex,
       newTile: editMapProperties.updatedTile,
       isSettingPlayer: editMapProperties.isSettingPlayer,
     });
@@ -65,6 +68,11 @@ export default function GridRow({
             editMapProperties?.updatedTile !== undefined && "cursor-pointer",
           )}
         >
+          {allEnemies?.current?.find(
+            (enemy) => rowIndex === enemy.x && colIndex === enemy.y,
+          ) && (
+            <div className="absolute z-10 flex h-8 w-8 items-center justify-center rounded-full bg-red-700" />
+          )}
           {grid.name === "blocked" && (
             <div className="stone-wall-tile bg-slate-900" />
           )}
@@ -92,11 +100,9 @@ export default function GridRow({
           {grid.name === "goal" && (
             <Image src={flag} alt="goal" className="h-8 w-10" />
           )}
-          {grid.name === "bomb" && (
-            <Image src={bomb} alt="bomb"/>
-          )}
+          {grid.name === "bomb" && <Image src={bomb} alt="bomb" />}
           {grid.name === "deployed" && (
-            <Image src={deployedBomb} alt="deployedBomb"/>
+            <Image src={deployedBomb} alt="deployedBomb" />
           )}
         </div>
       ))}

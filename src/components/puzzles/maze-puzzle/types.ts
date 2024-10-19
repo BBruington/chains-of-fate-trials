@@ -5,3 +5,14 @@ export type GridPiece = {
   isValidMove: boolean;
   isPickupable?: boolean;
 };
+
+export type coordinates = {
+  x: number;
+  y: number;
+};
+
+export type Enemy = {
+  x: number;
+  y: number;
+  moving: "left" | "right" | "up" | "down";
+};

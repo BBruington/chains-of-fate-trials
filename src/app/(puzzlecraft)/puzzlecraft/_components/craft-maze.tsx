@@ -58,8 +58,9 @@ export default function CraftMaze({
   );
   const {
     grid,
-    GRID_TILE,
     player,
+    GRID_TILE,
+    enemies,
     deployedBombs,
     playerPosition,
     setGrid,
@@ -72,6 +73,7 @@ export default function CraftMaze({
   } = useMazePuzzle({
     mapLayout: formattedPuzzle.matrix,
     playerStartingPosition: formattedPuzzle.playerStartingPosition,
+    allEnemies: [{ x: 2, y: 1, moving: "down" }],
   });
   const [updatedTile, setUpdateTile] = useState(0);
   const selectedPuzzle = useRef(MazePuzzle[0] ? MazePuzzle[0].id : "created");
@@ -126,7 +128,7 @@ export default function CraftMaze({
   };
 
   const handlePlantBomb = () => {
-    plantBomb({ dx: playerPosition.x, dy: playerPosition.y });
+    plantBomb({ x: playerPosition.x, y: playerPosition.y });
   };
 
   const handleDetonate = () => {
@@ -143,6 +145,7 @@ export default function CraftMaze({
               key={rowIndex}
               row={row}
               rowIndex={rowIndex}
+              allEnemies={enemies}
               GRID_TILE={GRID_TILE}
               playerPosition={playerPosition}
               editMapProperties={editMapProperties}
@@ -170,8 +173,15 @@ export default function CraftMaze({
             Reset Grid to Default
           </Button>
 
-          <Button disabled={deployedBombs.current.length === 0} onClick={handleDetonate}>Detonate</Button>
-          <Button disabled={!player.hasBomb} onClick={handlePlantBomb}>Plant Bomb</Button>
+          <Button
+            disabled={deployedBombs.current.length === 0}
+            onClick={handleDetonate}
+          >
+            Detonate
+          </Button>
+          <Button disabled={!player.hasBomb} onClick={handlePlantBomb}>
+            Plant Bomb
+          </Button>
 
           <div className="flex w-full justify-around">
             <div className="flex flex-col items-center">
@@ -179,14 +189,14 @@ export default function CraftMaze({
               <div className="flex">
                 <Button
                   onClick={() =>
-                    updateAxis({ dx: grid[0].length - 1, dy: grid.length })
+                    updateAxis({ x: grid[0].length - 1, y: grid.length })
                   }
                 >
                   -
                 </Button>
                 <Button
                   onClick={() =>
-                    updateAxis({ dx: grid[0].length + 1, dy: grid.length })
+                    updateAxis({ x: grid[0].length + 1, y: grid.length })
                   }
                 >
                   +
@@ -199,14 +209,14 @@ export default function CraftMaze({
               <div className="flex">
                 <Button
                   onClick={() =>
-                    updateAxis({ dx: grid[0].length, dy: grid.length - 1 })
+                    updateAxis({ x: grid[0].length, y: grid.length - 1 })
                   }
                 >
                   -
                 </Button>
                 <Button
                   onClick={() =>
-                    updateAxis({ dx: grid[0].length, dy: grid.length + 1 })
+                    updateAxis({ x: grid[0].length, y: grid.length + 1 })
                   }
                 >
                   +
@@ -223,7 +233,10 @@ export default function CraftMaze({
           >
             {Object.keys(GRID_TILE).map((tile) => (
               <ToggleGroupItem
-                className={cn("data-[state=on]:bg-black", GRID_TILE[Number(tile)].name === "deployed" && "hidden")}
+                className={cn(
+                  "data-[state=on]:bg-black",
+                  GRID_TILE[Number(tile)].name === "deployed" && "hidden",
+                )}
                 disabled={isSettingPlayer}
                 key={tile}
                 value={tile}

@@ -36,10 +36,10 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
       ref={setNodeRef}
     >
       <div className="mb-5 flex space-x-3">
-        <Button onClick={() => movePlayer(-1, 0)}>W</Button>
-        <Button onClick={() => movePlayer(1, 0)}>S</Button>
-        <Button onClick={() => movePlayer(0, 1)}>D</Button>
-        <Button onClick={() => movePlayer(0, -1)}>A</Button>
+        <Button onClick={() => movePlayer(-1, 0, "up")}>W</Button>
+        <Button onClick={() => movePlayer(1, 0, "down")}>S</Button>
+        <Button onClick={() => movePlayer(0, 1, "right")}>D</Button>
+        <Button onClick={() => movePlayer(0, -1, "left")}>A</Button>
         <Button onClick={reset}>Reset</Button>
         <Select
           onValueChange={(

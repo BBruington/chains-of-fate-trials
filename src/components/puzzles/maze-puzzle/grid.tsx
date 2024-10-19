@@ -1,20 +1,25 @@
-import { GridPiece } from "../../../_types";
 import elendiel from "@/../public/playericons/elendiel.png";
 import aelarion from "@/../public/playericons/aelarion.png";
 import dinner from "@/../public/playericons/dinner.png";
 import artemis from "@/../public/playericons/artemis.png";
+import box from "@/../public/icons/box.png";
+import flag from "@/../public/icons/flag.png";
+import bomb from "@/../public/icons/bomb.svg";
+import deployedBomb from "@/../public/icons/deployedBomb.svg";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import "./styles.css";
+import { GridPiece } from "./types";
 
 export default function GridRow({
   row,
   rowIndex,
   playerPosition,
-  MAP_TILE,
+  GRID_TILE,
   character,
   editMapProperties,
 }: {
-  row: number[];
+  row: GridPiece[];
   rowIndex: number;
   playerPosition: { x: number; y: number };
   editMapProperties?: {
@@ -31,7 +36,7 @@ export default function GridRow({
     }) => void;
     isSettingPlayer: boolean;
   };
-  MAP_TILE: Record<number, GridPiece>;
+  GRID_TILE: Record<number, GridPiece>;
   character?: "dinner" | "artemis" | "aelarion" | "elendiel" | undefined;
 }) {
   const characters = {
@@ -56,12 +61,12 @@ export default function GridRow({
           key={colIndex}
           onClick={() => modifyTile(colIndex)}
           className={cn(
-            "flex h-10 w-10 items-center justify-center border border-black bg-slate-400",
+            "flex h-10 w-10 items-center justify-center border border-black bg-gray-400 shadow-lg",
             editMapProperties?.updatedTile !== undefined && "cursor-pointer",
           )}
         >
-          {MAP_TILE[grid].name === "blocked" && (
-            <div className="h-full w-full bg-slate-900" />
+          {grid.name === "blocked" && (
+            <div className="stone-wall-tile bg-slate-900" />
           )}
           {rowIndex === playerPosition.x &&
             colIndex === playerPosition.y &&
@@ -76,18 +81,22 @@ export default function GridRow({
           {rowIndex === playerPosition.x &&
             colIndex === playerPosition.y &&
             character === undefined && (
-              <div className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-700" />
+              <div className="absolute z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-700" />
             )}
-          {MAP_TILE[grid].name === "push" && (
-            <div className="z-10 h-8 w-8 bg-green-300" />
+          {grid.name === "push" && (
+            <Image src={box} alt="pushable box" className="z-10 h-8 w-8" />
           )}
-          {MAP_TILE[grid].name === "hole" && (
+          {grid.name === "hole" && (
             <div className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black" />
           )}
-          {MAP_TILE[grid].name === "goal" && (
-            <div className="h-8 w-8 rounded-full text-center text-2xl text-black">
-              G
-            </div>
+          {grid.name === "goal" && (
+            <Image src={flag} alt="goal" className="h-8 w-10" />
+          )}
+          {grid.name === "bomb" && (
+            <Image src={bomb} alt="bomb"/>
+          )}
+          {grid.name === "deployed" && (
+            <Image src={deployedBomb} alt="deployedBomb"/>
           )}
         </div>
       ))}

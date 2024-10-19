@@ -1,5 +1,5 @@
 "use client";
-import GridRow from "@/app/(session)/session/[id]/_components/puzzles/air/grid";
+import GridRow from "@/components/puzzles/maze-puzzle/grid";
 import useMazePuzzle from "@/components/puzzles/maze-puzzle/useMazePuzzle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Toggle } from "@/components/ui/toggle";
@@ -8,6 +8,7 @@ import { useRef, useState } from "react";
 import { saveMazePuzzle, deleteMazePuzzle } from "../actions";
 import { DEFAULT_MAP } from "@/app/(session)/session/[id]/_constants";
 import { MazePuzzle } from "../../../../../prisma/generated/zod";
+import { cn } from "@/lib/utils";
 
 type CraftMazeProperties = {
   clerkId: string;
@@ -38,7 +39,10 @@ const formatPuzzle = (mazePuzzle?: Maze) => {
   return { playerStartingPosition: playerPosition, matrix };
 };
 
-export default function CraftMaze({ MazePuzzle, clerkId }: CraftMazeProperties) {
+export default function CraftMaze({
+  MazePuzzle,
+  clerkId,
+}: CraftMazeProperties) {
   const defaultCreatedMaze = {
     id: "created",
     playerX: 0,
@@ -48,19 +52,21 @@ export default function CraftMaze({ MazePuzzle, clerkId }: CraftMazeProperties) 
     grid: DEFAULT_MAP.flat(),
     userId: clerkId,
   };
-  
+
   const formattedPuzzle = formatPuzzle(
-    MazePuzzle[0]
-      ? MazePuzzle[0]
-      : defaultCreatedMaze,
+    MazePuzzle[0] ? MazePuzzle[0] : defaultCreatedMaze,
   );
   const {
     grid,
-    MAP_TILE,
+    GRID_TILE,
+    player,
+    deployedBombs,
     playerPosition,
     setGrid,
     setPlayerPosition,
+    plantBomb,
     updateAxis,
+    detonate,
     reset,
     updateMapTile,
   } = useMazePuzzle({
@@ -68,9 +74,7 @@ export default function CraftMaze({ MazePuzzle, clerkId }: CraftMazeProperties) 
     playerStartingPosition: formattedPuzzle.playerStartingPosition,
   });
   const [updatedTile, setUpdateTile] = useState(0);
-  const selectedPuzzle = useRef(
-    MazePuzzle[0] ? MazePuzzle[0].id : "created",
-  );
+  const selectedPuzzle = useRef(MazePuzzle[0] ? MazePuzzle[0].id : "created");
   const [isSettingPlayer, setIsSettingPlayer] = useState(false);
   const editMapProperties = {
     updatedTile,
@@ -87,7 +91,8 @@ export default function CraftMaze({ MazePuzzle, clerkId }: CraftMazeProperties) 
     const formatted = formatPuzzle(maze);
     const { matrix, playerStartingPosition } = formatted;
     selectedPuzzle.current = maze.id;
-    setGrid(matrix);
+    const updatedGrid = matrix.map((row) => row.map((tile) => GRID_TILE[tile]));
+    setGrid(updatedGrid);
     setPlayerPosition({
       x: playerStartingPosition.x,
       y: playerStartingPosition.y,
@@ -96,11 +101,7 @@ export default function CraftMaze({ MazePuzzle, clerkId }: CraftMazeProperties) 
 
   const handleDeletePuzzle = async () => {
     await deleteMazePuzzle({ id: selectedPuzzle.current });
-    handleSelectMaze(
-      MazePuzzle[0]
-        ? MazePuzzle[0]
-        : defaultCreatedMaze,
-    );
+    handleSelectMaze(MazePuzzle[0] ? MazePuzzle[0] : defaultCreatedMaze);
   };
 
   const handleSaveChanges = async () => {
@@ -108,7 +109,7 @@ export default function CraftMaze({ MazePuzzle, clerkId }: CraftMazeProperties) 
       selectedPuzzle.current === "created"
         ? { ...defaultCreatedMaze }
         : {
-            grid: grid.flat(),
+            grid: grid.flat().map((tile) => tile.id),
             columns: grid[0].length,
             rows: grid.length,
             playerX: playerPosition.x,
@@ -124,41 +125,55 @@ export default function CraftMaze({ MazePuzzle, clerkId }: CraftMazeProperties) 
     });
   };
 
+  const handlePlantBomb = () => {
+    plantBomb({ dx: playerPosition.x, dy: playerPosition.y });
+  };
+
+  const handleDetonate = () => {
+    detonate();
+  };
+
   return (
-    <div className="flex flex-col">
-      <div className="flex justify-center space-x-3">
-        {MazePuzzle.map((puzzle, index) => (
-          <Button onClick={() => handleSelectMaze(puzzle)} key={puzzle.id}>
-            {index + 1}
-          </Button>
-        ))}
-        <Button
-          onClick={() => {
-            handleSelectMaze(defaultCreatedMaze);
-            handleSaveChanges();
-          }}
-        >
-          +
-        </Button>
-      </div>
-      <div className="flex justify-between">
-        <div className="flex flex-col">
+    <div className="flex h-full flex-1 flex-col">
+      <div className="flex h-full justify-between">
+        {/* grid */}
+        <div className="m-5 flex w-full flex-col items-center">
           {grid.map((row, rowIndex) => (
             <GridRow
               key={rowIndex}
               row={row}
               rowIndex={rowIndex}
-              MAP_TILE={MAP_TILE}
+              GRID_TILE={GRID_TILE}
               playerPosition={playerPosition}
               editMapProperties={editMapProperties}
             />
           ))}
+          <div className="mt-5 flex justify-center space-x-3">
+            {MazePuzzle.map((puzzle, index) => (
+              <Button onClick={() => handleSelectMaze(puzzle)} key={puzzle.id}>
+                {index + 1}
+              </Button>
+            ))}
+            <Button
+              onClick={() => {
+                handleSelectMaze(defaultCreatedMaze);
+                handleSaveChanges();
+              }}
+            >
+              +
+            </Button>
+          </div>
         </div>
-        <div className="flex flex-col">
-          <Button onClick={reset}>Reset</Button>
-          <Button onClick={handleSaveChanges}>Save Changes</Button>
-          <Button onClick={handleDeletePuzzle}>Delete Puzzle</Button>
-          <div className="flex justify-between">
+        {/* side bar */}
+        <div className="flex h-full flex-col items-center space-y-3 bg-secondary p-2">
+          <Button className="w-1/2" onClick={reset}>
+            Reset Grid to Default
+          </Button>
+
+          <Button disabled={deployedBombs.current.length === 0} onClick={handleDetonate}>Detonate</Button>
+          <Button disabled={!player.hasBomb} onClick={handlePlantBomb}>Plant Bomb</Button>
+
+          <div className="flex w-full justify-around">
             <div className="flex flex-col items-center">
               <h2>Columns</h2>
               <div className="flex">
@@ -206,21 +221,31 @@ export default function CraftMaze({ MazePuzzle, clerkId }: CraftMazeProperties) 
               if (value) setUpdateTile(Number(value));
             }}
           >
-            {Object.keys(MAP_TILE).map((tile) => (
+            {Object.keys(GRID_TILE).map((tile) => (
               <ToggleGroupItem
+                className={cn("data-[state=on]:bg-black", GRID_TILE[Number(tile)].name === "deployed" && "hidden")}
                 disabled={isSettingPlayer}
                 key={tile}
                 value={tile}
               >
-                <p>{MAP_TILE[Number(tile)].name}</p>
+                <p>{GRID_TILE[Number(tile)].name}</p>
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
-          <div className="flex">
+          <div className="flex items-center justify-around">
             <h2>set player position</h2>
-            <Toggle onPressedChange={(e) => handleSetPlayerPosition(e)}>
+            <Toggle
+              className="mx-2 data-[state=on]:bg-black"
+              onPressedChange={(e) => handleSetPlayerPosition(e)}
+            >
               Set Position
             </Toggle>
+          </div>
+          <div className="flex justify-around space-x-5">
+            <Button onClick={handleSaveChanges}>Save Changes</Button>
+            <Button variant={"destructive"} onClick={handleDeletePuzzle}>
+              Delete Puzzle
+            </Button>
           </div>
         </div>
       </div>

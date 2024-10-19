@@ -3,7 +3,7 @@ import { useDroppable } from "@dnd-kit/core";
 import { PuzzleEnums } from "../../../_types";
 import { Button } from "@/components/ui/button";
 import useMazePuzzle from "../../../../../../../components/puzzles/maze-puzzle/useMazePuzzle";
-import GridRow from "./grid";
+import GridRow from "@/components/puzzles/maze-puzzle/grid";
 import {
   Select,
   SelectContent,
@@ -25,7 +25,7 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
     id: PuzzleEnums.AIR,
   });
 
-  const { grid, movePlayer, reset, playerPosition, MAP_TILE } = useMazePuzzle({
+  const { grid, movePlayer, reset, playerPosition, GRID_TILE } = useMazePuzzle({
     sessionId,
     mapLayout: INITIAL_MAP,
   });
@@ -67,7 +67,7 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
             row={row}
             character={character}
             rowIndex={rowIndex}
-            MAP_TILE={MAP_TILE}
+            GRID_TILE={GRID_TILE}
             playerPosition={playerPosition}
           />
         ))}

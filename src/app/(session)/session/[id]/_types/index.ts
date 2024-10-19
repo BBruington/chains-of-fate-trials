@@ -147,11 +147,7 @@ export type MetalType = {
   purity: number;
 };
 
-export type GridPiece = {
-  id: number;
-  name: string;
-  isValidMove: boolean;
-};
+
 
 type Rune = {
   label: string;

@@ -1,5 +1,4 @@
 import {
-  GridPiece,
   InventoryItemEnums,
   PuzzleEnums,
   PuzzleSideBarItem,
@@ -45,42 +44,6 @@ export const DEFAULT_MAP = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ];
-
-export enum TILE_TYPES {
-  EMPTY = 0,
-  BLOCKED = 1,
-  PUSHABLE = 2,
-  GOAL = 3,
-  HOLE = 4,
-}
-
-export const MAP_TILE: Record<number, GridPiece> = {
-  [TILE_TYPES.EMPTY]: {
-    id: 0,
-    name: "empty",
-    isValidMove: true,
-  },
-  [TILE_TYPES.BLOCKED]: {
-    id: 1,
-    name: "blocked",
-    isValidMove: false,
-  },
-  [TILE_TYPES.PUSHABLE]: {
-    id: 2,
-    name: "push",
-    isValidMove: true,
-  },
-  [TILE_TYPES.GOAL]: {
-    id: 3,
-    name: "goal",
-    isValidMove: true,
-  },
-  [TILE_TYPES.HOLE]: {
-    id: 4,
-    name: "hole",
-    isValidMove: false,
-  },
-};
 
 export const ALL_METALS = {
   copper: {

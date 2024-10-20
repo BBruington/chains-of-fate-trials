@@ -5,6 +5,7 @@ import { inventoryItems } from "../../../app/(session)/session/[id]/jotaiAtoms";
 import { revealInventoryItem } from "@/app/(session)/session/[id]/_hooks/hooks";
 import { GRID_TILE, TILE_TYPES } from "./constants";
 import { coordinates, Enemy, GridPiece } from "./types";
+import { Direction } from "@prisma/client";
 
 export default function useMazePuzzle({
   sessionId,
@@ -19,7 +20,7 @@ export default function useMazePuzzle({
 }) {
   const [player, setPlayer] = useState<{
     hasBomb: boolean;
-    lastDirectionMoved: null | "left" | "right" | "up" | "down";
+    lastDirectionMoved: null | Direction
   }>({
     hasBomb: false,
     lastDirectionMoved: null,
@@ -50,16 +51,16 @@ export default function useMazePuzzle({
   const handleKeyPress = (e: KeyboardEvent) => {
     switch (e.key) {
       case "w":
-        movePlayer(-1, 0, "up");
+        movePlayer(-1, 0, Direction.UP);
         break;
       case "s":
-        movePlayer(1, 0, "down");
+        movePlayer(1, 0, Direction.DOWN);
         break;
       case "a":
-        movePlayer(0, -1, "left");
+        movePlayer(0, -1, Direction.LEFT);
         break;
       case "d":
-        movePlayer(0, 1, "right");
+        movePlayer(0, 1, Direction.RIGHT);
         break;
       default:
         break;
@@ -189,21 +190,33 @@ export default function useMazePuzzle({
     return true;
   };
 
+  // const convertDirection = (moving: Direction): "right" | "left" | "up" | "down" => {
+  //   const ddd = {
+  //     UP: "up",
+  //     DOWN: 'down',
+  //     RIGHT: "right",
+  //     LEFT: "left",
+  //   }
+
+  //   return ddd[moving] || "down"
+  // }
+
   const moveEnemies = (enemy: Enemy): Enemy => {
-    const direction = enemy.moving;
-    const opposite: { left: "right"; right: "left"; up: "down"; down: "up" } = {
-      left: "right",
-      right: "left",
-      up: "down",
-      down: "up",
+    const direction = enemy.direction
+    //{ LEFT: "right"; right: "left"; up: "down"; down: "up" }
+    const opposite  = {
+      LEFT: Direction.RIGHT,
+      RIGHT: Direction.LEFT,
+      UP: Direction.DOWN,
+      DOWN: Direction.UP,
     };
     const movement = {
-      left: { x: 0, y: -1 },
-      right: { x: 0, y: 1 },
-      up: { x: -1, y: 0 },
-      down: { x: 1, y: 0 },
+      LEFT: { x: 0, y: -1 },
+      RIGHT: { x: 0, y: 1 },
+      UP: { x: -1, y: 0 },
+      DOWN: { x: 1, y: 0 },
     };
-    const otherDirection = opposite[direction];
+    const otherDirection = opposite[direction as keyof typeof opposite];
 
     if (
       !isValidMove({
@@ -220,7 +233,8 @@ export default function useMazePuzzle({
         return enemy;
       }
       return {
-        moving: opposite[direction],
+        ...enemy,
+        direction: opposite[direction],
         x: movement[otherDirection].x + enemy.x,
         y: movement[otherDirection].y + enemy.y,
       };
@@ -242,14 +256,16 @@ export default function useMazePuzzle({
         })
       ) {
         return {
-          moving: opposite[direction],
+          ...enemy,
+          direction: opposite[direction],
           x: movement[otherDirection].x + enemy.x,
           y: movement[otherDirection].y + enemy.y,
         };
       }
     }
     return {
-      moving: direction,
+      ...enemy,
+      direction: direction,
       x: movement[direction].x + enemy.x,
       y: movement[direction].y + enemy.y,
     };
@@ -266,27 +282,27 @@ export default function useMazePuzzle({
     movedFromY: number;
     movedToX: number;
     movedToY: number;
-    direction?: "left" | "right" | "up" | "down";
+    direction: Direction
   }) => {
-    const opposite: { left: "right"; right: "left"; up: "down"; down: "up" } = {
-      left: "right",
-      right: "left",
-      up: "down",
-      down: "up",
+    const opposite  = {
+      LEFT: Direction.RIGHT,
+      RIGHT: Direction.LEFT,
+      UP: Direction.DOWN,
+      DOWN: Direction.UP,
     };
     return enemies.current.find(
       (enemy) =>
         (enemy.x === movedToX && enemy.y === movedToY) ||
         (enemy.x === movedFromX &&
           enemy.y === movedFromY &&
-          direction === opposite[enemy.moving]),
+          direction === opposite[direction]),
     );
   };
 
   const movePlayer = (
     x: number,
     y: number,
-    direction: "left" | "right" | "up" | "down",
+    direction: Direction,
   ) => {
     const newX = playerPosition.x + x;
     const newY = playerPosition.y + y;

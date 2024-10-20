@@ -1,3 +1,5 @@
+import { $Enums } from "@prisma/client";
+
 export type GridPiece = {
   id: number;
   name: string;
@@ -12,7 +14,9 @@ export type coordinates = {
 };
 
 export type Enemy = {
+  id: string;
+  puzzleId: string;
   x: number;
   y: number;
-  moving: "left" | "right" | "up" | "down";
+  direction: $Enums.Direction
 };

@@ -112,6 +112,23 @@ model MazePuzzle {
   createdAt DateTime  @default(now()) @map(name: "created_at")
   userId  String
   User    User   @relation(fields: [userId], references: [clerkId])
+  enemies  Enemy[]
+}
+
+model Enemy {
+  id      String @id @default(cuid())
+  puzzleId String 
+  x   Int
+  y   Int
+  direction   Direction @default(DOWN)
+  Maze MazePuzzle @relation(fields: [puzzleId], references: [id])
+}
+
+enum Direction {
+  LEFT
+  RIGHT
+  UP 
+  DOWN
 }
 
 enum MagicType {

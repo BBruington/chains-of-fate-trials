@@ -70,6 +70,8 @@ export const PotionScalarFieldEnumSchema = z.enum(['id','rarity','type','primary
 
 export const MazePuzzleScalarFieldEnumSchema = z.enum(['id','playerX','playerY','rows','columns','grid','createdAt','userId']);
 
+export const EnemyScalarFieldEnumSchema = z.enum(['id','puzzleId','x','y','direction']);
+
 export const CoordinatesScalarFieldEnumSchema = z.enum(['id','head','torso','waist','leftForearm','leftHand','rightForearm','rightHand','leftKnee','leftFoot','rightKnee','rightFoot']);
 
 export const SolutionOrderScalarFieldEnumSchema = z.enum(['id','order']);
@@ -87,6 +89,10 @@ export const QueryModeSchema = z.enum(['default','insensitive']);
 export const NullsOrderSchema = z.enum(['first','last']);
 
 export const JsonNullValueFilterSchema = z.enum(['DbNull','JsonNull','AnyNull',]).transform((value) => value === 'JsonNull' ? Prisma.JsonNull : value === 'DbNull' ? Prisma.JsonNull : value === 'AnyNull' ? Prisma.AnyNull : value);
+
+export const DirectionSchema = z.enum(['LEFT','RIGHT','UP','DOWN']);
+
+export type DirectionType = `${z.infer<typeof DirectionSchema>}`
 
 export const MagicTypeSchema = z.enum(['EMPTY','ARCANE','PRIMAL','DIVINE','OCCULT']);
 
@@ -232,6 +238,20 @@ export const MazePuzzleSchema = z.object({
 })
 
 export type MazePuzzle = z.infer<typeof MazePuzzleSchema>
+
+/////////////////////////////////////////
+// ENEMY SCHEMA
+/////////////////////////////////////////
+
+export const EnemySchema = z.object({
+  direction: DirectionSchema,
+  id: z.string().cuid(),
+  puzzleId: z.string(),
+  x: z.number().int(),
+  y: z.number().int(),
+})
+
+export type Enemy = z.infer<typeof EnemySchema>
 
 /////////////////////////////////////////
 // COORDINATES SCHEMA
@@ -475,11 +495,21 @@ export const PotionSelectSchema: z.ZodType<Prisma.PotionSelect> = z.object({
 
 export const MazePuzzleIncludeSchema: z.ZodType<Prisma.MazePuzzleInclude> = z.object({
   User: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
+  enemies: z.union([z.boolean(),z.lazy(() => EnemyFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => MazePuzzleCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
 export const MazePuzzleArgsSchema: z.ZodType<Prisma.MazePuzzleDefaultArgs> = z.object({
   select: z.lazy(() => MazePuzzleSelectSchema).optional(),
   include: z.lazy(() => MazePuzzleIncludeSchema).optional(),
+}).strict();
+
+export const MazePuzzleCountOutputTypeArgsSchema: z.ZodType<Prisma.MazePuzzleCountOutputTypeDefaultArgs> = z.object({
+  select: z.lazy(() => MazePuzzleCountOutputTypeSelectSchema).nullish(),
+}).strict();
+
+export const MazePuzzleCountOutputTypeSelectSchema: z.ZodType<Prisma.MazePuzzleCountOutputTypeSelect> = z.object({
+  enemies: z.boolean().optional(),
 }).strict();
 
 export const MazePuzzleSelectSchema: z.ZodType<Prisma.MazePuzzleSelect> = z.object({
@@ -492,6 +522,29 @@ export const MazePuzzleSelectSchema: z.ZodType<Prisma.MazePuzzleSelect> = z.obje
   createdAt: z.boolean().optional(),
   userId: z.boolean().optional(),
   User: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
+  enemies: z.union([z.boolean(),z.lazy(() => EnemyFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => MazePuzzleCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+// ENEMY
+//------------------------------------------------------
+
+export const EnemyIncludeSchema: z.ZodType<Prisma.EnemyInclude> = z.object({
+  Maze: z.union([z.boolean(),z.lazy(() => MazePuzzleArgsSchema)]).optional(),
+}).strict()
+
+export const EnemyArgsSchema: z.ZodType<Prisma.EnemyDefaultArgs> = z.object({
+  select: z.lazy(() => EnemySelectSchema).optional(),
+  include: z.lazy(() => EnemyIncludeSchema).optional(),
+}).strict();
+
+export const EnemySelectSchema: z.ZodType<Prisma.EnemySelect> = z.object({
+  id: z.boolean().optional(),
+  puzzleId: z.boolean().optional(),
+  x: z.boolean().optional(),
+  y: z.boolean().optional(),
+  direction: z.boolean().optional(),
+  Maze: z.union([z.boolean(),z.lazy(() => MazePuzzleArgsSchema)]).optional(),
 }).strict()
 
 // COORDINATES
@@ -1088,6 +1141,7 @@ export const MazePuzzleWhereInputSchema: z.ZodType<Prisma.MazePuzzleWhereInput> 
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   User: z.union([ z.lazy(() => UserRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
+  enemies: z.lazy(() => EnemyListRelationFilterSchema).optional()
 }).strict();
 
 export const MazePuzzleOrderByWithRelationInputSchema: z.ZodType<Prisma.MazePuzzleOrderByWithRelationInput> = z.object({
@@ -1099,7 +1153,8 @@ export const MazePuzzleOrderByWithRelationInputSchema: z.ZodType<Prisma.MazePuzz
   grid: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
-  User: z.lazy(() => UserOrderByWithRelationInputSchema).optional()
+  User: z.lazy(() => UserOrderByWithRelationInputSchema).optional(),
+  enemies: z.lazy(() => EnemyOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const MazePuzzleWhereUniqueInputSchema: z.ZodType<Prisma.MazePuzzleWhereUniqueInput> = z.object({
@@ -1118,6 +1173,7 @@ export const MazePuzzleWhereUniqueInputSchema: z.ZodType<Prisma.MazePuzzleWhereU
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   User: z.union([ z.lazy(() => UserRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
+  enemies: z.lazy(() => EnemyListRelationFilterSchema).optional()
 }).strict());
 
 export const MazePuzzleOrderByWithAggregationInputSchema: z.ZodType<Prisma.MazePuzzleOrderByWithAggregationInput> = z.object({
@@ -1148,6 +1204,66 @@ export const MazePuzzleScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Ma
   grid: z.lazy(() => IntNullableListFilterSchema).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   userId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+}).strict();
+
+export const EnemyWhereInputSchema: z.ZodType<Prisma.EnemyWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => EnemyWhereInputSchema),z.lazy(() => EnemyWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EnemyWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EnemyWhereInputSchema),z.lazy(() => EnemyWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  puzzleId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  x: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  y: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  direction: z.union([ z.lazy(() => EnumDirectionFilterSchema),z.lazy(() => DirectionSchema) ]).optional(),
+  Maze: z.union([ z.lazy(() => MazePuzzleRelationFilterSchema),z.lazy(() => MazePuzzleWhereInputSchema) ]).optional(),
+}).strict();
+
+export const EnemyOrderByWithRelationInputSchema: z.ZodType<Prisma.EnemyOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  puzzleId: z.lazy(() => SortOrderSchema).optional(),
+  x: z.lazy(() => SortOrderSchema).optional(),
+  y: z.lazy(() => SortOrderSchema).optional(),
+  direction: z.lazy(() => SortOrderSchema).optional(),
+  Maze: z.lazy(() => MazePuzzleOrderByWithRelationInputSchema).optional()
+}).strict();
+
+export const EnemyWhereUniqueInputSchema: z.ZodType<Prisma.EnemyWhereUniqueInput> = z.object({
+  id: z.string().cuid()
+})
+.and(z.object({
+  id: z.string().cuid().optional(),
+  AND: z.union([ z.lazy(() => EnemyWhereInputSchema),z.lazy(() => EnemyWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EnemyWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EnemyWhereInputSchema),z.lazy(() => EnemyWhereInputSchema).array() ]).optional(),
+  puzzleId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  x: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  y: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  direction: z.union([ z.lazy(() => EnumDirectionFilterSchema),z.lazy(() => DirectionSchema) ]).optional(),
+  Maze: z.union([ z.lazy(() => MazePuzzleRelationFilterSchema),z.lazy(() => MazePuzzleWhereInputSchema) ]).optional(),
+}).strict());
+
+export const EnemyOrderByWithAggregationInputSchema: z.ZodType<Prisma.EnemyOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  puzzleId: z.lazy(() => SortOrderSchema).optional(),
+  x: z.lazy(() => SortOrderSchema).optional(),
+  y: z.lazy(() => SortOrderSchema).optional(),
+  direction: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => EnemyCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => EnemyAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => EnemyMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => EnemyMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => EnemySumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const EnemyScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.EnemyScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => EnemyScalarWhereWithAggregatesInputSchema),z.lazy(() => EnemyScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EnemyScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EnemyScalarWhereWithAggregatesInputSchema),z.lazy(() => EnemyScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  puzzleId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  x: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  y: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  direction: z.union([ z.lazy(() => EnumDirectionWithAggregatesFilterSchema),z.lazy(() => DirectionSchema) ]).optional(),
 }).strict();
 
 export const CoordinatesWhereInputSchema: z.ZodType<Prisma.CoordinatesWhereInput> = z.object({
@@ -1898,7 +2014,8 @@ export const MazePuzzleCreateInputSchema: z.ZodType<Prisma.MazePuzzleCreateInput
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.coerce.date().optional(),
-  User: z.lazy(() => UserCreateNestedOneWithoutMazePuzzleInputSchema)
+  User: z.lazy(() => UserCreateNestedOneWithoutMazePuzzleInputSchema),
+  enemies: z.lazy(() => EnemyCreateNestedManyWithoutMazeInputSchema).optional()
 }).strict();
 
 export const MazePuzzleUncheckedCreateInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedCreateInput> = z.object({
@@ -1909,7 +2026,8 @@ export const MazePuzzleUncheckedCreateInputSchema: z.ZodType<Prisma.MazePuzzleUn
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.coerce.date().optional(),
-  userId: z.string()
+  userId: z.string(),
+  enemies: z.lazy(() => EnemyUncheckedCreateNestedManyWithoutMazeInputSchema).optional()
 }).strict();
 
 export const MazePuzzleUpdateInputSchema: z.ZodType<Prisma.MazePuzzleUpdateInput> = z.object({
@@ -1920,7 +2038,8 @@ export const MazePuzzleUpdateInputSchema: z.ZodType<Prisma.MazePuzzleUpdateInput
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  User: z.lazy(() => UserUpdateOneRequiredWithoutMazePuzzleNestedInputSchema).optional()
+  User: z.lazy(() => UserUpdateOneRequiredWithoutMazePuzzleNestedInputSchema).optional(),
+  enemies: z.lazy(() => EnemyUpdateManyWithoutMazeNestedInputSchema).optional()
 }).strict();
 
 export const MazePuzzleUncheckedUpdateInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedUpdateInput> = z.object({
@@ -1932,6 +2051,7 @@ export const MazePuzzleUncheckedUpdateInputSchema: z.ZodType<Prisma.MazePuzzleUn
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  enemies: z.lazy(() => EnemyUncheckedUpdateManyWithoutMazeNestedInputSchema).optional()
 }).strict();
 
 export const MazePuzzleCreateManyInputSchema: z.ZodType<Prisma.MazePuzzleCreateManyInput> = z.object({
@@ -1964,6 +2084,61 @@ export const MazePuzzleUncheckedUpdateManyInputSchema: z.ZodType<Prisma.MazePuzz
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EnemyCreateInputSchema: z.ZodType<Prisma.EnemyCreateInput> = z.object({
+  id: z.string().cuid().optional(),
+  x: z.number().int(),
+  y: z.number().int(),
+  direction: z.lazy(() => DirectionSchema).optional(),
+  Maze: z.lazy(() => MazePuzzleCreateNestedOneWithoutEnemiesInputSchema)
+}).strict();
+
+export const EnemyUncheckedCreateInputSchema: z.ZodType<Prisma.EnemyUncheckedCreateInput> = z.object({
+  id: z.string().cuid().optional(),
+  puzzleId: z.string(),
+  x: z.number().int(),
+  y: z.number().int(),
+  direction: z.lazy(() => DirectionSchema).optional()
+}).strict();
+
+export const EnemyUpdateInputSchema: z.ZodType<Prisma.EnemyUpdateInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  x: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  y: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  direction: z.union([ z.lazy(() => DirectionSchema),z.lazy(() => EnumDirectionFieldUpdateOperationsInputSchema) ]).optional(),
+  Maze: z.lazy(() => MazePuzzleUpdateOneRequiredWithoutEnemiesNestedInputSchema).optional()
+}).strict();
+
+export const EnemyUncheckedUpdateInputSchema: z.ZodType<Prisma.EnemyUncheckedUpdateInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  puzzleId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  x: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  y: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  direction: z.union([ z.lazy(() => DirectionSchema),z.lazy(() => EnumDirectionFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EnemyCreateManyInputSchema: z.ZodType<Prisma.EnemyCreateManyInput> = z.object({
+  id: z.string().cuid().optional(),
+  puzzleId: z.string(),
+  x: z.number().int(),
+  y: z.number().int(),
+  direction: z.lazy(() => DirectionSchema).optional()
+}).strict();
+
+export const EnemyUpdateManyMutationInputSchema: z.ZodType<Prisma.EnemyUpdateManyMutationInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  x: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  y: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  direction: z.union([ z.lazy(() => DirectionSchema),z.lazy(() => EnumDirectionFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EnemyUncheckedUpdateManyInputSchema: z.ZodType<Prisma.EnemyUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  puzzleId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  x: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  y: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  direction: z.union([ z.lazy(() => DirectionSchema),z.lazy(() => EnumDirectionFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const CoordinatesCreateInputSchema: z.ZodType<Prisma.CoordinatesCreateInput> = z.object({
@@ -2705,6 +2880,16 @@ export const IntNullableListFilterSchema: z.ZodType<Prisma.IntNullableListFilter
   isEmpty: z.boolean().optional()
 }).strict();
 
+export const EnemyListRelationFilterSchema: z.ZodType<Prisma.EnemyListRelationFilter> = z.object({
+  every: z.lazy(() => EnemyWhereInputSchema).optional(),
+  some: z.lazy(() => EnemyWhereInputSchema).optional(),
+  none: z.lazy(() => EnemyWhereInputSchema).optional()
+}).strict();
+
+export const EnemyOrderByRelationAggregateInputSchema: z.ZodType<Prisma.EnemyOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
 export const MazePuzzleCountOrderByAggregateInputSchema: z.ZodType<Prisma.MazePuzzleCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   playerX: z.lazy(() => SortOrderSchema).optional(),
@@ -2750,6 +2935,62 @@ export const MazePuzzleSumOrderByAggregateInputSchema: z.ZodType<Prisma.MazePuzz
   rows: z.lazy(() => SortOrderSchema).optional(),
   columns: z.lazy(() => SortOrderSchema).optional(),
   grid: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EnumDirectionFilterSchema: z.ZodType<Prisma.EnumDirectionFilter> = z.object({
+  equals: z.lazy(() => DirectionSchema).optional(),
+  in: z.lazy(() => DirectionSchema).array().optional(),
+  notIn: z.lazy(() => DirectionSchema).array().optional(),
+  not: z.union([ z.lazy(() => DirectionSchema),z.lazy(() => NestedEnumDirectionFilterSchema) ]).optional(),
+}).strict();
+
+export const MazePuzzleRelationFilterSchema: z.ZodType<Prisma.MazePuzzleRelationFilter> = z.object({
+  is: z.lazy(() => MazePuzzleWhereInputSchema).optional(),
+  isNot: z.lazy(() => MazePuzzleWhereInputSchema).optional()
+}).strict();
+
+export const EnemyCountOrderByAggregateInputSchema: z.ZodType<Prisma.EnemyCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  puzzleId: z.lazy(() => SortOrderSchema).optional(),
+  x: z.lazy(() => SortOrderSchema).optional(),
+  y: z.lazy(() => SortOrderSchema).optional(),
+  direction: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EnemyAvgOrderByAggregateInputSchema: z.ZodType<Prisma.EnemyAvgOrderByAggregateInput> = z.object({
+  x: z.lazy(() => SortOrderSchema).optional(),
+  y: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EnemyMaxOrderByAggregateInputSchema: z.ZodType<Prisma.EnemyMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  puzzleId: z.lazy(() => SortOrderSchema).optional(),
+  x: z.lazy(() => SortOrderSchema).optional(),
+  y: z.lazy(() => SortOrderSchema).optional(),
+  direction: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EnemyMinOrderByAggregateInputSchema: z.ZodType<Prisma.EnemyMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  puzzleId: z.lazy(() => SortOrderSchema).optional(),
+  x: z.lazy(() => SortOrderSchema).optional(),
+  y: z.lazy(() => SortOrderSchema).optional(),
+  direction: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EnemySumOrderByAggregateInputSchema: z.ZodType<Prisma.EnemySumOrderByAggregateInput> = z.object({
+  x: z.lazy(() => SortOrderSchema).optional(),
+  y: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EnumDirectionWithAggregatesFilterSchema: z.ZodType<Prisma.EnumDirectionWithAggregatesFilter> = z.object({
+  equals: z.lazy(() => DirectionSchema).optional(),
+  in: z.lazy(() => DirectionSchema).array().optional(),
+  notIn: z.lazy(() => DirectionSchema).array().optional(),
+  not: z.union([ z.lazy(() => DirectionSchema),z.lazy(() => NestedEnumDirectionWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedEnumDirectionFilterSchema).optional(),
+  _max: z.lazy(() => NestedEnumDirectionFilterSchema).optional()
 }).strict();
 
 export const JsonFilterSchema: z.ZodType<Prisma.JsonFilter> = z.object({
@@ -3273,6 +3514,20 @@ export const UserCreateNestedOneWithoutMazePuzzleInputSchema: z.ZodType<Prisma.U
   connect: z.lazy(() => UserWhereUniqueInputSchema).optional()
 }).strict();
 
+export const EnemyCreateNestedManyWithoutMazeInputSchema: z.ZodType<Prisma.EnemyCreateNestedManyWithoutMazeInput> = z.object({
+  create: z.union([ z.lazy(() => EnemyCreateWithoutMazeInputSchema),z.lazy(() => EnemyCreateWithoutMazeInputSchema).array(),z.lazy(() => EnemyUncheckedCreateWithoutMazeInputSchema),z.lazy(() => EnemyUncheckedCreateWithoutMazeInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => EnemyCreateOrConnectWithoutMazeInputSchema),z.lazy(() => EnemyCreateOrConnectWithoutMazeInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => EnemyCreateManyMazeInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => EnemyWhereUniqueInputSchema),z.lazy(() => EnemyWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const EnemyUncheckedCreateNestedManyWithoutMazeInputSchema: z.ZodType<Prisma.EnemyUncheckedCreateNestedManyWithoutMazeInput> = z.object({
+  create: z.union([ z.lazy(() => EnemyCreateWithoutMazeInputSchema),z.lazy(() => EnemyCreateWithoutMazeInputSchema).array(),z.lazy(() => EnemyUncheckedCreateWithoutMazeInputSchema),z.lazy(() => EnemyUncheckedCreateWithoutMazeInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => EnemyCreateOrConnectWithoutMazeInputSchema),z.lazy(() => EnemyCreateOrConnectWithoutMazeInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => EnemyCreateManyMazeInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => EnemyWhereUniqueInputSchema),z.lazy(() => EnemyWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
 export const MazePuzzleUpdategridInputSchema: z.ZodType<Prisma.MazePuzzleUpdategridInput> = z.object({
   set: z.number().array().optional(),
   push: z.union([ z.number(),z.number().array() ]).optional(),
@@ -3284,6 +3539,52 @@ export const UserUpdateOneRequiredWithoutMazePuzzleNestedInputSchema: z.ZodType<
   upsert: z.lazy(() => UserUpsertWithoutMazePuzzleInputSchema).optional(),
   connect: z.lazy(() => UserWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => UserUpdateToOneWithWhereWithoutMazePuzzleInputSchema),z.lazy(() => UserUpdateWithoutMazePuzzleInputSchema),z.lazy(() => UserUncheckedUpdateWithoutMazePuzzleInputSchema) ]).optional(),
+}).strict();
+
+export const EnemyUpdateManyWithoutMazeNestedInputSchema: z.ZodType<Prisma.EnemyUpdateManyWithoutMazeNestedInput> = z.object({
+  create: z.union([ z.lazy(() => EnemyCreateWithoutMazeInputSchema),z.lazy(() => EnemyCreateWithoutMazeInputSchema).array(),z.lazy(() => EnemyUncheckedCreateWithoutMazeInputSchema),z.lazy(() => EnemyUncheckedCreateWithoutMazeInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => EnemyCreateOrConnectWithoutMazeInputSchema),z.lazy(() => EnemyCreateOrConnectWithoutMazeInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => EnemyUpsertWithWhereUniqueWithoutMazeInputSchema),z.lazy(() => EnemyUpsertWithWhereUniqueWithoutMazeInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => EnemyCreateManyMazeInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => EnemyWhereUniqueInputSchema),z.lazy(() => EnemyWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => EnemyWhereUniqueInputSchema),z.lazy(() => EnemyWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => EnemyWhereUniqueInputSchema),z.lazy(() => EnemyWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => EnemyWhereUniqueInputSchema),z.lazy(() => EnemyWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => EnemyUpdateWithWhereUniqueWithoutMazeInputSchema),z.lazy(() => EnemyUpdateWithWhereUniqueWithoutMazeInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => EnemyUpdateManyWithWhereWithoutMazeInputSchema),z.lazy(() => EnemyUpdateManyWithWhereWithoutMazeInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => EnemyScalarWhereInputSchema),z.lazy(() => EnemyScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const EnemyUncheckedUpdateManyWithoutMazeNestedInputSchema: z.ZodType<Prisma.EnemyUncheckedUpdateManyWithoutMazeNestedInput> = z.object({
+  create: z.union([ z.lazy(() => EnemyCreateWithoutMazeInputSchema),z.lazy(() => EnemyCreateWithoutMazeInputSchema).array(),z.lazy(() => EnemyUncheckedCreateWithoutMazeInputSchema),z.lazy(() => EnemyUncheckedCreateWithoutMazeInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => EnemyCreateOrConnectWithoutMazeInputSchema),z.lazy(() => EnemyCreateOrConnectWithoutMazeInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => EnemyUpsertWithWhereUniqueWithoutMazeInputSchema),z.lazy(() => EnemyUpsertWithWhereUniqueWithoutMazeInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => EnemyCreateManyMazeInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => EnemyWhereUniqueInputSchema),z.lazy(() => EnemyWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => EnemyWhereUniqueInputSchema),z.lazy(() => EnemyWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => EnemyWhereUniqueInputSchema),z.lazy(() => EnemyWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => EnemyWhereUniqueInputSchema),z.lazy(() => EnemyWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => EnemyUpdateWithWhereUniqueWithoutMazeInputSchema),z.lazy(() => EnemyUpdateWithWhereUniqueWithoutMazeInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => EnemyUpdateManyWithWhereWithoutMazeInputSchema),z.lazy(() => EnemyUpdateManyWithWhereWithoutMazeInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => EnemyScalarWhereInputSchema),z.lazy(() => EnemyScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const MazePuzzleCreateNestedOneWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuzzleCreateNestedOneWithoutEnemiesInput> = z.object({
+  create: z.union([ z.lazy(() => MazePuzzleCreateWithoutEnemiesInputSchema),z.lazy(() => MazePuzzleUncheckedCreateWithoutEnemiesInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => MazePuzzleCreateOrConnectWithoutEnemiesInputSchema).optional(),
+  connect: z.lazy(() => MazePuzzleWhereUniqueInputSchema).optional()
+}).strict();
+
+export const EnumDirectionFieldUpdateOperationsInputSchema: z.ZodType<Prisma.EnumDirectionFieldUpdateOperationsInput> = z.object({
+  set: z.lazy(() => DirectionSchema).optional()
+}).strict();
+
+export const MazePuzzleUpdateOneRequiredWithoutEnemiesNestedInputSchema: z.ZodType<Prisma.MazePuzzleUpdateOneRequiredWithoutEnemiesNestedInput> = z.object({
+  create: z.union([ z.lazy(() => MazePuzzleCreateWithoutEnemiesInputSchema),z.lazy(() => MazePuzzleUncheckedCreateWithoutEnemiesInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => MazePuzzleCreateOrConnectWithoutEnemiesInputSchema).optional(),
+  upsert: z.lazy(() => MazePuzzleUpsertWithoutEnemiesInputSchema).optional(),
+  connect: z.lazy(() => MazePuzzleWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => MazePuzzleUpdateToOneWithWhereWithoutEnemiesInputSchema),z.lazy(() => MazePuzzleUpdateWithoutEnemiesInputSchema),z.lazy(() => MazePuzzleUncheckedUpdateWithoutEnemiesInputSchema) ]).optional(),
 }).strict();
 
 export const NestedStringFilterSchema: z.ZodType<Prisma.NestedStringFilter> = z.object({
@@ -3484,6 +3785,23 @@ export const NestedFloatFilterSchema: z.ZodType<Prisma.NestedFloatFilter> = z.ob
   gt: z.number().optional(),
   gte: z.number().optional(),
   not: z.union([ z.number(),z.lazy(() => NestedFloatFilterSchema) ]).optional(),
+}).strict();
+
+export const NestedEnumDirectionFilterSchema: z.ZodType<Prisma.NestedEnumDirectionFilter> = z.object({
+  equals: z.lazy(() => DirectionSchema).optional(),
+  in: z.lazy(() => DirectionSchema).array().optional(),
+  notIn: z.lazy(() => DirectionSchema).array().optional(),
+  not: z.union([ z.lazy(() => DirectionSchema),z.lazy(() => NestedEnumDirectionFilterSchema) ]).optional(),
+}).strict();
+
+export const NestedEnumDirectionWithAggregatesFilterSchema: z.ZodType<Prisma.NestedEnumDirectionWithAggregatesFilter> = z.object({
+  equals: z.lazy(() => DirectionSchema).optional(),
+  in: z.lazy(() => DirectionSchema).array().optional(),
+  notIn: z.lazy(() => DirectionSchema).array().optional(),
+  not: z.union([ z.lazy(() => DirectionSchema),z.lazy(() => NestedEnumDirectionWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedEnumDirectionFilterSchema).optional(),
+  _max: z.lazy(() => NestedEnumDirectionFilterSchema).optional()
 }).strict();
 
 export const NestedJsonFilterSchema: z.ZodType<Prisma.NestedJsonFilter> = z.object({
@@ -3849,7 +4167,8 @@ export const MazePuzzleCreateWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzle
   rows: z.number().int(),
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
-  createdAt: z.coerce.date().optional()
+  createdAt: z.coerce.date().optional(),
+  enemies: z.lazy(() => EnemyCreateNestedManyWithoutMazeInputSchema).optional()
 }).strict();
 
 export const MazePuzzleUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedCreateWithoutUserInput> = z.object({
@@ -3859,7 +4178,8 @@ export const MazePuzzleUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.M
   rows: z.number().int(),
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
-  createdAt: z.coerce.date().optional()
+  createdAt: z.coerce.date().optional(),
+  enemies: z.lazy(() => EnemyUncheckedCreateNestedManyWithoutMazeInputSchema).optional()
 }).strict();
 
 export const MazePuzzleCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzleCreateOrConnectWithoutUserInput> = z.object({
@@ -4285,6 +4605,30 @@ export const UserCreateOrConnectWithoutMazePuzzleInputSchema: z.ZodType<Prisma.U
   create: z.union([ z.lazy(() => UserCreateWithoutMazePuzzleInputSchema),z.lazy(() => UserUncheckedCreateWithoutMazePuzzleInputSchema) ]),
 }).strict();
 
+export const EnemyCreateWithoutMazeInputSchema: z.ZodType<Prisma.EnemyCreateWithoutMazeInput> = z.object({
+  id: z.string().cuid().optional(),
+  x: z.number().int(),
+  y: z.number().int(),
+  direction: z.lazy(() => DirectionSchema).optional()
+}).strict();
+
+export const EnemyUncheckedCreateWithoutMazeInputSchema: z.ZodType<Prisma.EnemyUncheckedCreateWithoutMazeInput> = z.object({
+  id: z.string().cuid().optional(),
+  x: z.number().int(),
+  y: z.number().int(),
+  direction: z.lazy(() => DirectionSchema).optional()
+}).strict();
+
+export const EnemyCreateOrConnectWithoutMazeInputSchema: z.ZodType<Prisma.EnemyCreateOrConnectWithoutMazeInput> = z.object({
+  where: z.lazy(() => EnemyWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => EnemyCreateWithoutMazeInputSchema),z.lazy(() => EnemyUncheckedCreateWithoutMazeInputSchema) ]),
+}).strict();
+
+export const EnemyCreateManyMazeInputEnvelopeSchema: z.ZodType<Prisma.EnemyCreateManyMazeInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => EnemyCreateManyMazeInputSchema),z.lazy(() => EnemyCreateManyMazeInputSchema).array() ]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+
 export const UserUpsertWithoutMazePuzzleInputSchema: z.ZodType<Prisma.UserUpsertWithoutMazePuzzleInput> = z.object({
   update: z.union([ z.lazy(() => UserUpdateWithoutMazePuzzleInputSchema),z.lazy(() => UserUncheckedUpdateWithoutMazePuzzleInputSchema) ]),
   create: z.union([ z.lazy(() => UserCreateWithoutMazePuzzleInputSchema),z.lazy(() => UserUncheckedCreateWithoutMazePuzzleInputSchema) ]),
@@ -4322,6 +4666,93 @@ export const UserUncheckedUpdateWithoutMazePuzzleInputSchema: z.ZodType<Prisma.U
   Ingredients: z.lazy(() => IngredientUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
   Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
+}).strict();
+
+export const EnemyUpsertWithWhereUniqueWithoutMazeInputSchema: z.ZodType<Prisma.EnemyUpsertWithWhereUniqueWithoutMazeInput> = z.object({
+  where: z.lazy(() => EnemyWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => EnemyUpdateWithoutMazeInputSchema),z.lazy(() => EnemyUncheckedUpdateWithoutMazeInputSchema) ]),
+  create: z.union([ z.lazy(() => EnemyCreateWithoutMazeInputSchema),z.lazy(() => EnemyUncheckedCreateWithoutMazeInputSchema) ]),
+}).strict();
+
+export const EnemyUpdateWithWhereUniqueWithoutMazeInputSchema: z.ZodType<Prisma.EnemyUpdateWithWhereUniqueWithoutMazeInput> = z.object({
+  where: z.lazy(() => EnemyWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => EnemyUpdateWithoutMazeInputSchema),z.lazy(() => EnemyUncheckedUpdateWithoutMazeInputSchema) ]),
+}).strict();
+
+export const EnemyUpdateManyWithWhereWithoutMazeInputSchema: z.ZodType<Prisma.EnemyUpdateManyWithWhereWithoutMazeInput> = z.object({
+  where: z.lazy(() => EnemyScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => EnemyUpdateManyMutationInputSchema),z.lazy(() => EnemyUncheckedUpdateManyWithoutMazeInputSchema) ]),
+}).strict();
+
+export const EnemyScalarWhereInputSchema: z.ZodType<Prisma.EnemyScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => EnemyScalarWhereInputSchema),z.lazy(() => EnemyScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EnemyScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EnemyScalarWhereInputSchema),z.lazy(() => EnemyScalarWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  puzzleId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  x: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  y: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  direction: z.union([ z.lazy(() => EnumDirectionFilterSchema),z.lazy(() => DirectionSchema) ]).optional(),
+}).strict();
+
+export const MazePuzzleCreateWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuzzleCreateWithoutEnemiesInput> = z.object({
+  id: z.string().cuid().optional(),
+  playerX: z.number().int(),
+  playerY: z.number().int(),
+  rows: z.number().int(),
+  columns: z.number().int(),
+  grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.coerce.date().optional(),
+  User: z.lazy(() => UserCreateNestedOneWithoutMazePuzzleInputSchema)
+}).strict();
+
+export const MazePuzzleUncheckedCreateWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedCreateWithoutEnemiesInput> = z.object({
+  id: z.string().cuid().optional(),
+  playerX: z.number().int(),
+  playerY: z.number().int(),
+  rows: z.number().int(),
+  columns: z.number().int(),
+  grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.coerce.date().optional(),
+  userId: z.string()
+}).strict();
+
+export const MazePuzzleCreateOrConnectWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuzzleCreateOrConnectWithoutEnemiesInput> = z.object({
+  where: z.lazy(() => MazePuzzleWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => MazePuzzleCreateWithoutEnemiesInputSchema),z.lazy(() => MazePuzzleUncheckedCreateWithoutEnemiesInputSchema) ]),
+}).strict();
+
+export const MazePuzzleUpsertWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuzzleUpsertWithoutEnemiesInput> = z.object({
+  update: z.union([ z.lazy(() => MazePuzzleUpdateWithoutEnemiesInputSchema),z.lazy(() => MazePuzzleUncheckedUpdateWithoutEnemiesInputSchema) ]),
+  create: z.union([ z.lazy(() => MazePuzzleCreateWithoutEnemiesInputSchema),z.lazy(() => MazePuzzleUncheckedCreateWithoutEnemiesInputSchema) ]),
+  where: z.lazy(() => MazePuzzleWhereInputSchema).optional()
+}).strict();
+
+export const MazePuzzleUpdateToOneWithWhereWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuzzleUpdateToOneWithWhereWithoutEnemiesInput> = z.object({
+  where: z.lazy(() => MazePuzzleWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => MazePuzzleUpdateWithoutEnemiesInputSchema),z.lazy(() => MazePuzzleUncheckedUpdateWithoutEnemiesInputSchema) ]),
+}).strict();
+
+export const MazePuzzleUpdateWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuzzleUpdateWithoutEnemiesInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  playerX: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  playerY: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  rows: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  User: z.lazy(() => UserUpdateOneRequiredWithoutMazePuzzleNestedInputSchema).optional()
+}).strict();
+
+export const MazePuzzleUncheckedUpdateWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedUpdateWithoutEnemiesInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  playerX: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  playerY: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  rows: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PuzzleChatMessageCreateManySessionInputSchema: z.ZodType<Prisma.PuzzleChatMessageCreateManySessionInput> = z.object({
@@ -4619,6 +5050,7 @@ export const MazePuzzleUpdateWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzle
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  enemies: z.lazy(() => EnemyUpdateManyWithoutMazeNestedInputSchema).optional()
 }).strict();
 
 export const MazePuzzleUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedUpdateWithoutUserInput> = z.object({
@@ -4629,6 +5061,7 @@ export const MazePuzzleUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.M
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  enemies: z.lazy(() => EnemyUncheckedUpdateManyWithoutMazeNestedInputSchema).optional()
 }).strict();
 
 export const MazePuzzleUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedUpdateManyWithoutUserInput> = z.object({
@@ -4639,6 +5072,34 @@ export const MazePuzzleUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Pris
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EnemyCreateManyMazeInputSchema: z.ZodType<Prisma.EnemyCreateManyMazeInput> = z.object({
+  id: z.string().cuid().optional(),
+  x: z.number().int(),
+  y: z.number().int(),
+  direction: z.lazy(() => DirectionSchema).optional()
+}).strict();
+
+export const EnemyUpdateWithoutMazeInputSchema: z.ZodType<Prisma.EnemyUpdateWithoutMazeInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  x: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  y: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  direction: z.union([ z.lazy(() => DirectionSchema),z.lazy(() => EnumDirectionFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EnemyUncheckedUpdateWithoutMazeInputSchema: z.ZodType<Prisma.EnemyUncheckedUpdateWithoutMazeInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  x: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  y: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  direction: z.union([ z.lazy(() => DirectionSchema),z.lazy(() => EnumDirectionFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EnemyUncheckedUpdateManyWithoutMazeInputSchema: z.ZodType<Prisma.EnemyUncheckedUpdateManyWithoutMazeInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  x: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  y: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  direction: z.union([ z.lazy(() => DirectionSchema),z.lazy(() => EnumDirectionFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 /////////////////////////////////////////
@@ -5077,6 +5538,68 @@ export const MazePuzzleFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.MazePuzzleF
   select: MazePuzzleSelectSchema.optional(),
   include: MazePuzzleIncludeSchema.optional(),
   where: MazePuzzleWhereUniqueInputSchema,
+}).strict() ;
+
+export const EnemyFindFirstArgsSchema: z.ZodType<Prisma.EnemyFindFirstArgs> = z.object({
+  select: EnemySelectSchema.optional(),
+  include: EnemyIncludeSchema.optional(),
+  where: EnemyWhereInputSchema.optional(),
+  orderBy: z.union([ EnemyOrderByWithRelationInputSchema.array(),EnemyOrderByWithRelationInputSchema ]).optional(),
+  cursor: EnemyWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EnemyScalarFieldEnumSchema,EnemyScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EnemyFindFirstOrThrowArgsSchema: z.ZodType<Prisma.EnemyFindFirstOrThrowArgs> = z.object({
+  select: EnemySelectSchema.optional(),
+  include: EnemyIncludeSchema.optional(),
+  where: EnemyWhereInputSchema.optional(),
+  orderBy: z.union([ EnemyOrderByWithRelationInputSchema.array(),EnemyOrderByWithRelationInputSchema ]).optional(),
+  cursor: EnemyWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EnemyScalarFieldEnumSchema,EnemyScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EnemyFindManyArgsSchema: z.ZodType<Prisma.EnemyFindManyArgs> = z.object({
+  select: EnemySelectSchema.optional(),
+  include: EnemyIncludeSchema.optional(),
+  where: EnemyWhereInputSchema.optional(),
+  orderBy: z.union([ EnemyOrderByWithRelationInputSchema.array(),EnemyOrderByWithRelationInputSchema ]).optional(),
+  cursor: EnemyWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EnemyScalarFieldEnumSchema,EnemyScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EnemyAggregateArgsSchema: z.ZodType<Prisma.EnemyAggregateArgs> = z.object({
+  where: EnemyWhereInputSchema.optional(),
+  orderBy: z.union([ EnemyOrderByWithRelationInputSchema.array(),EnemyOrderByWithRelationInputSchema ]).optional(),
+  cursor: EnemyWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EnemyGroupByArgsSchema: z.ZodType<Prisma.EnemyGroupByArgs> = z.object({
+  where: EnemyWhereInputSchema.optional(),
+  orderBy: z.union([ EnemyOrderByWithAggregationInputSchema.array(),EnemyOrderByWithAggregationInputSchema ]).optional(),
+  by: EnemyScalarFieldEnumSchema.array(),
+  having: EnemyScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EnemyFindUniqueArgsSchema: z.ZodType<Prisma.EnemyFindUniqueArgs> = z.object({
+  select: EnemySelectSchema.optional(),
+  include: EnemyIncludeSchema.optional(),
+  where: EnemyWhereUniqueInputSchema,
+}).strict() ;
+
+export const EnemyFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.EnemyFindUniqueOrThrowArgs> = z.object({
+  select: EnemySelectSchema.optional(),
+  include: EnemyIncludeSchema.optional(),
+  where: EnemyWhereUniqueInputSchema,
 }).strict() ;
 
 export const CoordinatesFindFirstArgsSchema: z.ZodType<Prisma.CoordinatesFindFirstArgs> = z.object({
@@ -5570,6 +6093,52 @@ export const MazePuzzleUpdateManyArgsSchema: z.ZodType<Prisma.MazePuzzleUpdateMa
 
 export const MazePuzzleDeleteManyArgsSchema: z.ZodType<Prisma.MazePuzzleDeleteManyArgs> = z.object({
   where: MazePuzzleWhereInputSchema.optional(),
+}).strict() ;
+
+export const EnemyCreateArgsSchema: z.ZodType<Prisma.EnemyCreateArgs> = z.object({
+  select: EnemySelectSchema.optional(),
+  include: EnemyIncludeSchema.optional(),
+  data: z.union([ EnemyCreateInputSchema,EnemyUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const EnemyUpsertArgsSchema: z.ZodType<Prisma.EnemyUpsertArgs> = z.object({
+  select: EnemySelectSchema.optional(),
+  include: EnemyIncludeSchema.optional(),
+  where: EnemyWhereUniqueInputSchema,
+  create: z.union([ EnemyCreateInputSchema,EnemyUncheckedCreateInputSchema ]),
+  update: z.union([ EnemyUpdateInputSchema,EnemyUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const EnemyCreateManyArgsSchema: z.ZodType<Prisma.EnemyCreateManyArgs> = z.object({
+  data: z.union([ EnemyCreateManyInputSchema,EnemyCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EnemyCreateManyAndReturnArgsSchema: z.ZodType<Prisma.EnemyCreateManyAndReturnArgs> = z.object({
+  data: z.union([ EnemyCreateManyInputSchema,EnemyCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EnemyDeleteArgsSchema: z.ZodType<Prisma.EnemyDeleteArgs> = z.object({
+  select: EnemySelectSchema.optional(),
+  include: EnemyIncludeSchema.optional(),
+  where: EnemyWhereUniqueInputSchema,
+}).strict() ;
+
+export const EnemyUpdateArgsSchema: z.ZodType<Prisma.EnemyUpdateArgs> = z.object({
+  select: EnemySelectSchema.optional(),
+  include: EnemyIncludeSchema.optional(),
+  data: z.union([ EnemyUpdateInputSchema,EnemyUncheckedUpdateInputSchema ]),
+  where: EnemyWhereUniqueInputSchema,
+}).strict() ;
+
+export const EnemyUpdateManyArgsSchema: z.ZodType<Prisma.EnemyUpdateManyArgs> = z.object({
+  data: z.union([ EnemyUpdateManyMutationInputSchema,EnemyUncheckedUpdateManyInputSchema ]),
+  where: EnemyWhereInputSchema.optional(),
+}).strict() ;
+
+export const EnemyDeleteManyArgsSchema: z.ZodType<Prisma.EnemyDeleteManyArgs> = z.object({
+  where: EnemyWhereInputSchema.optional(),
 }).strict() ;
 
 export const CoordinatesCreateArgsSchema: z.ZodType<Prisma.CoordinatesCreateArgs> = z.object({

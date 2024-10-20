@@ -7,12 +7,29 @@ import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
 import { saveMazePuzzle, deleteMazePuzzle } from "../actions";
 import { DEFAULT_MAP } from "@/app/(session)/session/[id]/_constants";
-import { MazePuzzle } from "../../../../../prisma/generated/zod";
 import { cn } from "@/lib/utils";
+import type { $Enums } from "@prisma/client";
 
 type CraftMazeProperties = {
   clerkId: string;
-  MazePuzzle: MazePuzzle[];
+  MazePuzzle: ({
+    enemies: {
+      id: string;
+      puzzleId: string;
+      x: number;
+      y: number;
+      direction: $Enums.Direction;
+    }[];
+  } & {
+    id: string;
+    playerX: number;
+    playerY: number;
+    rows: number;
+    columns: number;
+    grid: number[];
+    createdAt: Date;
+    userId: string;
+  })[];
 };
 
 type Maze = {
@@ -23,6 +40,13 @@ type Maze = {
   columns: number;
   grid: number[];
   userId: string;
+  enemies: {
+    id: string;
+    puzzleId: string;
+    x: number;
+    y: number;
+    direction: $Enums.Direction
+  }[];
 };
 
 const formatPuzzle = (mazePuzzle?: Maze) => {
@@ -36,7 +60,11 @@ const formatPuzzle = (mazePuzzle?: Maze) => {
     matrix.push(mazePuzzle.grid.slice(i, i + mazePuzzle.columns));
   }
 
-  return { playerStartingPosition: playerPosition, matrix };
+  return {
+    playerStartingPosition: playerPosition,
+    matrix,
+    enemies: mazePuzzle.enemies,
+  };
 };
 
 export default function CraftMaze({
@@ -51,6 +79,7 @@ export default function CraftMaze({
     columns: 10,
     grid: DEFAULT_MAP.flat(),
     userId: clerkId,
+    enemies: [],
   };
 
   const formattedPuzzle = formatPuzzle(
@@ -73,7 +102,7 @@ export default function CraftMaze({
   } = useMazePuzzle({
     mapLayout: formattedPuzzle.matrix,
     playerStartingPosition: formattedPuzzle.playerStartingPosition,
-    allEnemies: [{ x: 2, y: 1, moving: "down" }],
+    allEnemies: formattedPuzzle.enemies ? formattedPuzzle.enemies : [],
   });
   const [updatedTile, setUpdateTile] = useState(0);
   const selectedPuzzle = useRef(MazePuzzle[0] ? MazePuzzle[0].id : "created");

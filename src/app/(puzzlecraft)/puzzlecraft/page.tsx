@@ -11,7 +11,7 @@ export default async function Page() {
     },
     select: {
       clerkId: true,
-      MazePuzzle: { orderBy: { createdAt: "asc" } },
+      MazePuzzle: { orderBy: { createdAt: "asc" }, include: {enemies: true, } },
     },
   });
   if (!userPuzzles) return <div>failed to get puzzle</div>;

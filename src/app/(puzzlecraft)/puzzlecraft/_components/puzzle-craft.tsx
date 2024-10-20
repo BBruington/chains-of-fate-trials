@@ -1,15 +1,32 @@
 "use client";
 import CraftMaze from "./craft-maze";
 import { PuzzleCraftEnums } from "../types";
-import { MazePuzzle } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { useAtom } from "jotai";
 import { puzzle } from "../../jotaiAtoms";
+import type { $Enums } from "@prisma/client";
 
 type CraftPuzzleProperties = {
   userPuzzles: {
     clerkId: string;
-    MazePuzzle: MazePuzzle[];
+    MazePuzzle: ({
+      enemies: {
+        id: string;
+        puzzleId: string;
+        x: number;
+        y: number;
+        direction: $Enums.Direction;
+      }[];
+    } & {
+      id: string;
+      playerX: number;
+      playerY: number;
+      rows: number;
+      columns: number;
+      grid: number[];
+      createdAt: Date;
+      userId: string;
+    })[];
   };
 };
 

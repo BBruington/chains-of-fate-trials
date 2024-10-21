@@ -21,17 +21,19 @@ export const randomizeSolutionOrder = async () => {
   const currentOrder = await getSolutionOrder();
   console.log("Current Order:", currentOrder);
 
-  const shuffledOrder = currentOrder?.order.sort(() => Math.random() - 0.5);
-  console.log("Shuffled Order:", shuffledOrder);
+  if (currentOrder && Array.isArray(currentOrder.order)) {
+    const shuffledOrder = currentOrder?.order.sort(() => Math.random() - 0.5);
+    console.log("Shuffled Order:", shuffledOrder);
 
-  try {
-    const updatedSolutionOrder = await prisma.solutionOrder.update({
-      where: { id: "1" },
-      data: { order: shuffledOrder },
-    });
-    return updatedSolutionOrder;
-  } catch (error) {
-    console.error("Failed to randomize solution order", error);
+    try {
+      const updatedSolutionOrder = await prisma.solutionOrder.update({
+        where: { id: "1" },
+        data: { order: shuffledOrder },
+      });
+      return updatedSolutionOrder;
+    } catch (error) {
+      console.error("Failed to randomize solution order", error);
+    }
   }
 };
 

@@ -1,6 +1,10 @@
 import { nameArrayAtom } from "@/app/atoms/globalState";
 import { colorBorderChoices, mouseColor } from "@/app/pose-mirror/const";
-import type { ColorSelectBoxesProps } from "@/app/pose-mirror/types";
+import type {
+  ColorSelectBoxesProps,
+  handleMouseClickData,
+  nameArrayElement,
+} from "@/app/pose-mirror/types";
 import { pusherClient } from "@/lib/pusher";
 import { cn } from "@/lib/utils";
 import { useAtom } from "jotai";
@@ -21,7 +25,7 @@ export default function ColorSelectBoxes({ i }: ColorSelectBoxesProps) {
   const [isColorChoiceComplete, setIsColorChoiceComplete] = useState(false);
   const [nameArray, setNameArray] = useAtom(nameArrayAtom);
 
-  async function poseMirrorHandleColorChoice(newNameArray) {
+  async function poseMirrorHandleColorChoice(newNameArray: nameArrayElement[]) {
     await fetch("/api/pose-mirror-color-select", {
       method: "POST",
       headers: {
@@ -38,8 +42,7 @@ export default function ColorSelectBoxes({ i }: ColorSelectBoxesProps) {
   useEffect(() => {
     pusherClient.subscribe("pose-mirror");
 
-    const handleMouseClick = (data) => {
-      console.log(data);
+    const handleMouseClick = (data: handleMouseClickData) => {
       setNameArray(data.nameArray);
     };
 
@@ -65,7 +68,6 @@ export default function ColorSelectBoxes({ i }: ColorSelectBoxesProps) {
       onClick={() => {
         handleColorChoice(i);
         setIsColorChoiceComplete(true);
-        // poseMirrorHandleColorChoice(nameArray);
       }}
       className={`${colorBorderChoices[i]} ${mouseColor[i]} relative flex h-72 w-52 flex-1 flex-col items-center justify-center overflow-hidden break-words break-all rounded-lg border-8 p-6 text-center text-3xl md:w-72 lg:w-96`}
     >

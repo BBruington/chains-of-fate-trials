@@ -6,7 +6,7 @@ import { PageProvider } from "./page-context";
 export default async function Page() {
   const user = await currentUser();
   const userData = {
-    id: user?.id,
+    id: user?.id || "",
   };
 
   return (

@@ -1,13 +1,15 @@
 import { coordinatesAtom } from "@/app/atoms/globalState";
+import type { bodySizes } from "@/app/pose/types";
 import { DndContext } from "@dnd-kit/core";
 import { useAtom } from "jotai";
 import Pusher from "pusher-js";
 import { useEffect, useRef } from "react";
+import type { handleMoveBodyPartData } from "../types";
 import BodyPartConnectors from "./body-part-connectors";
 import DraggableStickmanBodyPart from "./draggable-stickman-body-part";
 
 export default function Stickman() {
-  const poseContainerRef = useRef(null);
+  const poseContainerRef = useRef<HTMLDivElement>(null);
   const [coordinates, setCoordinates] = useAtom(coordinatesAtom);
 
   useEffect(() => {
@@ -16,10 +18,13 @@ export default function Stickman() {
     });
 
     const channel = pusher.subscribe("pose");
-    channel.bind("move-body-part", (data) => {
+
+    const handleMoveBodyPart = (data: handleMoveBodyPartData) => {
       console.log(data);
       setCoordinates(data.coordinates);
-    });
+    };
+
+    channel.bind("move-body-part", handleMoveBodyPart);
 
     if (poseContainerRef.current) {
       const { width, height } =
@@ -64,7 +69,7 @@ export default function Stickman() {
                   top={y}
                   left={x}
                   active={false}
-                  bodyPart={bodyPart}
+                  bodyPart={bodyPart as keyof bodySizes}
                 />
               </DndContext>
             );

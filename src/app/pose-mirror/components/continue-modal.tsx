@@ -14,20 +14,28 @@ export default function ContinueModal() {
   const { gameStart } = MirrorPoseHooks();
 
   function handleMouseleave() {
-    buttonAudioRef.current.pause();
-    buttonAudioRef.current.currentTime = 0;
+    if (buttonAudioRef.current) {
+      buttonAudioRef.current.pause();
+      buttonAudioRef.current.currentTime = 0;
+    }
   }
 
   function handleContinueButton() {
     gameStart();
     setShowColorSelect(false);
-    
-    button2AudioRef.current.play();
 
-    colorSelectMusicRef.current.pause();
+    if (button2AudioRef.current) {
+      button2AudioRef.current.play();
+    }
 
-    poseMusicRef.current.play();
-    poseMusicRef.current.loop = true;
+    if (colorSelectMusicRef.current) {
+      colorSelectMusicRef.current.pause();
+    }
+
+    if (poseMusicRef.current) {
+      poseMusicRef.current.play();
+      poseMusicRef.current.loop = true;
+    }
   }
 
   return (
@@ -40,7 +48,11 @@ export default function ContinueModal() {
 
         <button
           onClick={() => handleContinueButton()}
-          onMouseEnter={() => buttonAudioRef.current.play()}
+          onMouseEnter={() => {
+            if (buttonAudioRef.current) {
+              buttonAudioRef.current.play();
+            }
+          }}
           onMouseLeave={() => handleMouseleave()}
           className="z-10 h-10 w-1/3 skew-x-[30deg] transform rounded-2xl bg-neutral-800 text-neutral-200 duration-150 ease-in-out hover:scale-110 focus:scale-110 active:scale-95"
         >

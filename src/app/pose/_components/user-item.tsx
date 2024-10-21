@@ -8,7 +8,7 @@ type UserItemProps = {
 
 export default function UserItem(props: UserItemProps) {
   const { user } = props;
-  const { id, name, email } = user;
+  const { id, email } = user;
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });
 
@@ -24,7 +24,7 @@ export default function UserItem(props: UserItemProps) {
       className="flex justify-between rounded bg-blue-200 p-4 shadow-md"
     >
       <h1>
-        <h3 className="text-lg font-semibold">{name}</h3>
+        {/* <h3 className="text-lg font-semibold">{name}</h3> */}
         <p className="text-gray-600">{email}</p>
       </h1>
       <button {...attributes} {...listeners} className="cursor-move">

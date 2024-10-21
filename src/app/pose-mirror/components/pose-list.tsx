@@ -49,7 +49,7 @@ export default function PoseMirror() {
       {showColorSelect ? (
         <ColorSelectScreen />
       ) : (
-        <DndContext onDragEnd={handleDragEnd}>
+        <DndContext onDragEnd={() => handleDragEnd}>
           <MatchingContainer containers={containers} />
           <Stickman />
         </DndContext>

@@ -7,16 +7,23 @@ import {
   nameArrayAtom,
   numOfPlayersAtom,
   playerStatesAtom,
-  showConfettiAtom,
   solutionOrderAtom,
   userIdAtom,
 } from "@/app/atoms/globalState";
 import { initalContainers } from "@/app/pose-mirror/const";
 import { pusherClient } from "@/lib/pusher";
 import type { DragEndEvent } from "@dnd-kit/core";
+import type { JsonValue } from "@prisma/client/runtime/library";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { randomizeSolutionOrder } from "../actions";
+import type {
+  containerElement,
+  handleShuffleNameArrayData,
+  mousePosition,
+  nameArrayElement,
+  playerStatesElement,
+} from "../types";
 
 export default function MirrorPoseHooks() {
   // Audio States
@@ -31,7 +38,6 @@ export default function MirrorPoseHooks() {
   const [currentPoseContainer, setCurrentPoseContainer] = useAtom(
     currentPoseContainerAtom,
   );
-  const [showConfetti, setShowConfetti] = useAtom(showConfettiAtom);
 
   // Player State States
   const [playerStates, setPlayerStates] = useAtom(playerStatesAtom);
@@ -44,78 +50,17 @@ export default function MirrorPoseHooks() {
   // User ID States
   const [userId, setUserId] = useAtom(userIdAtom);
 
-  function gameStart() {
-    console.log("gameStart running");
-    console.log(nameArray);
-    setNameArray((order) => {
-      const newOrder = [...order]
-        .sort(() => Math.random() - 0.5)
-        .map((playerData) => {
-          return { ...playerData, state: false };
-        });
-      console.log("newOrder", newOrder);
-
-      poseMirrorShuffleNameArray(newOrder);
-
-      return newOrder;
-    });
-    shuffleSolutionOrder();
-  }
-
-  async function poseMirrorShuffleNameArray(nameArrayShuffled) {
-    console.log("shuffleNameArray running");
-
-    await fetch("/api/pose-mirror-shuffle-name-array", {
+  // Pusher Functions
+  async function poseMirrorConfettiSync() {
+    await fetch("/api/pose-mirror-confetti-sync", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         channel: "pose-mirror",
-        event: "shuffle-name-array",
-        data: { newNameArray: nameArrayShuffled },
-      }),
-    });
-  }
-
-  useEffect(() => {
-    pusherClient.subscribe("pose-mirror");
-
-    const handleShuffleNameArray = (data) => {
-      setNameArray(data.newNameArray);
-      setPlayerStates(data.newNameArray);
-    };
-
-    pusherClient.bind("shuffle-name-array", handleShuffleNameArray);
-
-    return () => {
-      pusherClient.unbind("shuffle-name-array", handleShuffleNameArray);
-      pusherClient.unsubscribe("pose-mirror");
-    };
-  }, []);
-
-  async function shuffleSolutionOrder() {
-    console.log("shuffleSolutionOrder running");
-    const newOrder = await randomizeSolutionOrder();
-    console.log(newOrder);
-    setSolutionOrder(newOrder?.order);
-    poseMirrorGameStartEvent(newOrder?.order);
-  }
-
-  async function poseMirrorGameStartEvent(shuffledOrder: string[]) {
-    console.log("poseMirrorGameStartEvent");
-    console.log("shuffledOrder");
-    console.log(shuffledOrder);
-
-    await fetch("/api/pose-mirror-game-start", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        channel: "pose-mirror",
-        event: "game-start",
-        data: { solutionOrder: shuffledOrder },
+        event: "confetti-sync",
+        data: {},
       }),
     });
   }
@@ -135,12 +80,11 @@ export default function MirrorPoseHooks() {
   }
 
   async function poseMirrorCorrectPoseSyncEvent(
-    newContainers,
-    newPlayerStates,
-    newCurrentPoseContainer,
-    newColoredBoxes,
+    newContainers: containerElement[],
+    newPlayerStates: playerStatesElement[],
+    newCurrentPoseContainer: number,
+    newColoredBoxes: number[],
   ) {
-    console.log(newContainers);
     await fetch("/api/pose-mirror-correct-pose-sync", {
       method: "POST",
       headers: {
@@ -159,36 +103,122 @@ export default function MirrorPoseHooks() {
     });
   }
 
+  async function poseMirrorGameStartEvent(
+    shuffledOrder: string[] | JsonValue | undefined,
+  ) {
+    await fetch("/api/pose-mirror-game-start", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        channel: "pose-mirror",
+        event: "game-start",
+        data: { solutionOrder: shuffledOrder },
+      }),
+    });
+  }
+
+  async function poseMirrorHandleMouseMoveEvent(
+    mousePosition: mousePosition,
+    currentUserId: string,
+  ) {
+    await fetch("/api/pose-mirror-mouse-tracker", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        channel: "pose-mirror",
+        event: "mouse-tracker",
+        data: { mousePosition: mousePosition, currentUserId: currentUserId },
+      }),
+    });
+  }
+
+  async function poseMirrorResetSync() {
+    await fetch("/api/pose-mirror-reset-sync", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        channel: "pose-mirror",
+        event: "reset-sync",
+        data: {},
+      }),
+    });
+  }
+
+  async function poseMirrorShuffleNameArray(
+    nameArrayShuffled: nameArrayElement[],
+  ) {
+    await fetch("/api/pose-mirror-shuffle-name-array", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        channel: "pose-mirror",
+        event: "shuffle-name-array",
+        data: { newNameArray: nameArrayShuffled },
+      }),
+    });
+  }
+
+  useEffect(() => {
+    pusherClient.subscribe("pose-mirror");
+
+    const handleShuffleNameArray = (data: handleShuffleNameArrayData) => {
+      console.log(data);
+      setNameArray(data.newNameArray);
+      setPlayerStates(data.newNameArray);
+    };
+
+    pusherClient.bind("shuffle-name-array", handleShuffleNameArray);
+
+    return () => {
+      pusherClient.unbind("shuffle-name-array", handleShuffleNameArray);
+      pusherClient.unsubscribe("pose-mirror");
+    };
+  }, []);
+
+  // Regular Functions
+
+  function gameStart() {
+    setNameArray((order) => {
+      const newOrder = [...order]
+        .sort(() => Math.random() - 0.5)
+        .map((playerData) => {
+          return { ...playerData, state: false };
+        });
+
+      poseMirrorShuffleNameArray(newOrder);
+
+      return newOrder;
+    });
+    shuffleSolutionOrder();
+  }
+
+  async function shuffleSolutionOrder() {
+    const newOrder = await randomizeSolutionOrder();
+    console.log(newOrder?.order);
+    setSolutionOrder(newOrder?.order);
+    poseMirrorGameStartEvent(newOrder?.order);
+  }
+
   function handleDragEnd(event: DragEndEvent, userId: string) {
     const { active, over } = event;
-    console.log(event);
-    console.log(coloredBoxes);
 
     if (over) {
-      console.log(solutionOrder);
-      console.log("current Solution", solutionOrder[currentPoseContainer]);
-      console.log("next solution", solutionOrder[currentPoseContainer + 1]);
       if (
         // If user places the wrong pose in the wrong order reset game or if the wrong user tries solving out of order
-        (active.id !== solutionOrder[currentPoseContainer] &&
+        (Array.isArray(solutionOrder) &&
+          active.id !== solutionOrder[currentPoseContainer] &&
           over.id.toString().charCodeAt(0) < 77) ||
         userId !== playerStates[0].userId
       ) {
-        console.log(
-          "REASON 1:",
-          active.id !== solutionOrder[currentPoseContainer] &&
-            over.id.toString().charCodeAt(0) < 77,
-        );
-        console.log("active.id:", active.id);
-        console.log("currentPoseContainer", currentPoseContainer);
-        console.log(
-          "solutionOrder[currentPoseContainer]:",
-          solutionOrder[currentPoseContainer],
-        );
-        console.log("REASON 2:", userId !== playerStates[0].userId);
-        console.log("userId:", userId);
-        console.log("playerStates[0].userId:", playerStates[0].userId);
-        handlePoseMirrorResetSync();
+        poseMirrorResetSync();
       } else {
         // If user places correct pose in correct order then swap the empty container to the given pose
         button2Audio.play();
@@ -205,7 +235,6 @@ export default function MirrorPoseHooks() {
         [updatedContainers[firstLocation], updatedContainers[secondLocation]] =
           [updatedContainers[secondLocation], updatedContainers[firstLocation]];
 
-        console.log(updatedContainers);
         setContainers(updatedContainers);
 
         // Rearrange nameArray to swap who places the next pose
@@ -225,47 +254,17 @@ export default function MirrorPoseHooks() {
               },
             );
 
-            console.log(disableDroppableContainerIndex);
             newContainers[disableDroppableContainerIndex] = {
               ...newContainers[disableDroppableContainerIndex],
               isDroppableDisabled: true,
               showColor: false,
             };
 
-            // find index of userId in nameArray
-            // Set that nameArray into state true
-            // Check if all playerStates is true then make the next user state false
-            // setCurrentPoseContainer((prev) => prev + 1);
-
-            // setPlayerStates((prevPlayerStates) => {
-            //   // if all states are true then make the first one false
-            //   const newPlayerStates = prevPlayerStates
-            //     .slice(1)
-            //     .concat(prevPlayerStates[0]);
-            //   console.log("NEW PLAYER STATES", newPlayerStates);
-            //   return newPlayerStates;
-            // });
-
-            console.log("currentPoseContainer", currentPoseContainer);
-
-            console.log(
-              "newContainers[currentPoseContainer]",
-              newContainers[currentPoseContainer],
-            );
-
             newContainers[currentPoseContainer + 1] = {
               ...prevContainers[currentPoseContainer + 1],
               showColor: true,
               isDraggableDisabled: true,
             };
-
-            // newContainers[currentPoseContainer + 1] = {
-            //   ...prevContainers[currentPoseContainer + 1],
-            //   showColor: true,
-            //   isDroppableDisabled: false,
-            // };
-
-            console.log("Updated Containers:", newContainers);
 
             return newContainers;
           });
@@ -277,27 +276,22 @@ export default function MirrorPoseHooks() {
     }
 
     function updateColoredBoxes() {
-      console.log("UPDATECOLOREDBOXES RUNNING");
       setColoredBoxes((prevBoxes) => {
         let newBoxes = [];
         if (prevBoxes[1] === numOfPlayers) {
           // After first set, reveal start of next set & remove first box of prev set
-          console.log("test colored boxes moved 1");
 
           newBoxes = [prevBoxes[0] + 1, prevBoxes[1] + 1];
         } else if (prevBoxes[1] < numOfPlayers - 1) {
           // Until the first set is finished reveal each different colored box
-          console.log("test colored boxes moved 2");
 
           newBoxes = [prevBoxes[0], prevBoxes[1] + 1];
         } else if (prevBoxes[0] === 12 - numOfPlayers && prevBoxes[1] === 11) {
           // At the end prevents bottom row from being colored and show Confetti
-          console.log("test colored boxes moved 3");
-          handlePoseMirrorConfettiSync();
+          poseMirrorConfettiSync();
           newBoxes = [...prevBoxes];
         } else {
           // Move the set of boxes one to the right
-          console.log("test colored boxes moved 4");
           newBoxes = [prevBoxes[0] + 1, prevBoxes[1] + 1];
         }
 
@@ -308,7 +302,7 @@ export default function MirrorPoseHooks() {
     }
   }
 
-  function handleSyncAfterColoredBoxesUpdate(updatedColoredBoxes) {
+  function handleSyncAfterColoredBoxesUpdate(updatedColoredBoxes: number[]) {
     setContainers((prevContainers) => {
       const newContainers = prevContainers.map((containers, index) => {
         let newContainer = { ...containers };
@@ -358,46 +352,11 @@ export default function MirrorPoseHooks() {
     gameStart();
   }
 
-  async function handlePoseMirrorResetSync() {
-    console.log("handlePoseMirrorResetSync running");
-
-    await fetch("/api/pose-mirror-reset-sync", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        channel: "pose-mirror",
-        event: "reset-sync",
-        data: {},
-      }),
-    });
-  }
-
-  async function handlePoseMirrorConfettiSync() {
-    console.log("handlePoseMirrorConfettiSync running");
-
-    await fetch("/api/pose-mirror-confetti-sync", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        channel: "pose-mirror",
-        event: "confetti-sync",
-        data: {},
-      }),
-    });
-  }
-
-  function handleMouseLeave(playerId) {
+  function handleMouseLeave(playerId: string) {
     // If player does not "hold" pose until it's their turn then the game will reset
-    // console.log(playerId);
-    // console.log(playerStates);
     const result = nameArray.find((obj) => obj.userId === playerId);
-    // console.log(result);
-    if (result.state) {
-      console.log("reset game");
+
+    if (result && result.state) {
       handleResetGame();
       window.location.reload();
     }
@@ -410,5 +369,6 @@ export default function MirrorPoseHooks() {
     handleResetGame,
     solutionOrder,
     poseMirrorCorrectPoseSyncEvent,
+    poseMirrorHandleMouseMoveEvent,
   };
 }

@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { coordinatesAtom, solutionOrderAtom } from "../../atoms/globalState";
 // import { changeHeadCoordiantes } from "../actions";
 import { initalImageArray } from "../const";
+import type { handleGameStartData } from "../types";
 import BodyPartConnectors from "./body-part-connectors";
 import BodyPartDisplay from "./body-parts-display";
 import PoseOrder from "./pose-order";
@@ -14,13 +15,10 @@ export default function SilentPose() {
   const isFirstRender = useRef(true);
   const [imageArray, setImageArray] = useState(initalImageArray);
   const [solutionOrder, setSolutionOrder] = useAtom(solutionOrderAtom);
-  const [solutionMap, setSolutionMap] = useState();
+  const [solutionMap, setSolutionMap] = useState<Record<string, number>>({});
   const [coordinates, setCoordinates] = useAtom(coordinatesAtom);
-  const poseContainerRef = useRef(null);
+  const poseContainerRef = useRef<HTMLDivElement>(null);
   const test = useUser();
-  // const handleChangeHeadCoordinates = async (testCoordinates) => {
-  //   await changeHeadCoordiantes(testCoordinates);
-  // };
 
   useEffect(() => {
     if (poseContainerRef.current) {
@@ -50,13 +48,16 @@ export default function SilentPose() {
     }
   }, []);
 
-  function gameStart(solutionOrder) {
+  function gameStart(solutionOrder: string[]) {
     console.log("gameStart:", solutionOrder);
     setSolutionMap(() => {
-      const newSolutionMap = solutionOrder.reduce((acc, letter, index) => {
-        acc[letter] = index;
-        return acc;
-      }, {});
+      const newSolutionMap: Record<string, number> = solutionOrder.reduce(
+        (acc, letter, index) => {
+          acc[letter] = index;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
 
       setImageArray((prevImageArray) => {
         const sortedImageArray = [...prevImageArray].sort((a, b) => {
@@ -99,9 +100,9 @@ export default function SilentPose() {
       advanceGame();
     };
 
-    const handleGameStart = (solutionOrder) => {
-      console.log("newSolutionOrder", solutionOrder.solutionOrder);
-      gameStart(solutionOrder.solutionOrder);
+    const handleGameStart = (data: handleGameStartData) => {
+      console.log("newSolutionOrder", data.solutionOrder);
+      gameStart(data.solutionOrder);
     };
 
     pusherClient.bind("correct-pose", handleCorrectPose);

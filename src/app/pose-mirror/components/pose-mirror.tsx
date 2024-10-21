@@ -15,18 +15,25 @@ import { DndContext } from "@dnd-kit/core";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { useAtom } from "jotai";
 import Image from "next/image";
-import Pusher from "pusher-js";
 import { useContext, useEffect, useRef, useState } from "react";
+
 import Confetti from "react-confetti";
 import MirrorPoseHooks from "../_hooks/mirror-pose-hooks";
-import { getSolutionOrder, randomizeSolutionOrder } from "../actions";
 import { PageContext } from "../page-context";
+import type {
+  handleMouseTrackerData,
+  handleSyncContainersData,
+  handleSyncSolutionOrderData,
+  mousePosition,
+  otherPlayersMouses,
+  PoseMirrorProps,
+} from "../types";
 import ColorSelectScreen from "./color-select-screen";
 import MatchingContainer from "./matching-container";
 import StartScreen from "./start";
 import Stickman from "./stickman";
 
-export default function PoseMirror({ currentUser, userData }) {
+export default function PoseMirror({ currentUser, userData }: PoseMirrorProps) {
   // UI States
   const { showColorSelect, showStart } = useContext(PageContext);
   const [windowSize, setWindowSize] = useState({
@@ -52,7 +59,8 @@ export default function PoseMirror({ currentUser, userData }) {
     xPercent: 0,
     yPercent: 0,
   });
-  const [otherPlayersMouses, setOtherPlayersMouses] = useState({});
+  const [otherPlayersMouses, setOtherPlayersMouses] =
+    useState<otherPlayersMouses>({});
   const [userId, setUserId] = useAtom(userIdAtom);
 
   // Refs
@@ -64,7 +72,7 @@ export default function PoseMirror({ currentUser, userData }) {
     handleDragEnd,
     gameStart,
     handleResetGame,
-    poseMirrorCorrectPoseSyncEvent,
+    poseMirrorHandleMouseMoveEvent,
   } = MirrorPoseHooks();
 
   useEffect(() => {
@@ -77,9 +85,23 @@ export default function PoseMirror({ currentUser, userData }) {
   }, []);
 
   useEffect(() => {
+    // Pusher Functions
     pusherClient.subscribe("pose-mirror");
 
-    const handleSyncContainers = (data) => {
+    const handleSyncSolutionOrder = (data: handleSyncSolutionOrderData) => {
+      setSolutionOrder(data.solutionOrder);
+    };
+
+    const handleMouseTracker = (data: handleMouseTrackerData) => {
+      console.log(data);
+      presentOtherPlayersMouses(data.mousePosition, data.currentUserId);
+    };
+
+    const handleResetSync = () => {
+      handleResetGame();
+    };
+
+    const handleSyncContainers = (data: handleSyncContainersData) => {
       console.log(data);
       setContainers(data.containers);
       setPlayerStates(data.playerStates);
@@ -87,87 +109,29 @@ export default function PoseMirror({ currentUser, userData }) {
       setColoredBoxes(data.coloredBoxes);
     };
 
-    pusherClient.bind("correct-pose-sync", handleSyncContainers);
-
-    return () => {
-      pusherClient.unbind("correct-pose-sync", handleSyncContainers);
-      pusherClient.unsubscribe("pose-mirror");
-    };
-  }, []);
-
-  // useEffect(() => {
-  //   if (isFirstRender.current) {
-  //     isFirstRender.current = false;
-  //     return;
-  //   }
-
-  // }, [coloredBoxes]);
-
-  useEffect(() => {
-    pusherClient.subscribe("pose-mirror");
-
-    const handleSyncSolutionOrder = (data) => {
-      setSolutionOrder(data.solutionOrder);
-    };
-
-    const handleResetSync = () => {
-      handleResetGame();
-    };
-
     const handleShowConfetti = () => {
       setShowConfetti(true);
     };
 
     pusherClient.bind("game-start", handleSyncSolutionOrder);
+    pusherClient.bind("mouse-tracker", handleMouseTracker);
     pusherClient.bind("reset-sync", handleResetSync);
+    pusherClient.bind("correct-pose-sync", handleSyncContainers);
     pusherClient.bind("confetti-sync", handleShowConfetti);
 
     return () => {
       pusherClient.unbind("game-start", handleSyncSolutionOrder);
       pusherClient.unbind("reset-sync", handleResetSync);
-      pusherClient.bind("confetti-sync", handleShowConfetti);
+      pusherClient.unbind("confetti-sync", handleShowConfetti);
+      pusherClient.unbind("correct-pose-sync", handleSyncContainers);
+      pusherClient.unbind("mouse-tracker", handleMouseTracker);
 
       pusherClient.unsubscribe("pose-mirror");
     };
   }, []);
 
-  const handleGetSolutionOrder = async () => {
-    try {
-      const prismaSolutionOrder = await getSolutionOrder();
-      if (prismaSolutionOrder) {
-        console.log(prismaSolutionOrder.order);
-        setSolutionOrder(prismaSolutionOrder.order[0]); // Update state only if data is fetched
-      }
-    } catch (error) {
-      console.error("Error fetching solution order:", error);
-    }
-  };
-
-  const handleRandomizeSolutionOrder = async () => {
-    try {
-      await randomizeSolutionOrder();
-    } catch (error) {
-      console.error("Error randomizing solution order:", error);
-    }
-  };
-
-  function handleWindowResize() {
-    setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-  }
-
-  function handleMouseMove(event) {
-    setMousePosition({
-      x: event.clientX,
-      y: event.clientY,
-      xPercent: event.clientX / windowSize.width,
-      yPercent: event.clientY / windowSize.height,
-    });
-  }
-
   useEffect(() => {
+    // Only tracks mouse movement if it has stayed still for at least 100ms
     const timeoutId = setTimeout(() => {
       poseMirrorHandleMouseMoveEvent(
         {
@@ -182,32 +146,6 @@ export default function PoseMirror({ currentUser, userData }) {
     return () => clearTimeout(timeoutId);
   }, [mousePosition]);
 
-  function presentOtherPlayersMouses(mousePosition, currentUser) {
-    let x = mousePosition.xPercent * windowSize.width;
-    let y = mousePosition.yPercent * windowSize.height;
-
-    setOtherPlayersMouses((prevMouses) => {
-      let newMouses = { ...prevMouses };
-      newMouses[currentUser] = { x, y, userId: currentUser };
-
-      return newMouses;
-    });
-  }
-
-  async function poseMirrorHandleMouseMoveEvent(mousePosition, currentUserId) {
-    await fetch("/api/pose-mirror-mouse-tracker", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        channel: "pose-mirror",
-        event: "mouse-tracker",
-        data: { mousePosition: mousePosition, currentUserId: currentUserId },
-      }),
-    });
-  }
-
   useEffect(() => {
     // Listens to when user moves mouse and/or changes window size
     window.addEventListener("mousemove", handleMouseMove);
@@ -219,24 +157,36 @@ export default function PoseMirror({ currentUser, userData }) {
     };
   }, [handleMouseMove]);
 
-  useEffect(() => {
-    const pusher = new Pusher("13e9bf6d55ba50bff774", {
-      cluster: "us3",
+  function handleWindowResize() {
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
     });
+  }
 
-    const channel = pusher.subscribe("pose-mirror");
+  function handleMouseMove(event: MouseEvent) {
+    setMousePosition({
+      x: event.clientX,
+      y: event.clientY,
+      xPercent: event.clientX / windowSize.width,
+      yPercent: event.clientY / windowSize.height,
+    });
+  }
 
-    const handleMouseTracker = (data) => {
-      presentOtherPlayersMouses(data.mousePosition, data.currentUserId);
-    };
+  function presentOtherPlayersMouses(
+    mousePosition: mousePosition,
+    currentUser: string,
+  ) {
+    let x = mousePosition.xPercent * windowSize.width;
+    let y = mousePosition.yPercent * windowSize.height;
 
-    channel.bind("mouse-tracker", handleMouseTracker);
+    setOtherPlayersMouses((prevMouses) => {
+      let newMouses = { ...prevMouses };
+      newMouses[currentUser] = { x, y, userId: currentUser };
 
-    return () => {
-      channel.unbind("mouse-tracker", handleMouseTracker);
-      pusher.unsubscribe("pose-mirror");
-    };
-  }, []);
+      return newMouses;
+    });
+  }
 
   return (
     <div

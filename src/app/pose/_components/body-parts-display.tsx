@@ -6,6 +6,7 @@ import Pusher from "pusher-js";
 import { useEffect } from "react";
 import Draggable from "./draggable";
 import type { BodyCoordinates } from "./types";
+import type { bodySizes } from "../types";
 
 export default function BodyPartDisplay() {
   const [coordinates, setCoordinates] = useAtom(coordinatesAtom);
@@ -56,7 +57,7 @@ export default function BodyPartDisplay() {
             }
             modifiers={[restrictToParentElement]}
           >
-            <Draggable top={y} left={x} active={true} bodyPart={bodyPart} />
+            <Draggable top={y} left={x} active={true} bodyPart={bodyPart as keyof bodySizes} />
           </DndContext>
         );
       })}

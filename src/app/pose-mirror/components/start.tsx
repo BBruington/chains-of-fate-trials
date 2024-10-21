@@ -11,6 +11,7 @@ import { useAtom } from "jotai";
 import { Cinzel, Luxurious_Roman } from "next/font/google";
 import Image from "next/image";
 import { useContext, useEffect, useRef, useState } from "react";
+import type { nameArrayElement } from "../types";
 
 const fontHeader = Cinzel({
   // use cn when implementing it
@@ -45,33 +46,49 @@ export default function StartScreen() {
   const [isSetNameArrayFinished, setIsSetNameArrayFinished] = useState(false);
 
   // Unique Titles State
-  const [uniqueTitles, setUniqueTitles] = useState({
+  const [uniqueTitles, setUniqueTitles] = useState<uniqueTitles>({
     Aelarion: { title: "Veil of the Demon Within" },
     Artemis: { title: "The Hidden Circuit" },
     Elendiel: { title: "The Elven Dissapointment" },
     Gannandolf: { title: "Norebo's Pet" },
   });
 
+  interface uniqueTitles {
+    Aelarion: title;
+    Artemis: title;
+    Elendiel: title;
+    Gannandolf: title;
+  }
+
+  interface title {
+    title: string;
+  }
+
   // Refs
   const inputNameFlashRef = useRef<HTMLInputElement | null>(null);
-  const inputIconFlashRef = useRef<HTMLInputElement | null>(null);
+  const inputIconFlashRef = useRef<HTMLLabelElement | null>(null);
 
   useEffect(() => {
     const inputNameElement = inputNameFlashRef.current;
     const inputIconElement = inputIconFlashRef.current;
 
-    inputNameElement.addEventListener("animationend", () => {
-      setFlashInputName(false);
-    });
+    if (inputNameElement) {
+      inputNameElement.addEventListener("animationend", () => {
+        setFlashInputName(false);
+      });
+      return () => {
+        inputNameElement.removeEventListener("animationend", () => {});
+      };
+    }
 
-    inputIconElement.addEventListener("animationend", () => {
-      setFlashInputIcon(false);
-    });
-
-    return () => {
-      inputNameElement.removeEventListener("animationend", () => {});
-      inputIconElement.removeEventListener("animationend", () => {});
-    };
+    if (inputIconElement) {
+      inputIconElement.addEventListener("animationend", () => {
+        setFlashInputIcon(false);
+      });
+      return () => {
+        inputIconElement.removeEventListener("animationend", () => {});
+      };
+    }
   }, []);
 
   function handleStartButton() {
@@ -82,18 +99,20 @@ export default function StartScreen() {
       poseMirrorStart();
 
       setShowStart(false);
-      colorSelectMusicRef.current.play();
-      colorSelectMusicRef.current.loop = true;
+      if (colorSelectMusicRef.current) {
+        colorSelectMusicRef.current.play();
+        colorSelectMusicRef.current.loop = true;
+      }
     }
   }
 
-  function handleInputNameChange(e) {
+  function handleInputNameChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { value } = e.target;
     if (flashInputName === true) {
       setFlashInputName(false);
     }
 
-    if (uniqueTitles[value]) {
+    if (uniqueTitles[value as keyof uniqueTitles]) {
       setTimeout(() => {
         setRemoveRevealElement(true);
       }, 1800);
@@ -106,7 +125,7 @@ export default function StartScreen() {
     }
   }
 
-  function handleInputIconChange(e) {
+  function handleInputIconChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const imageURL = URL.createObjectURL(file);
@@ -132,11 +151,11 @@ export default function StartScreen() {
   useEffect(() => {
     pusherClient.subscribe("pose-mirror");
 
-    const handleStartClick = (data) => {
+    const handleStartClick = () => {
       console.log("handleStartClick");
       setNumOfPlayers((prevNumOfPlayers) => {
         const newNumOfPlayers = prevNumOfPlayers + 1;
-        let newNameArray = [];
+        let newNameArray: nameArrayElement[] = [];
         console.log(newNumOfPlayers);
 
         setNameArray(() => {
@@ -146,6 +165,7 @@ export default function StartScreen() {
             initalNameArray.push({
               color: "",
               colorBorder: "",
+              colorName: "",
               icon: "",
               name: "",
               state: false,
@@ -199,7 +219,7 @@ export default function StartScreen() {
           </h1>
 
           <div className="h-20 w-full overflow-hidden">
-            {uniqueTitles[playerName] && (
+            {uniqueTitles[playerName as keyof uniqueTitles] && (
               <div className="relative">
                 {!removeRevealElement && (
                   <div className="absolute z-10 h-full w-full animate-reveal bg-neutral-200"></div>
@@ -215,7 +235,7 @@ export default function StartScreen() {
                     "text-xl md:text-2xl lg:text-4xl",
                   )}
                 >
-                  {uniqueTitles[playerName].title}
+                  {uniqueTitles[playerName as keyof uniqueTitles].title}
                 </h2>
               </div>
             )}

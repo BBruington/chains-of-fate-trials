@@ -1,13 +1,7 @@
+import type { bodySizes, DraggableItemProps } from "@/app/pose/types";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-
-interface DraggableItemProps {
-  style?: React.CSSProperties;
-  top?: number;
-  left?: number;
-  active?: boolean;
-  bodyPart?: string;
-}
+import type { CSSProperties } from "react";
 
 export default function DraggableStickmanBodyPart({
   style,
@@ -20,7 +14,7 @@ export default function DraggableStickmanBodyPart({
     id: "1",
   });
 
-  const bodySizes = {
+  const bodySizes: bodySizes = {
     head: {
       height: "6rem", // h-24 (24 * 0.25rem = 6rem)
       width: "6rem", // w-24 (24 * 0.25rem = 6rem)
@@ -67,7 +61,7 @@ export default function DraggableStickmanBodyPart({
     },
   };
 
-  let draggableStyle = {
+  let draggableStyle: CSSProperties = {
     position: "absolute",
     height: `${bodySizes[bodyPart].height}`,
     width: `${bodySizes[bodyPart].width}`,

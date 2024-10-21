@@ -1,13 +1,6 @@
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-
-interface DraggableItemProps {
-  style?: React.CSSProperties;
-  top?: number;
-  left?: number;
-  active?: boolean;
-  bodyPart?: string;
-}
+import type { bodySizes, DraggableItemProps } from "../types";
 
 export default function Draggable({
   style,
@@ -20,7 +13,7 @@ export default function Draggable({
     id: "1",
   });
 
-  const bodySizes = {
+  const bodySizes: bodySizes = {
     head: {
       height: "6rem", // h-24 (24 * 0.25rem = 6rem)
       width: "6rem", // w-24 (24 * 0.25rem = 6rem)
@@ -67,21 +60,21 @@ export default function Draggable({
     },
   };
 
-  let draggableStyle = {
+  let draggableStyle: React.CSSProperties = {
     position: "absolute",
-    height: `${bodySizes[bodyPart].height}`,
-    width: `${bodySizes[bodyPart].width}`,
-    top: `calc(${top}px - (${bodySizes[bodyPart].height} /2))`,
-    left: `calc(${left}px - (${bodySizes[bodyPart].width} /2))`,
+    height: bodySizes[bodyPart].height,
+    width: bodySizes[bodyPart].width,
+    top: `calc(${top}px - (${parseFloat(bodySizes[bodyPart].height) / 2}rem))`,
+    left: `calc(${left}px - (${parseFloat(bodySizes[bodyPart].width) / 2}rem))`,
     ...style,
   };
 
-  active === true
-    ? (draggableStyle = {
-        ...draggableStyle,
-        transform: CSS.Translate.toString(transform),
-      })
-    : null;
+  if (active) {
+    draggableStyle = {
+      ...draggableStyle,
+      transform: CSS.Translate.toString(transform),
+    };
+  }
 
   return (
     <div

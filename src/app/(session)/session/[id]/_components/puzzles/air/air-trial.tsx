@@ -16,6 +16,7 @@ import {
 import { useAtom } from "jotai";
 import { selectedCharacter } from "../../../jotaiAtoms";
 import { INITIAL_MAP } from "../../../_constants";
+import { Direction } from "@prisma/client";
 
 export default function AirPuzzle({ sessionId }: { sessionId: string }) {
   const [character, setCharacter] = useAtom<
@@ -36,10 +37,10 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
       ref={setNodeRef}
     >
       <div className="mb-5 flex space-x-3">
-        <Button onClick={() => movePlayer(-1, 0, "up")}>W</Button>
-        <Button onClick={() => movePlayer(1, 0, "down")}>S</Button>
-        <Button onClick={() => movePlayer(0, 1, "right")}>D</Button>
-        <Button onClick={() => movePlayer(0, -1, "left")}>A</Button>
+        <Button onClick={() => movePlayer(-1, 0, Direction.UP)}>W</Button>
+        <Button onClick={() => movePlayer(1, 0, Direction.DOWN)}>S</Button>
+        <Button onClick={() => movePlayer(0, 1, Direction.RIGHT)}>D</Button>
+        <Button onClick={() => movePlayer(0, -1, Direction.LEFT)}>A</Button>
         <Button onClick={reset}>Reset</Button>
         <Select
           onValueChange={(

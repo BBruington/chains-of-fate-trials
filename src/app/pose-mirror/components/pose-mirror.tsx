@@ -209,13 +209,14 @@ export default function PoseMirror({ currentUser, userData }: PoseMirrorProps) {
             }}
             modifiers={[restrictToWindowEdges]}
           >
-            {Object.keys(otherPlayersMouses).map((playerData) => {
+            {Object.keys(otherPlayersMouses).map((playerData, i) => {
               const mouseColorIndex = nameArray.findIndex((player) => {
                 return player.userId === playerData;
               });
 
               return (
                 <Image
+                  key={i}
                   style={{
                     position: "absolute",
                     left: `${otherPlayersMouses[playerData].x}px`,

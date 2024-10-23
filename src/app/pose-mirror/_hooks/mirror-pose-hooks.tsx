@@ -322,10 +322,26 @@ export default function MirrorPoseHooks() {
       });
 
       setPlayerStates((prevPlayerStates) => {
-        // if all states are true then make the first one false
-        const newPlayerStates = prevPlayerStates
-          .slice(1)
-          .concat(prevPlayerStates[0]);
+        let newPlayerStates = [];
+        let firstNewPlayerState = { ...prevPlayerStates[0], state: true };
+        let trueStateCount = prevPlayerStates.filter(
+          (playerState) => playerState.state === true,
+        ).length;
+
+        if (trueStateCount === 1) {
+          // if there is only one person with a state of true then we unlock the player who is next in line
+          newPlayerStates = prevPlayerStates
+            .slice(1)
+            .concat(firstNewPlayerState);
+          newPlayerStates[0] = { ...newPlayerStates[0], state: false };
+        } else {
+          newPlayerStates = prevPlayerStates
+            .slice(1)
+            .concat(firstNewPlayerState);
+        }
+
+        console.log("THIS IS NEWPLAYERSTATES");
+        console.log(newPlayerStates);
 
         setCurrentPoseContainer((prevCurrentPoseContianer) => {
           const newCurrentPoseContainer = prevCurrentPoseContianer + 1;
@@ -354,11 +370,14 @@ export default function MirrorPoseHooks() {
 
   function handleMouseLeave(playerId: string) {
     // If player does not "hold" pose until it's their turn then the game will reset
-    const result = nameArray.find((obj) => obj.userId === playerId);
-
+    const result = playerStates.find((obj) => obj.userId === playerId);
+    console.log(playerStates);
+    console.log(playerId);
+    console.log(result);
     if (result && result.state) {
       handleResetGame();
-      window.location.reload();
+      poseMirrorResetSync();
+      // window.location.reload();
     }
   }
 

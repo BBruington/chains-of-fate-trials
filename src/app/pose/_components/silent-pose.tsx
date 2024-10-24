@@ -131,7 +131,7 @@ export default function SilentPose() {
   }, []);
 
   return (
-    <div className="flex h-full flex-col items-center justify-evenly lg:flex-row">
+    <div className="relative flex h-full flex-col items-center justify-evenly lg:flex-row">
       {showConfetti ? (
         <Confetti width={window.innerWidth} height={window.innerHeight} />
       ) : null}

@@ -158,6 +158,7 @@ export default function PoseMirror({ currentUser, userData }: PoseMirrorProps) {
   }, [handleMouseMove]);
 
   function handleWindowResize() {
+    console.log(window.innerHeight, window.innerWidth);
     setWindowSize({
       width: window.innerWidth,
       height: window.innerHeight,
@@ -165,6 +166,8 @@ export default function PoseMirror({ currentUser, userData }: PoseMirrorProps) {
   }
 
   function handleMouseMove(event: MouseEvent) {
+    console.log("handleMouseMove");
+    console.log(windowSize.width, windowSize.height);
     setMousePosition({
       x: event.clientX,
       y: event.clientY,
@@ -179,6 +182,10 @@ export default function PoseMirror({ currentUser, userData }: PoseMirrorProps) {
   ) {
     let x = mousePosition.xPercent * windowSize.width;
     let y = mousePosition.yPercent * windowSize.height;
+
+    console.log({ x });
+    console.log({ y });
+    console.log(mousePosition.yPercent);
 
     setOtherPlayersMouses((prevMouses) => {
       let newMouses = { ...prevMouses };
@@ -195,7 +202,7 @@ export default function PoseMirror({ currentUser, userData }: PoseMirrorProps) {
       {showConfetti ? (
         <Confetti width={windowSize.width} height={windowSize.height} />
       ) : null}
-      
+
       <div className={`${showStart ? "" : "hidden"} h-full w-full`}>
         <StartScreen />
       </div>
@@ -221,7 +228,7 @@ export default function PoseMirror({ currentUser, userData }: PoseMirrorProps) {
                   style={{
                     position: "absolute",
                     left: `${otherPlayersMouses[playerData].x}px`,
-                    top: `${otherPlayersMouses[playerData].y}px`,
+                    top: `${otherPlayersMouses[playerData].y - 48}px`, //48px equivalates to nav bar height
                     zIndex: "20",
                   }}
                   src={`/cursors/${nameArray[mouseColorIndex].colorName}-cursor-pointer.png`}

@@ -54,7 +54,7 @@ export default function Stickman() {
   }, []);
 
   return (
-    <div className="flex h-3/4 w-1/2 items-center justify-center">
+    <div className="flex h-full w-[47.5%] items-center justify-center">
       <div
         ref={poseContainerRef}
         className="relative mb-5 flex h-[calc(156px*4)] w-[95%] flex-col border-2 border-neutral-800 lg:mb-0 lg:w-[calc(108px*4)]"
@@ -64,7 +64,7 @@ export default function Stickman() {
         <div className="absolute h-full w-full">
           {Object.entries(coordinates).map(([bodyPart, { x, y }]) => {
             return (
-              <DndContext>
+              <DndContext key={bodyPart}>
                 <DraggableStickmanBodyPart
                   top={y}
                   left={x}

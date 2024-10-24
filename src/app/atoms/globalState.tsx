@@ -55,5 +55,6 @@ export const solutionOrderAtom = atom<string[] | JsonValue | undefined>([
   "W",
   "X",
 ]);
-export const showConfettiAtom = atom(false);
+export const showConfettiAtom = atom<boolean>(false);
+export const showStartScreenAtom = atom<boolean>(true);
 export const userIdAtom = atom("");

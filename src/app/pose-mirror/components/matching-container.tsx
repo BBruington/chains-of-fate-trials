@@ -7,8 +7,8 @@ export default function MatchingContainer({
   containers,
 }: MatchingContainerProps) {
   return (
-    <div className="flex h-full w-1/2 items-center justify-center">
-      <div className="flex h-[95%] max-h-[800px] max-w-[900px] flex-wrap items-center justify-evenly rounded-lg bg-neutral-800 p-4">
+    <div className="flex h-full w-[47.5%] items-center justify-end">
+      <div className="flex h-[95%] w-full flex-wrap items-center justify-evenly rounded-lg bg-neutral-800 p-4">
         {containers.map((id, index) => {
           return (
             <Droppable

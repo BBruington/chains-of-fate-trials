@@ -195,6 +195,7 @@ export default function PoseMirror({ currentUser, userData }: PoseMirrorProps) {
       {showConfetti ? (
         <Confetti width={windowSize.width} height={windowSize.height} />
       ) : null}
+      
       <div className={`${showStart ? "" : "hidden"} h-full w-full`}>
         <StartScreen />
       </div>

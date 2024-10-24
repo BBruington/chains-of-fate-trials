@@ -3,17 +3,26 @@ import { pusherClient } from "@/lib/pusher";
 import { useUser } from "@clerk/nextjs";
 import { useAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
-import { coordinatesAtom, solutionOrderAtom } from "../../atoms/globalState";
+import {
+  coordinatesAtom,
+  showConfettiAtom,
+  showStartScreenAtom,
+  solutionOrderAtom,
+} from "../../atoms/globalState";
 // import { changeHeadCoordiantes } from "../actions";
+import Confetti from "react-confetti";
 import { initalImageArray } from "../const";
 import type { handleGameStartData } from "../types";
 import BodyPartConnectors from "./body-part-connectors";
 import BodyPartDisplay from "./body-parts-display";
 import PoseOrder from "./pose-order";
+import StartScreen from "./start-screen";
 
 export default function SilentPose() {
   const isFirstRender = useRef(true);
   const [imageArray, setImageArray] = useState(initalImageArray);
+  const [showConfetti, setShowConfetti] = useAtom(showConfettiAtom);
+  const [showStartScreen, setShowStartScreen] = useAtom(showStartScreenAtom);
   const [solutionOrder, setSolutionOrder] = useAtom(solutionOrderAtom);
   const [solutionMap, setSolutionMap] = useState<Record<string, number>>({});
   const [coordinates, setCoordinates] = useAtom(coordinatesAtom);
@@ -105,23 +114,39 @@ export default function SilentPose() {
       gameStart(data.solutionOrder);
     };
 
+    const handleShowConfetti = () => {
+      setShowConfetti(true);
+    };
+
     pusherClient.bind("correct-pose", handleCorrectPose);
     pusherClient.bind("game-start", handleGameStart);
+    pusherClient.bind("confetti-sync", handleShowConfetti);
 
     return () => {
       pusherClient.unbind("correct-pose", handleCorrectPose);
       pusherClient.unbind("game-start", handleGameStart);
+      pusherClient.unbind("confetti-sync", handleShowConfetti);
       pusherClient.unsubscribe("pose-mirror");
     };
   }, []);
 
   return (
-    <div className="flex h-[95%] flex-col items-center justify-evenly lg:flex-row">
+    <div className="flex h-full flex-col items-center justify-evenly lg:flex-row">
+      {showConfetti ? (
+        <Confetti width={window.innerWidth} height={window.innerHeight} />
+      ) : null}
+
+      {showStartScreen ? (
+        <div className="absolute z-10 h-full w-full bg-neutral-200">
+          <StartScreen />
+        </div>
+      ) : null}
+
       <PoseOrder imageArray={imageArray} />
-      <div className="flex h-full w-[48%] items-center justify-center lg:h-[calc(100vh-60px)]">
+      <div className={`flex h-full w-[48%] items-center justify-center`}>
         <div
           ref={poseContainerRef}
-          className="relative mb-5 flex h-[calc(156px*4)] w-[95%] flex-col border-2 border-neutral-800 lg:mb-0 lg:w-[calc(108px*4)]"
+          className="relative mb-5 flex h-3/4 w-[95%] flex-col border-2 border-neutral-800 lg:mb-0 lg:w-[calc(108px*4)]"
         >
           <BodyPartConnectors />
           <BodyPartDisplay />

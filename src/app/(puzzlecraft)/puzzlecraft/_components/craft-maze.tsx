@@ -8,7 +8,9 @@ import { useRef, useState } from "react";
 import { saveMazePuzzle, deleteMazePuzzle } from "../actions";
 import { DEFAULT_MAP } from "@/app/(session)/session/[id]/_constants";
 import { cn } from "@/lib/utils";
-import type { $Enums } from "@prisma/client";
+import { Direction, type $Enums } from "@prisma/client";
+import { GRID_TILE } from "@/components/puzzles/maze-puzzle/constants";
+import { SIDEBAR_TOGGLE_ENUM } from "../types";
 
 type CraftMazeProperties = {
   clerkId: string;
@@ -45,7 +47,7 @@ type Maze = {
     puzzleId: string;
     x: number;
     y: number;
-    direction: $Enums.Direction
+    direction: $Enums.Direction;
   }[];
 };
 
@@ -85,37 +87,37 @@ export default function CraftMaze({
   const formattedPuzzle = formatPuzzle(
     MazePuzzle[0] ? MazePuzzle[0] : defaultCreatedMaze,
   );
-  const {
-    grid,
-    player,
-    GRID_TILE,
-    enemies,
-    deployedBombs,
-    playerPosition,
-    setGrid,
-    setPlayerPosition,
-    plantBomb,
-    updateAxis,
-    detonate,
-    reset,
-    updateMapTile,
-  } = useMazePuzzle({
-    mapLayout: formattedPuzzle.matrix,
-    playerStartingPosition: formattedPuzzle.playerStartingPosition,
-    allEnemies: formattedPuzzle.enemies ? formattedPuzzle.enemies : [],
-  });
-  const [updatedTile, setUpdateTile] = useState(0);
   const selectedPuzzle = useRef(MazePuzzle[0] ? MazePuzzle[0].id : "created");
-  const [isSettingPlayer, setIsSettingPlayer] = useState(false);
+  const selectedEnemyDirection = useRef<Direction>(Direction.DOWN)
+
+  const { playMaze, mazeState, buildMaze, reset } = useMazePuzzle({
+    selectedMazeId: selectedPuzzle.current ? selectedPuzzle.current : undefined,
+    gameGridDetails: {
+      mapLayout: formattedPuzzle.matrix,
+      playerStartingPosition: formattedPuzzle.playerStartingPosition,
+      allEnemies: formattedPuzzle.enemies ? formattedPuzzle.enemies : [],
+    },
+  });
+  const { grid, setGrid, enemies, playerPosition, setPlayerPosition } =
+    mazeState;
+  const { updateMapTile, updateAxis } = buildMaze;
+  const [updatedTile, setUpdateTile] = useState(0);
+  const [activeTileType, setActiveTileType] = useState(
+    SIDEBAR_TOGGLE_ENUM.TILE_TYPE,
+  );
   const editMapProperties = {
     updatedTile,
     updateMapTile,
-    isSettingPlayer,
+    activeTileType,
+    selectedPuzzle,
+    enemyDirection: selectedEnemyDirection.current,
   };
 
   const handleSetPlayerPosition = (event: boolean) => {
-    if (event) setUpdateTile(0);
-    setIsSettingPlayer(event);
+    if (event) {
+      setUpdateTile(0);
+      setActiveTileType(SIDEBAR_TOGGLE_ENUM.PLAYER_POSITION);
+    }
   };
 
   const handleSelectMaze = (maze: Maze) => {
@@ -149,20 +151,19 @@ export default function CraftMaze({
             id: selectedPuzzle.current,
           };
     await saveMazePuzzle({
-      maze: {
-        ...mazeProperties,
-      },
+      maze: mazeProperties,
       isCreated: selectedPuzzle.current === "created",
+      allEnemies: enemies.current.length > 0 ? enemies.current : undefined,
     });
   };
 
-  const handlePlantBomb = () => {
-    plantBomb({ x: playerPosition.x, y: playerPosition.y });
-  };
+  // const handlePlantBomb = () => {
+  //   plantBomb({ x: playerPosition.x, y: playerPosition.y });
+  // };
 
-  const handleDetonate = () => {
-    detonate();
-  };
+  // const handleDetonate = () => {
+  //   detonateBomb();
+  // };
 
   return (
     <div className="flex h-full flex-1 flex-col">
@@ -175,7 +176,6 @@ export default function CraftMaze({
               row={row}
               rowIndex={rowIndex}
               allEnemies={enemies}
-              GRID_TILE={GRID_TILE}
               playerPosition={playerPosition}
               editMapProperties={editMapProperties}
             />
@@ -198,25 +198,126 @@ export default function CraftMaze({
         </div>
         {/* side bar */}
         <div className="flex h-full flex-col items-center space-y-3 bg-secondary p-2">
-          <Button className="w-1/2" onClick={reset}>
-            Reset Grid to Default
-          </Button>
+          <h2 className="text-xl">Add Tiles to the Map</h2>
+          <div className="flex w-full flex-col bg-primary-foreground">
+            <div className="flex w-full items-center justify-around border-b">
+              <Toggle
+                className="mx-2 data-[state=on]:bg-secondary"
+                pressed={
+                  activeTileType === SIDEBAR_TOGGLE_ENUM.PLAYER_POSITION
+                }
+                onPressedChange={(e) => {
+                  if (e) {
+                    setUpdateTile(0);
+                    setActiveTileType(SIDEBAR_TOGGLE_ENUM.PLAYER_POSITION);
+                  } else {
+                    setActiveTileType(SIDEBAR_TOGGLE_ENUM.TILE_TYPE);
+                  }
+                }}
+              >
+                Player Position
+              </Toggle>
+            </div>
+            <ToggleGroup
+              type="single"
+              value={updatedTile.toString()}
+              onValueChange={(value) => {
+                if (value) setUpdateTile(Number(value));
+              }}
+            >
+              {Object.keys(GRID_TILE).map((tile) => (
+                <ToggleGroupItem
+                  className={cn(
+                    "data-[state=on]:bg-secondary",
+                    GRID_TILE[Number(tile)].name === "deployed" && "hidden",
+                  )}
+                  disabled={
+                    activeTileType !== SIDEBAR_TOGGLE_ENUM.TILE_TYPE
+                  }
+                  key={tile}
+                  value={tile}
+                >
+                  <p>{GRID_TILE[Number(tile)].name}</p>
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </div>
+          <div className="flex w-full flex-col items-center bg-primary-foreground">
+            <Toggle
+              pressed={
+                activeTileType === SIDEBAR_TOGGLE_ENUM.ENEMY_POSITION
+              }
+              onPressedChange={(e) => {
+                if (e) {
+                  setUpdateTile(0);
+                  setActiveTileType(SIDEBAR_TOGGLE_ENUM.ENEMY_POSITION);
+                } else {
+                  setActiveTileType(SIDEBAR_TOGGLE_ENUM.TILE_TYPE);
+                }
+              }}
+              className="flex w-full justify-center border-b py-2 text-sm"
+            >
+              Set Enemy
+            </Toggle>
+            <ToggleGroup
+              type="single"
+              onValueChange={(value) => {
+                if (value) selectedEnemyDirection.current = value as Direction;
+              }}
+            >
+              <ToggleGroupItem
+                disabled={
+                  activeTileType !== SIDEBAR_TOGGLE_ENUM.ENEMY_POSITION
+                }
+                value={Direction.UP}
+              >
+                Up
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                disabled={
+                  activeTileType !== SIDEBAR_TOGGLE_ENUM.ENEMY_POSITION
+                }
+                value={Direction.DOWN}
+              >
+                Down
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                disabled={
+                  activeTileType !== SIDEBAR_TOGGLE_ENUM.ENEMY_POSITION
+                }
+                value={Direction.LEFT}
+              >
+                Left
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                disabled={
+                  activeTileType !== SIDEBAR_TOGGLE_ENUM.ENEMY_POSITION
+                }
+                value={Direction.RIGHT}
+              >
+                Right
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
 
-          <Button
-            disabled={deployedBombs.current.length === 0}
-            onClick={handleDetonate}
-          >
-            Detonate
-          </Button>
-          <Button disabled={!player.hasBomb} onClick={handlePlantBomb}>
-            Plant Bomb
-          </Button>
+          {/* <div className="flex justify-around space-x-5">
+            <Button
+              disabled={deployedBombs.current.length === 0}
+              onClick={handleDetonate}
+            >
+              detonateBomb
+            </Button>
+            <Button disabled={!player.hasBomb} onClick={handlePlantBomb}>
+              Plant Bomb
+            </Button>
+          </div> */}
 
           <div className="flex w-full justify-around">
             <div className="flex flex-col items-center">
               <h2>Columns</h2>
               <div className="flex">
                 <Button
+                  className="mr-2"
                   onClick={() =>
                     updateAxis({ x: grid[0].length - 1, y: grid.length })
                   }
@@ -237,6 +338,7 @@ export default function CraftMaze({
               <h2>Rows</h2>
               <div className="flex">
                 <Button
+                  className="mr-2"
                   onClick={() =>
                     updateAxis({ x: grid[0].length, y: grid.length - 1 })
                   }
@@ -253,36 +355,9 @@ export default function CraftMaze({
               </div>
             </div>
           </div>
-          <ToggleGroup
-            type="single"
-            value={updatedTile.toString()}
-            onValueChange={(value) => {
-              if (value) setUpdateTile(Number(value));
-            }}
-          >
-            {Object.keys(GRID_TILE).map((tile) => (
-              <ToggleGroupItem
-                className={cn(
-                  "data-[state=on]:bg-black",
-                  GRID_TILE[Number(tile)].name === "deployed" && "hidden",
-                )}
-                disabled={isSettingPlayer}
-                key={tile}
-                value={tile}
-              >
-                <p>{GRID_TILE[Number(tile)].name}</p>
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-          <div className="flex items-center justify-around">
-            <h2>set player position</h2>
-            <Toggle
-              className="mx-2 data-[state=on]:bg-black"
-              onPressedChange={(e) => handleSetPlayerPosition(e)}
-            >
-              Set Position
-            </Toggle>
-          </div>
+          <Button className="w-1/2" onClick={reset}>
+            Reset Grid to Default
+          </Button>
           <div className="flex justify-around space-x-5">
             <Button onClick={handleSaveChanges}>Save Changes</Button>
             <Button variant={"destructive"} onClick={handleDeletePuzzle}>

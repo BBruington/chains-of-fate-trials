@@ -11,12 +11,13 @@ import { cn } from "@/lib/utils";
 import "./styles.css";
 import { Enemy, GridPiece } from "./types";
 import { MutableRefObject } from "react";
+import { SIDEBAR_TOGGLE_ENUM } from "@/app/(puzzlecraft)/puzzlecraft/types";
+import { $Enums, Direction } from "@prisma/client";
 
 export default function GridRow({
   row,
   rowIndex,
   playerPosition,
-  GRID_TILE,
   allEnemies,
   character,
   editMapProperties,
@@ -26,20 +27,23 @@ export default function GridRow({
   allEnemies?: MutableRefObject<Enemy[]>;
   playerPosition: { x: number; y: number };
   editMapProperties?: {
+    enemyDirection: Direction;
     updatedTile: number;
     updateMapTile: ({
       x,
       y,
       newTile,
+      activeTileType,
+      enemyDirection,
     }: {
       x: number;
       y: number;
       newTile: number;
-      isSettingPlayer: boolean;
+      activeTileType: SIDEBAR_TOGGLE_ENUM;
+      enemyDirection?: Direction;
     }) => void;
-    isSettingPlayer: boolean;
+    activeTileType: SIDEBAR_TOGGLE_ENUM;
   };
-  GRID_TILE: Record<number, GridPiece>;
   character?: "dinner" | "artemis" | "aelarion" | "elendiel" | undefined;
 }) {
   const characters = {
@@ -54,7 +58,8 @@ export default function GridRow({
       x: rowIndex,
       y: colIndex,
       newTile: editMapProperties.updatedTile,
-      isSettingPlayer: editMapProperties.isSettingPlayer,
+      activeTileType: editMapProperties.activeTileType,
+      enemyDirection: editMapProperties.enemyDirection,
     });
   };
   return (

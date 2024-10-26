@@ -6,21 +6,26 @@ import { revealInventoryItem } from "@/app/(session)/session/[id]/_hooks/hooks";
 import { GRID_TILE, TILE_TYPES } from "./constants";
 import { coordinates, Enemy, GridPiece } from "./types";
 import { Direction } from "@prisma/client";
+import uuid from "react-uuid";
+import { SIDEBAR_TOGGLE_ENUM } from "@/app/(puzzlecraft)/puzzlecraft/types";
 
 export default function useMazePuzzle({
-  sessionId,
-  mapLayout,
-  allEnemies,
-  playerStartingPosition,
+  elementalSessionId,
+  selectedMazeId,
+  gameGridDetails,
 }: {
-  sessionId?: string;
-  mapLayout?: number[][];
-  allEnemies?: Enemy[];
-  playerStartingPosition?: { x: number; y: number };
+  elementalSessionId?: string;
+  selectedMazeId?: string;
+  gameGridDetails: {
+    mapLayout: number[][];
+    allEnemies?: Enemy[];
+    playerStartingPosition?: { x: number; y: number };
+  };
 }) {
+  const { mapLayout, allEnemies, playerStartingPosition } = gameGridDetails;
   const [player, setPlayer] = useState<{
     hasBomb: boolean;
-    lastDirectionMoved: null | Direction
+    lastDirectionMoved: null | Direction;
   }>({
     hasBomb: false,
     lastDirectionMoved: null,
@@ -79,7 +84,14 @@ export default function useMazePuzzle({
         ? mapRef.current.map((row) => row.map((tile) => tile))
         : DEFAULT_MAP.map((row, index) => [GRID_TILE[row[index]]]),
     );
-    setPlayerPosition({ x: 0, y: 0 });
+    setPlayerPosition(
+      playerStartingPosition
+        ? playerStartingPosition
+        : {
+            x: 0,
+            y: 0,
+          },
+    );
   };
 
   const updateAxis = ({ x, y }: { x: number; y: number }) => {
@@ -109,24 +121,64 @@ export default function useMazePuzzle({
     x,
     y,
     newTile,
-    isSettingPlayer,
+    activeTileType,
+    enemyDirection,
   }: {
     x: number;
     y: number;
     newTile: number;
-    isSettingPlayer: boolean;
+    activeTileType: SIDEBAR_TOGGLE_ENUM;
+    enemyDirection?: Direction;
   }) => {
     mapRef.current = grid;
-    if (playerPosition.x === x && playerPosition.y === y) return;
-    if (isSettingPlayer) setPlayerPosition({ x: x, y: y });
-    if (mapRef.current) {
-      mapRef.current[x][y] = GRID_TILE[newTile];
-      setGrid(mapRef.current.map((row) => row.map((tile) => tile)));
-    }
+    if (
+      (playerPosition.x === x && playerPosition.y === y) ||
+      selectedMazeId === undefined
+    )
+      return;
+    if (activeTileType === SIDEBAR_TOGGLE_ENUM.ENEMY_POSITION && enemyDirection !== undefined) {
+      enemies.current.push({
+        x,
+        y,
+        puzzleId: selectedMazeId,
+        direction: enemyDirection,
+        id: uuid(),
+      });
+    } 
+      if (activeTileType === SIDEBAR_TOGGLE_ENUM.PLAYER_POSITION) setPlayerPosition({ x, y });
+    mapRef.current[x][y] = GRID_TILE[newTile];
+    setGrid(mapRef.current.map((row) => row.map((tile) => tile)));
   };
 
   const isEdgeOfGrid = (x: number, y: number) => {
     return x < 0 || y < 0 || x >= grid.length || y >= grid[0].length;
+  };
+
+  const addMovingEnemy = ({
+    x,
+    y,
+    direction,
+    puzzleId,
+  }: {
+    x: number;
+    y: number;
+    direction: Direction;
+    puzzleId: string;
+  }) => {
+    if (
+      (playerPosition.x === x && playerPosition.y === y) ||
+      enemies.current.find((enemy) => enemy.x === x && enemy.y === y) ||
+      grid[x][y].name !== "empty"
+    )
+      return;
+
+    enemies.current.push({
+      x,
+      y,
+      direction: direction,
+      id: uuid(),
+      puzzleId,
+    });
   };
 
   const isValidMove = ({
@@ -190,21 +242,9 @@ export default function useMazePuzzle({
     return true;
   };
 
-  // const convertDirection = (moving: Direction): "right" | "left" | "up" | "down" => {
-  //   const ddd = {
-  //     UP: "up",
-  //     DOWN: 'down',
-  //     RIGHT: "right",
-  //     LEFT: "left",
-  //   }
-
-  //   return ddd[moving] || "down"
-  // }
-
   const moveEnemies = (enemy: Enemy): Enemy => {
-    const direction = enemy.direction
-    //{ LEFT: "right"; right: "left"; up: "down"; down: "up" }
-    const opposite  = {
+    const direction = enemy.direction;
+    const opposite = {
       LEFT: Direction.RIGHT,
       RIGHT: Direction.LEFT,
       UP: Direction.DOWN,
@@ -282,9 +322,9 @@ export default function useMazePuzzle({
     movedFromY: number;
     movedToX: number;
     movedToY: number;
-    direction: Direction
+    direction: Direction;
   }) => {
-    const opposite  = {
+    const opposite = {
       LEFT: Direction.RIGHT,
       RIGHT: Direction.LEFT,
       UP: Direction.DOWN,
@@ -299,11 +339,7 @@ export default function useMazePuzzle({
     );
   };
 
-  const movePlayer = (
-    x: number,
-    y: number,
-    direction: Direction,
-  ) => {
+  const movePlayer = (x: number, y: number, direction: Direction) => {
     const newX = playerPosition.x + x;
     const newY = playerPosition.y + y;
     let playerRef = { ...player, lastDirectionMoved: direction };
@@ -341,8 +377,13 @@ export default function useMazePuzzle({
     }
     if (tileMovedTo === GRID_TILE[TILE_TYPES.GOAL]) {
       alert("You reached the goal!");
-      if (sessionId) {
-        revealInventoryItem(sessionId, "airgem", inventory, setInventory);
+      if (elementalSessionId) {
+        revealInventoryItem(
+          elementalSessionId,
+          "airgem",
+          inventory,
+          setInventory,
+        );
       }
     }
     setPlayer(playerRef);
@@ -356,7 +397,7 @@ export default function useMazePuzzle({
     setPlayer({ ...player, hasBomb: false });
   };
 
-  const detonate = () => {
+  const detonateBomb = () => {
     if (deployedBombs.current.length < 1) return;
     let gridRef = grid;
 
@@ -373,20 +414,21 @@ export default function useMazePuzzle({
     setGrid(gridRef.map((row) => row.map((tile) => tile)));
   };
 
-  return {
+  const mazeState = {
     grid,
-    player,
-    GRID_TILE,
-    enemies,
-    deployedBombs,
-    playerPosition,
-    reset,
     setGrid,
-    detonate,
-    plantBomb,
-    updateAxis,
-    movePlayer,
-    updateMapTile,
+    player,
+    enemies,
+    playerPosition,
     setPlayerPosition,
+  };
+  const buildMaze = { updateMapTile, updateAxis, addMovingEnemy };
+  const playMaze = { movePlayer, detonateBomb, plantBomb, deployedBombs };
+
+  return {
+    mazeState,
+    buildMaze,
+    playMaze,
+    reset,
   };
 }

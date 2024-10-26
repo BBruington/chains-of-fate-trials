@@ -26,10 +26,14 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
     id: PuzzleEnums.AIR,
   });
 
-  const { grid, movePlayer, reset, playerPosition, GRID_TILE } = useMazePuzzle({
-    sessionId,
-    mapLayout: INITIAL_MAP,
+  const { playMaze, mazeState, reset } = useMazePuzzle({
+    elementalSessionId: sessionId,
+    gameGridDetails: {
+      mapLayout: INITIAL_MAP,
+    },
   });
+  const { movePlayer } = playMaze;
+  const { grid, playerPosition } = mazeState;
 
   return (
     <div
@@ -68,7 +72,6 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
             row={row}
             character={character}
             rowIndex={rowIndex}
-            GRID_TILE={GRID_TILE}
             playerPosition={playerPosition}
           />
         ))}

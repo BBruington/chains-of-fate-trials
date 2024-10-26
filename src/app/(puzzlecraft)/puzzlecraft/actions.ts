@@ -1,10 +1,36 @@
 "use server";
 import { prisma } from "@/lib/db";
+import { Enemy } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+
+const upsertEnemiesOnMaze = async ({
+  allEnemies,
+  puzzleId,
+}: {
+  allEnemies: Enemy[];
+  puzzleId: string;
+}) => {
+  try {
+    console.log("look at the enemies here LOOK HERE: ", allEnemies);
+    console.log("cm2awwv7n00053vjz4k2b3nya");
+    prisma.$transaction([
+      prisma.enemy.deleteMany({
+        where: { puzzleId },
+      }),
+      prisma.enemy.createMany({
+        data: allEnemies,
+      }),
+    ]);
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to update enemies for the puzzle");
+  }
+};
 
 export const saveMazePuzzle = async ({
   maze,
   isCreated,
+  allEnemies,
 }: {
   maze: {
     id: string;
@@ -16,6 +42,7 @@ export const saveMazePuzzle = async ({
     userId: string;
   };
   isCreated?: boolean;
+  allEnemies?: Enemy[];
 }) => {
   try {
     if (!isCreated) {
@@ -28,6 +55,7 @@ export const saveMazePuzzle = async ({
           ...maze,
         },
       });
+      if (allEnemies) await upsertEnemiesOnMaze({ allEnemies, puzzleId: updatedMaze.id });
       revalidatePath(`${process.env.BASE_URL}/puzzlecraft`);
       return updatedMaze;
     } else {
@@ -42,6 +70,7 @@ export const saveMazePuzzle = async ({
           userId,
         },
       });
+      if (allEnemies) await upsertEnemiesOnMaze({ allEnemies, puzzleId: createdMaze.id });
       revalidatePath(`${process.env.BASE_URL}/puzzlecraft`);
       return createdMaze;
     }
@@ -57,11 +86,14 @@ export const deleteMazePuzzle = async ({ id }: { id: string }) => {
       where: {
         id,
       },
+      include: { enemies: true },
     });
     revalidatePath(`${process.env.BASE_URL}/puzzlecraft`);
     return deletedPuzzle;
   } catch (error) {
-    console.error(error)
-    throw new Error("Something went wrong when trying to delete the maze puzzle")
+    console.error(error);
+    throw new Error(
+      "Something went wrong when trying to delete the maze puzzle",
+    );
   }
 };

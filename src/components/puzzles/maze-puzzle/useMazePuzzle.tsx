@@ -79,6 +79,7 @@ export default function useMazePuzzle({
 
   const reset = () => {
     deployedBombs.current = [];
+    enemies.current = allEnemies ? allEnemies : [];
     setGrid(
       mapRef.current
         ? mapRef.current.map((row) => row.map((tile) => tile))
@@ -136,7 +137,10 @@ export default function useMazePuzzle({
       selectedMazeId === undefined
     )
       return;
-    if (activeTileType === SIDEBAR_TOGGLE_ENUM.ENEMY_POSITION && enemyDirection !== undefined) {
+    if (
+      activeTileType === SIDEBAR_TOGGLE_ENUM.PLACE_ENEMY &&
+      enemyDirection !== undefined
+    ) {
       enemies.current.push({
         x,
         y,
@@ -144,8 +148,11 @@ export default function useMazePuzzle({
         direction: enemyDirection,
         id: uuid(),
       });
-    } 
-      if (activeTileType === SIDEBAR_TOGGLE_ENUM.PLAYER_POSITION) setPlayerPosition({ x, y });
+    }
+    if (activeTileType === SIDEBAR_TOGGLE_ENUM.REMOVE_ENEMY)
+      removeEnemy({ x, y });
+    if (activeTileType === SIDEBAR_TOGGLE_ENUM.PLAYER_POSITION)
+      setPlayerPosition({ x, y });
     mapRef.current[x][y] = GRID_TILE[newTile];
     setGrid(mapRef.current.map((row) => row.map((tile) => tile)));
   };
@@ -240,6 +247,15 @@ export default function useMazePuzzle({
     }
     setGrid(gridRef);
     return true;
+  };
+
+  const removeEnemy = ({ x, y }: { x: number; y: number }) => {
+    if (enemies.current !== undefined) {
+      const newEnemies = enemies.current?.filter(
+        (enemy) => enemy.x !== x && enemy.y !== y,
+      );
+      enemies.current = newEnemies;
+    }
   };
 
   const moveEnemies = (enemy: Enemy): Enemy => {

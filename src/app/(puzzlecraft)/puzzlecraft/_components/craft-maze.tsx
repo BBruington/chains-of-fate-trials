@@ -2,12 +2,10 @@
 import GridRow from "@/components/puzzles/maze-puzzle/grid";
 import useMazePuzzle from "@/components/puzzles/maze-puzzle/useMazePuzzle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Toggle } from "@/components/ui/toggle";
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
 import { saveMazePuzzle, deleteMazePuzzle } from "../actions";
 import { DEFAULT_MAP } from "@/app/(session)/session/[id]/_constants";
-import { cn } from "@/lib/utils";
 import { Direction, type $Enums } from "@prisma/client";
 import { GRID_TILE } from "@/components/puzzles/maze-puzzle/constants";
 import { ACTIVE_SIDEBAR, Maze, SIDEBAR_TOGGLE_ENUM } from "../types";
@@ -109,6 +107,7 @@ export default function CraftMaze({
       x: playerStartingPosition.x,
       y: playerStartingPosition.y,
     });
+    enemies.current = maze.enemies;
   };
 
   const handleSaveChanges = async () => {

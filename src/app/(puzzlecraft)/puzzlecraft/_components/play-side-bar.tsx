@@ -25,7 +25,7 @@ export default function PlaySideBar({
           disabled={deployedBombs.current.length === 0}
           onClick={handleDetonate}
         >
-          detonateBomb
+          Detonate Bomb
         </Button>
         <Button
           className="w-32"

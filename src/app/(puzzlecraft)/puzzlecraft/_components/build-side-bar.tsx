@@ -81,11 +81,11 @@ export default function BuildSideBar({
       </div>
       <div className="flex w-full flex-col items-center bg-primary-foreground">
         <Toggle
-          pressed={activeTileType === SIDEBAR_TOGGLE_ENUM.ENEMY_POSITION}
+          pressed={activeTileType === SIDEBAR_TOGGLE_ENUM.PLACE_ENEMY}
           onPressedChange={(e) => {
             if (e) {
               setUpdateTile(0);
-              setActiveTileType(SIDEBAR_TOGGLE_ENUM.ENEMY_POSITION);
+              setActiveTileType(SIDEBAR_TOGGLE_ENUM.PLACE_ENEMY);
             } else {
               setActiveTileType(SIDEBAR_TOGGLE_ENUM.TILE_TYPE);
             }
@@ -93,6 +93,18 @@ export default function BuildSideBar({
           className="flex w-full justify-center border-b py-2 text-sm"
         >
           Set Enemy
+        </Toggle>
+        <Toggle pressed={activeTileType === SIDEBAR_TOGGLE_ENUM.REMOVE_ENEMY}
+          onPressedChange={(e) => {
+            if (e) {
+              setUpdateTile(0);
+              setActiveTileType(SIDEBAR_TOGGLE_ENUM.REMOVE_ENEMY);
+            } else {
+              setActiveTileType(SIDEBAR_TOGGLE_ENUM.TILE_TYPE);
+            }
+          }}
+        >
+          Remove Enemy
         </Toggle>
         <ToggleGroup
         className="flex justify-around w-full"
@@ -102,25 +114,25 @@ export default function BuildSideBar({
           }}
         >
           <ToggleGroupItem
-            disabled={activeTileType !== SIDEBAR_TOGGLE_ENUM.ENEMY_POSITION}
+            disabled={activeTileType !== SIDEBAR_TOGGLE_ENUM.PLACE_ENEMY}
             value={Direction.UP}
           >
             Up
           </ToggleGroupItem>
           <ToggleGroupItem
-            disabled={activeTileType !== SIDEBAR_TOGGLE_ENUM.ENEMY_POSITION}
+            disabled={activeTileType !== SIDEBAR_TOGGLE_ENUM.PLACE_ENEMY}
             value={Direction.DOWN}
           >
             Down
           </ToggleGroupItem>
           <ToggleGroupItem
-            disabled={activeTileType !== SIDEBAR_TOGGLE_ENUM.ENEMY_POSITION}
+            disabled={activeTileType !== SIDEBAR_TOGGLE_ENUM.PLACE_ENEMY}
             value={Direction.LEFT}
           >
             Left
           </ToggleGroupItem>
           <ToggleGroupItem
-            disabled={activeTileType !== SIDEBAR_TOGGLE_ENUM.ENEMY_POSITION}
+            disabled={activeTileType !== SIDEBAR_TOGGLE_ENUM.PLACE_ENEMY}
             value={Direction.RIGHT}
           >
             Right

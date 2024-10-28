@@ -22,6 +22,12 @@ export enum SIDEBAR_TOGGLE_ENUM {
   ENEMY_POSITION = "ENEMY_POSITION",
   TILE_TYPE = "TILE_TYPE",
 }
+
+export enum ACTIVE_SIDEBAR {
+  PLAYMODE = "PLAYMODE",
+  EDITMODE = "EDITMODE"
+}
+
 export type Maze = {
   id: string;
   playerX: number;
@@ -46,6 +52,7 @@ export type PlaySideBarProps = {
     plantBomb: ({ x, y }: { x: number; y: number }) => void;
     deployedBombs: MutableRefObject<coordinates[]>;
   };
+  reset: () => void;
   player: {
     hasBomb: boolean;
     lastDirectionMoved: null | Direction;

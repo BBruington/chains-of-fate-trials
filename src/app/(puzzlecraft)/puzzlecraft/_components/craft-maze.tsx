@@ -10,7 +10,7 @@ import { DEFAULT_MAP } from "@/app/(session)/session/[id]/_constants";
 import { cn } from "@/lib/utils";
 import { Direction, type $Enums } from "@prisma/client";
 import { GRID_TILE } from "@/components/puzzles/maze-puzzle/constants";
-import { Maze, SIDEBAR_TOGGLE_ENUM } from "../types";
+import { ACTIVE_SIDEBAR, Maze, SIDEBAR_TOGGLE_ENUM } from "../types";
 import BuildSideBar from "./build-side-bar";
 import PlaySideBar from "./play-side-bar";
 
@@ -90,6 +90,7 @@ export default function CraftMaze({
   const [activeTileType, setActiveTileType] = useState(
     SIDEBAR_TOGGLE_ENUM.TILE_TYPE,
   );
+  const [currentSidebar, setCurrentSidebar] = useState(ACTIVE_SIDEBAR.EDITMODE);
   const editMapProperties = {
     updatedTile,
     updateMapTile,
@@ -130,8 +131,6 @@ export default function CraftMaze({
     });
   };
 
-  
-
   return (
     <div className="flex h-full flex-1 flex-col">
       <div className="flex h-full justify-between">
@@ -164,23 +163,46 @@ export default function CraftMaze({
           </div>
         </div>
         {/* side bar */}
-        <div className="flex h-full flex-col items-center space-y-3 bg-secondary p-2">
-          <PlaySideBar playMaze={playMaze} playerPosition={playerPosition} player={mazeState.player}/>
-          <BuildSideBar
-            grid={grid}
-            clerkId={clerkId}
-            MazePuzzle={MazePuzzle}
-            updatedTile={updatedTile}
-            activeTileType={activeTileType}
-            selectedPuzzle={selectedPuzzle.current}
-            selectedEnemyDirection={selectedEnemyDirection.current}
-            reset={reset}
-            updateAxis={updateAxis}
-            setUpdateTile={setUpdateTile}
-            handleSelectMaze={handleSelectMaze}
-            handleSaveChanges={handleSaveChanges}
-            setActiveTileType={setActiveTileType}
-          />
+        <div className="flex h-full flex-col items-center space-y-3 bg-secondary p-2 min-w-96">
+          <ToggleGroup
+          className="flex justify-around w-full mb-5"
+            onValueChange={(value) => {
+              if (value) setCurrentSidebar(value as ACTIVE_SIDEBAR);
+            }}
+            type="single"
+          >
+            <ToggleGroupItem className="min-w-32 border" value={ACTIVE_SIDEBAR.PLAYMODE}>
+              Play
+            </ToggleGroupItem>
+            <ToggleGroupItem className="min-w-32 border" value={ACTIVE_SIDEBAR.EDITMODE}>
+              Edit
+            </ToggleGroupItem>
+          </ToggleGroup>
+          {currentSidebar === ACTIVE_SIDEBAR.PLAYMODE && (
+            <PlaySideBar
+              playMaze={playMaze}
+              playerPosition={playerPosition}
+              player={mazeState.player}
+              reset={reset}
+            />
+          )}
+          {currentSidebar === ACTIVE_SIDEBAR.EDITMODE && (
+            <BuildSideBar
+              grid={grid}
+              clerkId={clerkId}
+              MazePuzzle={MazePuzzle}
+              updatedTile={updatedTile}
+              activeTileType={activeTileType}
+              selectedPuzzle={selectedPuzzle.current}
+              selectedEnemyDirection={selectedEnemyDirection.current}
+              reset={reset}
+              updateAxis={updateAxis}
+              setUpdateTile={setUpdateTile}
+              handleSelectMaze={handleSelectMaze}
+              handleSaveChanges={handleSaveChanges}
+              setActiveTileType={setActiveTileType}
+            />
+          )}
         </div>
       </div>
     </div>

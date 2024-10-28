@@ -1,10 +1,8 @@
 import { GRID_TILE } from "@/components/puzzles/maze-puzzle/constants";
-import grid from "@/components/puzzles/maze-puzzle/grid";
 import { cn } from "@/lib/utils";
 import { Direction } from "@prisma/client";
-import { Toggle } from "@radix-ui/react-toggle";
-import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group";
-import React from "react";
+import { Toggle } from "@/components/ui/toggle";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
 import { BuildSideBarProps, SIDEBAR_TOGGLE_ENUM } from "../types";
 import { deleteMazePuzzle } from "../actions";
@@ -97,6 +95,7 @@ export default function BuildSideBar({
           Set Enemy
         </Toggle>
         <ToggleGroup
+        className="flex justify-around w-full"
           type="single"
           onValueChange={(value) => {
             if (value) selectedEnemyDirection = value as Direction;

@@ -335,7 +335,7 @@ export default function useMazePuzzle({
         (enemy.x === movedToX && enemy.y === movedToY) ||
         (enemy.x === movedFromX &&
           enemy.y === movedFromY &&
-          direction === opposite[direction]),
+          enemy.direction === opposite[direction]),
     );
   };
 

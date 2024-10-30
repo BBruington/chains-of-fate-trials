@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Dispatch, SetStateAction } from "react";
 import { DEFAULT_MAP } from "../../../app/(session)/session/[id]/_constants";
 import { useAtom } from "jotai";
 import { inventoryItems } from "../../../app/(session)/session/[id]/jotaiAtoms";
@@ -7,7 +7,10 @@ import { GRID_TILE, TILE_TYPES } from "./constants";
 import { coordinates, Enemy, GridPiece } from "./types";
 import { Direction } from "@prisma/client";
 import uuid from "react-uuid";
-import { SIDEBAR_TOGGLE_ENUM } from "@/app/(puzzlecraft)/puzzlecraft/types";
+import {
+  ACTIVE_SIDEBAR,
+  SIDEBAR_TOGGLE_ENUM,
+} from "@/app/(puzzlecraft)/puzzlecraft/types";
 
 export default function useMazePuzzle({
   elementalSessionId,
@@ -17,12 +20,20 @@ export default function useMazePuzzle({
   elementalSessionId?: string;
   selectedMazeId?: string;
   gameGridDetails: {
+    isCraftMode?: ACTIVE_SIDEBAR;
+    setIsFailed: Dispatch<SetStateAction<boolean>>;
     mapLayout: number[][];
     allEnemies?: Enemy[];
     playerStartingPosition?: { x: number; y: number };
   };
 }) {
-  const { mapLayout, allEnemies, playerStartingPosition } = gameGridDetails;
+  const {
+    mapLayout,
+    allEnemies,
+    playerStartingPosition,
+    isCraftMode,
+    setIsFailed,
+  } = gameGridDetails;
   const [player, setPlayer] = useState<{
     hasBomb: boolean;
     lastDirectionMoved: null | Direction;
@@ -77,7 +88,7 @@ export default function useMazePuzzle({
     return () => document.removeEventListener("keydown", handleKeyPress);
   }, [playerPosition]);
 
-  const reset = () => {
+  function reset() {
     deployedBombs.current = [];
     enemies.current = allEnemies ? allEnemies : [];
     setGrid(
@@ -93,7 +104,7 @@ export default function useMazePuzzle({
             y: 0,
           },
     );
-  };
+  }
 
   const updateAxis = ({ x, y }: { x: number; y: number }) => {
     mapRef.current = grid;
@@ -250,6 +261,7 @@ export default function useMazePuzzle({
   };
 
   const removeEnemy = ({ x, y }: { x: number; y: number }) => {
+    reset();
     if (enemies.current !== undefined) {
       const newEnemies = enemies.current?.filter(
         (enemy) => enemy.x !== x && enemy.y !== y,
@@ -356,6 +368,7 @@ export default function useMazePuzzle({
   };
 
   const movePlayer = (x: number, y: number, direction: Direction) => {
+    if (isCraftMode === ACTIVE_SIDEBAR.EDITMODE) return;
     const newX = playerPosition.x + x;
     const newY = playerPosition.y + y;
     let playerRef = { ...player, lastDirectionMoved: direction };
@@ -382,8 +395,9 @@ export default function useMazePuzzle({
         movedToY: newY,
         direction: playerRef.lastDirectionMoved,
       })
-    )
-      alert("you lose");
+    ) {
+      setIsFailed(true);
+    }
     setPlayerPosition({ x: newX, y: newY });
     if (tileMovedTo === GRID_TILE[TILE_TYPES.BOMB] && !player.hasBomb) {
       let gridRef = grid;

@@ -11,8 +11,6 @@ const upsertEnemiesOnMaze = async ({
   puzzleId: string;
 }) => {
   try {
-    console.log("look at the enemies here LOOK HERE: ", allEnemies);
-    console.log("cm2awwv7n00053vjz4k2b3nya");
     prisma.$transaction([
       prisma.enemy.deleteMany({
         where: { puzzleId },
@@ -55,7 +53,7 @@ export const saveMazePuzzle = async ({
           ...maze,
         },
       });
-      if (allEnemies) await upsertEnemiesOnMaze({ allEnemies, puzzleId: updatedMaze.id });
+      if (allEnemies !== undefined) await upsertEnemiesOnMaze({ allEnemies, puzzleId: updatedMaze.id });
       revalidatePath(`${process.env.BASE_URL}/puzzlecraft`);
       return updatedMaze;
     } else {
@@ -70,7 +68,7 @@ export const saveMazePuzzle = async ({
           userId,
         },
       });
-      if (allEnemies) await upsertEnemiesOnMaze({ allEnemies, puzzleId: createdMaze.id });
+      if (allEnemies !== undefined) await upsertEnemiesOnMaze({ allEnemies, puzzleId: createdMaze.id });
       revalidatePath(`${process.env.BASE_URL}/puzzlecraft`);
       return createdMaze;
     }

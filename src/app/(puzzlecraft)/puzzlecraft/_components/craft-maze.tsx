@@ -72,7 +72,7 @@ export default function CraftMaze({
     MazePuzzle[0] ? MazePuzzle[0] : defaultCreatedMaze,
   );
   const selectedPuzzle = useRef(MazePuzzle[0] ? MazePuzzle[0].id : "created");
-  const selectedEnemyDirection = useRef<Direction>(Direction.DOWN);
+  const [selectedEnemyDirection, setSelectedEnemyDirection] = useState<Direction>(Direction.DOWN);
   const [isFailed, setIsFailed] = useState(false);
   const [isCraftMode, setIsCraftMode] = useState(ACTIVE_SIDEBAR.EDITMODE);
 
@@ -98,7 +98,7 @@ export default function CraftMaze({
     updateMapTile,
     activeTileType,
     selectedPuzzle,
-    enemyDirection: selectedEnemyDirection.current,
+    enemyDirection: selectedEnemyDirection,
   };
 
   const handleSelectMaze = (maze: Maze) => {
@@ -130,7 +130,7 @@ export default function CraftMaze({
     await saveMazePuzzle({
       maze: mazeProperties,
       isCreated: selectedPuzzle.current === "created",
-      allEnemies: enemies.current.length > 0 ? enemies.current : undefined,
+      allEnemies: enemies.current || undefined,
     });
   };
 
@@ -171,7 +171,7 @@ export default function CraftMaze({
           <ToggleGroup
             className="mb-5 flex w-full justify-around"
             onValueChange={(value) => {
-              reset()
+              reset();
               setIsCraftMode(value as ACTIVE_SIDEBAR);
             }}
             type="single"
@@ -205,7 +205,7 @@ export default function CraftMaze({
               updatedTile={updatedTile}
               activeTileType={activeTileType}
               selectedPuzzle={selectedPuzzle.current}
-              selectedEnemyDirection={selectedEnemyDirection.current}
+              setSelectedEnemyDirection={setSelectedEnemyDirection}
               reset={reset}
               updateAxis={updateAxis}
               setUpdateTile={setUpdateTile}

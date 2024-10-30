@@ -16,7 +16,7 @@ export default function BuildSideBar({
   MazePuzzle,
   updatedTile,
   clerkId,
-  selectedEnemyDirection,
+  setSelectedEnemyDirection,
   handleSelectMaze,
   updateAxis,
   grid,
@@ -40,7 +40,7 @@ export default function BuildSideBar({
   return (
     <>
       <h2 className="text-xl">Add Tiles to the Map</h2>
-      <div className="flex w-full flex-col bg-primary-foreground">
+      <div className="flex w-full flex-col bg-primary-foreground p-2">
         <div className="flex w-full items-center justify-around border-b">
           <Toggle
             className="mx-2 data-[state=on]:bg-secondary"
@@ -67,50 +67,54 @@ export default function BuildSideBar({
           {Object.keys(GRID_TILE).map((tile) => (
             <ToggleGroupItem
               className={cn(
-                "data-[state=on]:bg-secondary",
+                "data-[state=on]:bg-secondary text-xs",
                 GRID_TILE[Number(tile)].name === "deployed" && "hidden",
               )}
               disabled={activeTileType !== SIDEBAR_TOGGLE_ENUM.TILE_TYPE}
               key={tile}
               value={tile}
             >
-              <p>{GRID_TILE[Number(tile)].name}</p>
+              {GRID_TILE[Number(tile)].name}
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
       </div>
       <div className="flex w-full flex-col items-center bg-primary-foreground">
-        <Toggle
-          pressed={activeTileType === SIDEBAR_TOGGLE_ENUM.PLACE_ENEMY}
-          onPressedChange={(e) => {
-            if (e) {
-              setUpdateTile(0);
-              setActiveTileType(SIDEBAR_TOGGLE_ENUM.PLACE_ENEMY);
-            } else {
-              setActiveTileType(SIDEBAR_TOGGLE_ENUM.TILE_TYPE);
-            }
-          }}
-          className="flex w-full justify-center border-b py-2 text-sm"
-        >
-          Set Enemy
-        </Toggle>
-        <Toggle pressed={activeTileType === SIDEBAR_TOGGLE_ENUM.REMOVE_ENEMY}
-          onPressedChange={(e) => {
-            if (e) {
-              setUpdateTile(0);
-              setActiveTileType(SIDEBAR_TOGGLE_ENUM.REMOVE_ENEMY);
-            } else {
-              setActiveTileType(SIDEBAR_TOGGLE_ENUM.TILE_TYPE);
-            }
-          }}
-        >
-          Remove Enemy
-        </Toggle>
+        <div className="flex">
+          <Toggle
+          className="w-32"
+            pressed={activeTileType === SIDEBAR_TOGGLE_ENUM.PLACE_ENEMY}
+            onPressedChange={(e) => {
+              if (e) {
+                setUpdateTile(0);
+                setActiveTileType(SIDEBAR_TOGGLE_ENUM.PLACE_ENEMY);
+              } else {
+                setActiveTileType(SIDEBAR_TOGGLE_ENUM.TILE_TYPE);
+              }
+            }}
+          >
+            Place Enemy
+          </Toggle>
+          <Toggle
+          className="w-32"
+            pressed={activeTileType === SIDEBAR_TOGGLE_ENUM.REMOVE_ENEMY}
+            onPressedChange={(e) => {
+              if (e) {
+                setUpdateTile(0);
+                setActiveTileType(SIDEBAR_TOGGLE_ENUM.REMOVE_ENEMY);
+              } else {
+                setActiveTileType(SIDEBAR_TOGGLE_ENUM.TILE_TYPE);
+              }
+            }}
+          >
+            Remove Enemy
+          </Toggle>
+        </div>
         <ToggleGroup
-        className="flex justify-around w-full"
+          className="flex w-full justify-around"
           type="single"
           onValueChange={(value) => {
-            if (value) selectedEnemyDirection = value as Direction;
+            if (value) setSelectedEnemyDirection(value as Direction);
           }}
         >
           <ToggleGroupItem

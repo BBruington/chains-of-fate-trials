@@ -26,7 +26,7 @@ export enum SIDEBAR_TOGGLE_ENUM {
 
 export enum ACTIVE_SIDEBAR {
   PLAYMODE = "PLAYMODE",
-  EDITMODE = "EDITMODE"
+  EDITMODE = "EDITMODE",
 }
 
 export type Maze = {
@@ -74,7 +74,7 @@ export type BuildSideBarProps = {
   activeTileType: SIDEBAR_TOGGLE_ENUM;
   selectedPuzzle: string;
   updatedTile: number;
-  selectedEnemyDirection: Direction;
+  setSelectedEnemyDirection: Dispatch<SetStateAction<Direction>>;
   clerkId: string;
   grid: GridPiece[][];
   MazePuzzle: ({

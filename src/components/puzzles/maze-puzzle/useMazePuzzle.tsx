@@ -261,16 +261,32 @@ export default function useMazePuzzle({
   };
 
   const removeEnemy = ({ x, y }: { x: number; y: number }) => {
-    reset();
     if (enemies.current !== undefined) {
       const newEnemies = enemies.current?.filter(
-        (enemy) => enemy.x !== x && enemy.y !== y,
+        (enemy) => enemy.x !== x || enemy.y !== y,
       );
       enemies.current = newEnemies;
     }
   };
 
   const moveEnemies = (enemy: Enemy): Enemy => {
+    function checkIsPushableObject(checkDirection: Direction) {
+      const tileMovedTo =
+        grid[movement[checkDirection].x + enemy.x][
+          movement[checkDirection].y + enemy.y
+        ];
+      if (tileMovedTo === GRID_TILE[TILE_TYPES.PUSHABLE]) {
+        const isValidPush = movePushableObject({
+          pushedFromDx: movement[checkDirection].x + enemy.x,
+          pushedFromDy: movement[checkDirection].y + enemy.y,
+          pushedToDx:
+            movement[checkDirection].x + movement[checkDirection].x + enemy.x,
+          pushedToDy:
+            movement[checkDirection].y + movement[checkDirection].y + enemy.y,
+        });
+        return isValidPush;
+      }
+    }
     const direction = enemy.direction;
     const opposite = {
       LEFT: Direction.RIGHT,
@@ -300,6 +316,8 @@ export default function useMazePuzzle({
       ) {
         return enemy;
       }
+      const isValidPush = checkIsPushableObject(otherDirection);
+      if (isValidPush === false) return enemy;
       return {
         ...enemy,
         direction: opposite[direction],
@@ -307,30 +325,22 @@ export default function useMazePuzzle({
         y: movement[otherDirection].y + enemy.y,
       };
     }
-    const tileMovedTo =
-      grid[movement[direction].x + enemy.x][movement[direction].y + enemy.y];
-    if (tileMovedTo === GRID_TILE[TILE_TYPES.PUSHABLE]) {
-      const isValidPush = movePushableObject({
-        pushedFromDx: movement[direction].x + enemy.x,
-        pushedFromDy: movement[direction].y + enemy.y,
-        pushedToDx: movement[direction].x + movement[direction].x + enemy.x,
-        pushedToDy: movement[direction].y + movement[direction].y + enemy.y,
-      });
-      if (
-        !isValidPush &&
-        isValidMove({
-          x: movement[otherDirection].x + enemy.x,
-          y: movement[otherDirection].y + enemy.y,
-        })
-      ) {
-        return {
-          ...enemy,
-          direction: opposite[direction],
-          x: movement[otherDirection].x + enemy.x,
-          y: movement[otherDirection].y + enemy.y,
-        };
-      }
+    const isValidPush = checkIsPushableObject(direction);
+    if (
+      isValidPush === false &&
+      isValidMove({
+        x: movement[otherDirection].x + enemy.x,
+        y: movement[otherDirection].y + enemy.y,
+      })
+    ) {
+      return {
+        ...enemy,
+        direction: opposite[direction],
+        x: movement[otherDirection].x + enemy.x,
+        y: movement[otherDirection].y + enemy.y,
+      };
     }
+
     return {
       ...enemy,
       direction: direction,

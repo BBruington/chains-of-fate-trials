@@ -12,7 +12,7 @@ import "./styles.css";
 import { Enemy, GridPiece } from "./types";
 import { MutableRefObject } from "react";
 import { SIDEBAR_TOGGLE_ENUM } from "@/app/(puzzlecraft)/puzzlecraft/types";
-import { $Enums, Direction } from "@prisma/client";
+import { Direction } from "@prisma/client";
 
 export default function GridRow({
   row,

@@ -24,9 +24,10 @@ export enum SIDEBAR_TOGGLE_ENUM {
   TILE_TYPE = "TILE_TYPE",
 }
 
-export enum ACTIVE_SIDEBAR {
+export enum ACTIVE_SIDEBAR_ENUM {
   PLAYMODE = "PLAYMODE",
   EDITMODE = "EDITMODE",
+  CREATE_SESSION = "CREATE_SESSION",
 }
 
 export type Maze = {
@@ -77,22 +78,5 @@ export type BuildSideBarProps = {
   setSelectedEnemyDirection: Dispatch<SetStateAction<Direction>>;
   clerkId: string;
   grid: GridPiece[][];
-  MazePuzzle: ({
-    enemies: {
-      id: string;
-      puzzleId: string;
-      x: number;
-      y: number;
-      direction: Direction;
-    }[];
-  } & {
-    id: string;
-    playerX: number;
-    playerY: number;
-    rows: number;
-    columns: number;
-    grid: number[];
-    createdAt: Date;
-    userId: string;
-  })[];
+  MazePuzzle: Maze[];
 };

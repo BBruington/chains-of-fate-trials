@@ -1,32 +1,21 @@
 "use client";
 import CraftMaze from "./craft-maze";
-import { PuzzleCraftEnums } from "../types";
+import { Maze, PuzzleCraftEnums } from "../types";
 import { Button } from "@/components/ui/button";
 import { useAtom } from "jotai";
 import { puzzle } from "../../jotaiAtoms";
-import type { $Enums } from "@prisma/client";
 
 type CraftPuzzleProperties = {
   userPuzzles: {
     clerkId: string;
-    MazePuzzle: ({
-      enemies: {
-        id: string;
-        puzzleId: string;
-        x: number;
-        y: number;
-        direction: $Enums.Direction;
-      }[];
+    MazeSessions: ({
+      Mazes: Maze[];
     } & {
       id: string;
-      playerX: number;
-      playerY: number;
-      rows: number;
-      columns: number;
-      grid: number[];
-      createdAt: Date;
       userId: string;
+      title: string;
     })[];
+    MazePuzzle: Maze[];
   };
 };
 
@@ -36,12 +25,13 @@ export default function PuzzleCraft({ userPuzzles }: CraftPuzzleProperties) {
     [PuzzleCraftEnums.MAZE]: (
       <CraftMaze
         MazePuzzle={userPuzzles.MazePuzzle}
+        MazeSessions={userPuzzles.MazeSessions}
         clerkId={userPuzzles.clerkId}
       />
     ),
   };
 
-  const [puzzleAtom, setPuzzle] = useAtom(puzzle);
+  const [puzzleAtom, setPuzzleAtom] = useAtom(puzzle);
 
   return (
     <div className="flex h-[calc(100vh-48px)] min-h-[calc(100vh-48px)] flex-col">
@@ -56,7 +46,7 @@ export default function PuzzleCraft({ userPuzzles }: CraftPuzzleProperties) {
               <Button
                 className="w-32"
                 key={puzzleName}
-                onClick={() => setPuzzle(puzzleName)}
+                onClick={() => setPuzzleAtom(puzzleName)}
               >
                 {puzzleName}
               </Button>

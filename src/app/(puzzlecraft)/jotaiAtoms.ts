@@ -1,5 +1,5 @@
 import { atom } from "jotai";
 
-const puzzle = atom("EMPTY");
+const puzzle = atom("MAZE");
 
 export { puzzle };

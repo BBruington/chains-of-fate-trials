@@ -48,7 +48,7 @@ model User {
   Potions               Potion[]
   Formulas              Formula[]
   MazePuzzle            MazePuzzle[]
-
+  MazeSessions          MazeSession[]
   @@map(name: "users")
 }
 
@@ -113,6 +113,15 @@ model MazePuzzle {
   userId  String
   User    User   @relation(fields: [userId], references: [clerkId])
   enemies  Enemy[]
+  MazeSession MazeSession[]
+}
+
+model MazeSession {
+  id String @id @default(cuid())
+  userId String
+  title String
+  User User @relation(fields: [userId], references: [clerkId])
+  Mazes MazePuzzle[]
 }
 
 model Enemy {

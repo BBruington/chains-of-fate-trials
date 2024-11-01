@@ -8,7 +8,7 @@ import { coordinates, Enemy, GridPiece } from "./types";
 import { Direction } from "@prisma/client";
 import uuid from "react-uuid";
 import {
-  ACTIVE_SIDEBAR,
+  ACTIVE_SIDEBAR_ENUM,
   SIDEBAR_TOGGLE_ENUM,
 } from "@/app/(puzzlecraft)/puzzlecraft/types";
 
@@ -20,8 +20,8 @@ export default function useMazePuzzle({
   elementalSessionId?: string;
   selectedMazeId?: string;
   gameGridDetails: {
-    isCraftMode?: ACTIVE_SIDEBAR;
-    setIsFailed: Dispatch<SetStateAction<boolean>>;
+    isCraftMode?: ACTIVE_SIDEBAR_ENUM;
+    setIsFailed?: Dispatch<SetStateAction<boolean>>;
     mapLayout: number[][];
     allEnemies?: Enemy[];
     playerStartingPosition?: { x: number; y: number };
@@ -378,7 +378,7 @@ export default function useMazePuzzle({
   };
 
   const movePlayer = (x: number, y: number, direction: Direction) => {
-    if (isCraftMode === ACTIVE_SIDEBAR.EDITMODE) return;
+    if (isCraftMode !== ACTIVE_SIDEBAR_ENUM.PLAYMODE) return;
     const newX = playerPosition.x + x;
     const newY = playerPosition.y + y;
     let playerRef = { ...player, lastDirectionMoved: direction };
@@ -406,7 +406,7 @@ export default function useMazePuzzle({
         direction: playerRef.lastDirectionMoved,
       })
     ) {
-      setIsFailed(true);
+      if (setIsFailed !== undefined) setIsFailed(true);
     }
     setPlayerPosition({ x: newX, y: newY });
     if (tileMovedTo === GRID_TILE[TILE_TYPES.BOMB] && !player.hasBomb) {

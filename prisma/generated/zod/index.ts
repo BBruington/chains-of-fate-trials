@@ -70,6 +70,8 @@ export const PotionScalarFieldEnumSchema = z.enum(['id','rarity','type','primary
 
 export const MazePuzzleScalarFieldEnumSchema = z.enum(['id','playerX','playerY','rows','columns','grid','createdAt','userId']);
 
+export const MazeSessionScalarFieldEnumSchema = z.enum(['id','userId','title']);
+
 export const EnemyScalarFieldEnumSchema = z.enum(['id','puzzleId','x','y','direction']);
 
 export const CoordinatesScalarFieldEnumSchema = z.enum(['id','head','torso','waist','leftForearm','leftHand','rightForearm','rightHand','leftKnee','leftFoot','rightKnee','rightFoot']);
@@ -240,6 +242,18 @@ export const MazePuzzleSchema = z.object({
 export type MazePuzzle = z.infer<typeof MazePuzzleSchema>
 
 /////////////////////////////////////////
+// MAZE SESSION SCHEMA
+/////////////////////////////////////////
+
+export const MazeSessionSchema = z.object({
+  id: z.string().cuid(),
+  userId: z.string(),
+  title: z.string(),
+})
+
+export type MazeSession = z.infer<typeof MazeSessionSchema>
+
+/////////////////////////////////////////
 // ENEMY SCHEMA
 /////////////////////////////////////////
 
@@ -368,6 +382,7 @@ export const UserIncludeSchema: z.ZodType<Prisma.UserInclude> = z.object({
   Potions: z.union([z.boolean(),z.lazy(() => PotionFindManyArgsSchema)]).optional(),
   Formulas: z.union([z.boolean(),z.lazy(() => FormulaFindManyArgsSchema)]).optional(),
   MazePuzzle: z.union([z.boolean(),z.lazy(() => MazePuzzleFindManyArgsSchema)]).optional(),
+  MazeSessions: z.union([z.boolean(),z.lazy(() => MazeSessionFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => UserCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -386,6 +401,7 @@ export const UserCountOutputTypeSelectSchema: z.ZodType<Prisma.UserCountOutputTy
   Potions: z.boolean().optional(),
   Formulas: z.boolean().optional(),
   MazePuzzle: z.boolean().optional(),
+  MazeSessions: z.boolean().optional(),
 }).strict();
 
 export const UserSelectSchema: z.ZodType<Prisma.UserSelect> = z.object({
@@ -401,6 +417,7 @@ export const UserSelectSchema: z.ZodType<Prisma.UserSelect> = z.object({
   Potions: z.union([z.boolean(),z.lazy(() => PotionFindManyArgsSchema)]).optional(),
   Formulas: z.union([z.boolean(),z.lazy(() => FormulaFindManyArgsSchema)]).optional(),
   MazePuzzle: z.union([z.boolean(),z.lazy(() => MazePuzzleFindManyArgsSchema)]).optional(),
+  MazeSessions: z.union([z.boolean(),z.lazy(() => MazeSessionFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => UserCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -496,6 +513,7 @@ export const PotionSelectSchema: z.ZodType<Prisma.PotionSelect> = z.object({
 export const MazePuzzleIncludeSchema: z.ZodType<Prisma.MazePuzzleInclude> = z.object({
   User: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
   enemies: z.union([z.boolean(),z.lazy(() => EnemyFindManyArgsSchema)]).optional(),
+  MazeSession: z.union([z.boolean(),z.lazy(() => MazeSessionFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => MazePuzzleCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -510,6 +528,7 @@ export const MazePuzzleCountOutputTypeArgsSchema: z.ZodType<Prisma.MazePuzzleCou
 
 export const MazePuzzleCountOutputTypeSelectSchema: z.ZodType<Prisma.MazePuzzleCountOutputTypeSelect> = z.object({
   enemies: z.boolean().optional(),
+  MazeSession: z.boolean().optional(),
 }).strict();
 
 export const MazePuzzleSelectSchema: z.ZodType<Prisma.MazePuzzleSelect> = z.object({
@@ -523,7 +542,39 @@ export const MazePuzzleSelectSchema: z.ZodType<Prisma.MazePuzzleSelect> = z.obje
   userId: z.boolean().optional(),
   User: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
   enemies: z.union([z.boolean(),z.lazy(() => EnemyFindManyArgsSchema)]).optional(),
+  MazeSession: z.union([z.boolean(),z.lazy(() => MazeSessionFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => MazePuzzleCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+// MAZE SESSION
+//------------------------------------------------------
+
+export const MazeSessionIncludeSchema: z.ZodType<Prisma.MazeSessionInclude> = z.object({
+  User: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
+  Mazes: z.union([z.boolean(),z.lazy(() => MazePuzzleFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => MazeSessionCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+export const MazeSessionArgsSchema: z.ZodType<Prisma.MazeSessionDefaultArgs> = z.object({
+  select: z.lazy(() => MazeSessionSelectSchema).optional(),
+  include: z.lazy(() => MazeSessionIncludeSchema).optional(),
+}).strict();
+
+export const MazeSessionCountOutputTypeArgsSchema: z.ZodType<Prisma.MazeSessionCountOutputTypeDefaultArgs> = z.object({
+  select: z.lazy(() => MazeSessionCountOutputTypeSelectSchema).nullish(),
+}).strict();
+
+export const MazeSessionCountOutputTypeSelectSchema: z.ZodType<Prisma.MazeSessionCountOutputTypeSelect> = z.object({
+  Mazes: z.boolean().optional(),
+}).strict();
+
+export const MazeSessionSelectSchema: z.ZodType<Prisma.MazeSessionSelect> = z.object({
+  id: z.boolean().optional(),
+  userId: z.boolean().optional(),
+  title: z.boolean().optional(),
+  User: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
+  Mazes: z.union([z.boolean(),z.lazy(() => MazePuzzleFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => MazeSessionCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
 // ENEMY
@@ -736,7 +787,8 @@ export const UserWhereInputSchema: z.ZodType<Prisma.UserWhereInput> = z.object({
   Ingredients: z.lazy(() => IngredientListRelationFilterSchema).optional(),
   Potions: z.lazy(() => PotionListRelationFilterSchema).optional(),
   Formulas: z.lazy(() => FormulaListRelationFilterSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleListRelationFilterSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleListRelationFilterSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionListRelationFilterSchema).optional()
 }).strict();
 
 export const UserOrderByWithRelationInputSchema: z.ZodType<Prisma.UserOrderByWithRelationInput> = z.object({
@@ -751,7 +803,8 @@ export const UserOrderByWithRelationInputSchema: z.ZodType<Prisma.UserOrderByWit
   Ingredients: z.lazy(() => IngredientOrderByRelationAggregateInputSchema).optional(),
   Potions: z.lazy(() => PotionOrderByRelationAggregateInputSchema).optional(),
   Formulas: z.lazy(() => FormulaOrderByRelationAggregateInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleOrderByRelationAggregateInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleOrderByRelationAggregateInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const UserWhereUniqueInputSchema: z.ZodType<Prisma.UserWhereUniqueInput> = z.union([
@@ -797,7 +850,8 @@ export const UserWhereUniqueInputSchema: z.ZodType<Prisma.UserWhereUniqueInput> 
   Ingredients: z.lazy(() => IngredientListRelationFilterSchema).optional(),
   Potions: z.lazy(() => PotionListRelationFilterSchema).optional(),
   Formulas: z.lazy(() => FormulaListRelationFilterSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleListRelationFilterSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleListRelationFilterSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionListRelationFilterSchema).optional()
 }).strict());
 
 export const UserOrderByWithAggregationInputSchema: z.ZodType<Prisma.UserOrderByWithAggregationInput> = z.object({
@@ -1141,7 +1195,8 @@ export const MazePuzzleWhereInputSchema: z.ZodType<Prisma.MazePuzzleWhereInput> 
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   User: z.union([ z.lazy(() => UserRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
-  enemies: z.lazy(() => EnemyListRelationFilterSchema).optional()
+  enemies: z.lazy(() => EnemyListRelationFilterSchema).optional(),
+  MazeSession: z.lazy(() => MazeSessionListRelationFilterSchema).optional()
 }).strict();
 
 export const MazePuzzleOrderByWithRelationInputSchema: z.ZodType<Prisma.MazePuzzleOrderByWithRelationInput> = z.object({
@@ -1154,7 +1209,8 @@ export const MazePuzzleOrderByWithRelationInputSchema: z.ZodType<Prisma.MazePuzz
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   User: z.lazy(() => UserOrderByWithRelationInputSchema).optional(),
-  enemies: z.lazy(() => EnemyOrderByRelationAggregateInputSchema).optional()
+  enemies: z.lazy(() => EnemyOrderByRelationAggregateInputSchema).optional(),
+  MazeSession: z.lazy(() => MazeSessionOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const MazePuzzleWhereUniqueInputSchema: z.ZodType<Prisma.MazePuzzleWhereUniqueInput> = z.object({
@@ -1173,7 +1229,8 @@ export const MazePuzzleWhereUniqueInputSchema: z.ZodType<Prisma.MazePuzzleWhereU
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   User: z.union([ z.lazy(() => UserRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
-  enemies: z.lazy(() => EnemyListRelationFilterSchema).optional()
+  enemies: z.lazy(() => EnemyListRelationFilterSchema).optional(),
+  MazeSession: z.lazy(() => MazeSessionListRelationFilterSchema).optional()
 }).strict());
 
 export const MazePuzzleOrderByWithAggregationInputSchema: z.ZodType<Prisma.MazePuzzleOrderByWithAggregationInput> = z.object({
@@ -1204,6 +1261,57 @@ export const MazePuzzleScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Ma
   grid: z.lazy(() => IntNullableListFilterSchema).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   userId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+}).strict();
+
+export const MazeSessionWhereInputSchema: z.ZodType<Prisma.MazeSessionWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => MazeSessionWhereInputSchema),z.lazy(() => MazeSessionWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => MazeSessionWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => MazeSessionWhereInputSchema),z.lazy(() => MazeSessionWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  User: z.union([ z.lazy(() => UserRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
+  Mazes: z.lazy(() => MazePuzzleListRelationFilterSchema).optional()
+}).strict();
+
+export const MazeSessionOrderByWithRelationInputSchema: z.ZodType<Prisma.MazeSessionOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  userId: z.lazy(() => SortOrderSchema).optional(),
+  title: z.lazy(() => SortOrderSchema).optional(),
+  User: z.lazy(() => UserOrderByWithRelationInputSchema).optional(),
+  Mazes: z.lazy(() => MazePuzzleOrderByRelationAggregateInputSchema).optional()
+}).strict();
+
+export const MazeSessionWhereUniqueInputSchema: z.ZodType<Prisma.MazeSessionWhereUniqueInput> = z.object({
+  id: z.string().cuid()
+})
+.and(z.object({
+  id: z.string().cuid().optional(),
+  AND: z.union([ z.lazy(() => MazeSessionWhereInputSchema),z.lazy(() => MazeSessionWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => MazeSessionWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => MazeSessionWhereInputSchema),z.lazy(() => MazeSessionWhereInputSchema).array() ]).optional(),
+  userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  User: z.union([ z.lazy(() => UserRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
+  Mazes: z.lazy(() => MazePuzzleListRelationFilterSchema).optional()
+}).strict());
+
+export const MazeSessionOrderByWithAggregationInputSchema: z.ZodType<Prisma.MazeSessionOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  userId: z.lazy(() => SortOrderSchema).optional(),
+  title: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => MazeSessionCountOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => MazeSessionMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => MazeSessionMinOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const MazeSessionScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.MazeSessionScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => MazeSessionScalarWhereWithAggregatesInputSchema),z.lazy(() => MazeSessionScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => MazeSessionScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => MazeSessionScalarWhereWithAggregatesInputSchema),z.lazy(() => MazeSessionScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  userId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  title: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
 export const EnemyWhereInputSchema: z.ZodType<Prisma.EnemyWhereInput> = z.object({
@@ -1602,7 +1710,8 @@ export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object
   Ingredients: z.lazy(() => IngredientCreateNestedManyWithoutUserInputSchema).optional(),
   Potions: z.lazy(() => PotionCreateNestedManyWithoutUserInputSchema).optional(),
   Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleCreateNestedManyWithoutUserInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleCreateNestedManyWithoutUserInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateInputSchema: z.ZodType<Prisma.UserUncheckedCreateInput> = z.object({
@@ -1617,7 +1726,8 @@ export const UserUncheckedCreateInputSchema: z.ZodType<Prisma.UserUncheckedCreat
   Ingredients: z.lazy(() => IngredientUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
   Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUncheckedCreateNestedManyWithoutUserInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUpdateInputSchema: z.ZodType<Prisma.UserUpdateInput> = z.object({
@@ -1632,7 +1742,8 @@ export const UserUpdateInputSchema: z.ZodType<Prisma.UserUpdateInput> = z.object
   Ingredients: z.lazy(() => IngredientUpdateManyWithoutUserNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUpdateManyWithoutUserNestedInputSchema).optional(),
   Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUpdateManyWithoutUserNestedInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUpdateManyWithoutUserNestedInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserUncheckedUpdateInputSchema: z.ZodType<Prisma.UserUncheckedUpdateInput> = z.object({
@@ -1647,7 +1758,8 @@ export const UserUncheckedUpdateInputSchema: z.ZodType<Prisma.UserUncheckedUpdat
   Ingredients: z.lazy(() => IngredientUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
   Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserCreateManyInputSchema: z.ZodType<Prisma.UserCreateManyInput> = z.object({
@@ -2015,7 +2127,8 @@ export const MazePuzzleCreateInputSchema: z.ZodType<Prisma.MazePuzzleCreateInput
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.coerce.date().optional(),
   User: z.lazy(() => UserCreateNestedOneWithoutMazePuzzleInputSchema),
-  enemies: z.lazy(() => EnemyCreateNestedManyWithoutMazeInputSchema).optional()
+  enemies: z.lazy(() => EnemyCreateNestedManyWithoutMazeInputSchema).optional(),
+  MazeSession: z.lazy(() => MazeSessionCreateNestedManyWithoutMazesInputSchema).optional()
 }).strict();
 
 export const MazePuzzleUncheckedCreateInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedCreateInput> = z.object({
@@ -2027,7 +2140,8 @@ export const MazePuzzleUncheckedCreateInputSchema: z.ZodType<Prisma.MazePuzzleUn
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.coerce.date().optional(),
   userId: z.string(),
-  enemies: z.lazy(() => EnemyUncheckedCreateNestedManyWithoutMazeInputSchema).optional()
+  enemies: z.lazy(() => EnemyUncheckedCreateNestedManyWithoutMazeInputSchema).optional(),
+  MazeSession: z.lazy(() => MazeSessionUncheckedCreateNestedManyWithoutMazesInputSchema).optional()
 }).strict();
 
 export const MazePuzzleUpdateInputSchema: z.ZodType<Prisma.MazePuzzleUpdateInput> = z.object({
@@ -2039,7 +2153,8 @@ export const MazePuzzleUpdateInputSchema: z.ZodType<Prisma.MazePuzzleUpdateInput
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   User: z.lazy(() => UserUpdateOneRequiredWithoutMazePuzzleNestedInputSchema).optional(),
-  enemies: z.lazy(() => EnemyUpdateManyWithoutMazeNestedInputSchema).optional()
+  enemies: z.lazy(() => EnemyUpdateManyWithoutMazeNestedInputSchema).optional(),
+  MazeSession: z.lazy(() => MazeSessionUpdateManyWithoutMazesNestedInputSchema).optional()
 }).strict();
 
 export const MazePuzzleUncheckedUpdateInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedUpdateInput> = z.object({
@@ -2051,7 +2166,8 @@ export const MazePuzzleUncheckedUpdateInputSchema: z.ZodType<Prisma.MazePuzzleUn
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  enemies: z.lazy(() => EnemyUncheckedUpdateManyWithoutMazeNestedInputSchema).optional()
+  enemies: z.lazy(() => EnemyUncheckedUpdateManyWithoutMazeNestedInputSchema).optional(),
+  MazeSession: z.lazy(() => MazeSessionUncheckedUpdateManyWithoutMazesNestedInputSchema).optional()
 }).strict();
 
 export const MazePuzzleCreateManyInputSchema: z.ZodType<Prisma.MazePuzzleCreateManyInput> = z.object({
@@ -2084,6 +2200,51 @@ export const MazePuzzleUncheckedUpdateManyInputSchema: z.ZodType<Prisma.MazePuzz
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const MazeSessionCreateInputSchema: z.ZodType<Prisma.MazeSessionCreateInput> = z.object({
+  id: z.string().cuid().optional(),
+  title: z.string(),
+  User: z.lazy(() => UserCreateNestedOneWithoutMazeSessionsInputSchema),
+  Mazes: z.lazy(() => MazePuzzleCreateNestedManyWithoutMazeSessionInputSchema).optional()
+}).strict();
+
+export const MazeSessionUncheckedCreateInputSchema: z.ZodType<Prisma.MazeSessionUncheckedCreateInput> = z.object({
+  id: z.string().cuid().optional(),
+  userId: z.string(),
+  title: z.string(),
+  Mazes: z.lazy(() => MazePuzzleUncheckedCreateNestedManyWithoutMazeSessionInputSchema).optional()
+}).strict();
+
+export const MazeSessionUpdateInputSchema: z.ZodType<Prisma.MazeSessionUpdateInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  User: z.lazy(() => UserUpdateOneRequiredWithoutMazeSessionsNestedInputSchema).optional(),
+  Mazes: z.lazy(() => MazePuzzleUpdateManyWithoutMazeSessionNestedInputSchema).optional()
+}).strict();
+
+export const MazeSessionUncheckedUpdateInputSchema: z.ZodType<Prisma.MazeSessionUncheckedUpdateInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Mazes: z.lazy(() => MazePuzzleUncheckedUpdateManyWithoutMazeSessionNestedInputSchema).optional()
+}).strict();
+
+export const MazeSessionCreateManyInputSchema: z.ZodType<Prisma.MazeSessionCreateManyInput> = z.object({
+  id: z.string().cuid().optional(),
+  userId: z.string(),
+  title: z.string()
+}).strict();
+
+export const MazeSessionUpdateManyMutationInputSchema: z.ZodType<Prisma.MazeSessionUpdateManyMutationInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const MazeSessionUncheckedUpdateManyInputSchema: z.ZodType<Prisma.MazeSessionUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const EnemyCreateInputSchema: z.ZodType<Prisma.EnemyCreateInput> = z.object({
@@ -2521,6 +2682,12 @@ export const MazePuzzleListRelationFilterSchema: z.ZodType<Prisma.MazePuzzleList
   none: z.lazy(() => MazePuzzleWhereInputSchema).optional()
 }).strict();
 
+export const MazeSessionListRelationFilterSchema: z.ZodType<Prisma.MazeSessionListRelationFilter> = z.object({
+  every: z.lazy(() => MazeSessionWhereInputSchema).optional(),
+  some: z.lazy(() => MazeSessionWhereInputSchema).optional(),
+  none: z.lazy(() => MazeSessionWhereInputSchema).optional()
+}).strict();
+
 export const SortOrderInputSchema: z.ZodType<Prisma.SortOrderInput> = z.object({
   sort: z.lazy(() => SortOrderSchema),
   nulls: z.lazy(() => NullsOrderSchema).optional()
@@ -2543,6 +2710,10 @@ export const FormulaOrderByRelationAggregateInputSchema: z.ZodType<Prisma.Formul
 }).strict();
 
 export const MazePuzzleOrderByRelationAggregateInputSchema: z.ZodType<Prisma.MazePuzzleOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const MazeSessionOrderByRelationAggregateInputSchema: z.ZodType<Prisma.MazeSessionOrderByRelationAggregateInput> = z.object({
   _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -2937,6 +3108,24 @@ export const MazePuzzleSumOrderByAggregateInputSchema: z.ZodType<Prisma.MazePuzz
   grid: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
+export const MazeSessionCountOrderByAggregateInputSchema: z.ZodType<Prisma.MazeSessionCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  userId: z.lazy(() => SortOrderSchema).optional(),
+  title: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const MazeSessionMaxOrderByAggregateInputSchema: z.ZodType<Prisma.MazeSessionMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  userId: z.lazy(() => SortOrderSchema).optional(),
+  title: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const MazeSessionMinOrderByAggregateInputSchema: z.ZodType<Prisma.MazeSessionMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  userId: z.lazy(() => SortOrderSchema).optional(),
+  title: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
 export const EnumDirectionFilterSchema: z.ZodType<Prisma.EnumDirectionFilter> = z.object({
   equals: z.lazy(() => DirectionSchema).optional(),
   in: z.lazy(() => DirectionSchema).array().optional(),
@@ -3257,6 +3446,13 @@ export const MazePuzzleCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.
   connect: z.union([ z.lazy(() => MazePuzzleWhereUniqueInputSchema),z.lazy(() => MazePuzzleWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
+export const MazeSessionCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.MazeSessionCreateNestedManyWithoutUserInput> = z.object({
+  create: z.union([ z.lazy(() => MazeSessionCreateWithoutUserInputSchema),z.lazy(() => MazeSessionCreateWithoutUserInputSchema).array(),z.lazy(() => MazeSessionUncheckedCreateWithoutUserInputSchema),z.lazy(() => MazeSessionUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => MazeSessionCreateOrConnectWithoutUserInputSchema),z.lazy(() => MazeSessionCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => MazeSessionCreateManyUserInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
 export const PuzzleElementalTrialsUncheckedCreateNestedManyWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUncheckedCreateNestedManyWithoutPlayersInput> = z.object({
   create: z.union([ z.lazy(() => PuzzleElementalTrialsCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsCreateWithoutPlayersInputSchema).array(),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutPlayersInputSchema).array() ]).optional(),
@@ -3289,6 +3485,13 @@ export const MazePuzzleUncheckedCreateNestedManyWithoutUserInputSchema: z.ZodTyp
   connectOrCreate: z.union([ z.lazy(() => MazePuzzleCreateOrConnectWithoutUserInputSchema),z.lazy(() => MazePuzzleCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
   createMany: z.lazy(() => MazePuzzleCreateManyUserInputEnvelopeSchema).optional(),
   connect: z.union([ z.lazy(() => MazePuzzleWhereUniqueInputSchema),z.lazy(() => MazePuzzleWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const MazeSessionUncheckedCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.MazeSessionUncheckedCreateNestedManyWithoutUserInput> = z.object({
+  create: z.union([ z.lazy(() => MazeSessionCreateWithoutUserInputSchema),z.lazy(() => MazeSessionCreateWithoutUserInputSchema).array(),z.lazy(() => MazeSessionUncheckedCreateWithoutUserInputSchema),z.lazy(() => MazeSessionUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => MazeSessionCreateOrConnectWithoutUserInputSchema),z.lazy(() => MazeSessionCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => MazeSessionCreateManyUserInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const NullableStringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.NullableStringFieldUpdateOperationsInput> = z.object({
@@ -3364,6 +3567,20 @@ export const MazePuzzleUpdateManyWithoutUserNestedInputSchema: z.ZodType<Prisma.
   deleteMany: z.union([ z.lazy(() => MazePuzzleScalarWhereInputSchema),z.lazy(() => MazePuzzleScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
+export const MazeSessionUpdateManyWithoutUserNestedInputSchema: z.ZodType<Prisma.MazeSessionUpdateManyWithoutUserNestedInput> = z.object({
+  create: z.union([ z.lazy(() => MazeSessionCreateWithoutUserInputSchema),z.lazy(() => MazeSessionCreateWithoutUserInputSchema).array(),z.lazy(() => MazeSessionUncheckedCreateWithoutUserInputSchema),z.lazy(() => MazeSessionUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => MazeSessionCreateOrConnectWithoutUserInputSchema),z.lazy(() => MazeSessionCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => MazeSessionUpsertWithWhereUniqueWithoutUserInputSchema),z.lazy(() => MazeSessionUpsertWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => MazeSessionCreateManyUserInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => MazeSessionUpdateWithWhereUniqueWithoutUserInputSchema),z.lazy(() => MazeSessionUpdateWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => MazeSessionUpdateManyWithWhereWithoutUserInputSchema),z.lazy(() => MazeSessionUpdateManyWithWhereWithoutUserInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => MazeSessionScalarWhereInputSchema),z.lazy(() => MazeSessionScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
 export const PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersNestedInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersNestedInput> = z.object({
   create: z.union([ z.lazy(() => PuzzleElementalTrialsCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsCreateWithoutPlayersInputSchema).array(),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsUncheckedCreateWithoutPlayersInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutPlayersInputSchema),z.lazy(() => PuzzleElementalTrialsCreateOrConnectWithoutPlayersInputSchema).array() ]).optional(),
@@ -3431,6 +3648,20 @@ export const MazePuzzleUncheckedUpdateManyWithoutUserNestedInputSchema: z.ZodTyp
   update: z.union([ z.lazy(() => MazePuzzleUpdateWithWhereUniqueWithoutUserInputSchema),z.lazy(() => MazePuzzleUpdateWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
   updateMany: z.union([ z.lazy(() => MazePuzzleUpdateManyWithWhereWithoutUserInputSchema),z.lazy(() => MazePuzzleUpdateManyWithWhereWithoutUserInputSchema).array() ]).optional(),
   deleteMany: z.union([ z.lazy(() => MazePuzzleScalarWhereInputSchema),z.lazy(() => MazePuzzleScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const MazeSessionUncheckedUpdateManyWithoutUserNestedInputSchema: z.ZodType<Prisma.MazeSessionUncheckedUpdateManyWithoutUserNestedInput> = z.object({
+  create: z.union([ z.lazy(() => MazeSessionCreateWithoutUserInputSchema),z.lazy(() => MazeSessionCreateWithoutUserInputSchema).array(),z.lazy(() => MazeSessionUncheckedCreateWithoutUserInputSchema),z.lazy(() => MazeSessionUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => MazeSessionCreateOrConnectWithoutUserInputSchema),z.lazy(() => MazeSessionCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => MazeSessionUpsertWithWhereUniqueWithoutUserInputSchema),z.lazy(() => MazeSessionUpsertWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => MazeSessionCreateManyUserInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => MazeSessionUpdateWithWhereUniqueWithoutUserInputSchema),z.lazy(() => MazeSessionUpdateWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => MazeSessionUpdateManyWithWhereWithoutUserInputSchema),z.lazy(() => MazeSessionUpdateManyWithWhereWithoutUserInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => MazeSessionScalarWhereInputSchema),z.lazy(() => MazeSessionScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const FormulaCreateingredientsInputSchema: z.ZodType<Prisma.FormulaCreateingredientsInput> = z.object({
@@ -3521,11 +3752,23 @@ export const EnemyCreateNestedManyWithoutMazeInputSchema: z.ZodType<Prisma.Enemy
   connect: z.union([ z.lazy(() => EnemyWhereUniqueInputSchema),z.lazy(() => EnemyWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
+export const MazeSessionCreateNestedManyWithoutMazesInputSchema: z.ZodType<Prisma.MazeSessionCreateNestedManyWithoutMazesInput> = z.object({
+  create: z.union([ z.lazy(() => MazeSessionCreateWithoutMazesInputSchema),z.lazy(() => MazeSessionCreateWithoutMazesInputSchema).array(),z.lazy(() => MazeSessionUncheckedCreateWithoutMazesInputSchema),z.lazy(() => MazeSessionUncheckedCreateWithoutMazesInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => MazeSessionCreateOrConnectWithoutMazesInputSchema),z.lazy(() => MazeSessionCreateOrConnectWithoutMazesInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
 export const EnemyUncheckedCreateNestedManyWithoutMazeInputSchema: z.ZodType<Prisma.EnemyUncheckedCreateNestedManyWithoutMazeInput> = z.object({
   create: z.union([ z.lazy(() => EnemyCreateWithoutMazeInputSchema),z.lazy(() => EnemyCreateWithoutMazeInputSchema).array(),z.lazy(() => EnemyUncheckedCreateWithoutMazeInputSchema),z.lazy(() => EnemyUncheckedCreateWithoutMazeInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => EnemyCreateOrConnectWithoutMazeInputSchema),z.lazy(() => EnemyCreateOrConnectWithoutMazeInputSchema).array() ]).optional(),
   createMany: z.lazy(() => EnemyCreateManyMazeInputEnvelopeSchema).optional(),
   connect: z.union([ z.lazy(() => EnemyWhereUniqueInputSchema),z.lazy(() => EnemyWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const MazeSessionUncheckedCreateNestedManyWithoutMazesInputSchema: z.ZodType<Prisma.MazeSessionUncheckedCreateNestedManyWithoutMazesInput> = z.object({
+  create: z.union([ z.lazy(() => MazeSessionCreateWithoutMazesInputSchema),z.lazy(() => MazeSessionCreateWithoutMazesInputSchema).array(),z.lazy(() => MazeSessionUncheckedCreateWithoutMazesInputSchema),z.lazy(() => MazeSessionUncheckedCreateWithoutMazesInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => MazeSessionCreateOrConnectWithoutMazesInputSchema),z.lazy(() => MazeSessionCreateOrConnectWithoutMazesInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const MazePuzzleUpdategridInputSchema: z.ZodType<Prisma.MazePuzzleUpdategridInput> = z.object({
@@ -3555,6 +3798,19 @@ export const EnemyUpdateManyWithoutMazeNestedInputSchema: z.ZodType<Prisma.Enemy
   deleteMany: z.union([ z.lazy(() => EnemyScalarWhereInputSchema),z.lazy(() => EnemyScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
+export const MazeSessionUpdateManyWithoutMazesNestedInputSchema: z.ZodType<Prisma.MazeSessionUpdateManyWithoutMazesNestedInput> = z.object({
+  create: z.union([ z.lazy(() => MazeSessionCreateWithoutMazesInputSchema),z.lazy(() => MazeSessionCreateWithoutMazesInputSchema).array(),z.lazy(() => MazeSessionUncheckedCreateWithoutMazesInputSchema),z.lazy(() => MazeSessionUncheckedCreateWithoutMazesInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => MazeSessionCreateOrConnectWithoutMazesInputSchema),z.lazy(() => MazeSessionCreateOrConnectWithoutMazesInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => MazeSessionUpsertWithWhereUniqueWithoutMazesInputSchema),z.lazy(() => MazeSessionUpsertWithWhereUniqueWithoutMazesInputSchema).array() ]).optional(),
+  set: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => MazeSessionUpdateWithWhereUniqueWithoutMazesInputSchema),z.lazy(() => MazeSessionUpdateWithWhereUniqueWithoutMazesInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => MazeSessionUpdateManyWithWhereWithoutMazesInputSchema),z.lazy(() => MazeSessionUpdateManyWithWhereWithoutMazesInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => MazeSessionScalarWhereInputSchema),z.lazy(() => MazeSessionScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
 export const EnemyUncheckedUpdateManyWithoutMazeNestedInputSchema: z.ZodType<Prisma.EnemyUncheckedUpdateManyWithoutMazeNestedInput> = z.object({
   create: z.union([ z.lazy(() => EnemyCreateWithoutMazeInputSchema),z.lazy(() => EnemyCreateWithoutMazeInputSchema).array(),z.lazy(() => EnemyUncheckedCreateWithoutMazeInputSchema),z.lazy(() => EnemyUncheckedCreateWithoutMazeInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => EnemyCreateOrConnectWithoutMazeInputSchema),z.lazy(() => EnemyCreateOrConnectWithoutMazeInputSchema).array() ]).optional(),
@@ -3567,6 +3823,71 @@ export const EnemyUncheckedUpdateManyWithoutMazeNestedInputSchema: z.ZodType<Pri
   update: z.union([ z.lazy(() => EnemyUpdateWithWhereUniqueWithoutMazeInputSchema),z.lazy(() => EnemyUpdateWithWhereUniqueWithoutMazeInputSchema).array() ]).optional(),
   updateMany: z.union([ z.lazy(() => EnemyUpdateManyWithWhereWithoutMazeInputSchema),z.lazy(() => EnemyUpdateManyWithWhereWithoutMazeInputSchema).array() ]).optional(),
   deleteMany: z.union([ z.lazy(() => EnemyScalarWhereInputSchema),z.lazy(() => EnemyScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const MazeSessionUncheckedUpdateManyWithoutMazesNestedInputSchema: z.ZodType<Prisma.MazeSessionUncheckedUpdateManyWithoutMazesNestedInput> = z.object({
+  create: z.union([ z.lazy(() => MazeSessionCreateWithoutMazesInputSchema),z.lazy(() => MazeSessionCreateWithoutMazesInputSchema).array(),z.lazy(() => MazeSessionUncheckedCreateWithoutMazesInputSchema),z.lazy(() => MazeSessionUncheckedCreateWithoutMazesInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => MazeSessionCreateOrConnectWithoutMazesInputSchema),z.lazy(() => MazeSessionCreateOrConnectWithoutMazesInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => MazeSessionUpsertWithWhereUniqueWithoutMazesInputSchema),z.lazy(() => MazeSessionUpsertWithWhereUniqueWithoutMazesInputSchema).array() ]).optional(),
+  set: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => MazeSessionWhereUniqueInputSchema),z.lazy(() => MazeSessionWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => MazeSessionUpdateWithWhereUniqueWithoutMazesInputSchema),z.lazy(() => MazeSessionUpdateWithWhereUniqueWithoutMazesInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => MazeSessionUpdateManyWithWhereWithoutMazesInputSchema),z.lazy(() => MazeSessionUpdateManyWithWhereWithoutMazesInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => MazeSessionScalarWhereInputSchema),z.lazy(() => MazeSessionScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const UserCreateNestedOneWithoutMazeSessionsInputSchema: z.ZodType<Prisma.UserCreateNestedOneWithoutMazeSessionsInput> = z.object({
+  create: z.union([ z.lazy(() => UserCreateWithoutMazeSessionsInputSchema),z.lazy(() => UserUncheckedCreateWithoutMazeSessionsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => UserCreateOrConnectWithoutMazeSessionsInputSchema).optional(),
+  connect: z.lazy(() => UserWhereUniqueInputSchema).optional()
+}).strict();
+
+export const MazePuzzleCreateNestedManyWithoutMazeSessionInputSchema: z.ZodType<Prisma.MazePuzzleCreateNestedManyWithoutMazeSessionInput> = z.object({
+  create: z.union([ z.lazy(() => MazePuzzleCreateWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleCreateWithoutMazeSessionInputSchema).array(),z.lazy(() => MazePuzzleUncheckedCreateWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleUncheckedCreateWithoutMazeSessionInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => MazePuzzleCreateOrConnectWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleCreateOrConnectWithoutMazeSessionInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => MazePuzzleWhereUniqueInputSchema),z.lazy(() => MazePuzzleWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const MazePuzzleUncheckedCreateNestedManyWithoutMazeSessionInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedCreateNestedManyWithoutMazeSessionInput> = z.object({
+  create: z.union([ z.lazy(() => MazePuzzleCreateWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleCreateWithoutMazeSessionInputSchema).array(),z.lazy(() => MazePuzzleUncheckedCreateWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleUncheckedCreateWithoutMazeSessionInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => MazePuzzleCreateOrConnectWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleCreateOrConnectWithoutMazeSessionInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => MazePuzzleWhereUniqueInputSchema),z.lazy(() => MazePuzzleWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const UserUpdateOneRequiredWithoutMazeSessionsNestedInputSchema: z.ZodType<Prisma.UserUpdateOneRequiredWithoutMazeSessionsNestedInput> = z.object({
+  create: z.union([ z.lazy(() => UserCreateWithoutMazeSessionsInputSchema),z.lazy(() => UserUncheckedCreateWithoutMazeSessionsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => UserCreateOrConnectWithoutMazeSessionsInputSchema).optional(),
+  upsert: z.lazy(() => UserUpsertWithoutMazeSessionsInputSchema).optional(),
+  connect: z.lazy(() => UserWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => UserUpdateToOneWithWhereWithoutMazeSessionsInputSchema),z.lazy(() => UserUpdateWithoutMazeSessionsInputSchema),z.lazy(() => UserUncheckedUpdateWithoutMazeSessionsInputSchema) ]).optional(),
+}).strict();
+
+export const MazePuzzleUpdateManyWithoutMazeSessionNestedInputSchema: z.ZodType<Prisma.MazePuzzleUpdateManyWithoutMazeSessionNestedInput> = z.object({
+  create: z.union([ z.lazy(() => MazePuzzleCreateWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleCreateWithoutMazeSessionInputSchema).array(),z.lazy(() => MazePuzzleUncheckedCreateWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleUncheckedCreateWithoutMazeSessionInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => MazePuzzleCreateOrConnectWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleCreateOrConnectWithoutMazeSessionInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => MazePuzzleUpsertWithWhereUniqueWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleUpsertWithWhereUniqueWithoutMazeSessionInputSchema).array() ]).optional(),
+  set: z.union([ z.lazy(() => MazePuzzleWhereUniqueInputSchema),z.lazy(() => MazePuzzleWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => MazePuzzleWhereUniqueInputSchema),z.lazy(() => MazePuzzleWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => MazePuzzleWhereUniqueInputSchema),z.lazy(() => MazePuzzleWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => MazePuzzleWhereUniqueInputSchema),z.lazy(() => MazePuzzleWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => MazePuzzleUpdateWithWhereUniqueWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleUpdateWithWhereUniqueWithoutMazeSessionInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => MazePuzzleUpdateManyWithWhereWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleUpdateManyWithWhereWithoutMazeSessionInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => MazePuzzleScalarWhereInputSchema),z.lazy(() => MazePuzzleScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const MazePuzzleUncheckedUpdateManyWithoutMazeSessionNestedInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedUpdateManyWithoutMazeSessionNestedInput> = z.object({
+  create: z.union([ z.lazy(() => MazePuzzleCreateWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleCreateWithoutMazeSessionInputSchema).array(),z.lazy(() => MazePuzzleUncheckedCreateWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleUncheckedCreateWithoutMazeSessionInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => MazePuzzleCreateOrConnectWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleCreateOrConnectWithoutMazeSessionInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => MazePuzzleUpsertWithWhereUniqueWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleUpsertWithWhereUniqueWithoutMazeSessionInputSchema).array() ]).optional(),
+  set: z.union([ z.lazy(() => MazePuzzleWhereUniqueInputSchema),z.lazy(() => MazePuzzleWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => MazePuzzleWhereUniqueInputSchema),z.lazy(() => MazePuzzleWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => MazePuzzleWhereUniqueInputSchema),z.lazy(() => MazePuzzleWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => MazePuzzleWhereUniqueInputSchema),z.lazy(() => MazePuzzleWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => MazePuzzleUpdateWithWhereUniqueWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleUpdateWithWhereUniqueWithoutMazeSessionInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => MazePuzzleUpdateManyWithWhereWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleUpdateManyWithWhereWithoutMazeSessionInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => MazePuzzleScalarWhereInputSchema),z.lazy(() => MazePuzzleScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const MazePuzzleCreateNestedOneWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuzzleCreateNestedOneWithoutEnemiesInput> = z.object({
@@ -3871,7 +4192,8 @@ export const UserCreateWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma
   Ingredients: z.lazy(() => IngredientCreateNestedManyWithoutUserInputSchema).optional(),
   Potions: z.lazy(() => PotionCreateNestedManyWithoutUserInputSchema).optional(),
   Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleCreateNestedManyWithoutUserInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleCreateNestedManyWithoutUserInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutPuzzleElementalTrialsInput> = z.object({
@@ -3885,7 +4207,8 @@ export const UserUncheckedCreateWithoutPuzzleElementalTrialsInputSchema: z.ZodTy
   Ingredients: z.lazy(() => IngredientUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
   Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUncheckedCreateNestedManyWithoutUserInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserCreateOrConnectWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutPuzzleElementalTrialsInput> = z.object({
@@ -4168,7 +4491,8 @@ export const MazePuzzleCreateWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzle
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.coerce.date().optional(),
-  enemies: z.lazy(() => EnemyCreateNestedManyWithoutMazeInputSchema).optional()
+  enemies: z.lazy(() => EnemyCreateNestedManyWithoutMazeInputSchema).optional(),
+  MazeSession: z.lazy(() => MazeSessionCreateNestedManyWithoutMazesInputSchema).optional()
 }).strict();
 
 export const MazePuzzleUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedCreateWithoutUserInput> = z.object({
@@ -4179,7 +4503,8 @@ export const MazePuzzleUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.M
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.coerce.date().optional(),
-  enemies: z.lazy(() => EnemyUncheckedCreateNestedManyWithoutMazeInputSchema).optional()
+  enemies: z.lazy(() => EnemyUncheckedCreateNestedManyWithoutMazeInputSchema).optional(),
+  MazeSession: z.lazy(() => MazeSessionUncheckedCreateNestedManyWithoutMazesInputSchema).optional()
 }).strict();
 
 export const MazePuzzleCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzleCreateOrConnectWithoutUserInput> = z.object({
@@ -4189,6 +4514,28 @@ export const MazePuzzleCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.M
 
 export const MazePuzzleCreateManyUserInputEnvelopeSchema: z.ZodType<Prisma.MazePuzzleCreateManyUserInputEnvelope> = z.object({
   data: z.union([ z.lazy(() => MazePuzzleCreateManyUserInputSchema),z.lazy(() => MazePuzzleCreateManyUserInputSchema).array() ]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+
+export const MazeSessionCreateWithoutUserInputSchema: z.ZodType<Prisma.MazeSessionCreateWithoutUserInput> = z.object({
+  id: z.string().cuid().optional(),
+  title: z.string(),
+  Mazes: z.lazy(() => MazePuzzleCreateNestedManyWithoutMazeSessionInputSchema).optional()
+}).strict();
+
+export const MazeSessionUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.MazeSessionUncheckedCreateWithoutUserInput> = z.object({
+  id: z.string().cuid().optional(),
+  title: z.string(),
+  Mazes: z.lazy(() => MazePuzzleUncheckedCreateNestedManyWithoutMazeSessionInputSchema).optional()
+}).strict();
+
+export const MazeSessionCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.MazeSessionCreateOrConnectWithoutUserInput> = z.object({
+  where: z.lazy(() => MazeSessionWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => MazeSessionCreateWithoutUserInputSchema),z.lazy(() => MazeSessionUncheckedCreateWithoutUserInputSchema) ]),
+}).strict();
+
+export const MazeSessionCreateManyUserInputEnvelopeSchema: z.ZodType<Prisma.MazeSessionCreateManyUserInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => MazeSessionCreateManyUserInputSchema),z.lazy(() => MazeSessionCreateManyUserInputSchema).array() ]),
   skipDuplicates: z.boolean().optional()
 }).strict();
 
@@ -4356,6 +4703,31 @@ export const MazePuzzleScalarWhereInputSchema: z.ZodType<Prisma.MazePuzzleScalar
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
 }).strict();
 
+export const MazeSessionUpsertWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.MazeSessionUpsertWithWhereUniqueWithoutUserInput> = z.object({
+  where: z.lazy(() => MazeSessionWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => MazeSessionUpdateWithoutUserInputSchema),z.lazy(() => MazeSessionUncheckedUpdateWithoutUserInputSchema) ]),
+  create: z.union([ z.lazy(() => MazeSessionCreateWithoutUserInputSchema),z.lazy(() => MazeSessionUncheckedCreateWithoutUserInputSchema) ]),
+}).strict();
+
+export const MazeSessionUpdateWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.MazeSessionUpdateWithWhereUniqueWithoutUserInput> = z.object({
+  where: z.lazy(() => MazeSessionWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => MazeSessionUpdateWithoutUserInputSchema),z.lazy(() => MazeSessionUncheckedUpdateWithoutUserInputSchema) ]),
+}).strict();
+
+export const MazeSessionUpdateManyWithWhereWithoutUserInputSchema: z.ZodType<Prisma.MazeSessionUpdateManyWithWhereWithoutUserInput> = z.object({
+  where: z.lazy(() => MazeSessionScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => MazeSessionUpdateManyMutationInputSchema),z.lazy(() => MazeSessionUncheckedUpdateManyWithoutUserInputSchema) ]),
+}).strict();
+
+export const MazeSessionScalarWhereInputSchema: z.ZodType<Prisma.MazeSessionScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => MazeSessionScalarWhereInputSchema),z.lazy(() => MazeSessionScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => MazeSessionScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => MazeSessionScalarWhereInputSchema),z.lazy(() => MazeSessionScalarWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+}).strict();
+
 export const UserCreateWithoutFormulasInputSchema: z.ZodType<Prisma.UserCreateWithoutFormulasInput> = z.object({
   id: z.string().cuid().optional(),
   clerkId: z.string(),
@@ -4367,7 +4739,8 @@ export const UserCreateWithoutFormulasInputSchema: z.ZodType<Prisma.UserCreateWi
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsCreateNestedManyWithoutPlayersInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientCreateNestedManyWithoutUserInputSchema).optional(),
   Potions: z.lazy(() => PotionCreateNestedManyWithoutUserInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleCreateNestedManyWithoutUserInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleCreateNestedManyWithoutUserInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateWithoutFormulasInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutFormulasInput> = z.object({
@@ -4381,7 +4754,8 @@ export const UserUncheckedCreateWithoutFormulasInputSchema: z.ZodType<Prisma.Use
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedCreateNestedManyWithoutPlayersInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUncheckedCreateNestedManyWithoutUserInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserCreateOrConnectWithoutFormulasInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutFormulasInput> = z.object({
@@ -4411,7 +4785,8 @@ export const UserUpdateWithoutFormulasInputSchema: z.ZodType<Prisma.UserUpdateWi
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUpdateManyWithoutUserNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUpdateManyWithoutUserNestedInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUpdateManyWithoutUserNestedInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUpdateManyWithoutUserNestedInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserUncheckedUpdateWithoutFormulasInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutFormulasInput> = z.object({
@@ -4425,7 +4800,8 @@ export const UserUncheckedUpdateWithoutFormulasInputSchema: z.ZodType<Prisma.Use
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserCreateWithoutIngredientsInputSchema: z.ZodType<Prisma.UserCreateWithoutIngredientsInput> = z.object({
@@ -4439,7 +4815,8 @@ export const UserCreateWithoutIngredientsInputSchema: z.ZodType<Prisma.UserCreat
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsCreateNestedManyWithoutPlayersInputSchema).optional(),
   Potions: z.lazy(() => PotionCreateNestedManyWithoutUserInputSchema).optional(),
   Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleCreateNestedManyWithoutUserInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleCreateNestedManyWithoutUserInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateWithoutIngredientsInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutIngredientsInput> = z.object({
@@ -4453,7 +4830,8 @@ export const UserUncheckedCreateWithoutIngredientsInputSchema: z.ZodType<Prisma.
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedCreateNestedManyWithoutPlayersInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
   Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUncheckedCreateNestedManyWithoutUserInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserCreateOrConnectWithoutIngredientsInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutIngredientsInput> = z.object({
@@ -4483,7 +4861,8 @@ export const UserUpdateWithoutIngredientsInputSchema: z.ZodType<Prisma.UserUpdat
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUpdateManyWithoutUserNestedInputSchema).optional(),
   Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUpdateManyWithoutUserNestedInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUpdateManyWithoutUserNestedInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserUncheckedUpdateWithoutIngredientsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutIngredientsInput> = z.object({
@@ -4497,7 +4876,8 @@ export const UserUncheckedUpdateWithoutIngredientsInputSchema: z.ZodType<Prisma.
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
   Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserCreateWithoutPotionsInputSchema: z.ZodType<Prisma.UserCreateWithoutPotionsInput> = z.object({
@@ -4511,7 +4891,8 @@ export const UserCreateWithoutPotionsInputSchema: z.ZodType<Prisma.UserCreateWit
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsCreateNestedManyWithoutPlayersInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientCreateNestedManyWithoutUserInputSchema).optional(),
   Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleCreateNestedManyWithoutUserInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleCreateNestedManyWithoutUserInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateWithoutPotionsInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutPotionsInput> = z.object({
@@ -4525,7 +4906,8 @@ export const UserUncheckedCreateWithoutPotionsInputSchema: z.ZodType<Prisma.User
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedCreateNestedManyWithoutPlayersInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
   Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUncheckedCreateNestedManyWithoutUserInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserCreateOrConnectWithoutPotionsInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutPotionsInput> = z.object({
@@ -4555,7 +4937,8 @@ export const UserUpdateWithoutPotionsInputSchema: z.ZodType<Prisma.UserUpdateWit
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUpdateManyWithoutUserNestedInputSchema).optional(),
   Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUpdateManyWithoutUserNestedInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUpdateManyWithoutUserNestedInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserUncheckedUpdateWithoutPotionsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutPotionsInput> = z.object({
@@ -4569,7 +4952,8 @@ export const UserUncheckedUpdateWithoutPotionsInputSchema: z.ZodType<Prisma.User
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
   Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserCreateWithoutMazePuzzleInputSchema: z.ZodType<Prisma.UserCreateWithoutMazePuzzleInput> = z.object({
@@ -4583,7 +4967,8 @@ export const UserCreateWithoutMazePuzzleInputSchema: z.ZodType<Prisma.UserCreate
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsCreateNestedManyWithoutPlayersInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientCreateNestedManyWithoutUserInputSchema).optional(),
   Potions: z.lazy(() => PotionCreateNestedManyWithoutUserInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional()
+  Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateWithoutMazePuzzleInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutMazePuzzleInput> = z.object({
@@ -4597,7 +4982,8 @@ export const UserUncheckedCreateWithoutMazePuzzleInputSchema: z.ZodType<Prisma.U
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedCreateNestedManyWithoutPlayersInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional()
+  Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserCreateOrConnectWithoutMazePuzzleInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutMazePuzzleInput> = z.object({
@@ -4629,6 +5015,23 @@ export const EnemyCreateManyMazeInputEnvelopeSchema: z.ZodType<Prisma.EnemyCreat
   skipDuplicates: z.boolean().optional()
 }).strict();
 
+export const MazeSessionCreateWithoutMazesInputSchema: z.ZodType<Prisma.MazeSessionCreateWithoutMazesInput> = z.object({
+  id: z.string().cuid().optional(),
+  title: z.string(),
+  User: z.lazy(() => UserCreateNestedOneWithoutMazeSessionsInputSchema)
+}).strict();
+
+export const MazeSessionUncheckedCreateWithoutMazesInputSchema: z.ZodType<Prisma.MazeSessionUncheckedCreateWithoutMazesInput> = z.object({
+  id: z.string().cuid().optional(),
+  userId: z.string(),
+  title: z.string()
+}).strict();
+
+export const MazeSessionCreateOrConnectWithoutMazesInputSchema: z.ZodType<Prisma.MazeSessionCreateOrConnectWithoutMazesInput> = z.object({
+  where: z.lazy(() => MazeSessionWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => MazeSessionCreateWithoutMazesInputSchema),z.lazy(() => MazeSessionUncheckedCreateWithoutMazesInputSchema) ]),
+}).strict();
+
 export const UserUpsertWithoutMazePuzzleInputSchema: z.ZodType<Prisma.UserUpsertWithoutMazePuzzleInput> = z.object({
   update: z.union([ z.lazy(() => UserUpdateWithoutMazePuzzleInputSchema),z.lazy(() => UserUncheckedUpdateWithoutMazePuzzleInputSchema) ]),
   create: z.union([ z.lazy(() => UserCreateWithoutMazePuzzleInputSchema),z.lazy(() => UserUncheckedCreateWithoutMazePuzzleInputSchema) ]),
@@ -4651,7 +5054,8 @@ export const UserUpdateWithoutMazePuzzleInputSchema: z.ZodType<Prisma.UserUpdate
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUpdateManyWithoutUserNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUpdateManyWithoutUserNestedInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional()
+  Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserUncheckedUpdateWithoutMazePuzzleInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutMazePuzzleInput> = z.object({
@@ -4665,7 +5069,8 @@ export const UserUncheckedUpdateWithoutMazePuzzleInputSchema: z.ZodType<Prisma.U
   PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersNestedInputSchema).optional(),
   Ingredients: z.lazy(() => IngredientUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
+  Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const EnemyUpsertWithWhereUniqueWithoutMazeInputSchema: z.ZodType<Prisma.EnemyUpsertWithWhereUniqueWithoutMazeInput> = z.object({
@@ -4695,6 +5100,143 @@ export const EnemyScalarWhereInputSchema: z.ZodType<Prisma.EnemyScalarWhereInput
   direction: z.union([ z.lazy(() => EnumDirectionFilterSchema),z.lazy(() => DirectionSchema) ]).optional(),
 }).strict();
 
+export const MazeSessionUpsertWithWhereUniqueWithoutMazesInputSchema: z.ZodType<Prisma.MazeSessionUpsertWithWhereUniqueWithoutMazesInput> = z.object({
+  where: z.lazy(() => MazeSessionWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => MazeSessionUpdateWithoutMazesInputSchema),z.lazy(() => MazeSessionUncheckedUpdateWithoutMazesInputSchema) ]),
+  create: z.union([ z.lazy(() => MazeSessionCreateWithoutMazesInputSchema),z.lazy(() => MazeSessionUncheckedCreateWithoutMazesInputSchema) ]),
+}).strict();
+
+export const MazeSessionUpdateWithWhereUniqueWithoutMazesInputSchema: z.ZodType<Prisma.MazeSessionUpdateWithWhereUniqueWithoutMazesInput> = z.object({
+  where: z.lazy(() => MazeSessionWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => MazeSessionUpdateWithoutMazesInputSchema),z.lazy(() => MazeSessionUncheckedUpdateWithoutMazesInputSchema) ]),
+}).strict();
+
+export const MazeSessionUpdateManyWithWhereWithoutMazesInputSchema: z.ZodType<Prisma.MazeSessionUpdateManyWithWhereWithoutMazesInput> = z.object({
+  where: z.lazy(() => MazeSessionScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => MazeSessionUpdateManyMutationInputSchema),z.lazy(() => MazeSessionUncheckedUpdateManyWithoutMazesInputSchema) ]),
+}).strict();
+
+export const UserCreateWithoutMazeSessionsInputSchema: z.ZodType<Prisma.UserCreateWithoutMazeSessionsInput> = z.object({
+  id: z.string().cuid().optional(),
+  clerkId: z.string(),
+  imgUrl: z.string().optional().nullable(),
+  username: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsCreateNestedManyWithoutPlayersInputSchema).optional(),
+  Ingredients: z.lazy(() => IngredientCreateNestedManyWithoutUserInputSchema).optional(),
+  Potions: z.lazy(() => PotionCreateNestedManyWithoutUserInputSchema).optional(),
+  Formulas: z.lazy(() => FormulaCreateNestedManyWithoutUserInputSchema).optional(),
+  MazePuzzle: z.lazy(() => MazePuzzleCreateNestedManyWithoutUserInputSchema).optional()
+}).strict();
+
+export const UserUncheckedCreateWithoutMazeSessionsInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutMazeSessionsInput> = z.object({
+  id: z.string().cuid().optional(),
+  clerkId: z.string(),
+  imgUrl: z.string().optional().nullable(),
+  username: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedCreateNestedManyWithoutPlayersInputSchema).optional(),
+  Ingredients: z.lazy(() => IngredientUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
+  Potions: z.lazy(() => PotionUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
+  Formulas: z.lazy(() => FormulaUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
+  MazePuzzle: z.lazy(() => MazePuzzleUncheckedCreateNestedManyWithoutUserInputSchema).optional()
+}).strict();
+
+export const UserCreateOrConnectWithoutMazeSessionsInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutMazeSessionsInput> = z.object({
+  where: z.lazy(() => UserWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => UserCreateWithoutMazeSessionsInputSchema),z.lazy(() => UserUncheckedCreateWithoutMazeSessionsInputSchema) ]),
+}).strict();
+
+export const MazePuzzleCreateWithoutMazeSessionInputSchema: z.ZodType<Prisma.MazePuzzleCreateWithoutMazeSessionInput> = z.object({
+  id: z.string().cuid().optional(),
+  playerX: z.number().int(),
+  playerY: z.number().int(),
+  rows: z.number().int(),
+  columns: z.number().int(),
+  grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.coerce.date().optional(),
+  User: z.lazy(() => UserCreateNestedOneWithoutMazePuzzleInputSchema),
+  enemies: z.lazy(() => EnemyCreateNestedManyWithoutMazeInputSchema).optional()
+}).strict();
+
+export const MazePuzzleUncheckedCreateWithoutMazeSessionInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedCreateWithoutMazeSessionInput> = z.object({
+  id: z.string().cuid().optional(),
+  playerX: z.number().int(),
+  playerY: z.number().int(),
+  rows: z.number().int(),
+  columns: z.number().int(),
+  grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.coerce.date().optional(),
+  userId: z.string(),
+  enemies: z.lazy(() => EnemyUncheckedCreateNestedManyWithoutMazeInputSchema).optional()
+}).strict();
+
+export const MazePuzzleCreateOrConnectWithoutMazeSessionInputSchema: z.ZodType<Prisma.MazePuzzleCreateOrConnectWithoutMazeSessionInput> = z.object({
+  where: z.lazy(() => MazePuzzleWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => MazePuzzleCreateWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleUncheckedCreateWithoutMazeSessionInputSchema) ]),
+}).strict();
+
+export const UserUpsertWithoutMazeSessionsInputSchema: z.ZodType<Prisma.UserUpsertWithoutMazeSessionsInput> = z.object({
+  update: z.union([ z.lazy(() => UserUpdateWithoutMazeSessionsInputSchema),z.lazy(() => UserUncheckedUpdateWithoutMazeSessionsInputSchema) ]),
+  create: z.union([ z.lazy(() => UserCreateWithoutMazeSessionsInputSchema),z.lazy(() => UserUncheckedCreateWithoutMazeSessionsInputSchema) ]),
+  where: z.lazy(() => UserWhereInputSchema).optional()
+}).strict();
+
+export const UserUpdateToOneWithWhereWithoutMazeSessionsInputSchema: z.ZodType<Prisma.UserUpdateToOneWithWhereWithoutMazeSessionsInput> = z.object({
+  where: z.lazy(() => UserWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => UserUpdateWithoutMazeSessionsInputSchema),z.lazy(() => UserUncheckedUpdateWithoutMazeSessionsInputSchema) ]),
+}).strict();
+
+export const UserUpdateWithoutMazeSessionsInputSchema: z.ZodType<Prisma.UserUpdateWithoutMazeSessionsInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  clerkId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  imgUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  username: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUpdateManyWithoutPlayersNestedInputSchema).optional(),
+  Ingredients: z.lazy(() => IngredientUpdateManyWithoutUserNestedInputSchema).optional(),
+  Potions: z.lazy(() => PotionUpdateManyWithoutUserNestedInputSchema).optional(),
+  Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional(),
+  MazePuzzle: z.lazy(() => MazePuzzleUpdateManyWithoutUserNestedInputSchema).optional()
+}).strict();
+
+export const UserUncheckedUpdateWithoutMazeSessionsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutMazeSessionsInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  clerkId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  imgUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  username: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  PuzzleElementalTrials: z.lazy(() => PuzzleElementalTrialsUncheckedUpdateManyWithoutPlayersNestedInputSchema).optional(),
+  Ingredients: z.lazy(() => IngredientUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
+  Potions: z.lazy(() => PotionUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
+  Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
+  MazePuzzle: z.lazy(() => MazePuzzleUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
+}).strict();
+
+export const MazePuzzleUpsertWithWhereUniqueWithoutMazeSessionInputSchema: z.ZodType<Prisma.MazePuzzleUpsertWithWhereUniqueWithoutMazeSessionInput> = z.object({
+  where: z.lazy(() => MazePuzzleWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => MazePuzzleUpdateWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleUncheckedUpdateWithoutMazeSessionInputSchema) ]),
+  create: z.union([ z.lazy(() => MazePuzzleCreateWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleUncheckedCreateWithoutMazeSessionInputSchema) ]),
+}).strict();
+
+export const MazePuzzleUpdateWithWhereUniqueWithoutMazeSessionInputSchema: z.ZodType<Prisma.MazePuzzleUpdateWithWhereUniqueWithoutMazeSessionInput> = z.object({
+  where: z.lazy(() => MazePuzzleWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => MazePuzzleUpdateWithoutMazeSessionInputSchema),z.lazy(() => MazePuzzleUncheckedUpdateWithoutMazeSessionInputSchema) ]),
+}).strict();
+
+export const MazePuzzleUpdateManyWithWhereWithoutMazeSessionInputSchema: z.ZodType<Prisma.MazePuzzleUpdateManyWithWhereWithoutMazeSessionInput> = z.object({
+  where: z.lazy(() => MazePuzzleScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => MazePuzzleUpdateManyMutationInputSchema),z.lazy(() => MazePuzzleUncheckedUpdateManyWithoutMazeSessionInputSchema) ]),
+}).strict();
+
 export const MazePuzzleCreateWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuzzleCreateWithoutEnemiesInput> = z.object({
   id: z.string().cuid().optional(),
   playerX: z.number().int(),
@@ -4703,7 +5245,8 @@ export const MazePuzzleCreateWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuz
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.coerce.date().optional(),
-  User: z.lazy(() => UserCreateNestedOneWithoutMazePuzzleInputSchema)
+  User: z.lazy(() => UserCreateNestedOneWithoutMazePuzzleInputSchema),
+  MazeSession: z.lazy(() => MazeSessionCreateNestedManyWithoutMazesInputSchema).optional()
 }).strict();
 
 export const MazePuzzleUncheckedCreateWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedCreateWithoutEnemiesInput> = z.object({
@@ -4714,7 +5257,8 @@ export const MazePuzzleUncheckedCreateWithoutEnemiesInputSchema: z.ZodType<Prism
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.coerce.date().optional(),
-  userId: z.string()
+  userId: z.string(),
+  MazeSession: z.lazy(() => MazeSessionUncheckedCreateNestedManyWithoutMazesInputSchema).optional()
 }).strict();
 
 export const MazePuzzleCreateOrConnectWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuzzleCreateOrConnectWithoutEnemiesInput> = z.object({
@@ -4741,7 +5285,8 @@ export const MazePuzzleUpdateWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuz
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  User: z.lazy(() => UserUpdateOneRequiredWithoutMazePuzzleNestedInputSchema).optional()
+  User: z.lazy(() => UserUpdateOneRequiredWithoutMazePuzzleNestedInputSchema).optional(),
+  MazeSession: z.lazy(() => MazeSessionUpdateManyWithoutMazesNestedInputSchema).optional()
 }).strict();
 
 export const MazePuzzleUncheckedUpdateWithoutEnemiesInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedUpdateWithoutEnemiesInput> = z.object({
@@ -4753,6 +5298,7 @@ export const MazePuzzleUncheckedUpdateWithoutEnemiesInputSchema: z.ZodType<Prism
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  MazeSession: z.lazy(() => MazeSessionUncheckedUpdateManyWithoutMazesNestedInputSchema).optional()
 }).strict();
 
 export const PuzzleChatMessageCreateManySessionInputSchema: z.ZodType<Prisma.PuzzleChatMessageCreateManySessionInput> = z.object({
@@ -4794,7 +5340,8 @@ export const UserUpdateWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma
   Ingredients: z.lazy(() => IngredientUpdateManyWithoutUserNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUpdateManyWithoutUserNestedInputSchema).optional(),
   Formulas: z.lazy(() => FormulaUpdateManyWithoutUserNestedInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUpdateManyWithoutUserNestedInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUpdateManyWithoutUserNestedInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserUncheckedUpdateWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutPuzzleElementalTrialsInput> = z.object({
@@ -4808,7 +5355,8 @@ export const UserUncheckedUpdateWithoutPuzzleElementalTrialsInputSchema: z.ZodTy
   Ingredients: z.lazy(() => IngredientUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
   Potions: z.lazy(() => PotionUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
   Formulas: z.lazy(() => FormulaUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  MazePuzzle: z.lazy(() => MazePuzzleUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
+  MazePuzzle: z.lazy(() => MazePuzzleUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
+  MazeSessions: z.lazy(() => MazeSessionUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserUncheckedUpdateManyWithoutPuzzleElementalTrialsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateManyWithoutPuzzleElementalTrialsInput> = z.object({
@@ -4873,6 +5421,11 @@ export const MazePuzzleCreateManyUserInputSchema: z.ZodType<Prisma.MazePuzzleCre
   columns: z.number().int(),
   grid: z.union([ z.lazy(() => MazePuzzleCreategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.coerce.date().optional()
+}).strict();
+
+export const MazeSessionCreateManyUserInputSchema: z.ZodType<Prisma.MazeSessionCreateManyUserInput> = z.object({
+  id: z.string().cuid().optional(),
+  title: z.string()
 }).strict();
 
 export const PuzzleElementalTrialsUpdateWithoutPlayersInputSchema: z.ZodType<Prisma.PuzzleElementalTrialsUpdateWithoutPlayersInput> = z.object({
@@ -5050,7 +5603,8 @@ export const MazePuzzleUpdateWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzle
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  enemies: z.lazy(() => EnemyUpdateManyWithoutMazeNestedInputSchema).optional()
+  enemies: z.lazy(() => EnemyUpdateManyWithoutMazeNestedInputSchema).optional(),
+  MazeSession: z.lazy(() => MazeSessionUpdateManyWithoutMazesNestedInputSchema).optional()
 }).strict();
 
 export const MazePuzzleUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedUpdateWithoutUserInput> = z.object({
@@ -5061,7 +5615,8 @@ export const MazePuzzleUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.M
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  enemies: z.lazy(() => EnemyUncheckedUpdateManyWithoutMazeNestedInputSchema).optional()
+  enemies: z.lazy(() => EnemyUncheckedUpdateManyWithoutMazeNestedInputSchema).optional(),
+  MazeSession: z.lazy(() => MazeSessionUncheckedUpdateManyWithoutMazesNestedInputSchema).optional()
 }).strict();
 
 export const MazePuzzleUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedUpdateManyWithoutUserInput> = z.object({
@@ -5072,6 +5627,23 @@ export const MazePuzzleUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Pris
   columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const MazeSessionUpdateWithoutUserInputSchema: z.ZodType<Prisma.MazeSessionUpdateWithoutUserInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Mazes: z.lazy(() => MazePuzzleUpdateManyWithoutMazeSessionNestedInputSchema).optional()
+}).strict();
+
+export const MazeSessionUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.MazeSessionUncheckedUpdateWithoutUserInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Mazes: z.lazy(() => MazePuzzleUncheckedUpdateManyWithoutMazeSessionNestedInputSchema).optional()
+}).strict();
+
+export const MazeSessionUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.MazeSessionUncheckedUpdateManyWithoutUserInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const EnemyCreateManyMazeInputSchema: z.ZodType<Prisma.EnemyCreateManyMazeInput> = z.object({
@@ -5100,6 +5672,59 @@ export const EnemyUncheckedUpdateManyWithoutMazeInputSchema: z.ZodType<Prisma.En
   x: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   y: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   direction: z.union([ z.lazy(() => DirectionSchema),z.lazy(() => EnumDirectionFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const MazeSessionUpdateWithoutMazesInputSchema: z.ZodType<Prisma.MazeSessionUpdateWithoutMazesInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  User: z.lazy(() => UserUpdateOneRequiredWithoutMazeSessionsNestedInputSchema).optional()
+}).strict();
+
+export const MazeSessionUncheckedUpdateWithoutMazesInputSchema: z.ZodType<Prisma.MazeSessionUncheckedUpdateWithoutMazesInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const MazeSessionUncheckedUpdateManyWithoutMazesInputSchema: z.ZodType<Prisma.MazeSessionUncheckedUpdateManyWithoutMazesInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const MazePuzzleUpdateWithoutMazeSessionInputSchema: z.ZodType<Prisma.MazePuzzleUpdateWithoutMazeSessionInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  playerX: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  playerY: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  rows: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  User: z.lazy(() => UserUpdateOneRequiredWithoutMazePuzzleNestedInputSchema).optional(),
+  enemies: z.lazy(() => EnemyUpdateManyWithoutMazeNestedInputSchema).optional()
+}).strict();
+
+export const MazePuzzleUncheckedUpdateWithoutMazeSessionInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedUpdateWithoutMazeSessionInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  playerX: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  playerY: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  rows: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  enemies: z.lazy(() => EnemyUncheckedUpdateManyWithoutMazeNestedInputSchema).optional()
+}).strict();
+
+export const MazePuzzleUncheckedUpdateManyWithoutMazeSessionInputSchema: z.ZodType<Prisma.MazePuzzleUncheckedUpdateManyWithoutMazeSessionInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  playerX: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  playerY: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  rows: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  columns: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  grid: z.union([ z.lazy(() => MazePuzzleUpdategridInputSchema),z.number().int().array() ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 /////////////////////////////////////////
@@ -5538,6 +6163,68 @@ export const MazePuzzleFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.MazePuzzleF
   select: MazePuzzleSelectSchema.optional(),
   include: MazePuzzleIncludeSchema.optional(),
   where: MazePuzzleWhereUniqueInputSchema,
+}).strict() ;
+
+export const MazeSessionFindFirstArgsSchema: z.ZodType<Prisma.MazeSessionFindFirstArgs> = z.object({
+  select: MazeSessionSelectSchema.optional(),
+  include: MazeSessionIncludeSchema.optional(),
+  where: MazeSessionWhereInputSchema.optional(),
+  orderBy: z.union([ MazeSessionOrderByWithRelationInputSchema.array(),MazeSessionOrderByWithRelationInputSchema ]).optional(),
+  cursor: MazeSessionWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ MazeSessionScalarFieldEnumSchema,MazeSessionScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const MazeSessionFindFirstOrThrowArgsSchema: z.ZodType<Prisma.MazeSessionFindFirstOrThrowArgs> = z.object({
+  select: MazeSessionSelectSchema.optional(),
+  include: MazeSessionIncludeSchema.optional(),
+  where: MazeSessionWhereInputSchema.optional(),
+  orderBy: z.union([ MazeSessionOrderByWithRelationInputSchema.array(),MazeSessionOrderByWithRelationInputSchema ]).optional(),
+  cursor: MazeSessionWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ MazeSessionScalarFieldEnumSchema,MazeSessionScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const MazeSessionFindManyArgsSchema: z.ZodType<Prisma.MazeSessionFindManyArgs> = z.object({
+  select: MazeSessionSelectSchema.optional(),
+  include: MazeSessionIncludeSchema.optional(),
+  where: MazeSessionWhereInputSchema.optional(),
+  orderBy: z.union([ MazeSessionOrderByWithRelationInputSchema.array(),MazeSessionOrderByWithRelationInputSchema ]).optional(),
+  cursor: MazeSessionWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ MazeSessionScalarFieldEnumSchema,MazeSessionScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const MazeSessionAggregateArgsSchema: z.ZodType<Prisma.MazeSessionAggregateArgs> = z.object({
+  where: MazeSessionWhereInputSchema.optional(),
+  orderBy: z.union([ MazeSessionOrderByWithRelationInputSchema.array(),MazeSessionOrderByWithRelationInputSchema ]).optional(),
+  cursor: MazeSessionWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const MazeSessionGroupByArgsSchema: z.ZodType<Prisma.MazeSessionGroupByArgs> = z.object({
+  where: MazeSessionWhereInputSchema.optional(),
+  orderBy: z.union([ MazeSessionOrderByWithAggregationInputSchema.array(),MazeSessionOrderByWithAggregationInputSchema ]).optional(),
+  by: MazeSessionScalarFieldEnumSchema.array(),
+  having: MazeSessionScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const MazeSessionFindUniqueArgsSchema: z.ZodType<Prisma.MazeSessionFindUniqueArgs> = z.object({
+  select: MazeSessionSelectSchema.optional(),
+  include: MazeSessionIncludeSchema.optional(),
+  where: MazeSessionWhereUniqueInputSchema,
+}).strict() ;
+
+export const MazeSessionFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.MazeSessionFindUniqueOrThrowArgs> = z.object({
+  select: MazeSessionSelectSchema.optional(),
+  include: MazeSessionIncludeSchema.optional(),
+  where: MazeSessionWhereUniqueInputSchema,
 }).strict() ;
 
 export const EnemyFindFirstArgsSchema: z.ZodType<Prisma.EnemyFindFirstArgs> = z.object({
@@ -6093,6 +6780,52 @@ export const MazePuzzleUpdateManyArgsSchema: z.ZodType<Prisma.MazePuzzleUpdateMa
 
 export const MazePuzzleDeleteManyArgsSchema: z.ZodType<Prisma.MazePuzzleDeleteManyArgs> = z.object({
   where: MazePuzzleWhereInputSchema.optional(),
+}).strict() ;
+
+export const MazeSessionCreateArgsSchema: z.ZodType<Prisma.MazeSessionCreateArgs> = z.object({
+  select: MazeSessionSelectSchema.optional(),
+  include: MazeSessionIncludeSchema.optional(),
+  data: z.union([ MazeSessionCreateInputSchema,MazeSessionUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const MazeSessionUpsertArgsSchema: z.ZodType<Prisma.MazeSessionUpsertArgs> = z.object({
+  select: MazeSessionSelectSchema.optional(),
+  include: MazeSessionIncludeSchema.optional(),
+  where: MazeSessionWhereUniqueInputSchema,
+  create: z.union([ MazeSessionCreateInputSchema,MazeSessionUncheckedCreateInputSchema ]),
+  update: z.union([ MazeSessionUpdateInputSchema,MazeSessionUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const MazeSessionCreateManyArgsSchema: z.ZodType<Prisma.MazeSessionCreateManyArgs> = z.object({
+  data: z.union([ MazeSessionCreateManyInputSchema,MazeSessionCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const MazeSessionCreateManyAndReturnArgsSchema: z.ZodType<Prisma.MazeSessionCreateManyAndReturnArgs> = z.object({
+  data: z.union([ MazeSessionCreateManyInputSchema,MazeSessionCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const MazeSessionDeleteArgsSchema: z.ZodType<Prisma.MazeSessionDeleteArgs> = z.object({
+  select: MazeSessionSelectSchema.optional(),
+  include: MazeSessionIncludeSchema.optional(),
+  where: MazeSessionWhereUniqueInputSchema,
+}).strict() ;
+
+export const MazeSessionUpdateArgsSchema: z.ZodType<Prisma.MazeSessionUpdateArgs> = z.object({
+  select: MazeSessionSelectSchema.optional(),
+  include: MazeSessionIncludeSchema.optional(),
+  data: z.union([ MazeSessionUpdateInputSchema,MazeSessionUncheckedUpdateInputSchema ]),
+  where: MazeSessionWhereUniqueInputSchema,
+}).strict() ;
+
+export const MazeSessionUpdateManyArgsSchema: z.ZodType<Prisma.MazeSessionUpdateManyArgs> = z.object({
+  data: z.union([ MazeSessionUpdateManyMutationInputSchema,MazeSessionUncheckedUpdateManyInputSchema ]),
+  where: MazeSessionWhereInputSchema.optional(),
+}).strict() ;
+
+export const MazeSessionDeleteManyArgsSchema: z.ZodType<Prisma.MazeSessionDeleteManyArgs> = z.object({
+  where: MazeSessionWhereInputSchema.optional(),
 }).strict() ;
 
 export const EnemyCreateArgsSchema: z.ZodType<Prisma.EnemyCreateArgs> = z.object({

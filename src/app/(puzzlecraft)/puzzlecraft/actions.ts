@@ -53,7 +53,8 @@ export const saveMazePuzzle = async ({
           ...maze,
         },
       });
-      if (allEnemies !== undefined) await upsertEnemiesOnMaze({ allEnemies, puzzleId: updatedMaze.id });
+      if (allEnemies !== undefined)
+        await upsertEnemiesOnMaze({ allEnemies, puzzleId: updatedMaze.id });
       revalidatePath(`${process.env.BASE_URL}/puzzlecraft`);
       return updatedMaze;
     } else {
@@ -68,7 +69,8 @@ export const saveMazePuzzle = async ({
           userId,
         },
       });
-      if (allEnemies !== undefined) await upsertEnemiesOnMaze({ allEnemies, puzzleId: createdMaze.id });
+      if (allEnemies !== undefined)
+        await upsertEnemiesOnMaze({ allEnemies, puzzleId: createdMaze.id });
       revalidatePath(`${process.env.BASE_URL}/puzzlecraft`);
       return createdMaze;
     }
@@ -93,5 +95,76 @@ export const deleteMazePuzzle = async ({ id }: { id: string }) => {
     throw new Error(
       "Something went wrong when trying to delete the maze puzzle",
     );
+  }
+};
+
+export const deleteSession = async ({ sessionId }: { sessionId: string }) => {
+  try {
+    await prisma.mazeSession.delete({
+      where: { id: sessionId },
+    });
+    revalidatePath(`${process.env.BASE_URL}/puzzlecraft`);
+  } catch (error) {
+    console.error(error);
+    throw new Error("Something went wrong trying to delete the session");
+  }
+};
+
+export const addMazeToSession = async ({
+  mazeId,
+  sessionId,
+  action,
+}: {
+  mazeId: string;
+  sessionId: string;
+  action: "connect" | "disconnect";
+}) => {
+  try {
+    await prisma.mazeSession.update({
+      where: { id: sessionId },
+      data: {
+        Mazes: {
+          [action]: { id: mazeId },
+        },
+      },
+    });
+    revalidatePath(`${process.env.BASE_URL}/puzzlecraft`);
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to add maze to session");
+  }
+};
+
+export const updateSessionTitle = async ({
+  sessionId,
+  sessionTitle,
+}: {
+  sessionId: string;
+  sessionTitle: string;
+}) => {
+  try {
+    await prisma.mazeSession.update({
+      where: { id: sessionId },
+      data: { title: sessionTitle },
+    });
+    revalidatePath(`${process.env.BASE_URL}/puzzlecraft`);
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to update the title for the session");
+  }
+};
+
+export const addNewSession = async ({ userId }: { userId: string }) => {
+  try {
+    await prisma.mazeSession.create({
+      data: {
+        userId,
+        title: "New Session",
+      },
+    });
+    revalidatePath(`${process.env.BASE_URL}/puzzlecraft`);
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed creating new session");
   }
 };

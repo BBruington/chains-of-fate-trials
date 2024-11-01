@@ -17,6 +17,7 @@ import { useAtom } from "jotai";
 import { selectedCharacter } from "../../../jotaiAtoms";
 import { INITIAL_MAP } from "../../../_constants";
 import { Direction } from "@prisma/client";
+import { ACTIVE_SIDEBAR_ENUM } from "@/app/(puzzlecraft)/puzzlecraft/types";
 
 export default function AirPuzzle({ sessionId }: { sessionId: string }) {
   const [character, setCharacter] = useAtom<
@@ -29,6 +30,7 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
   const { playMaze, mazeState, reset } = useMazePuzzle({
     elementalSessionId: sessionId,
     gameGridDetails: {
+      isCraftMode: ACTIVE_SIDEBAR_ENUM.PLAYMODE,
       mapLayout: INITIAL_MAP,
     },
   });

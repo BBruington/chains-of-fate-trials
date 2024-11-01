@@ -4,35 +4,26 @@ import useMazePuzzle from "@/components/puzzles/maze-puzzle/useMazePuzzle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
-import { saveMazePuzzle, deleteMazePuzzle } from "../actions";
+import { saveMazePuzzle } from "../actions";
 import { DEFAULT_MAP } from "@/app/(session)/session/[id]/_constants";
-import { Direction, type $Enums } from "@prisma/client";
+import { Direction, MazeSession, type $Enums } from "@prisma/client";
 import { GRID_TILE } from "@/components/puzzles/maze-puzzle/constants";
-import { ACTIVE_SIDEBAR, Maze, SIDEBAR_TOGGLE_ENUM } from "../types";
+import { ACTIVE_SIDEBAR_ENUM, Maze, SIDEBAR_TOGGLE_ENUM } from "../types";
 import LostDialog from "./lost-dialog";
 import BuildSideBar from "./build-side-bar";
 import PlaySideBar from "./play-side-bar";
+import SessionSideBar from "./session-side-bar";
 
 type CraftMazeProperties = {
   clerkId: string;
-  MazePuzzle: ({
-    enemies: {
-      id: string;
-      puzzleId: string;
-      x: number;
-      y: number;
-      direction: $Enums.Direction;
-    }[];
+  MazeSessions: ({
+    Mazes: Maze[];
   } & {
     id: string;
-    playerX: number;
-    playerY: number;
-    rows: number;
-    columns: number;
-    grid: number[];
-    createdAt: Date;
     userId: string;
+    title: string;
   })[];
+  MazePuzzle: Maze[];
 };
 
 const formatPuzzle = (mazePuzzle?: Maze) => {
@@ -55,6 +46,7 @@ const formatPuzzle = (mazePuzzle?: Maze) => {
 
 export default function CraftMaze({
   MazePuzzle,
+  MazeSessions,
   clerkId,
 }: CraftMazeProperties) {
   const defaultCreatedMaze = {
@@ -72,9 +64,10 @@ export default function CraftMaze({
     MazePuzzle[0] ? MazePuzzle[0] : defaultCreatedMaze,
   );
   const selectedPuzzle = useRef(MazePuzzle[0] ? MazePuzzle[0].id : "created");
-  const [selectedEnemyDirection, setSelectedEnemyDirection] = useState<Direction>(Direction.DOWN);
+  const [selectedEnemyDirection, setSelectedEnemyDirection] =
+    useState<Direction>(Direction.DOWN);
   const [isFailed, setIsFailed] = useState(false);
-  const [isCraftMode, setIsCraftMode] = useState(ACTIVE_SIDEBAR.EDITMODE);
+  const [isCraftMode, setIsCraftMode] = useState(ACTIVE_SIDEBAR_ENUM.EDITMODE);
 
   const { playMaze, mazeState, buildMaze, reset } = useMazePuzzle({
     selectedMazeId: selectedPuzzle.current ? selectedPuzzle.current : undefined,
@@ -172,24 +165,38 @@ export default function CraftMaze({
             className="mb-5 flex w-full justify-around"
             onValueChange={(value) => {
               reset();
-              setIsCraftMode(value as ACTIVE_SIDEBAR);
+              setIsCraftMode(value as ACTIVE_SIDEBAR_ENUM);
             }}
             type="single"
           >
             <ToggleGroupItem
               className="min-w-32 border"
-              value={ACTIVE_SIDEBAR.PLAYMODE}
+              value={ACTIVE_SIDEBAR_ENUM.PLAYMODE}
             >
               Play
             </ToggleGroupItem>
             <ToggleGroupItem
               className="min-w-32 border"
-              value={ACTIVE_SIDEBAR.EDITMODE}
+              value={ACTIVE_SIDEBAR_ENUM.EDITMODE}
             >
               Edit
             </ToggleGroupItem>
+            <ToggleGroupItem
+              className="min-w-32 border"
+              value={ACTIVE_SIDEBAR_ENUM.CREATE_SESSION}
+            >
+              Create a Session
+            </ToggleGroupItem>
           </ToggleGroup>
-          {isCraftMode === ACTIVE_SIDEBAR.PLAYMODE && (
+          {isCraftMode === ACTIVE_SIDEBAR_ENUM.CREATE_SESSION && (
+            <SessionSideBar
+              handleSelectMaze={handleSelectMaze}
+              selectedPuzzle={selectedPuzzle}
+              MazeSessions={MazeSessions}
+              clerkId={clerkId}
+            />
+          )}
+          {isCraftMode === ACTIVE_SIDEBAR_ENUM.PLAYMODE && (
             <PlaySideBar
               playMaze={playMaze}
               playerPosition={playerPosition}
@@ -197,7 +204,7 @@ export default function CraftMaze({
               reset={reset}
             />
           )}
-          {isCraftMode === ACTIVE_SIDEBAR.EDITMODE && (
+          {isCraftMode === ACTIVE_SIDEBAR_ENUM.EDITMODE && (
             <BuildSideBar
               grid={grid}
               clerkId={clerkId}

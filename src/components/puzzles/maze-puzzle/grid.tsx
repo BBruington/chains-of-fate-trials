@@ -14,7 +14,7 @@ import { MutableRefObject } from "react";
 import { SIDEBAR_TOGGLE_ENUM } from "@/app/(puzzlecraft)/puzzlecraft/types";
 import { Direction } from "@prisma/client";
 
-export default function GridRow({
+export default function MazeGrid({
   row,
   rowIndex,
   playerPosition,

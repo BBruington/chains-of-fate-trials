@@ -20,7 +20,8 @@ export default function useMazePuzzle({
   elementalSessionId?: string;
   selectedMazeId?: string;
   gameGridDetails: {
-    isCraftMode?: ACTIVE_SIDEBAR_ENUM;
+    mode?: ACTIVE_SIDEBAR_ENUM;
+    setIsWon?: Dispatch<SetStateAction<boolean>>;
     setIsFailed?: Dispatch<SetStateAction<boolean>>;
     mapLayout: number[][];
     allEnemies?: Enemy[];
@@ -31,7 +32,8 @@ export default function useMazePuzzle({
     mapLayout,
     allEnemies,
     playerStartingPosition,
-    isCraftMode,
+    mode,
+    setIsWon,
     setIsFailed,
   } = gameGridDetails;
   const [player, setPlayer] = useState<{
@@ -63,6 +65,30 @@ export default function useMazePuzzle({
       : DEFAULT_MAP.map((row) => row.map((tile) => GRID_TILE[tile])),
   );
   const [inventory, setInventory] = useAtom(inventoryItems);
+
+  useEffect(() => {
+    (mapRef.current = mapLayout
+      ? mapLayout.map((row) => row.map((tile) => GRID_TILE[tile]))
+      : null),
+      (enemies.current = allEnemies || []);
+    setGrid(
+      mapRef.current
+        ? mapRef.current.map((row) => row.map((tile) => tile))
+        : DEFAULT_MAP.map((row) => row.map((tile) => GRID_TILE[tile])),
+    );
+    setPlayer({
+      hasBomb: false,
+      lastDirectionMoved: null,
+    });
+    setPlayerPosition(
+      playerStartingPosition
+        ? playerStartingPosition
+        : {
+            x: 0,
+            y: 0,
+          },
+    );
+  }, [selectedMazeId]);
 
   const handleKeyPress = (e: KeyboardEvent) => {
     switch (e.key) {
@@ -378,7 +404,7 @@ export default function useMazePuzzle({
   };
 
   const movePlayer = (x: number, y: number, direction: Direction) => {
-    if (isCraftMode !== ACTIVE_SIDEBAR_ENUM.PLAYMODE) return;
+    if (mode !== ACTIVE_SIDEBAR_ENUM.PLAYMODE || mode === undefined) return;
     const newX = playerPosition.x + x;
     const newY = playerPosition.y + y;
     let playerRef = { ...player, lastDirectionMoved: direction };
@@ -416,7 +442,7 @@ export default function useMazePuzzle({
       playerRef = { ...playerRef, hasBomb: true };
     }
     if (tileMovedTo === GRID_TILE[TILE_TYPES.GOAL]) {
-      alert("You reached the goal!");
+      winMaze();
       if (elementalSessionId) {
         revealInventoryItem(
           elementalSessionId,
@@ -428,6 +454,12 @@ export default function useMazePuzzle({
     }
     setPlayer(playerRef);
   };
+
+  function winMaze() {
+    if (setIsWon) {
+      setIsWon(true);
+    }
+  }
 
   const plantBomb = ({ x, y }: { x: number; y: number }) => {
     if (!player.hasBomb) return;

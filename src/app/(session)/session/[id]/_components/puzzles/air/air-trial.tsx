@@ -30,7 +30,7 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
   const { playMaze, mazeState, reset } = useMazePuzzle({
     elementalSessionId: sessionId,
     gameGridDetails: {
-      isCraftMode: ACTIVE_SIDEBAR_ENUM.PLAYMODE,
+      mode: ACTIVE_SIDEBAR_ENUM.PLAYMODE,
       mapLayout: INITIAL_MAP,
     },
   });

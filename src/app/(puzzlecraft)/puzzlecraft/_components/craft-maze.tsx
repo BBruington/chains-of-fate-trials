@@ -1,11 +1,10 @@
 "use client";
-import GridRow from "@/components/puzzles/maze-puzzle/grid";
+import MazeGrid from "@/components/puzzles/maze-puzzle/grid";
 import useMazePuzzle from "@/components/puzzles/maze-puzzle/useMazePuzzle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { saveMazePuzzle } from "../actions";
-import { DEFAULT_MAP } from "@/app/(session)/session/[id]/_constants";
 import { Direction } from "@prisma/client";
 import { GRID_TILE } from "@/components/puzzles/maze-puzzle/constants";
 import { ACTIVE_SIDEBAR_ENUM, Maze, SIDEBAR_TOGGLE_ENUM } from "../types";
@@ -16,6 +15,7 @@ import SessionSideBar from "./session-side-bar";
 import { defaultCreatedMaze } from "../constants";
 import { useAtom } from "jotai";
 import { craftMode, maze } from "../../jotaiAtoms";
+import { formatPuzzle } from "@/components/puzzles/maze-puzzle/utils";
 
 type CraftMazeProperties = {
   clerkId: string;
@@ -48,7 +48,7 @@ export default function CraftMaze({
   const { playMaze, mazeState, buildMaze, reset } = useMazePuzzle({
     selectedMazeId: selectedMaze.id !== "created" ? selectedMaze.id : undefined,
     gameGridDetails: {
-      isCraftMode,
+      mode: isCraftMode,
       setIsFailed,
       mapLayout: formattedPuzzle.matrix,
       playerStartingPosition: formattedPuzzle.playerStartingPosition,
@@ -64,23 +64,6 @@ export default function CraftMaze({
     activeTileType,
     enemyDirection: selectedEnemyDirection,
   };
-
-  function formatPuzzle(mazePuzzle?: Maze) {
-    if (!mazePuzzle) {
-      return { playerStartingPosition: { x: 0, y: 0 }, matrix: DEFAULT_MAP };
-    }
-    const playerPosition = { x: mazePuzzle.playerX, y: mazePuzzle.playerY };
-    const matrix = [];
-
-    for (let i = 0; i < mazePuzzle.grid.length; i += mazePuzzle.columns) {
-      matrix.push(mazePuzzle.grid.slice(i, i + mazePuzzle.columns));
-    }
-    return {
-      playerStartingPosition: playerPosition,
-      matrix,
-      enemies: mazePuzzle.enemies,
-    };
-  }
 
   const handleSelectMaze = (maze: Maze) => {
     const formatted = formatPuzzle(maze);
@@ -125,7 +108,7 @@ export default function CraftMaze({
         {/* grid */}
         <div className="m-5 flex w-full flex-col items-center">
           {grid.map((row, rowIndex) => (
-            <GridRow
+            <MazeGrid
               key={rowIndex}
               row={row}
               rowIndex={rowIndex}

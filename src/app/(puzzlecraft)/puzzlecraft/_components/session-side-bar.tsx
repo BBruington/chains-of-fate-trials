@@ -12,7 +12,7 @@ import {
 import { Maze } from "../types";
 
 type SessionSideBarProps = {
-  selectedPuzzle: MutableRefObject<string>;
+  selectedMazeId: string;
   handleSelectMaze: (maze: Maze) => void;
   clerkId: string;
   MazeSessions: ({
@@ -28,7 +28,7 @@ export default function SessionSideBar({
   clerkId,
   MazeSessions,
   handleSelectMaze,
-  selectedPuzzle,
+  selectedMazeId,
 }: SessionSideBarProps) {
   const [selectedMazeSession, setSelectedMazeSession] = useState(
     MazeSessions[0] || undefined,
@@ -47,7 +47,7 @@ export default function SessionSideBar({
 
   const handleConnectMaze = async (action: "connect" | "disconnect") => {
     await addMazeToSession({
-      mazeId: selectedPuzzle.current,
+      mazeId: selectedMazeId,
       sessionId: selectedMazeSession.id,
       action,
     });
@@ -83,7 +83,7 @@ export default function SessionSideBar({
           disabled={
             selectedMazeSession === undefined ||
             selectedMazeSession.Mazes?.find(
-              (maze) => selectedPuzzle.current === maze.id,
+              (maze) => selectedMazeId === maze.id,
             ) !== undefined
           }
         >
@@ -94,7 +94,7 @@ export default function SessionSideBar({
           disabled={
             selectedMazeSession === undefined ||
             selectedMazeSession.Mazes.find(
-              (maze) => selectedPuzzle.current === maze.id,
+              (maze) => selectedMazeId === maze.id,
             ) === undefined
           }
         >

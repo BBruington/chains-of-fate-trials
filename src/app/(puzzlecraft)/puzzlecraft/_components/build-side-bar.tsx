@@ -9,19 +9,19 @@ import { deleteMazePuzzle } from "../actions";
 import { DEFAULT_MAP } from "@/app/(session)/session/[id]/_constants";
 
 export default function BuildSideBar({
-  activeTileType,
-  setUpdateTile,
-  setActiveTileType,
-  selectedPuzzle,
+  grid,
+  clerkId,
   MazePuzzle,
   updatedTile,
-  clerkId,
-  setSelectedEnemyDirection,
-  handleSelectMaze,
-  updateAxis,
-  grid,
+  selectedMazeId,
+  activeTileType,
   reset,
+  updateAxis,
+  setUpdateTile,
+  handleSelectMaze,
+  setActiveTileType,
   handleSaveChanges,
+  setSelectedEnemyDirection,
 }: BuildSideBarProps) {
   const defaultCreatedMaze = {
     id: "created",
@@ -34,7 +34,7 @@ export default function BuildSideBar({
     enemies: [],
   };
   const handleDeletePuzzle = async () => {
-    await deleteMazePuzzle({ id: selectedPuzzle });
+    await deleteMazePuzzle({ id: selectedMazeId });
     handleSelectMaze(MazePuzzle[0] ? MazePuzzle[0] : defaultCreatedMaze);
   };
   return (

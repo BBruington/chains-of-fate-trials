@@ -73,7 +73,7 @@ export type BuildSideBarProps = {
   handleSaveChanges: () => Promise<void>;
   handleSelectMaze: (maze: Maze) => void;
   activeTileType: SIDEBAR_TOGGLE_ENUM;
-  selectedPuzzle: string;
+  selectedMazeId: string;
   updatedTile: number;
   setSelectedEnemyDirection: Dispatch<SetStateAction<Direction>>;
   clerkId: string;

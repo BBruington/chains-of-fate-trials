@@ -1,5 +1,10 @@
 import { GridPiece } from "./types";
 
+const defaultTileProperties = {
+  isValidMove: false,
+  isDestructable: true,
+};
+
 export enum TILE_TYPES {
   EMPTY = 0,
   BLOCKED = 1,
@@ -9,10 +14,6 @@ export enum TILE_TYPES {
   BOMB = 5,
   DEPLOYED_BOMB = 6
 }
-const defaultTileProperties = {
-  isValidMove: false,
-  isDestructable: true,
-};
 
 export const GRID_TILE: Record<number, GridPiece> = {
   [TILE_TYPES.EMPTY]: {

@@ -457,6 +457,7 @@ export default function useMazePuzzle({
   const mazeState = {
     grid,
     setGrid,
+    mapRef,
     player,
     enemies,
     playerPosition,

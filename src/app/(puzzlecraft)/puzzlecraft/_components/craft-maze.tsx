@@ -6,13 +6,16 @@ import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
 import { saveMazePuzzle } from "../actions";
 import { DEFAULT_MAP } from "@/app/(session)/session/[id]/_constants";
-import { Direction, MazeSession, type $Enums } from "@prisma/client";
+import { Direction } from "@prisma/client";
 import { GRID_TILE } from "@/components/puzzles/maze-puzzle/constants";
 import { ACTIVE_SIDEBAR_ENUM, Maze, SIDEBAR_TOGGLE_ENUM } from "../types";
 import LostDialog from "./lost-dialog";
 import BuildSideBar from "./build-side-bar";
 import PlaySideBar from "./play-side-bar";
 import SessionSideBar from "./session-side-bar";
+import { defaultCreatedMaze } from "../constants";
+import { useAtom } from "jotai";
+import { craftMode, maze } from "../../jotaiAtoms";
 
 type CraftMazeProperties = {
   clerkId: string;
@@ -26,51 +29,24 @@ type CraftMazeProperties = {
   MazePuzzle: Maze[];
 };
 
-const formatPuzzle = (mazePuzzle?: Maze) => {
-  if (!mazePuzzle) {
-    return { playerStartingPosition: { x: 0, y: 0 }, matrix: DEFAULT_MAP };
-  }
-  const playerPosition = { x: mazePuzzle.playerX, y: mazePuzzle.playerY };
-  const matrix = [];
-
-  for (let i = 0; i < mazePuzzle.grid.length; i += mazePuzzle.columns) {
-    matrix.push(mazePuzzle.grid.slice(i, i + mazePuzzle.columns));
-  }
-
-  return {
-    playerStartingPosition: playerPosition,
-    matrix,
-    enemies: mazePuzzle.enemies,
-  };
-};
-
 export default function CraftMaze({
   MazePuzzle,
   MazeSessions,
   clerkId,
 }: CraftMazeProperties) {
-  const defaultCreatedMaze = {
-    id: "created",
-    playerX: 0,
-    playerY: 0,
-    rows: 10,
-    columns: 10,
-    grid: DEFAULT_MAP.flat(),
-    userId: clerkId,
-    enemies: [],
-  };
-
-  const formattedPuzzle = formatPuzzle(
-    MazePuzzle[0] ? MazePuzzle[0] : defaultCreatedMaze,
-  );
-  const selectedPuzzle = useRef(MazePuzzle[0] ? MazePuzzle[0].id : "created");
+  const [selectedMaze, setSelectedMaze] = useAtom(maze);
+  const [isCraftMode, setIsCraftMode] = useAtom(craftMode);
   const [selectedEnemyDirection, setSelectedEnemyDirection] =
     useState<Direction>(Direction.DOWN);
   const [isFailed, setIsFailed] = useState(false);
-  const [isCraftMode, setIsCraftMode] = useState(ACTIVE_SIDEBAR_ENUM.EDITMODE);
+  const [updatedTile, setUpdateTile] = useState(0);
+  const [activeTileType, setActiveTileType] = useState(
+    SIDEBAR_TOGGLE_ENUM.TILE_TYPE,
+  );
 
+  const formattedPuzzle = formatPuzzle(selectedMaze);
   const { playMaze, mazeState, buildMaze, reset } = useMazePuzzle({
-    selectedMazeId: selectedPuzzle.current ? selectedPuzzle.current : undefined,
+    selectedMazeId: selectedMaze.id !== "created" ? selectedMaze.id : undefined,
     gameGridDetails: {
       isCraftMode,
       setIsFailed,
@@ -79,26 +55,41 @@ export default function CraftMaze({
       allEnemies: formattedPuzzle.enemies ? formattedPuzzle.enemies : [],
     },
   });
-  const { grid, setGrid, enemies, playerPosition, setPlayerPosition } =
+  const { grid, setGrid, enemies, playerPosition, mapRef, setPlayerPosition } =
     mazeState;
   const { updateMapTile, updateAxis } = buildMaze;
-  const [updatedTile, setUpdateTile] = useState(0);
-  const [activeTileType, setActiveTileType] = useState(
-    SIDEBAR_TOGGLE_ENUM.TILE_TYPE,
-  );
   const editMapProperties = {
     updatedTile,
     updateMapTile,
     activeTileType,
-    selectedPuzzle,
     enemyDirection: selectedEnemyDirection,
   };
+
+  function formatPuzzle(mazePuzzle?: Maze) {
+    if (!mazePuzzle) {
+      return { playerStartingPosition: { x: 0, y: 0 }, matrix: DEFAULT_MAP };
+    }
+    const playerPosition = { x: mazePuzzle.playerX, y: mazePuzzle.playerY };
+    const matrix = [];
+
+    for (let i = 0; i < mazePuzzle.grid.length; i += mazePuzzle.columns) {
+      matrix.push(mazePuzzle.grid.slice(i, i + mazePuzzle.columns));
+    }
+    return {
+      playerStartingPosition: playerPosition,
+      matrix,
+      enemies: mazePuzzle.enemies,
+    };
+  }
 
   const handleSelectMaze = (maze: Maze) => {
     const formatted = formatPuzzle(maze);
     const { matrix, playerStartingPosition } = formatted;
-    selectedPuzzle.current = maze.id;
+    mapRef.current = formatted.matrix.map((row) =>
+      row.map((tile) => GRID_TILE[tile]),
+    );
     const updatedGrid = matrix.map((row) => row.map((tile) => GRID_TILE[tile]));
+    setSelectedMaze(maze);
     setGrid(updatedGrid);
     setPlayerPosition({
       x: playerStartingPosition.x,
@@ -109,8 +100,8 @@ export default function CraftMaze({
 
   const handleSaveChanges = async () => {
     const mazeProperties =
-      selectedPuzzle.current === "created"
-        ? { ...defaultCreatedMaze }
+      selectedMaze.id === "created"
+        ? { ...defaultCreatedMaze, userId: clerkId }
         : {
             grid: grid.flat().map((tile) => tile.id),
             columns: grid[0].length,
@@ -118,11 +109,11 @@ export default function CraftMaze({
             playerX: playerPosition.x,
             playerY: playerPosition.y,
             userId: clerkId,
-            id: selectedPuzzle.current,
+            id: selectedMaze.id,
           };
     await saveMazePuzzle({
       maze: mazeProperties,
-      isCreated: selectedPuzzle.current === "created",
+      isCreated: selectedMaze.id === "created",
       allEnemies: enemies.current || undefined,
     });
   };
@@ -151,7 +142,7 @@ export default function CraftMaze({
             ))}
             <Button
               onClick={() => {
-                handleSelectMaze(defaultCreatedMaze);
+                handleSelectMaze({ ...defaultCreatedMaze, userId: clerkId });
                 handleSaveChanges();
               }}
             >
@@ -191,7 +182,7 @@ export default function CraftMaze({
           {isCraftMode === ACTIVE_SIDEBAR_ENUM.CREATE_SESSION && (
             <SessionSideBar
               handleSelectMaze={handleSelectMaze}
-              selectedPuzzle={selectedPuzzle}
+              selectedMazeId={selectedMaze.id}
               MazeSessions={MazeSessions}
               clerkId={clerkId}
             />
@@ -211,7 +202,7 @@ export default function CraftMaze({
               MazePuzzle={MazePuzzle}
               updatedTile={updatedTile}
               activeTileType={activeTileType}
-              selectedPuzzle={selectedPuzzle.current}
+              selectedMazeId={selectedMaze.id}
               setSelectedEnemyDirection={setSelectedEnemyDirection}
               reset={reset}
               updateAxis={updateAxis}

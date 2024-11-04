@@ -145,7 +145,7 @@ export default function useMazePuzzle({
     }
     while (y !== mapRef.current.length) {
       if (y > mapRef.current.length) {
-        const createdRow = new Array(mapRef.current[0].length).fill(0);
+        const createdRow = new Array(mapRef.current[0].length).fill(GRID_TILE[0]);
         mapRef.current.push(createdRow);
       }
 

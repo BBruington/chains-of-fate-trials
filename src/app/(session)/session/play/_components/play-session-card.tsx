@@ -1,7 +1,7 @@
-"use client";
-
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
+import puzzleImage from "@/../public/puzzle-piece-template.jpg"
 type SessionCardProps = {
   session: {
     id: string;
@@ -20,13 +20,13 @@ export default function PlaySessionCard({ session }: SessionCardProps) {
       )}
     >
       <div className="relative h-60 w-full">
-        {/* <Image
-            fill={true}
-            style={{ objectFit: "cover" }}
-            className="transition-transform duration-200 ease-in-out group-hover:scale-105"
-            src={DEFAULT_IMAGE_URL}
-            alt="session main image"
-          /> */}
+        <Image
+          fill={true}
+          style={{ objectFit: "cover" }}
+          className="transition-transform duration-200 ease-in-out group-hover:scale-105"
+          src={puzzleImage}
+          alt="session maze image"
+        />
       </div>
       <div className="flex justify-between bg-accent-foreground p-5">
         <div>

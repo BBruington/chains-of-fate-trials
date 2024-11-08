@@ -54,10 +54,10 @@ export default function useMazePuzzle({
 
   const enemies = useRef<Enemy[]>(allEnemies || []);
   const deployedBombs = useRef<coordinates[]>([]);
-  const mapRef = useRef<GridPiece[][] | null>(
+  const mapRef = useRef<GridPiece[][]>(
     mapLayout
       ? mapLayout.map((row) => row.map((tile) => GRID_TILE[tile]))
-      : null,
+      : DEFAULT_MAP.map((row) => row.map((tile) => GRID_TILE[tile])),
   );
   const [grid, setGrid] = useState(
     mapRef.current
@@ -69,7 +69,7 @@ export default function useMazePuzzle({
   useEffect(() => {
     (mapRef.current = mapLayout
       ? mapLayout.map((row) => row.map((tile) => GRID_TILE[tile]))
-      : null),
+      : DEFAULT_MAP.map((row) => row.map((tile) => GRID_TILE[tile]))),
       (enemies.current = allEnemies || []);
     setGrid(
       mapRef.current
@@ -118,8 +118,8 @@ export default function useMazePuzzle({
     deployedBombs.current = [];
     enemies.current = allEnemies ? allEnemies : [];
     setGrid(
-      mapRef.current
-        ? mapRef.current.map((row) => row.map((tile) => tile))
+      mapLayout
+        ? mapLayout.map((row) => row.map((tile) => GRID_TILE[tile]))
         : DEFAULT_MAP.map((row, index) => [GRID_TILE[row[index]]]),
     );
     setPlayerPosition(
@@ -145,7 +145,9 @@ export default function useMazePuzzle({
     }
     while (y !== mapRef.current.length) {
       if (y > mapRef.current.length) {
-        const createdRow = new Array(mapRef.current[0].length).fill(GRID_TILE[0]);
+        const createdRow = new Array(mapRef.current[0].length).fill(
+          GRID_TILE[0],
+        );
         mapRef.current.push(createdRow);
       }
 
@@ -255,34 +257,34 @@ export default function useMazePuzzle({
   };
 
   const movePushableObject = ({
-    pushedFromDx,
-    pushedFromDy,
-    pushedToDx,
-    pushedToDy,
+    pushedFromX,
+    pushedFromY,
+    pushedToX,
+    pushedToY,
   }: {
-    pushedFromDx: number;
-    pushedFromDy: number;
-    pushedToDx: number;
-    pushedToDy: number;
+    pushedFromX: number;
+    pushedFromY: number;
+    pushedToX: number;
+    pushedToY: number;
   }) => {
-    if (!isValidMove({ x: pushedToDx, y: pushedToDy, isPushedObject: true }))
+    if (!isValidMove({ x: pushedToX, y: pushedToY, isPushedObject: true }))
       return false;
-    let gridRef = grid;
-    const gridTile = grid[pushedToDx][pushedToDy];
+    mapRef.current = grid;
+    const gridTile = mapRef.current[pushedToX][pushedToY];
     const pushObjectInto = {
       [TILE_TYPES.EMPTY]: () =>
-        (gridRef[pushedToDx][pushedToDy] = GRID_TILE[TILE_TYPES.PUSHABLE]),
+        (mapRef.current[pushedToX][pushedToY] = GRID_TILE[TILE_TYPES.PUSHABLE]),
       [TILE_TYPES.HOLE]: () =>
-        (gridRef[pushedToDx][pushedToDy] = GRID_TILE[TILE_TYPES.EMPTY]),
+        (mapRef.current[pushedToX][pushedToY] = GRID_TILE[TILE_TYPES.EMPTY]),
     };
-    gridRef[pushedFromDx][pushedFromDy] = GRID_TILE[TILE_TYPES.EMPTY];
+    mapRef.current[pushedFromX][pushedFromY] = GRID_TILE[TILE_TYPES.EMPTY];
     if (
       gridTile === GRID_TILE[TILE_TYPES.EMPTY] ||
       gridTile === GRID_TILE[TILE_TYPES.HOLE]
     ) {
       pushObjectInto[gridTile.id as keyof typeof pushObjectInto]();
     }
-    setGrid(gridRef);
+    setGrid(mapRef.current);
     return true;
   };
 
@@ -295,23 +297,36 @@ export default function useMazePuzzle({
     }
   };
 
-  const moveEnemies = (enemy: Enemy): Enemy => {
+  const moveEnemies = (
+    enemy: Enemy,
+    playerNewX: number,
+    playerNewY: number,
+  ): Enemy => {
     function checkIsPushableObject(checkDirection: Direction) {
       const tileMovedTo =
-        grid[movement[checkDirection].x + enemy.x][
+        mapRef.current[movement[checkDirection].x + enemy.x][
           movement[checkDirection].y + enemy.y
         ];
+
       if (tileMovedTo === GRID_TILE[TILE_TYPES.PUSHABLE]) {
+        if (
+          playerNewX ===
+            movement[checkDirection].x + movement[checkDirection].x + enemy.x &&
+          playerNewY ===
+            movement[checkDirection].y + movement[checkDirection].y + enemy.y
+        )
+          return false;
         const isValidPush = movePushableObject({
-          pushedFromDx: movement[checkDirection].x + enemy.x,
-          pushedFromDy: movement[checkDirection].y + enemy.y,
-          pushedToDx:
+          pushedFromX: movement[checkDirection].x + enemy.x,
+          pushedFromY: movement[checkDirection].y + enemy.y,
+          pushedToX:
             movement[checkDirection].x + movement[checkDirection].x + enemy.x,
-          pushedToDy:
+          pushedToY:
             movement[checkDirection].y + movement[checkDirection].y + enemy.y,
         });
         return isValidPush;
       }
+      return true;
     }
     const direction = enemy.direction;
     const opposite = {
@@ -343,7 +358,7 @@ export default function useMazePuzzle({
         return enemy;
       }
       const isValidPush = checkIsPushableObject(otherDirection);
-      if (isValidPush === false) return enemy;
+      if (!isValidPush) return enemy;
       return {
         ...enemy,
         direction: opposite[direction],
@@ -353,7 +368,7 @@ export default function useMazePuzzle({
     }
     const isValidPush = checkIsPushableObject(direction);
     if (
-      isValidPush === false &&
+      !isValidPush &&
       isValidMove({
         x: movement[otherDirection].x + enemy.x,
         y: movement[otherDirection].y + enemy.y,
@@ -409,19 +424,28 @@ export default function useMazePuzzle({
     const newY = playerPosition.y + y;
     let playerRef = { ...player, lastDirectionMoved: direction };
     if (!isValidMove({ x: newX, y: newY })) return;
-    const tileMovedTo = grid[newX][newY];
+    const tileMovedTo = mapRef.current[newX][newY];
     if (tileMovedTo === GRID_TILE[TILE_TYPES.PUSHABLE]) {
+
+      if (
+        enemies.current.find((enemy) => {
+          return enemy.x === newX + x && enemy.y === newY + y;
+        })
+      )
+        return;
+        
       const isValidPush = movePushableObject({
-        pushedFromDx: newX,
-        pushedFromDy: newY,
-        pushedToDx: newX + x,
-        pushedToDy: newY + y,
+        pushedFromX: newX,
+        pushedFromY: newY,
+        pushedToX: newX + x,
+        pushedToY: newY + y,
       });
       if (!isValidPush) return;
     }
     const allEnemyMovement = enemies.current.map((enemy) => {
-      return moveEnemies(enemy);
+      return moveEnemies(enemy, newX, newY);
     });
+    setPlayerPosition({ x: newX, y: newY });
     enemies.current = allEnemyMovement;
     if (
       isMovedIntoEnemy({
@@ -434,15 +458,13 @@ export default function useMazePuzzle({
     ) {
       if (setIsFailed !== undefined) setIsFailed(true);
     }
-    setPlayerPosition({ x: newX, y: newY });
     if (tileMovedTo === GRID_TILE[TILE_TYPES.BOMB] && !player.hasBomb) {
-      let gridRef = grid;
-      gridRef[newX][newY] = GRID_TILE[TILE_TYPES.EMPTY];
-      setGrid(gridRef);
+      mapRef.current = grid;
+      mapRef.current[newX][newY] = GRID_TILE[TILE_TYPES.EMPTY];
+      setGrid(mapRef.current);
       playerRef = { ...playerRef, hasBomb: true };
     }
     if (tileMovedTo === GRID_TILE[TILE_TYPES.GOAL]) {
-      winMaze();
       if (elementalSessionId) {
         revealInventoryItem(
           elementalSessionId,
@@ -450,6 +472,8 @@ export default function useMazePuzzle({
           inventory,
           setInventory,
         );
+      } else {
+        winMaze();
       }
     }
     setPlayer(playerRef);

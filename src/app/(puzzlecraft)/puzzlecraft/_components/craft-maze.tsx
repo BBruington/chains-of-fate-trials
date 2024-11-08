@@ -144,19 +144,19 @@ export default function CraftMaze({
             type="single"
           >
             <ToggleGroupItem
-              className="min-w-32 border"
+              className="min-w-28 border"
               value={ACTIVE_SIDEBAR_ENUM.PLAYMODE}
             >
               Play
             </ToggleGroupItem>
             <ToggleGroupItem
-              className="min-w-32 border"
+              className="min-w-28 border"
               value={ACTIVE_SIDEBAR_ENUM.EDITMODE}
             >
               Edit
             </ToggleGroupItem>
             <ToggleGroupItem
-              className="min-w-32 border"
+              className="min-w-28 border"
               value={ACTIVE_SIDEBAR_ENUM.CREATE_SESSION}
             >
               Create a Session

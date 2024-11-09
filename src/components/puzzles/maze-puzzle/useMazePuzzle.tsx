@@ -117,11 +117,14 @@ export default function useMazePuzzle({
   function reset() {
     deployedBombs.current = [];
     enemies.current = allEnemies ? allEnemies : [];
-    setGrid(
-      mapLayout
-        ? mapLayout.map((row) => row.map((tile) => GRID_TILE[tile]))
-        : DEFAULT_MAP.map((row, index) => [GRID_TILE[row[index]]]),
-    );
+    (mapRef.current = mapLayout
+      ? mapLayout.map((row) => row.map((tile) => GRID_TILE[tile]))
+      : DEFAULT_MAP.map((row) => row.map((tile) => GRID_TILE[tile]))),
+      setGrid(
+        mapLayout
+          ? mapLayout.map((row) => row.map((tile) => GRID_TILE[tile]))
+          : DEFAULT_MAP.map((row, index) => [GRID_TILE[row[index]]]),
+      );
     setPlayerPosition(
       playerStartingPosition
         ? playerStartingPosition
@@ -426,14 +429,13 @@ export default function useMazePuzzle({
     if (!isValidMove({ x: newX, y: newY })) return;
     const tileMovedTo = mapRef.current[newX][newY];
     if (tileMovedTo === GRID_TILE[TILE_TYPES.PUSHABLE]) {
-
       if (
         enemies.current.find((enemy) => {
           return enemy.x === newX + x && enemy.y === newY + y;
         })
       )
         return;
-        
+
       const isValidPush = movePushableObject({
         pushedFromX: newX,
         pushedFromY: newY,

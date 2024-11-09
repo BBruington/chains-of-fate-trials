@@ -62,55 +62,74 @@ export default function MazeGrid({
       enemyDirection: editMapProperties.enemyDirection,
     });
   };
+
+  const enemyDirectionStyles = {
+    UP: "h-0 border-l-[16px] border-r-[16px] border-transparent border-b-[30px] border-b-black",
+    DOWN: "h-0 border-l-[16px] border-r-[16px] border-transparent border-t-[30px] border-t-black",
+    RIGHT:
+      "h-0 border-t-[16px] border-b-[16px] border-transparent border-l-[30px] border-l-black",
+    LEFT: "h-0 border-t-[16px] border-b-[16px] border-transparent border-r-[30px] border-r-black",
+  };
+
   return (
     <div className="flex gap-1">
-      {row.map((grid, colIndex) => (
-        <div
-          key={colIndex}
-          onClick={() => modifyTile(colIndex)}
-          className={cn(
-            "flex h-10 w-10 items-center justify-center border border-black bg-gray-400 shadow-lg",
-            editMapProperties?.updatedTile !== undefined && "cursor-pointer",
-          )}
-        >
-          {allEnemies?.current?.find(
-            (enemy) => rowIndex === enemy.x && colIndex === enemy.y,
-          ) && (
-            <div className="absolute z-10 flex h-8 w-8 items-center justify-center rounded-full bg-red-700" />
-          )}
-          {grid.name === "blocked" && (
-            <div className="stone-wall-tile bg-slate-900" />
-          )}
-          {rowIndex === playerPosition.x &&
-            colIndex === playerPosition.y &&
-            character && (
-              <Image
-                src={characters[character]}
-                height={45}
-                width={45}
-                alt="player"
+      {row.map((grid, colIndex) => {
+        const foundEnemy = allEnemies?.current?.find(
+          (enemy) => rowIndex === enemy.x && colIndex === enemy.y,
+        );
+
+        return (
+          <div
+            key={colIndex}
+            onClick={() => modifyTile(colIndex)}
+            className={cn(
+              "flex h-10 w-10 items-center justify-center border border-black bg-gray-400 shadow-lg",
+              editMapProperties?.updatedTile !== undefined && "cursor-pointer",
+            )}
+          >
+            {foundEnemy && (
+              <div
+                className={cn(
+                  "absolute z-10 flex h-8 w-8 items-center justify-center rounded-full",
+                  enemyDirectionStyles[foundEnemy.direction],
+                )}
               />
             )}
-          {rowIndex === playerPosition.x &&
-            colIndex === playerPosition.y &&
-            character === undefined && (
-              <div className="absolute z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-700" />
+
+            {grid.name === "blocked" && (
+              <div className="stone-wall-tile bg-slate-900" />
             )}
-          {grid.name === "push" && (
-            <Image src={box} alt="pushable box" className="z-10 h-8 w-8" />
-          )}
-          {grid.name === "hole" && (
-            <div className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black" />
-          )}
-          {grid.name === "goal" && (
-            <Image src={flag} alt="goal" className="h-8 w-10" />
-          )}
-          {grid.name === "bomb" && <Image src={bomb} alt="bomb" />}
-          {grid.name === "deployed" && (
-            <Image src={deployedBomb} alt="deployedBomb" />
-          )}
-        </div>
-      ))}
+            {rowIndex === playerPosition.x &&
+              colIndex === playerPosition.y &&
+              character && (
+                <Image
+                  src={characters[character]}
+                  height={45}
+                  width={45}
+                  alt="player"
+                />
+              )}
+            {rowIndex === playerPosition.x &&
+              colIndex === playerPosition.y &&
+              character === undefined && (
+                <div className="absolute z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-700" />
+              )}
+            {grid.name === "push" && (
+              <Image src={box} alt="pushable box" className="z-10 h-8 w-8" />
+            )}
+            {grid.name === "hole" && (
+              <div className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black" />
+            )}
+            {grid.name === "goal" && (
+              <Image src={flag} alt="goal" className="h-8 w-10" />
+            )}
+            {grid.name === "bomb" && <Image src={bomb} alt="bomb" />}
+            {grid.name === "deployed" && (
+              <Image src={deployedBomb} alt="deployedBomb" />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

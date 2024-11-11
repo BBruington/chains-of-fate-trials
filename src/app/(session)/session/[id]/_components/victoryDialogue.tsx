@@ -35,7 +35,7 @@ export default function VictoryDialogue({
     const calculateTime = () => {
       revalidateSession({ sessionId: puzzleSession.id });
       const difference =
-        puzzleSession.createdAt.getTime() - puzzleSession.updatedAt.getTime();
+        puzzleSession.createdAt.getTime() - new Date().getTime();
       const time = {
         minutes: Math.abs(Math.floor(difference / (1000 * 60))),
         seconds: Math.abs(Math.floor((difference / 1000) % 60)),

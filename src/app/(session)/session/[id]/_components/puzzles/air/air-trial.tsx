@@ -2,8 +2,8 @@
 import { useDroppable } from "@dnd-kit/core";
 import { PuzzleEnums } from "../../../_types";
 import { Button } from "@/components/ui/button";
-import useAirPuzzle from "./useAirPuzzle";
-import GridRow from "./grid";
+import useMazePuzzle from "../../../../../../../components/puzzles/maze-puzzle/useMazePuzzle";
+import GridRow from "@/components/puzzles/maze-puzzle/grid";
 import {
   Select,
   SelectContent,
@@ -15,6 +15,9 @@ import {
 } from "@/components/ui/select";
 import { useAtom } from "jotai";
 import { selectedCharacter } from "../../../jotaiAtoms";
+import { INITIAL_MAP } from "../../../_constants";
+import { Direction } from "@prisma/client";
+import { ACTIVE_SIDEBAR_ENUM } from "@/app/(puzzlecraft)/puzzlecraft/types";
 
 export default function AirPuzzle({ sessionId }: { sessionId: string }) {
   const [character, setCharacter] = useAtom<
@@ -24,28 +27,34 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
     id: PuzzleEnums.AIR,
   });
 
-  const { grid, movePlayer, reset, playerPosition, MAP_TILE } = useAirPuzzle({
-    sessionId,
+  const { playMaze, mazeState, reset } = useMazePuzzle({
+    elementalSessionId: sessionId,
+    gameGridDetails: {
+      mode: ACTIVE_SIDEBAR_ENUM.PLAYMODE,
+      mapLayout: INITIAL_MAP,
+    },
   });
+  const { movePlayer } = playMaze;
+  const { grid, playerPosition } = mazeState;
 
   return (
     <div
       className="relative mx-auto flex flex-col items-center justify-center"
       ref={setNodeRef}
     >
-      <div className="flex mb-5 space-x-3">
-        <Button onClick={() => movePlayer(-1, 0)}>W</Button>
-        <Button onClick={() => movePlayer(1, 0)}>S</Button>
-        <Button onClick={() => movePlayer(0, 1)}>D</Button>
-        <Button onClick={() => movePlayer(0, -1)}>A</Button>
+      <div className="mb-5 flex space-x-3">
+        <Button onClick={() => movePlayer(-1, 0, Direction.UP)}>W</Button>
+        <Button onClick={() => movePlayer(1, 0, Direction.DOWN)}>S</Button>
+        <Button onClick={() => movePlayer(0, 1, Direction.RIGHT)}>D</Button>
+        <Button onClick={() => movePlayer(0, -1, Direction.LEFT)}>A</Button>
         <Button onClick={reset}>Reset</Button>
         <Select
           onValueChange={(
             value: "dinner" | "artemis" | "aelarion" | "elendiel",
           ) => setCharacter(value)}
         >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select a character" />
+          <SelectTrigger className="w-[180px] bg-secondary-foreground text-black">
+            <SelectValue placeholder={character} />
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Characters</SelectLabel>
@@ -65,7 +74,6 @@ export default function AirPuzzle({ sessionId }: { sessionId: string }) {
             row={row}
             character={character}
             rowIndex={rowIndex}
-            MAP_TILE={MAP_TILE}
             playerPosition={playerPosition}
           />
         ))}

@@ -2,14 +2,6 @@ import { IngredientSchema, PotionRecord, PotionSchema } from "@/types";
 import { Rarity, MagicType, PrimaryAttribute } from "@prisma/client";
 import { z } from "zod";
 
-// const convert = (arr) => {
-//   const resultObj = arr.reduce((acc, potion, index) => {
-//     acc[index + 1] = { ...potion, id: index + 1 };
-//     return acc;
-//   }, {})
-//   console.log(resultObj)
-// }
-
 export const commonPotions: z.infer<typeof PotionRecord> = {
   "1": {
     id: 1,

@@ -2,7 +2,6 @@
 import { SetStateAction, useCallback, useState } from "react";
 import { handleSolvePuzzle } from "../actions";
 import {
-  InventoryItemEnums,
   InventoryItemProps,
   PuzzleEnums,
   SetAtom,
@@ -85,6 +84,12 @@ export const useDragEnd = ({
 
       actions[over.id as PuzzleEnums]();
     },
-    [setInventoryItems, setPedestalState, setVictoryDialogue, inventoryItemsState, pedestalState],
+    [
+      setInventoryItems,
+      setPedestalState,
+      setVictoryDialogue,
+      inventoryItemsState,
+      pedestalState,
+    ],
   );
 };

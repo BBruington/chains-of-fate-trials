@@ -35,7 +35,6 @@ export default function useEarthPuzzle({sessionId
     [mixture, setMixture],
   );
   const craftMetal = useCallback(() => {
-    if (!setLastCrafted) return;
     const metalAttributes = mixture.reduce((metalSum, currentMetal) => {
       return {
         name: "",

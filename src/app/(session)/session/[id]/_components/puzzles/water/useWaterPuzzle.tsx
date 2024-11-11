@@ -1,50 +1,52 @@
 "use client";
-import {  useCallback } from "react";
+import { useCallback } from "react";
 import {
   PipeType,
   ConnectKeys,
   CheckSideprops,
   FindSidesAndEdgesReturn,
   OppositeSideType,
-  InventoryItemEnums,
 } from "../../../_types";
 import { inventoryItems, waterPipes } from "../../../jotaiAtoms";
 import { useAtom } from "jotai";
-import { mapLength } from "../../../_constants";
 import { revealInventoryItem } from "../../../_hooks/hooks";
 
 type UseWaterPuzzleProps = {
-  sessionId: string
+  sessionId: string;
 };
 
-export default function useWaterPuzzle({
-  sessionId
-}: UseWaterPuzzleProps) {
+export default function useWaterPuzzle({ sessionId }: UseWaterPuzzleProps) {
   const [inventory, setInventory] = useAtom(inventoryItems);
   const [pipesState, setPipesState] = useAtom(waterPipes);
 
-  const isInvalidEdge = (pipe: PipeType, directions: ConnectKeys[]) => {
-    for (let direction of directions) {
-      if (pipe.connects[direction] === true) return true;
+  const isPointingToEdge = (
+    pipe: PipeType,
+    directionsToEdge: ConnectKeys[],
+  ) => {
+    for (let direction of directionsToEdge) {
+      if (pipe.isConnectedTo[direction]) return true;
     }
     return false;
   };
-  const resetPipes = (pipes: PipeType[]) => {
-    const pipesRef = pipes.map((pipe) => {
-      return {
-        ...pipe,
-        isValid: null,
-      };
-    });
+  const resetPipes = (pipes: PipeType[][]) => {
+    const pipesRef = pipes.map((pipesRow) =>
+      pipesRow.map((pipe) => {
+        return {
+          ...pipe,
+          isValid: null,
+        };
+      }),
+    );
     setPipesState(pipesRef);
   };
 
-  const isInvalidSide = ({ index, sides }: CheckSideprops): boolean => {
-    const sideChecker = {
-      left: index - 1,
-      right: index + 1,
-      up: index - mapLength,
-      down: index + mapLength,
+  const isInvalidSide = ({ x, y, sides }: CheckSideprops): boolean => {
+ 
+    const sideIndexToCheck = {
+      left: { x, y: y - 1 },
+      right: { x, y: y + 1 },
+      up: { x: x - 1, y },
+      down: { x: x + 1, y },
     };
 
     const oppositeSide: OppositeSideType = {
@@ -54,73 +56,78 @@ export default function useWaterPuzzle({
       down: "up",
     };
     for (let side of sides) {
-      const comparedIndex = sideChecker[side];
+      const comparedIndex = sideIndexToCheck[side];
       const comparedSide: ConnectKeys = oppositeSide[side];
-      if (pipesState[comparedIndex].connects[comparedSide] !== true)
+      if (
+        !pipesState[comparedIndex.x][comparedIndex.y].isConnectedTo[
+          comparedSide
+        ]
+      )
         return true;
     }
     return false;
   };
 
-  const findSidesAndEdges = (i: number): FindSidesAndEdgesReturn => {
+  const findSidesAndEdges = (x: number, y: number): FindSidesAndEdgesReturn => {
     const sidesRef: ConnectKeys[] = ["up", "left", "right", "down"];
-    const edges: ConnectKeys[] = [];
-    const sides: ConnectKeys[] = [];
-    if (i < mapLength) edges.push("up");
-    if (i % mapLength === 0) edges.push("left");
-    if (i % mapLength === mapLength - 1) edges.push("right");
-    if (pipesState.length - i <= mapLength) edges.push("down");
+    const edgesOfBoard: ConnectKeys[] = [];
+    const sidesConnectedTo: ConnectKeys[] = [];
+    if (x === 0) edgesOfBoard.push("up");
+    if (y === 0) edgesOfBoard.push("left");
+    if (y === pipesState.length - 1) edgesOfBoard.push("right");
+    if (x === pipesState[0].length - 1) edgesOfBoard.push("down");
     for (let side of sidesRef) {
       if (
-        pipesState[i].connects[side] === true &&
-        !edges.find((item) => item === side)
+        pipesState[x][y].isConnectedTo[side] === true &&
+        !edgesOfBoard.find((item) => item === side)
       )
-        sides.push(side);
+        sidesConnectedTo.push(side);
     }
-    return { edges, sides };
+    return { edgesOfBoard, sidesConnectedTo };
   };
 
   const findSolution = useCallback(
-    (pipes: PipeType[]) => {
+    (pipes: PipeType[][]) => {
       let isSolved = true;
       let pipesRef = pipes;
       for (let i = 0; i < pipes.length; i++) {
-        const { sides, edges } = findSidesAndEdges(i);
-        if (
-          isInvalidEdge(pipes[i], edges) ||
-          isInvalidSide({ index: i, sides })
-        ) {
-          isSolved = false;
-          pipesRef[i].isValid = false;
-          continue;
+        for (let j = 0; j < pipes[0].length; j++) {
+          const { sidesConnectedTo, edgesOfBoard } = findSidesAndEdges(j, i);
+          if (
+            isPointingToEdge(pipes[j][i], edgesOfBoard) ||
+            isInvalidSide({ x: j, y: i, sides: sidesConnectedTo })
+          ) {
+            isSolved = false;
+            pipesRef[j][i].isValid = false;
+            continue;
+          }
+          pipesRef[j][i].isValid = true;
         }
-        pipesRef[i].isValid = true;
-      }
-      setPipesState(pipesRef.map((pipe) => pipe));
-      if (isSolved === true) {
-        revealInventoryItem(
-          sessionId,
-          'watergem',
-          inventory,
-          setInventory,
-        );
+        setPipesState(pipesRef.map((pipe) => pipe));
+        if (isSolved === true) {
+          revealInventoryItem(sessionId, "watergem", inventory, setInventory);
+        }
       }
     },
     [pipesState, setPipesState],
   );
 
-  const rotatePipe = (pipe: PipeType, index: number): PipeType | undefined => {
+  const rotatePipe = (
+    pipe: PipeType,
+    rowIndex: number,
+    colIndex: number,
+  ): PipeType | undefined => {
     if (pipe.name === "four") return;
-    let pipeRef = pipesState[index];
+    let pipeRef = pipesState[rowIndex][colIndex];
     const pipeDirections = [
-      pipe.connects.up,
-      pipe.connects.right,
-      pipe.connects.down,
-      pipe.connects.left,
+      pipe.isConnectedTo.up,
+      pipe.isConnectedTo.right,
+      pipe.isConnectedTo.down,
+      pipe.isConnectedTo.left,
     ];
     pipeRef = {
       ...pipeRef,
-      connects: {
+      isConnectedTo: {
         up: pipeDirections[3],
         right: pipeDirections[0],
         down: pipeDirections[1],
@@ -128,10 +135,12 @@ export default function useWaterPuzzle({
       },
     };
     setPipesState(
-      pipesState.map((pipe, i) => {
-        if (i === index) return pipeRef;
-        return pipe;
-      }),
+      pipesState.map((pipeRow, colInd) =>
+        pipeRow.map((pipe, rowInd) => {
+          if (colInd === colIndex && rowInd === rowIndex) return pipeRef;
+          return pipe;
+        }),
+      ),
     );
     return pipeRef;
   };

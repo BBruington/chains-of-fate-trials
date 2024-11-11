@@ -1,5 +1,4 @@
 import {
-  GridPiece,
   InventoryItemEnums,
   PuzzleEnums,
   PuzzleSideBarItem,
@@ -33,34 +32,18 @@ export const INITIAL_MAP = [
   [1, 2, 0, 0, 1, 4, 2, 0, 0, 1, 1, 1],
   [1, 0, 0, 0, 0, 2, 4, 2, 0, 1, 1, 1],
 ];
-
-const empty: GridPiece = {
-  name: "empty",
-  validMove: true,
-};
-const blocked: GridPiece = {
-  name: "blocked",
-  validMove: false,
-};
-const push: GridPiece = {
-  name: "push",
-  validMove: true,
-};
-const goal: GridPiece = {
-  name: "goal",
-  validMove: true,
-};
-const hole: GridPiece = {
-  name: "hole",
-  validMove: false,
-};
-export const MAP_TILE: Record<number, GridPiece> = {
-  0: empty,
-  1: blocked,
-  2: push,
-  3: goal,
-  4: hole,
-};
+export const DEFAULT_MAP = [
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+];
 
 export const ALL_METALS = {
   copper: {
@@ -221,19 +204,22 @@ export const puzzleTransitions = [
     name: PuzzleEnums.PEDESTALS,
     description: [
       {
-        message: "The chamber is a vast, circular room carved from ancient stone, its high ceilings etched with faded runes that softly glow in the dim light. In the center, four pedestals stand equidistant, each one crafted from a different material—water-smooth stone, scorched black rock, wind-worn marble, and dense, earthen metal. At the base of each pedestal, faint grooves in the floor seem to guide something toward a central point, indicating where the elements must converge.",
+        message:
+          "The chamber is a vast, circular room carved from ancient stone, its high ceilings etched with faded runes that softly glow in the dim light. In the center, four pedestals stand equidistant, each one crafted from a different material—water-smooth stone, scorched black rock, wind-worn marble, and dense, earthen metal. At the base of each pedestal, faint grooves in the floor seem to guide something toward a central point, indicating where the elements must converge.",
         isHighlighted: false,
       },
       {
-        message: "Against one wall, an ancient tablet is embedded, its surface worn yet still legible, with intricate script inlaid with shimmering dust. The text reads:",
+        message:
+          "Against one wall, an ancient tablet is embedded, its surface worn yet still legible, with intricate script inlaid with shimmering dust. The text reads:",
         isHighlighted: false,
       },
       {
-        message: `"To open the gate to the Feywild, the Tears of the Elements must be gathered. Pass through the trials of Water, Fire, Air, and Earth to claim each Tear. Only when all are placed upon their rightful pedestals shall the ritual begin."`,
+        message: `"To open the gate to the Feywild, the Tears of the Elements must be gathered. Pass through the trials of Water, Fire, Air, and Earth to claim each Tear. Only when all are placed upon their rightful pedestal shall the ritual begin."`,
         isHighlighted: true,
       },
       {
-        message: "Beyond the chamber, four distinct paths branch off into the distance, each one hinting at the elemental challenge it holds. The air around the water path is damp and cool, the fire path glows with a faint heat, the earth path is solid and unyielding, while the air path feels light, with a soft breeze beckoning forward.",
+        message:
+          "Beyond the chamber, four distinct paths branch off into the distance, each one hinting at the elemental challenge it holds. The air around the water path is damp and cool, the fire path glows with a faint heat, the earth path is solid and unyielding, while the air path feels light, with a soft breeze beckoning forward.",
         isHighlighted: false,
       },
     ],
@@ -381,30 +367,30 @@ export const runes = [
 const linePipe: PipeType = {
   name: "line",
   isValid: null,
-  connects: { up: true, right: false, down: true, left: false },
+  isConnectedTo: { up: true, right: false, down: true, left: false },
 };
 const endPipe: PipeType = {
   name: "end",
   isValid: null,
-  connects: { up: false, right: false, down: true, left: false },
+  isConnectedTo: { up: false, right: false, down: true, left: false },
 };
 
 const threePipe: PipeType = {
   name: "three",
   isValid: null,
-  connects: { up: false, right: true, down: true, left: true },
+  isConnectedTo: { up: false, right: true, down: true, left: true },
 };
 
 const fourPipe: PipeType = {
   name: "four",
   isValid: null,
-  connects: { up: true, right: true, down: true, left: true },
+  isConnectedTo: { up: true, right: true, down: true, left: true },
 };
 
 const turnPipe: PipeType = {
   name: "turn",
   isValid: null,
-  connects: { up: false, right: true, down: true, left: false },
+  isConnectedTo: { up: false, right: true, down: true, left: false },
 };
 
 export const mapLength = 7;
@@ -418,36 +404,45 @@ export const allPipes: Record<number, PipeType> = {
 };
 
 export const pipesExample = [
-  1, 4, 1, 2, 2, 1, 1, 1, 4, 0, 4, 0, 4, 4, 4, 0, 2, 2, 2, 2, 1, 4, 1, 1, 2, 4,
-  4, 1, 2, 0, 0, 2, 2, 2, 4, 2, 1, 1, 2, 0, 1, 0, 4, 1, 1, 4, 4, 4, 1,
+  [1, 4, 1, 2, 2, 1, 1],
+  [1, 4, 0, 4, 0, 4, 4],
+  [4, 0, 2, 2, 2, 2, 1],
+  [4, 1, 1, 2, 4, 4, 1],
+  [2, 0, 0, 2, 2, 2, 4],
+  [2, 4, 4, 2, 0, 1, 0],
+  [1, 1, 4, 4, 4, 4, 1],
 ];
 
 export const inventoryItemsRecords = [
   {
     name: InventoryItemEnums.FIREGEM,
     label: "Tear of the Ignan",
-    description: "A vibrant orange-red gemstone that flickers with inner flames, casting a soft glow like embers in a hearth. It radiates heat, and when grasped, it fills the bearer with a sense of fierce power and passion.",
+    description:
+      "A vibrant orange-red gemstone that flickers with inner flames, casting a soft glow like embers in a hearth. It radiates heat, and when grasped, it fills the bearer with a sense of fierce power and passion.",
     hidden: true,
     image: firegem,
   },
   {
     name: InventoryItemEnums.AIRGEM,
     label: "Tear of the Auran",
-    descripgion: "A translucent, pale yellow gemstone that seems to weigh nothing, swirling with mist inside its core. It hums with a faint breeze and is cold to the touch, as though it holds the very breath of the sky within.",
+    description:
+      "A translucent, pale yellow gemstone that seems to weigh nothing, swirling with mist inside its core. It hums with a faint breeze and is cold to the touch, as though it holds the very breath of the sky within.",
     hidden: true,
     image: airgem,
   },
   {
     name: InventoryItemEnums.EARTHGEM,
     label: "Tear of the Terran",
-    description: "A dense, dark green gem streaked with veins of gold and silver, radiating a quiet strength. It feels warm in the hand, almost like the pulse of the earth itself, heavy with the weight of ancient stone.",
+    description:
+      "A dense, dark green gem streaked with veins of gold and silver, radiating a quiet strength. It feels warm in the hand, almost like the pulse of the earth itself, heavy with the weight of ancient stone.",
     hidden: true,
     image: earthgem,
   },
   {
     name: InventoryItemEnums.WATERGEM,
     label: "Tear of the Aquan",
-    description: "A deep blue gem that shimmers like the surface of the ocean under moonlight. It pulses with the rhythm of the tides, and when held, it cools the air around it, as though drawing on the eternal flow of water.",
+    description:
+      "A deep blue gem that shimmers like the surface of the ocean under moonlight. It pulses with the rhythm of the tides, and when held, it cools the air around it, as though drawing on the eternal flow of water.",
     hidden: true,
     image: watergem,
   },

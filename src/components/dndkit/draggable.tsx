@@ -19,7 +19,7 @@ export default function Draggable({
   disabled,
   showQuantity,
 }: DraggableProps) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
+  const { attributes, listeners, setNodeRef, transform } =
     useDraggable({
       id: id,
       data: {
@@ -35,8 +35,8 @@ export default function Draggable({
     <button
       className={cn(
         "inline-flex w-64 items-center justify-center whitespace-nowrap rounded-sm p-3 text-xs font-medium",
-        className,
         item.id === "empty" && "cursor-default",
+        className,
       )}
       ref={setNodeRef}
       style={style}

@@ -509,7 +509,6 @@ export default function useMazePuzzle({
     deployedBombs.current = [];
     setGrid(gridRef.map((row) => row.map((tile) => tile)));
   };
-
   const mazeState = {
     grid,
     setGrid,

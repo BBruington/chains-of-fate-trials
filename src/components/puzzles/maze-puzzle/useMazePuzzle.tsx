@@ -148,7 +148,7 @@ export default function useMazePuzzle({
     }
     while (y !== mapRef.current.length) {
       if (y > mapRef.current.length) {
-        const createdRow = new Array(mapRef.current[0].length).fill(
+        const createdRow: GridPiece[] = new Array(mapRef.current[0].length).fill(
           GRID_TILE[0],
         );
         mapRef.current.push(createdRow);
@@ -199,9 +199,7 @@ export default function useMazePuzzle({
     setGrid(mapRef.current.map((row) => row.map((tile) => tile)));
   };
 
-  const isEdgeOfGrid = (x: number, y: number) => {
-    return x < 0 || y < 0 || x >= grid.length || y >= grid[0].length;
-  };
+  const isEdgeOfGrid = (x: number, y: number) =>  x < 0 || y < 0 || x >= grid.length || y >= grid[0].length;
 
   const addMovingEnemy = ({
     x,
@@ -511,7 +509,6 @@ export default function useMazePuzzle({
     deployedBombs.current = [];
     setGrid(gridRef.map((row) => row.map((tile) => tile)));
   };
-
   const mazeState = {
     grid,
     setGrid,

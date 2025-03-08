@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Inter } from "next/font/google";
 import Navigation from "@/components/navigation";
+import Footer from "@/components/footer";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,7 +22,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <body className={inter.className}>
+        <body className={`${inter.className} min-h-[100vh] flex flex-col`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -29,7 +30,8 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Navigation />
-            <main>{children}</main>
+            <main className="flex-grow">{children}</main>
+            <Footer />
           </ThemeProvider>
         </body>
       </html>

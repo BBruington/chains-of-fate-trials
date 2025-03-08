@@ -106,6 +106,8 @@ export default function SessionPage({
 
   const PuzzleComponent = puzzleComponents[puzzle];
 
+
+
   return (
     <div className="flex w-full justify-between overflow-hidden">
       <Suspense>

@@ -73,24 +73,6 @@ const AddIngredientsToUserSchema = z.object({
       necromancy: z.number().min(0).default(0),
       transmutation: z.number().min(0).default(0),
     })
-    // z.object({
-    //   rarity: RaritySchema,
-    //   type: MagicTypeSchema,
-    //   primaryAttribute: PrimaryAttributeSchema,
-    //   id: z.string(),
-    //   name: z.string(),
-    //   description: z.string(),
-    //   quantity: z.number().int(),
-    //   abjuration: z.number().int(),
-    //   conjuration: z.number().int(),
-    //   divination: z.number().int(),
-    //   enchantment: z.number().int(),
-    //   evocation: z.number().int(),
-    //   illusion: z.number().int(),
-    //   necromancy: z.number().int(),
-    //   transmutation: z.number().int(),
-    //   userId: z.string(),
-    // }),
   ),
 });
 

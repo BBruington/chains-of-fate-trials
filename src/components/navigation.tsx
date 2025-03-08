@@ -4,6 +4,7 @@ import { useTheme } from "next-themes";
 import { Sun, Moon } from "lucide-react";
 import { Button } from "./ui/button";
 import { usePathname } from "next/navigation";
+import { Dice1Icon } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -14,9 +15,8 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/potioncraft", label: "Potion Craft" },
-  { href: "/session/play", label: "Puzzle Session" },
+  { href: "/potioncraft", label: "Potions" },
+  { href: "/session/play", label: "Puzzles" },
 ];
 
 const THEME_OPTIONS = [
@@ -41,8 +41,15 @@ export default function Navigation() {
   const baseUrl = findBaseUrl(pathName);
 
   return (
-    <nav className="flex h-12 w-full items-center justify-end space-x-3 border-b-2 border-secondary px-2">
-      
+    <nav className="flex h-12 w-full items-center justify-between space-x-3 border-b-2 border-secondary px-2">
+      <div>
+        <Link href="/" className="flex gap-2 items-center text-xl font-bold">
+            <Dice1Icon className="h-6 w-6 text-primary" />
+            <span>Chains of Fate</span>
+        </Link>
+      </div>
+      <div className="flex space-x-3 items-center">
+
       <div className="flex items-center space-x-4">
         {NAV_LINKS.map(({ href, label }) => (
           <Link
@@ -76,15 +83,16 @@ export default function Navigation() {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
-      <div className="my-2 flex items-center">
-        <SignedOut>
-          <SignInButton />
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
-      </div>
+        </div>
+          <div className="my-2 flex items-center">
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </div>
+        </div>
     </nav>
   );
 }
